@@ -1,5 +1,6 @@
 """Retirement CAS, evidence, rollback and retained history; no engines/jobs."""
 from dataclasses import asdict, replace
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 import hashlib
 from pathlib import Path
@@ -10,7 +11,7 @@ import test_submissions as submissions
 import test_terminal_evidence as terminal
 from dftlab_platform.artifact_storage import SQLiteArtifactIndex
 from dftlab_platform.artifacts import LocalArtifactStore
-from dftlab_platform.authority import utcnow
+from dftlab_platform.authority import stamp, utcnow
 from dftlab_platform.authority_storage import SQLiteAuthorityStore
 from dftlab_platform.authority_recovery import RegisteredAuthorityRetirement, SQLiteNativeAuthorityRetirement
 from dftlab_platform.contracts import canonical, loads
@@ -125,7 +126,7 @@ class Retirement(unittest.TestCase):
             self.untouched()
         self.native = original
 
-    def test_expired_future_live_lease_and_readonly_context_failure_reject(self):
+    def test_expired_proof_and_readonly_context_failure_reject(self):
         self.good = False
         self.reject(self.retire)
         self.good = True
@@ -133,7 +134,7 @@ class Retirement(unittest.TestCase):
         self.reject(self.retire)
         self.untouched()
 
-    def test_cas_old_generation_owner_and_corrupt_or_foreign_artifacts_refuse(self):
+    def test_cas_old_generation_owner_and_corrupt_proof_refuse(self):
         self.reject(self.port.retire, self.other, self.registration, self.record, self.native, self.proof, self.observations)
         original = self.record
         self.record = loads(canonical(original))
@@ -168,7 +169,7 @@ class Retirement(unittest.TestCase):
     def test_live_lease_and_future_proof_are_not_retirement_authority(self):
         original = self.record
         self.record = loads(canonical(original))
-        self.record["payload"]["lease_expires_at"] = (self.now+timedelta(seconds=30)).isoformat()
+        self.record["payload"]["lease_expires_at"] = stamp(self.now+timedelta(seconds=30))
         reseal(self.record)
         with self.repo.transaction() as db:
             db.execute("UPDATE controller_authorities SET document=?", (canonical(self.record).decode(),))
@@ -201,6 +202,33 @@ class Retirement(unittest.TestCase):
             db.execute("UPDATE authority_retirements SET retired_document=?", (canonical(self.record).decode(),))
         with self.assertRaises(Problem), source.freeze(self.owner, ((self.project, self.run),)):
             self.fail("corrupt audit authorized freeze")
+
+    def test_foreign_project_observation_does_not_prove_retirement(self):
+        project = self.repo.create_project(self.owner, {"name": "other", "idempotency_key": "retirement-other-project"})[0]["project_id"]
+        self.observations = (self.upload(b"other project terminal observation", project),)
+        self.reject(self.retire)
+        self.untouched()
+
+    def test_clock_rollback_cannot_resurrect_an_expired_proof(self):
+        self.now += timedelta(seconds=31)
+        self.reject(self.retire)
+        self.now -= timedelta(seconds=30)
+        self.reject(self.retire)
+        self.untouched()
+
+    def test_concurrent_retirement_never_duplicates_history(self):
+        def call(_):
+            try:
+                return self.retire()
+            except Problem:
+                return None
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results = list(pool.map(call, range(4)))
+        accepted = [result for result in results if result is not None]
+        self.assertTrue(accepted)
+        self.assertTrue(all(result == accepted[0] for result in accepted))
+        with self.repo._connection() as db:
+            self.assertEqual(db.execute("SELECT count(*) FROM authority_retirements").fetchone()[0], 1)
 
 
 if __name__ == "__main__":
