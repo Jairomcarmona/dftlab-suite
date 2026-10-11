@@ -9,14 +9,14 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const LIB = path.resolve(HERE, '../../dftlab/static/js/crystal');
-const sym = await import(path.join(LIB, 'symmetry.js'));
-const kp = await import(path.join(LIB, 'kpath.js'));
-const bzm = await import(path.join(LIB, 'bz.js'));
-const fm = await import(path.join(LIB, 'formats.js'));
+const sym = await import(pathToFileURL(path.join(LIB, 'symmetry.js')).href);
+const kp = await import(pathToFileURL(path.join(LIB, 'kpath.js')).href);
+const bzm = await import(pathToFileURL(path.join(LIB, 'bz.js')).href);
+const fm = await import(pathToFileURL(path.join(LIB, 'formats.js')).href);
 
 const args = process.argv.slice(2);
 const verbose = args.includes('--verbose');
