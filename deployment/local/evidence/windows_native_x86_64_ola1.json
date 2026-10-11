@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "scope": "installation/public import/API symbols/CLI help only",
+  "probe_script_sha256": "df807624f8c7072bd4590587eae80043c617582752b529300e75d15419a038b5",
+  "target": "windows_native_x86_64",
+  "environment": {
+    "os": "Windows",
+    "release": "11",
+    "machine": "AMD64",
+    "python": "3.12.10"
+  },
+  "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
+  "engines": {
+    "qraft": {
+      "source_commit": "41043edcabef39026fe3cb6b7776362695faf9c6",
+      "installed": true,
+      "scientific_qualification": "PENDING",
+      "hpc_runtime_qualification": "PENDING",
+      "source_archive": {
+        "url": "https://api.github.com/repos/Jairomcarmona/siestaflow/tarball/41043edcabef39026fe3cb6b7776362695faf9c6",
+        "file": "qraft-41043edcabef39026fe3cb6b7776362695faf9c6.tar.gz",
+        "bytes": 1952223,
+        "sha256": "0e9f2aaff0172c8d16c0ab2df3ad807f2bfe176068b802846856d1c8df7fa6bd"
+      },
+      "extraction_scope": "src/ plus packaging metadata; campaign/results archives excluded, source bytes unmodified",
+      "declared_metadata": {
+        "distribution": "qraft-hpc",
+        "version": "0.2.0",
+        "requires_python": ">=3.11",
+        "dependencies": [
+          "PyYAML>=6.0"
+        ]
+      },
+      "wheel": {
+        "file": "qraft_hpc-0.2.0-py3-none-any.whl",
+        "bytes": 475959,
+        "sha256": "288337c8778a4b20e24b30a2c290812f9a6b043057c54e3213637e4ca33b4d88"
+      },
+      "installed_distribution": "qraft-hpc",
+      "installed_version": "0.2.0",
+      "installed_file_manifest_sha256": "4d029039c506a524864895946f3566029fa73962de595e16393c21ae1166d426",
+      "entrypoints": {
+        "qraft": "qraft.cli:main"
+      },
+      "public_import": {
+        "exit_code": 0,
+        "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d",
+        "stdout": "{\"module\": \"qraft\", \"installed_outside_checkout\": true}",
+        "stderr": ""
+      },
+      "public_api": {
+        "exit_code": 0,
+        "log_sha256": "4bd8b7299027658a5a66473b3eb8fa3b88d184b2122b546d161a7fb2033401db",
+        "stdout": "{\"module\": \"qraft.api\", \"api_version\": \"1.0\", \"installed_outside_checkout\": true}",
+        "stderr": ""
+      },
+      "cli_help": {
+        "exit_code": 0,
+        "log_sha256": "d8d0d140626edeb330cbc3632eb4f4db2bef07caefa313fbe3b15b1f3137f2bf",
+        "stdout": "QRAFT \ufffd run reproducible scientific campaigns\n\nGET STARTED\n  init [PATH]       Create an editable campaign file\n  check TARGET      Check whether a target is ready to run\n  run TARGET        Run a checked campaign or calculation\n\nMONITOR / CONTINUE\n  status [TARGET]   Show progress and the next available action\n  resume [TARGET]   Continue using saved recovery state\n\nRESULTS\n  results [TARGET]  Inventory recorded outputs and route supported exports\n\nLEARN\n  examples [TOPIC]  Show fixture-backed learning topics\n\nComplete workflow:\n  qraft init campaign.yaml\n  # edit campaign.yaml\n  qraft check campaign.yaml\n  qraft run campaign.yaml\n  qraft status\n  qraft results\n\nSetup and diagnostics:\n  qraft setup --help\n  qraft inspect --help\n\nAdvanced workflows and compatibility:\n  qraft advanced --help\n  qraft help migration\n\nUse 'qraft COMMAND --help' for examples and options.",
+        "stderr": ""
+      },
+      "status": "INSTALL_PUBLIC_API_HELP_VERIFIED"
+    },
+    "hubbardflow": {
+      "source_commit": "32ac1936e396e33d7de63421f128b5e1c0641cdd",
+      "installed": true,
+      "scientific_qualification": "PENDING",
+      "hpc_runtime_qualification": "PENDING",
+      "source_archive": {
+        "url": "https://api.github.com/repos/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/tarball/32ac1936e396e33d7de63421f128b5e1c0641cdd",
+        "file": "hubbardflow-32ac1936e396e33d7de63421f128b5e1c0641cdd.tar.gz",
+        "bytes": 90952080,
+        "sha256": "fc4fa6de69053cdaa4bc7a2aa3fa67b6e7cc31833dc70613047c38959ad051e7"
+      },
+      "extraction_scope": "src/ plus packaging metadata; campaign/results archives excluded, source bytes unmodified",
+      "declared_metadata": {
+        "distribution": "hubbardflow",
+        "version": "0.1.3",
+        "requires_python": ">=3.12,<3.13",
+        "dependencies": [
+          "numpy>=1.26.4,<2.0.0",
+          "jsonschema>=4.0.0,<5.0.0"
+        ]
+      },
+      "wheel": {
+        "file": "hubbardflow-0.1.3-py3-none-any.whl",
+        "bytes": 532552,
+        "sha256": "d730ce41218e122a07d468bc3d9c256a1055af43bb9ab71582eb63ba11ee4be9"
+      },
+      "installed_distribution": "hubbardflow",
+      "installed_version": "0.1.3",
+      "installed_file_manifest_sha256": "5405029a9e71e390c7fca959b1b8b6910ccc1d8a6f5568d2090967cc2f071ded",
+      "entrypoints": {
+        "hubbardflow": "hubbardflow.cli:main"
+      },
+      "public_import": {
+        "exit_code": 0,
+        "log_sha256": "f0cf375f900b931628cc95974e769cf8b63c4e9424d66016c0e3fe6c68f56d2c",
+        "stdout": "{\"module\": \"hubbardflow\", \"installed_outside_checkout\": true}",
+        "stderr": ""
+      },
+      "public_api": {
+        "exit_code": 0,
+        "log_sha256": "5e2007c3a07f69a46ac251bee71d3a5a241be0762a7e82c9937ffecf9e27480e",
+        "stdout": "{\"module\": \"hubbardflow.api\", \"api_version\": \"1.0.0\", \"installed_outside_checkout\": true}",
+        "stderr": ""
+      },
+      "cli_help": {
+        "exit_code": 0,
+        "log_sha256": "ac6c7964ab7ed44651252df2988078dd57d7f1e31a01a52f2efa6fb05a7778d2",
+        "stdout": "usage: hubbardflow [-h]\n                   {plan,submit,reference,audit-fdf,check-projector,init,run,resume,status,report,stop,_init,_daemon-launch,_status,_stop,_report,_worker}\n                   ...\n\nHubbardFlow Linux/Slurm and PowerShell-to-WSL campaign CLI\n\npositional arguments:\n  {plan,submit,reference,audit-fdf,check-projector,init,run,resume,status,report,stop,_init,_daemon-launch,_status,_stop,_report,_worker}\n    plan                freeze an FDF perturbation plan and report exact\n                        qualification\n    submit              consume a frozen FDF plan at the SLURM admission\n                        boundary\n    reference           run and archive one validated reference SIESTA state\n    audit-fdf           run the existing read-only FDF consistency audit\n    check-projector     compare an LR campaign projector with a DFT+U FDF\n                        using explicit label mappings\n    init                create a fixed-grid or policy-driven adaptive v2\n                        campaign as a WSL pointer or direct Linux manifest\n    run                 consume an FDF product plan, or start an existing\n                        campaign worker\n    resume              resume an interrupted campaign in WSL\n    status              read the durable campaign status\n    report              regenerate the report from the saved analysis JSON\n    stop                request a safe worker stop\n    _init               ==SUPPRESS==\n    _daemon-launch      ==SUPPRESS==\n    _status             ==SUPPRESS==\n    _stop               ==SUPPRESS==\n    _report             ==SUPPRESS==\n    _worker             ==SUPPRESS==\n\noptions:\n  -h, --help            show this help message and exit",
+        "stderr": ""
+      },
+      "status": "INSTALL_PUBLIC_API_HELP_VERIFIED"
+    }
+  },
+  "dependency_versions": {
+    "setuptools": "80.9.0",
+    "wheel": "0.45.1",
+    "PyYAML": "6.0.2",
+    "numpy": "1.26.4",
+    "jsonschema": "4.23.0"
+  }
+}
