@@ -1,4 +1,4 @@
-"""Install pinned engine archives as wheels; probe only metadata/public import/CLI help.
+"""Install pinned engine archives; probe metadata/public API symbols/CLI help.
 
 No checkout, PYTHONPATH, private scientific API, SIESTA process or remote job.
 The owning repos are never modified; builds use disposable extracted archives.
@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import importlib.metadata
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -36,7 +35,7 @@ def main() -> int:
     output.mkdir(parents=True)
     lock = json.loads((ROOT / "engine-versions.lock.json").read_text(encoding="utf-8"))
     target = "windows_native_x86_64" if os.name == "nt" else "wsl2_linux_x86_64" if "microsoft" in platform.release().lower() else "linux_x86_64"
-    report = {"schema_version": 1, "scope": "installation/import/CLI help only", "target": target, "environment": {"os": platform.system(), "release": platform.release(), "machine": platform.machine(), "python": platform.python_version()}, "dependency_lock_sha256": hashlib.sha256((ROOT / lock["engine_probe_dependency_lock"]).read_bytes()).hexdigest(), "engines": {}}
+    report = {"schema_version": 1, "scope": "installation/public import/API symbols/CLI help only", "probe_script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), "target": target, "environment": {"os": platform.system(), "release": platform.release(), "machine": platform.machine(), "python": platform.python_version()}, "dependency_lock_sha256": hashlib.sha256((ROOT / lock["engine_probe_dependency_lock"]).read_bytes()).hexdigest(), "engines": {}}
     uv = shutil.which("uv")
     env = dict(os.environ)
     env.pop("PYTHONPATH", None)
@@ -58,6 +57,14 @@ def main() -> int:
             parser.error("Temporary archive extraction must be outside the checkout")
         if not uv or not run("uv-version", [uv, "--version"], scratch)["stdout"].startswith("uv 0.11.14 "):
             parser.error("uv 0.11.14 required")
+        # The probe's build environment is in this worktree; the engine consumer
+        # must be installed in a fresh environment physically outside it.
+        consumer = scratch / "consumer"
+        run("consumer-venv", [uv, "venv", "--python", sys.executable, str(consumer)], scratch)
+        consumer_python = consumer / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+        requirements = scratch / "dependencies.txt"
+        run("consumer-lock-export", [uv, "export", "--project", str(ROOT / "deployment/local/engine-probe"), "--locked", "--no-emit-project", "--format", "requirements-txt", "--output-file", str(requirements)], scratch)
+        run("consumer-dependencies", [uv, "pip", "install", "--python", str(consumer_python), "--require-hashes", "-r", str(requirements)], scratch)
         for key, engine in lock["engines"].items():
             evidence = {"source_commit": engine["commit"], "installed": False, "scientific_qualification": "PENDING", "hpc_runtime_qualification": "PENDING"}
             report["engines"][key] = evidence
@@ -107,26 +114,49 @@ def main() -> int:
                 expected_wheel = engine.get("targets", {}).get(target, {}).get("wheel", {}).get("sha256")
                 if expected_wheel and expected_wheel != evidence["wheel"]["sha256"]:
                     raise RuntimeError("Wheel hash differs from recorded evidence for this target")
-                run(key+"-install", [uv,"pip","install","--python",sys.executable,"--no-index","--no-deps","--reinstall",str(wheel)], scratch)
-                distribution = importlib.metadata.distribution(engine["distribution"])
+                run(key+"-install", [uv,"pip","install","--python",str(consumer_python),"--no-index","--no-deps","--reinstall",str(wheel)], scratch)
+                metadata_probe = (
+                    "import importlib.metadata,json; "
+                    f"d=importlib.metadata.distribution({engine['distribution']!r}); "
+                    "print(json.dumps({'name':d.metadata['Name'],'version':d.version,'record':d.read_text('RECORD'),'entrypoints':{e.name:e.value for e in d.entry_points if e.group=='console_scripts'}}))"
+                )
+                distribution = json.loads(run(key+"-metadata", [str(consumer_python), "-I", "-c", metadata_probe], scratch)["stdout"])
                 evidence["installed"] = True
-                evidence["installed_distribution"] = distribution.metadata["Name"]
-                evidence["installed_version"] = distribution.version
-                evidence["installed_file_manifest_sha256"] = hashlib.sha256(distribution.read_text("RECORD").encode()).hexdigest()
-                evidence["entrypoints"] = {entry.name: entry.value for entry in distribution.entry_points if entry.group == "console_scripts"}
+                evidence["installed_distribution"] = distribution["name"]
+                evidence["installed_version"] = distribution["version"]
+                evidence["installed_file_manifest_sha256"] = hashlib.sha256(distribution["record"].encode()).hexdigest()
+                evidence["entrypoints"] = distribution["entrypoints"]
                 # Only top-level public module import: no calls to private engine APIs.
-                probe = f"import importlib,json,pathlib,sys; m=importlib.import_module({engine['module']!r}); p=pathlib.Path(m.__file__).resolve(); assert p.is_relative_to(pathlib.Path(sys.prefix).resolve()); print(json.dumps({{'module':m.__name__,'installed_outside_checkout':True}}))"
-                evidence["public_import"] = run(key+"-import", [sys.executable,"-I","-c",probe], scratch, required=False)
-                executable = Path(sys.executable).parent / (engine["entrypoint"] + (".exe" if os.name=="nt" else ""))
+                probe = f"import importlib,json,pathlib,sys; m=importlib.import_module({engine['module']!r}); p=pathlib.Path(m.__file__).resolve(); assert p.is_relative_to(pathlib.Path(sys.prefix).resolve()); assert not p.is_relative_to(pathlib.Path({str(ROOT)!r}).resolve()); print(json.dumps({{'module':m.__name__,'installed_outside_checkout':True}}))"
+                evidence["public_import"] = run(key+"-import", [str(consumer_python),"-I","-c",probe], scratch, required=False)
+                api = engine.get("public_api")
+                if api:
+                    # Public symbols only: this checks the installed facade, not
+                    # an operational capability or a scientific calculation.
+                    probe = (
+                        "import importlib,json,pathlib,sys; "
+                        f"m=importlib.import_module({api['module']!r}); "
+                        "assert pathlib.Path(m.__file__).resolve().is_relative_to(pathlib.Path(sys.prefix).resolve()); "
+                        f"assert not pathlib.Path(m.__file__).resolve().is_relative_to(pathlib.Path({str(ROOT)!r}).resolve()); "
+                        f"assert m.API_VERSION == {api['version']!r}; "
+                        f"assert all(hasattr(m,name) for name in {api['required_symbols']!r}); "
+                        "print(json.dumps({'module':m.__name__,'api_version':m.API_VERSION,'installed_outside_checkout':True}))"
+                    )
+                    evidence["public_api"] = run(key+"-public-api", [str(consumer_python),"-I","-c",probe], scratch, required=False)
+                executable = consumer_python.parent / (engine["entrypoint"] + (".exe" if os.name=="nt" else ""))
                 evidence["cli_help"] = run(key+"-cli-help", [str(executable),"--help"], scratch, required=False)
-                evidence["status"] = "INSTALL_IMPORT_HELP_VERIFIED" if evidence["public_import"]["exit_code"] == evidence["cli_help"]["exit_code"] == 0 else "INSTALLED_WITH_IMPORT_OR_CLI_LIMITATION"
+                verified = evidence["public_import"]["exit_code"] == evidence["cli_help"]["exit_code"] == 0
+                if api:
+                    verified = verified and evidence["public_api"]["exit_code"] == 0
+                evidence["status"] = ("INSTALL_PUBLIC_API_HELP_VERIFIED" if api else "INSTALL_IMPORT_HELP_VERIFIED") if verified else "INSTALLED_WITH_IMPORT_OR_CLI_LIMITATION"
             except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired, tarfile.TarError) as error:
                 evidence["status"] = "PENDING_OR_FAILED"
                 evidence["error"] = str(error)
-    report["dependency_versions"] = {name: importlib.metadata.version(name) for name in ["setuptools","wheel","PyYAML","numpy","jsonschema"]}
+        dependency_probe = "import importlib.metadata,json; print(json.dumps({n:importlib.metadata.version(n) for n in ['setuptools','wheel','PyYAML','numpy','jsonschema']}))"
+        report["dependency_versions"] = json.loads(run("consumer-dependency-versions", [str(consumer_python), "-I", "-c", dependency_probe], scratch)["stdout"])
     (output / "report.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"target":target,"engines":{key:{"status":value.get("status"),"installed":value["installed"]} for key,value in report["engines"].items()}},indent=2))
-    return 0 if all(e["installed"] for e in report["engines"].values()) else 1
+    return 0 if all(e.get("status") in {"INSTALL_IMPORT_HELP_VERIFIED", "INSTALL_PUBLIC_API_HELP_VERIFIED"} for e in report["engines"].values()) else 1
 
 
 if __name__ == "__main__":
