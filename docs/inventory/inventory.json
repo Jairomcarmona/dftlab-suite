@@ -1,0 +1,2597 @@
+{
+  "schemaVersion": 1,
+  "scope": "T-001: capacidades del frontend actual; no capacidades operativas V2.1",
+  "counts": {
+    "views": 19,
+    "chapters": 15,
+    "toolViews": 2,
+    "siestaDispatchKinds": 23,
+    "calculatorPanels": 7,
+    "structureReaderFamilies": 6,
+    "structureWriterFormats": 6,
+    "datasets": 16,
+    "datasetBytes": 10678665,
+    "ownJavascriptFiles": 54,
+    "ownJavascriptLines": 11385,
+    "exportSourceCalls": 52,
+    "scientificModules": 25
+  },
+  "views": [
+    {
+      "id": "inicio",
+      "group": "start",
+      "chapter": null,
+      "title": "Inicio",
+      "file": "app/dftlab/static/js/views/home.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "ks",
+      "group": "learn",
+      "chapter": "1",
+      "title": "Kohn–Sham",
+      "file": "app/dftlab/static/js/views/ks.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "pseudos",
+      "group": "learn",
+      "chapter": "2",
+      "title": "Pseudopotenciales",
+      "file": "app/dftlab/static/js/views/pseudo.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "xc",
+      "group": "learn",
+      "chapter": "3",
+      "title": "Intercambio y correlación",
+      "file": "app/dftlab/static/js/views/xc.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "base",
+      "group": "learn",
+      "chapter": "4",
+      "title": "Base, malla y puntos k",
+      "file": "app/dftlab/static/js/views/basis.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "scf",
+      "group": "learn",
+      "chapter": "5",
+      "title": "Ciclo autoconsistente",
+      "file": "app/dftlab/static/js/views/scf.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "solvers",
+      "group": "learn",
+      "chapter": "6",
+      "title": "Diagonalización y orden N",
+      "file": "app/dftlab/static/js/views/solvers.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "bandas",
+      "group": "learn",
+      "chapter": "7",
+      "title": "Bandas, DOS y óptica",
+      "file": "app/dftlab/static/js/views/bands.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "dftu",
+      "group": "learn",
+      "chapter": "8",
+      "title": "DFT+U",
+      "file": "app/dftlab/static/js/views/dftu.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "densidad",
+      "group": "learn",
+      "chapter": "9",
+      "title": "Densidad y cargas",
+      "file": "app/dftlab/static/js/views/density.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "potencial",
+      "group": "learn",
+      "chapter": "10",
+      "title": "Potencial y función trabajo",
+      "file": "app/dftlab/static/js/views/potential.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "espin",
+      "group": "learn",
+      "chapter": "11",
+      "title": "Espín y magnetismo",
+      "file": "app/dftlab/static/js/views/spin.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "lectura",
+      "group": "learn",
+      "chapter": "12",
+      "title": "Lectura anotada del .out",
+      "file": "app/dftlab/static/js/views/lectura.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "fonones",
+      "group": "learn",
+      "chapter": "13",
+      "title": "Fonones",
+      "file": "app/dftlab/static/js/views/phonons.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "fuerzas",
+      "group": "learn",
+      "chapter": "14",
+      "title": "Fuerzas, estrés y relajación",
+      "file": "app/dftlab/static/js/views/forces.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "beyond",
+      "group": "learn",
+      "chapter": "15",
+      "title": "Más allá de DFT",
+      "file": "app/dftlab/static/js/views/beyond.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "estructura",
+      "group": "tools",
+      "chapter": null,
+      "title": "Estructura y entrada",
+      "file": "app/dftlab/static/js/views/estructura.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs",
+        "app/tests/ui/browser_offline.mjs",
+        "app/tests/crystal/run_tests.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "calc",
+      "group": "tools",
+      "chapter": null,
+      "title": "Calculadoras",
+      "file": "app/dftlab/static/js/views/calc.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs",
+        "app/tests/ui/run_calc_tests.mjs",
+        "app/tests/ui/browser_regressions.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    },
+    {
+      "id": "post",
+      "group": "post",
+      "chapter": null,
+      "title": "Mis archivos de SIESTA",
+      "file": "app/dftlab/static/js/views/postproc.js",
+      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs",
+        "app/tests/ui/browser_import.mjs",
+        "app/tests/ui/browser_bands.mjs"
+      ],
+      "preservation": "Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia."
+    }
+  ],
+  "readers": [
+    {
+      "kind": "out",
+      "file": "app/dftlab/static/js/siesta/out.js",
+      "symbol": "parseOut",
+      "formats": ".out/.log/.stdout + detección por cabecera",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "fdf",
+      "file": "app/dftlab/static/js/siesta/out.js",
+      "symbol": "parseFDF",
+      "formats": ".fdf",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "bands",
+      "file": "app/dftlab/static/js/siesta/bands.js",
+      "symbol": "parseBands",
+      "formats": ".bands",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/siesta/run_bands_path_tests.mjs",
+        "app/tests/ui/browser_bands.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "eig",
+      "file": "app/dftlab/static/js/siesta/eig.js",
+      "symbol": "parseEIG",
+      "formats": ".EIG + .KP",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/siesta/run_import_tests.mjs",
+        "app/tests/ui/browser_import.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "kp",
+      "file": "app/dftlab/static/js/siesta/eig.js",
+      "symbol": "parseKP",
+      "formats": ".KP/.BZ_KP",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "pdos-kp",
+      "file": "app/dftlab/static/js/siesta/eig.js",
+      "symbol": "parseKP",
+      "formats": ".PDOS.KP; cobertura de parser KP, alias sin fixture dedicado",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "pdos",
+      "file": "app/dftlab/static/js/siesta/pdos.js",
+      "symbol": "parsePDOS",
+      "formats": ".PDOS/.PDOS.xml o cabecera XML",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "pdos-text",
+      "file": "app/dftlab/static/js/siesta/pdos.js",
+      "symbol": "parsePDOSText",
+      "formats": ".dat/.txt con cabecera PDOS; rama sin fixture nominal dedicado",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "dos",
+      "file": "app/dftlab/static/js/siesta/dos.js",
+      "symbol": "parseDOS",
+      "formats": ".DOS o columnas numéricas",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "epsimg",
+      "file": "app/dftlab/static/js/siesta/epsimg.js",
+      "symbol": "parseEPSIMG",
+      "formats": ".EPSIMG",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "epsimg-contrib",
+      "file": "app/dftlab/static/js/siesta/epsimg.js",
+      "symbol": "parseContribEPSIMG",
+      "formats": ".contrib.EPSIMG; comprobar cobertura individual antes de migrar",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "ion-xml",
+      "file": "app/dftlab/static/js/siesta/ion.js",
+      "symbol": "parseIonXML",
+      "formats": ".ion.xml o cabecera <ion>",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "ion",
+      "file": "app/dftlab/static/js/siesta/ion.js",
+      "symbol": "parseIon",
+      "formats": ".ion",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "psf",
+      "file": "app/dftlab/static/js/siesta/pseudo.js",
+      "symbol": "parsePSF",
+      "formats": ".psf",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "psml",
+      "file": "app/dftlab/static/js/siesta/pseudo.js",
+      "symbol": "parsePSML",
+      "formats": ".psml",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "mde",
+      "file": "app/dftlab/static/js/siesta/mde.js",
+      "symbol": "parseMDE",
+      "formats": ".MDE",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "ani",
+      "file": "app/dftlab/static/js/siesta/mde.js",
+      "symbol": "parseANI",
+      "formats": ".ANI / XYZ por sniff",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "fa",
+      "file": "app/dftlab/static/js/siesta/mde.js",
+      "symbol": "parseFA",
+      "formats": ".FA/.FAC",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "xv",
+      "file": "app/dftlab/static/js/siesta/mde.js",
+      "symbol": "parseXV",
+      "formats": ".XV",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "struct",
+      "file": "app/dftlab/static/js/siesta/mde.js",
+      "symbol": "parseStructOut",
+      "formats": ".STRUCT_OUT/.STRUCT_IN/.STRUCT_NEXT_ITER",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "dftlab-pack",
+      "file": "app/dftlab/static/js/siesta/index.js",
+      "symbol": "detectAndParse → runset → pack",
+      "formats": ".dftlab.json / JSON con clave dftlab; expansión en pack.js/runset.js",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/siesta/run_import_tests.mjs",
+        "app/tests/ui/browser_import.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "fc",
+      "file": "app/dftlab/static/js/siesta/fc.js",
+      "symbol": "parseFC",
+      "formats": ".FC",
+      "tests": [
+        "app/tests/siesta/run_fc_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "grid",
+      "file": "app/dftlab/static/js/siesta/rho.js",
+      "symbol": "parseGrid",
+      "formats": ".RHO/.DRHO/.RHOXC/.BADER/.TOTAL_CHARGE/.VH/.VT/.VNA/.VXC/.LDOS/.IORHO",
+      "tests": [
+        "app/tests/siesta/run_rho_tests.mjs",
+        "app/tests/siesta/run_import_tests.mjs",
+        "app/tests/ui/browser_import.mjs"
+      ],
+      "consumer": "postproc.js, density.js, potential.js",
+      "preservation": "Fortran binario, endianness, Bohr/e·Bohr⁻³/Ry y bytes originales."
+    }
+  ],
+  "calculators": [
+    {
+      "id": "doCell2",
+      "file": "app/dftlab/static/js/views/calc.js",
+      "consumer": "Vista #calc, entradas del usuario",
+      "description": "Celda → malla k / FFT y MeshCutoff (Å, Å⁻¹, Ry)",
+      "tests": [
+        "app/tests/ui/run_calc_tests.mjs",
+        "app/tests/ui/browser_regressions.mjs"
+      ],
+      "preservation": "Conservar fórmulas y unidades; no afirmar validación independiente donde solo hay smoke UI."
+    },
+    {
+      "id": "doBM",
+      "file": "app/dftlab/static/js/views/calc.js",
+      "consumer": "Vista #calc, entradas del usuario",
+      "description": "Ajuste Birch–Murnaghan E(V), V0/a0/E0/B0/B′/RMS (Å³, Å, eV, GPa); sin suite numérica independiente",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar fórmulas y unidades; no afirmar validación independiente donde solo hay smoke UI."
+    },
+    {
+      "id": "doMass",
+      "file": "app/dftlab/static/js/views/calc.js",
+      "consumer": "Vista #calc, entradas del usuario",
+      "description": "Curvatura de banda / masa efectiva (eV, Å⁻¹, m*/me); sin suite numérica independiente",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar fórmulas y unidades; no afirmar validación independiente donde solo hay smoke UI."
+    },
+    {
+      "id": "doSmear",
+      "file": "app/dftlab/static/js/views/calc.js",
+      "consumer": "Vista #calc, entradas del usuario",
+      "description": "Ocupaciones Fermi–Dirac/Gauss/MP (eV); sin suite numérica independiente",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar fórmulas y unidades; no afirmar validación independiente donde solo hay smoke UI."
+    },
+    {
+      "id": "doUnits",
+      "file": "app/dftlab/static/js/views/calc.js",
+      "consumer": "Vista #calc, entradas del usuario",
+      "description": "Conversión energía/longitud/presión/fuerza; sin suite numérica independiente",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar fórmulas y unidades; no afirmar validación independiente donde solo hay smoke UI."
+    },
+    {
+      "id": "doGas",
+      "file": "app/dftlab/static/js/views/calc.js",
+      "consumer": "Vista #calc, entradas del usuario",
+      "description": "Gas de electrones: n, rs, kF, EF, TF (Å/Bohr/eV/K); sin suite numérica independiente",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar fórmulas y unidades; no afirmar validación independiente donde solo hay smoke UI."
+    },
+    {
+      "id": "doF",
+      "file": "app/dftlab/static/js/views/calc.js",
+      "consumer": "Vista #calc, entradas del usuario",
+      "description": "Energía de formación con μ por especie (eV, eV/átomo); sin suite numérica independiente",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar fórmulas y unidades; no afirmar validación independiente donde solo hay smoke UI."
+    }
+  ],
+  "structureFormats": [
+    {
+      "direction": "read",
+      "format": "CIF",
+      "symbols": [
+        "readCIF",
+        "readCIFAll"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "read",
+      "format": "XYZ/extXYZ",
+      "symbols": [
+        "readXYZ",
+        "readXYZAll"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "read",
+      "format": "POSCAR/CONTCAR/.vasp",
+      "symbols": [
+        "readPOSCAR"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "read",
+      "format": "XV",
+      "symbols": [
+        "readXV"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "read",
+      "format": "STRUCT_OUT/STRUCT_IN",
+      "symbols": [
+        "readStructOut"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "read",
+      "format": "FDF",
+      "symbols": [
+        "readFDF"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "write",
+      "format": "CIF",
+      "symbols": [
+        "writeCIF"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "write",
+      "format": "XYZ",
+      "symbols": [
+        "writeXYZ"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "write",
+      "format": "extXYZ",
+      "symbols": [
+        "writeExtXYZ"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "write",
+      "format": "POSCAR/.vasp",
+      "symbols": [
+        "writePOSCAR"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "write",
+      "format": "FDF",
+      "symbols": [
+        "writeFDF"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    },
+    {
+      "direction": "write",
+      "format": "STRUCT_IN/struct",
+      "symbols": [
+        "writeStructIn"
+      ],
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "consumer": "estructura.js, postproc.js; readStructure también phonons.js",
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar celda, especies, convenciones y unidades; aliases no se cuentan como nuevas familias."
+    }
+  ],
+  "datasets": [
+    {
+      "file": "app/dftlab/static/js/data/beyond_dft.json",
+      "bytes": 5259,
+      "sha256": "66ed9fc135cec3278fb806d073a9850e258937f7d929ac107499addd81d2d098",
+      "consumers": [
+        "app/dftlab/static/js/views/beyond.js"
+      ],
+      "origin": "Compilación bibliográfica: referencias dentro del JSON; no nuevas corridas de GW/HSE.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/conv.json",
+      "bytes": 129558,
+      "sha256": "2fb928784e01678dbc2014158d950947e1b44dde126d356ced96071f62b724a8",
+      "consumers": [
+        "app/dftlab/static/js/views/basis.js"
+      ],
+      "origin": "Corridas archivadas: corridas/conv.tar.gz; reconstrucción exacta pendiente.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/espin.json",
+      "bytes": 383368,
+      "sha256": "1cc48dd60f44774fcfd548ae057aabe1cac8b94457c9e5f7aac8a69cdcf0d50b",
+      "consumers": [
+        "app/dftlab/static/js/views/spin.js"
+      ],
+      "origin": "corridas/espin_gen_json.mjs + espin.tar.gz; histórico conservado.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/examples.json",
+      "bytes": 347223,
+      "sha256": "33659eae2aca7628ff0d4066a9beaa19589194a6d796de5beb24bb301d8af2c0",
+      "consumers": [
+        "app/dftlab/static/js/views/postproc.js"
+      ],
+      "origin": "Paquetes de ejemplos comprimidos; fixtures SIESTA en app/tests/siesta/fixtures; generador exacto pendiente.",
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/ui/browser_import.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/fuerzas.json",
+      "bytes": 34757,
+      "sha256": "8f0683f76aeb3ef3202e138699f90f83a996b0ece92951042af371778bc29f71",
+      "consumers": [
+        "app/dftlab/static/js/views/forces.js"
+      ],
+      "origin": "corridas/fuerzas_gen_json.mjs + fuerzas.tar.gz; histórico conservado.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/nio.json",
+      "bytes": 235387,
+      "sha256": "836210d741667eb77a27fdb39c10b31aacf71c6730c96522bb417ede79af7650",
+      "consumers": [
+        "app/dftlab/static/js/views/dftu.js"
+      ],
+      "origin": "corridas/nio.tar.gz; script externo de generación exacta no localizado. F regenera referencias de tests, no este dataset.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/out_fe.json",
+      "bytes": 33501,
+      "sha256": "85489bd7347a8f88b6362add6f711299380e4d910a9e5273fd8618c71055b253",
+      "consumers": [
+        "app/dftlab/static/js/views/lectura.js"
+      ],
+      "origin": "corridas/out_gen_json.mjs; .out de Fe dentro de espin.tar.gz (ver argumentos del generador).",
+      "tests": [
+        "app/tests/siesta/run_outnotes_tests.mjs",
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/potencial.json",
+      "bytes": 61589,
+      "sha256": "97ab5815ae75ad735f831ba315e4d83e8ab78863c0a9a62fa587566b9482d84a",
+      "consumers": [
+        "app/dftlab/static/js/views/potential.js"
+      ],
+      "origin": "corridas/wf_gen_json.mjs + wf.tar.gz; las mallas VH/VT grandes no se archivaron, según corridas/LEEME.txt.",
+      "tests": [
+        "app/tests/siesta/run_rho_tests.mjs",
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/pseudo_lib.json",
+      "bytes": 3873406,
+      "sha256": "e6c154357ca715063dc7115c8aac2d090cdae6629307e4b840977f7fb6254f62",
+      "consumers": [
+        "app/dftlab/static/js/views/pseudo.js"
+      ],
+      "origin": "Biblioteca PSML y validación: app/dftlab/data/pseudos; generador exacto/identidad de todos los runs pendiente.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/pseudo_xc.json",
+      "bytes": 385734,
+      "sha256": "d9c71f61fb1de4ec07f0646c05b202ba80cb6cef9346efb6034de0d00a6f60c9",
+      "consumers": [
+        "app/dftlab/static/js/views/beyond.js",
+        "app/dftlab/static/js/views/calc.js",
+        "app/dftlab/static/js/views/ks.js",
+        "app/dftlab/static/js/views/pseudo.js",
+        "app/dftlab/static/js/views/xc.js"
+      ],
+      "origin": "Material conservado en pseudo_xc/, prototipo_v2/pseudos/ y corridas/xc.tar.gz; generación exacta pendiente.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/rho.json",
+      "bytes": 314605,
+      "sha256": "cc69021c657a83d00abe4c31fd7ae726724e32e899ac190a563e5ecc232ce986",
+      "consumers": [
+        "app/dftlab/static/js/views/density.js"
+      ],
+      "origin": "corridas/rho_gen_json.mjs + rho.tar.gz y dens.tar.gz.",
+      "tests": [
+        "app/tests/siesta/run_rho_tests.mjs",
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/scf_runs.json",
+      "bytes": 63380,
+      "sha256": "24e4f941a275eddad150682be512faddf05f065cc1f97bb69dfcf2b58bbd24d4",
+      "consumers": [
+        "app/dftlab/static/js/views/scf.js"
+      ],
+      "origin": "corridas/scf.tar.gz, scfpack.tar.gz, si_scf.tar.gz; generación exacta pendiente.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/si_fonones.json",
+      "bytes": 20424,
+      "sha256": "6df0b278c67f2d33a3668d53fd21c8fc2618d49bd83958234069bf8c422bc7fb",
+      "consumers": [
+        "app/dftlab/static/js/views/phonons.js"
+      ],
+      "origin": "corridas/fonones_gen_json.mjs + fonones.tar.gz.",
+      "tests": [
+        "app/tests/siesta/run_fc_tests.mjs",
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/si_lda.json",
+      "bytes": 489387,
+      "sha256": "5623e9958f817101846591f266a1cd8d9d24c2ba9b7244c12700af9406b24373",
+      "consumers": [
+        "app/dftlab/static/js/views/bands.js",
+        "app/dftlab/static/js/views/calc.js"
+      ],
+      "origin": "Si histórico; corridas/si.tar.gz; reconstrucción exacta pendiente.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/si_wf.json",
+      "bytes": 4297717,
+      "sha256": "fe9dba6f60fc384ed0bf9c3009265cc80894aa69f2b63b246064836f0a4b3d95",
+      "consumers": [
+        "app/dftlab/static/js/views/bands.js"
+      ],
+      "origin": "Funciones de onda empaquetadas de Si; generador exacto pendiente. corridas/wf* es función trabajo, NO origen demostrado de si_wf.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    },
+    {
+      "file": "app/dftlab/static/js/data/solvers.json",
+      "bytes": 3370,
+      "sha256": "994f649aede2b26c69a8446facc30e230d12ac740cccacbfedef3efc09fcf5ed",
+      "consumers": [
+        "app/dftlab/static/js/views/solvers.js"
+      ],
+      "origin": "corridas/solv.tar.gz y solv2.tar.gz; generación exacta pendiente.",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Bytes históricos intactos; registrar procedencia y unidades al adaptar, sin elevar ejemplo a resultado nuevo."
+    }
+  ],
+  "scientificModules": [
+    {
+      "file": "app/dftlab/static/js/crystal/bz.js",
+      "sha256": "d040717a94c0f1cde1a6432a97b132b9481096f2a1d5636c83de8447b9571bd6",
+      "exports": [
+        "brillouinZone",
+        "bzWireframe",
+        "bzMesh",
+        "isInBZ",
+        "toFirstBZ",
+        "kpathCartesian",
+        "reciprocalAxes"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/views/estructura.js"
+      ],
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/crystal/elements.js",
+      "sha256": "cc2c2fa9ed184c3c8501f0977f1e55f94ffaed71dcd6a6e6bed849f4dd67c2ad",
+      "exports": [
+        "SYMBOLS",
+        "NAMES",
+        "MASSES",
+        "COVALENT_RADII",
+        "JMOL_COLORS",
+        "CPK_COLORS",
+        "atomicNumber",
+        "symbolOf",
+        "massOf",
+        "covalentRadius",
+        "colorOf",
+        "elementInfo"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/core/scene.js",
+        "app/dftlab/static/js/crystal/formats.js",
+        "app/dftlab/static/js/crystal/symmetry.js",
+        "app/dftlab/static/js/tools/fdfgen.js",
+        "app/dftlab/static/js/views/estructura.js",
+        "app/dftlab/static/js/views/forces.js",
+        "app/dftlab/static/js/views/ks.js",
+        "app/dftlab/static/js/views/phonons.js",
+        "app/dftlab/static/js/views/postproc.js"
+      ],
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "sha256": "93e9b3337ad7e82be7ac50372d59c53fe56301c8ebd85fe23f33af61d457439c",
+      "exports": [
+        "BOHR_SIESTA",
+        "BOHR",
+        "cifNumber",
+        "parseCIFBlocks",
+        "parseSymop",
+        "formatSymop",
+        "readCIF",
+        "readCIFAll",
+        "writeCIF",
+        "readXYZAll",
+        "readXYZ",
+        "writeXYZ",
+        "writeExtXYZ",
+        "readPOSCAR",
+        "writePOSCAR",
+        "readXV",
+        "readStructOut",
+        "writeStructIn",
+        "parseFDF",
+        "readFDF",
+        "writeFDF",
+        "siestaLabel",
+        "writeBandLines",
+        "kgridFromSpacing",
+        "writeKgridMonkhorstPack",
+        "detectFormat",
+        "readStructure",
+        "writeStructure",
+        "density"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/tools/fdfgen.js",
+        "app/dftlab/static/js/views/estructura.js",
+        "app/dftlab/static/js/views/phonons.js",
+        "app/dftlab/static/js/views/postproc.js"
+      ],
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/crystal/kpath.js",
+      "sha256": "6b42f2c935af25e0c7472eb3464d7bf53abc2ba3344f818a41f35be02e4654f7",
+      "exports": [
+        "EdgeCaseWarning",
+        "SymmetryDetectionError",
+        "evalExprSimple",
+        "extendKparam",
+        "evalExpr",
+        "getCellParams",
+        "getReciprocalCellRows",
+        "getRealCellFromReciprocalRows",
+        "getPathData",
+        "getPMatrix",
+        "getPrimitive",
+        "getPathFromStandardized",
+        "getPath",
+        "getExplicitFromImplicit",
+        "getExplicitKPath",
+        "getPathOrigCell",
+        "getExplicitKPathOrigCell",
+        "primitiveCellFromPath",
+        "prettyLabel",
+        "bandPlotTicks"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/views/estructura.js",
+        "app/dftlab/static/js/views/phonons.js"
+      ],
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/crystal/symmetry.js",
+      "sha256": "bdeafab89c0f881703ebe4ef0ff4b6eb42a0d0bff4a3020cc47d2b5413615952",
+      "exports": [
+        "dot",
+        "cross",
+        "norm",
+        "add",
+        "sub",
+        "scale",
+        "det3",
+        "transpose",
+        "matmul",
+        "matvec",
+        "vecmat",
+        "inv3",
+        "identity3",
+        "fromColumnMajor",
+        "basisToLattice",
+        "latticeToBasis",
+        "normalizeCell",
+        "symbolsOf",
+        "cellParameters",
+        "latticeFromParameters",
+        "reciprocalLattice",
+        "volume",
+        "fracToCart",
+        "cartToFrac",
+        "cartesianPositions",
+        "wrapPositions",
+        "formula",
+        "supercell",
+        "perturb",
+        "substitute",
+        "removeAtoms",
+        "addAtom",
+        "bonds",
+        "neighborList",
+        "distance",
+        "niggliReduce",
+        "crystalFamilyLetter",
+        "crystalSystem",
+        "latticeSystem",
+        "spacegroupCentering",
+        "bravaisLattice",
+        "spacegroupHasInversion",
+        "moyoDataset",
+        "analyze",
+        "analyzeAsync",
+        "standardize",
+        "operationsFromNumber",
+        "spaceGroupType"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/core/scene.js",
+        "app/dftlab/static/js/crystal/bz.js",
+        "app/dftlab/static/js/crystal/formats.js",
+        "app/dftlab/static/js/crystal/kpath.js",
+        "app/dftlab/static/js/views/estructura.js",
+        "app/dftlab/static/js/views/phonons.js",
+        "app/dftlab/static/js/views/postproc.js"
+      ],
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/physics/atom.js",
+      "sha256": "89b5a1d773656d5c4448d5f60b19799b17f6f6118448ac37203591519da826c3",
+      "exports": [
+        "LL",
+        "configuration",
+        "confString",
+        "parseConfig",
+        "xc",
+        "makeGrid",
+        "solveState",
+        "solveAtom"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/views/ks.js"
+      ],
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/perf/measure_views.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/physics/phonon.js",
+      "sha256": "6e7b0ed57e6f3a41f0cc194ca9cc1a52b6ad8360150e66f6abef03f7b090b60e",
+      "exports": [
+        "THZ",
+        "CM1_PER_THZ",
+        "MEV_PER_THZ",
+        "inv3",
+        "reciprocal",
+        "primitiveMap",
+        "phononModel",
+        "dynmat",
+        "jacobi",
+        "eigHermitian",
+        "toTHz",
+        "frequencies",
+        "qCart",
+        "pathFromSegments",
+        "dispersion",
+        "phononDOS"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/views/phonons.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_fc_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/bands.js",
+      "sha256": "97c74b33531a0343bac3f879b7b554a877b851dd54c2d958fe439018e6b31ddb",
+      "exports": [
+        "prettyLabel",
+        "parseBands",
+        "packPath",
+        "segmentSeries",
+        "segmentIndex",
+        "shiftToFermi",
+        "bandEdges"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js",
+        "app/dftlab/static/js/siesta/pack.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/siesta/run_bands_path_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/dos.js",
+      "sha256": "a32478b3187295baff32198ec6387f5233323070046fbb91701762765efbc899",
+      "exports": [
+        "parseDOS",
+        "integrateDOS"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/eig.js",
+      "sha256": "8357be42d563b7d78ef83bf404b53aa115ea352982ff99e1b71256e37a98047c",
+      "exports": [
+        "parseKP",
+        "parseEIG",
+        "analyzeGap",
+        "computeDOS",
+        "countElectrons"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js",
+        "app/dftlab/static/js/siesta/pdos.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/epsimg.js",
+      "sha256": "2e8c6cf4831c35863df46c4cf42b8e64ab18a84efaba2ec77f29c040bbab0c38",
+      "exports": [
+        "parseEPSIMG",
+        "parseContribEPSIMG",
+        "kramersKronig",
+        "opticalConstants",
+        "opticalSpectrum",
+        "addDrude"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/fc.js",
+      "sha256": "d00a74a6a1088ef45b15703d0c7e62cdcab6d902242c0b1b04d0ffef3a98a4ef",
+      "exports": [
+        "parseFC",
+        "fcRows"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js",
+        "app/dftlab/static/js/views/phonons.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/siesta/run_fc_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/index.js",
+      "sha256": "198283d3b81eecdcf06ddb3cd0850f83d48c87c10bf59468088026a5019b5bc8",
+      "exports": [
+        "detectKind",
+        "detectAndParse",
+        "parseMany"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/runset.js",
+        "app/dftlab/static/js/views/forces.js",
+        "app/dftlab/static/js/views/postproc.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/ion.js",
+      "sha256": "eb092f6356d002f8dbd5976d744e0a36011330ab7ee26fc514b5e8728c98fa0f",
+      "exports": [
+        "parseIonXML",
+        "parseIon"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/mde.js",
+      "sha256": "1989fd027944d58254cae8b666db910b302f9e0cc31341b9097ae892f50ed351",
+      "exports": [
+        "parseMDE",
+        "parseANI",
+        "parseFA",
+        "parseXV",
+        "parseStructOut"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/out.js",
+      "sha256": "095136811352a64384812830ca76a5ff52e7be0e0c8a237727eef768ba1eebee",
+      "exports": [
+        "fdfKey",
+        "parseFDF",
+        "fdfGet",
+        "fdfBlock",
+        "parseOut"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js",
+        "app/dftlab/static/js/siesta/outnotes.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/outnotes.js",
+      "sha256": "8eaded03427213f77d45f2daa0112040a3aeeff28a2d6573eec12ad9b85509d9",
+      "exports": [
+        "BLOCKS",
+        "segment",
+        "scan",
+        "EXAMPLE_NOTES",
+        "annotateLines",
+        "diagnose",
+        "analyzeOut",
+        "reportMarkdown"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/views/lectura.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/siesta/run_outnotes_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/pack.js",
+      "sha256": "4d189c0ec0a243ead33cbd6dd8b13833b148612d0c35050674b47984106ac994",
+      "exports": [
+        "isDftlabPack",
+        "decodeArray",
+        "unpackDftlab",
+        "at",
+        "row",
+        "dequantizeWF",
+        "packBands",
+        "packDOS",
+        "packStructure",
+        "packContents"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js",
+        "app/dftlab/static/js/siesta/runset.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/siesta/run_import_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/pdos.js",
+      "sha256": "472ba055929a13d953e3be7b5a05933420bc4c5f6db73e90cf7ef4897476a05f",
+      "exports": [
+        "parsePDOS",
+        "parsePDOSText",
+        "orbitalSpin",
+        "sumPDOS",
+        "totalPDOS",
+        "groupPDOS",
+        "integratePDOS",
+        "listSpecies",
+        "listAtoms"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/pseudo.js",
+      "sha256": "2c7b98a05e8686629f32c9ba478197cd9a0a5739dc326d642b7aeb985b0ec911",
+      "exports": [
+        "parsePSF",
+        "parsePSML",
+        "radialCharge",
+        "parsePseudo"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/rho.js",
+      "sha256": "9cc4f45d25045a534abe669633aa32c97394f21456440cd2fef09aefdab850c9",
+      "exports": [
+        "isGridName",
+        "GRID_UNITS",
+        "parseGrid",
+        "gridIntegral",
+        "toFrac",
+        "sampleFrac",
+        "planeSlice",
+        "lineProfile",
+        "planarAverage"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js",
+        "app/dftlab/static/js/siesta/runset.js",
+        "app/dftlab/static/js/views/density.js",
+        "app/dftlab/static/js/views/potential.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/siesta/run_rho_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/runset.js",
+      "sha256": "b5415189ece714a5adeb636d8ed8e72159ea028e04d828947475546b9d1633e6",
+      "exports": [
+        "eigLabel",
+        "kpLabel",
+        "readEntry",
+        "kpProblem",
+        "relink",
+        "createFileSet"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/views/postproc.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs",
+        "app/tests/siesta/run_import_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/util.js",
+      "sha256": "5cac21ca84721bfa34ba74bcb03cf0d711945928695ff8da71fed897092bf9c3",
+      "exports": [
+        "BOHR_ANG",
+        "RY_EV",
+        "HA_EV",
+        "KBAR_PER_EV_ANG3",
+        "toText",
+        "lines",
+        "ffloat",
+        "nums",
+        "floatBlock",
+        "trapz",
+        "cumtrapz",
+        "linspace",
+        "strip",
+        "basename",
+        "parseXML",
+        "xchild",
+        "xchildren",
+        "xfind",
+        "xfindAll",
+        "xtext",
+        "xnum",
+        "attrNum",
+        "attrStr",
+        "toPlain"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/siesta/bands.js",
+        "app/dftlab/static/js/siesta/dos.js",
+        "app/dftlab/static/js/siesta/eig.js",
+        "app/dftlab/static/js/siesta/epsimg.js",
+        "app/dftlab/static/js/siesta/index.js",
+        "app/dftlab/static/js/siesta/ion.js",
+        "app/dftlab/static/js/siesta/mde.js",
+        "app/dftlab/static/js/siesta/out.js",
+        "app/dftlab/static/js/siesta/pdos.js",
+        "app/dftlab/static/js/siesta/pseudo.js",
+        "app/dftlab/static/js/siesta/rho.js",
+        "app/dftlab/static/js/siesta/runset.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/tools/cellmesh.js",
+      "sha256": "94102b15d7ffeb04512f96ce38ef0793577b359ea91a542e0ac64f951d7a5ee2",
+      "exports": [
+        "LIMITS",
+        "fftGood",
+        "validateCellInputs"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/views/calc.js"
+      ],
+      "tests": [
+        "app/tests/ui/run_calc_tests.mjs",
+        "app/tests/ui/browser_regressions.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/tools/fdfgen.js",
+      "sha256": "9211f3d912d100527048ce759822b3b8303db0c9a8e833fe87f0328094282e04",
+      "exports": [
+        "XC",
+        "BASIS",
+        "DEFAULTS",
+        "siestaInput",
+        "bandLinesFor",
+        "SCHED_DEFAULTS",
+        "jobScript"
+      ],
+      "consumers": [
+        "app/dftlab/static/js/views/estructura.js"
+      ],
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    }
+  ],
+  "exportSites": [
+    {
+      "file": "app/dftlab/static/js/core/chart.js",
+      "line": 107,
+      "function": "download",
+      "source": "off.toBlob(b=>download(b,name+'.png'),'image/png');",
+      "consumer": "Todas las vistas con exportBar",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/core/chart.js",
+      "line": 112,
+      "function": "download",
+      "source": "download(new Blob([s.toString()],{type:'image/svg+xml'}),name+'.svg');",
+      "consumer": "Todas las vistas con exportBar",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/core/chart.js",
+      "line": 116,
+      "function": "download",
+      "source": "if (cfg.csv){ download(new Blob([cfg.csv()],{type:'text/csv'}),name+'.csv'); return; }",
+      "consumer": "Todas las vistas con exportBar",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/core/chart.js",
+      "line": 120,
+      "function": "download",
+      "source": "download(new Blob([out],{type:'text/csv'}),name+'.csv');",
+      "consumer": "Todas las vistas con exportBar",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/bands.js",
+      "line": 55,
+      "function": "exportBar",
+      "source": "$('#bBands .ph .btnrow').append(exportBar(cB,'Si_bandas'));",
+      "consumer": "#bandas",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/bands.js",
+      "line": 56,
+      "function": "exportBar",
+      "source": "$('#bDos .ph').append(exportBar(cD,'Si_PDOS'));",
+      "consumer": "#bandas",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/bands.js",
+      "line": 57,
+      "function": "exportBar",
+      "source": "$('#bEps .ph .btnrow').append(exportBar(cE,'Si_epsilon'));",
+      "consumer": "#bandas",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/basis.js",
+      "line": 118,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });",
+      "consumer": "#base",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/beyond.js",
+      "line": 107,
+      "function": "downloadText",
+      "source": "$('#bCsv').onclick = () => downloadText(['material;tipo;'+cols.map(m=>m.id+'_'+m.src).join(';')+';exp'].concat(MAT.map(t=>[t.id,t.gap].concat(cols.map(m=>t[m.id]??''),[t.exp]).join(';'))).join('\\n'), 'gaps_mas_alla_de_dft.csv');",
+      "consumer": "#beyond",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/beyond.js",
+      "line": 120,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]',root).forEach(cv=>cv.closest('.panel').querySelector('.ph').append(exportBar(cv,cv.dataset.export)));",
+      "consumer": "#beyond",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/calc.js",
+      "line": 134,
+      "function": "downloadText",
+      "source": "$('#cellFdf',root).onclick=()=>{ if(fdfBlock) downloadText(fdfBlock,'kgrid_mesh.fdf'); };",
+      "consumer": "#calc",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/calc.js",
+      "line": 164,
+      "function": "downloadText",
+      "source": "$('#bmRep',root).onclick=()=>{ if(!bmRes) return; const r=bmRes; downloadText(`DFT Lab · ajuste Birch–Murnaghan de tercer orden\\nfecha: ${new Date().toISOString()}\\n\\nV0 = ${r.V0.toFixed(4)} Ang^3  (${(r.V0/r.nat).toFixed(4)} Ang^3/atomo)\\na0 = ${isFinite(r.a0)?r.a0.toFixed(5)+' Ang':'-'}\\nE0 = ${r.E0.toFixed(6)} eV\\nB0 = ${r.B0.toFixed(2)} GPa\\nB' = ${r.Bp.toFixed(3)}\\nrms = ${(r.rms*1000).toFixed(4)} meV\\n\\n# datos (${r.mode}, E eV)\\n`+r.rows.map(x=>x.join('  ')).join('\\n')+'\\n','birch_murnaghan.txt'); };",
+      "consumer": "#calc",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/calc.js",
+      "line": 242,
+      "function": "downloadText",
+      "source": "$('#fAdd',root).onclick=()=>{ F.push({el:'',n:1,mu:''}); fRows(); }; $('#fE',root).oninput=doF; $('#fRep',root).onclick=()=>{ if(fRes) downloadText(fRes,'energia_formacion.txt'); };",
+      "consumer": "#calc",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/calc.js",
+      "line": 245,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });",
+      "consumer": "#calc",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/density.js",
+      "line": 103,
+      "function": "download",
+      "source": "function pngOf(cv, name) { cv.toBlob((b) => b && download(b, name + '.png'), 'image/png'); }",
+      "consumer": "#densidad",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/density.js",
+      "line": 164,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]', root).forEach((cv) => cv.closest('.panel').querySelector('.ph').append(exportBar(cv, cv.dataset.export)));",
+      "consumer": "#densidad",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/density.js",
+      "line": 341,
+      "function": "downloadText",
+      "source": "$('#dlCsv', root).onclick = () => downloadText(csvOfPlane(sys().plane, fieldValues(), sys().plane.ref, `${sys().name} · ${fieldLabel[S.field]} (e/Å³) · SIESTA ${D.siesta} ${D.xc}`), `densidad_${S.sys}_${S.field}.csv`, 'text/csv');",
+      "consumer": "#densidad",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/density.js",
+      "line": 342,
+      "function": "downloadText",
+      "source": "$('#dlFdf', root).onclick = () => downloadText(sys().fdfText, `${sys().formula.replace(/[₀-₉]/g, (c) => c.charCodeAt(0) - 8320)}_densidad.fdf`);",
+      "consumer": "#densidad",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/dftu.js",
+      "line": 98,
+      "function": "downloadText",
+      "source": "$('#fdfPre',root).textContent=N.fdf; $('#dlFdf',root).onclick=()=>downloadText(N.fdf,'NiO_U4.fdf');",
+      "consumer": "#dftu",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/dftu.js",
+      "line": 99,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });",
+      "consumer": "#dftu",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/estructura.js",
+      "line": 109,
+      "function": "downloadText",
+      "source": "$('#dlFdf',root).onclick=()=>downloadText(fdfText,`${S.p.label}.fdf`);",
+      "consumer": "#estructura",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs",
+        "app/tests/ui/browser_offline.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/estructura.js",
+      "line": 110,
+      "function": "downloadText",
+      "source": "$('#dlJob',root).onclick=()=>downloadText(jobText,`run_${S.p.label}.sh`);",
+      "consumer": "#estructura",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs",
+        "app/tests/ui/browser_offline.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/estructura.js",
+      "line": 111,
+      "function": "downloadText",
+      "source": "$('#dlLua',root).onclick=()=>downloadText(LUA_HOOK,'dftlab_scf_hook.lua');",
+      "consumer": "#estructura",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs",
+        "app/tests/ui/browser_offline.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/estructura.js",
+      "line": 160,
+      "function": "downloadText",
+      "source": "try{ downloadText(writeStructure(S.cell,fm,fm==='fdf'?{systemLabel:S.p.label}:fm==='cif'?{symmetrize:false}:{}),`${S.p.label}.${ext}`); }catch(e){ toast('Error al escribir '+fm+': '+e.message); } });",
+      "consumer": "#estructura",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs",
+        "app/tests/ui/browser_offline.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/estructura.js",
+      "line": 161,
+      "function": "download",
+      "source": "$('#png3',root).onclick=()=>{ if(!V3) return; fetch(V3.snapshot()).then(r=>r.blob()).then(b=>download(b,`${S.p.label}_${S.view==='st'?'estructura':'zona_brillouin'}.png`)); };",
+      "consumer": "#estructura",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs",
+        "app/tests/ui/browser_offline.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/forces.js",
+      "line": 227,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]', root).forEach(cv => cv.closest('.panel').querySelector('.ph').append(exportBar(cv, cv.dataset.export)));",
+      "consumer": "#fuerzas",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/forces.js",
+      "line": 328,
+      "function": "downloadText",
+      "source": "$$('[data-dl]', root).forEach(b => b.addEventListener('click', () => downloadText(D.fdf[b.dataset.dl], { h2o: 'h2o_relax_cg.fdf', vac: 'si_vacancia_cg.fdf', vc: 'si_celda_variable.fdf' }[b.dataset.dl])));",
+      "consumer": "#fuerzas",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/ks.js",
+      "line": 163,
+      "function": "downloadText",
+      "source": "downloadText(t,`ks_atomo_${SYMBOLS[S.Z]}.txt`); };",
+      "consumer": "#ks",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/ks.js",
+      "line": 165,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });",
+      "consumer": "#ks",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/lectura.js",
+      "line": 68,
+      "function": "downloadText",
+      "source": "q('#repBtn').onclick = () => { if (A) downloadText(reportMarkdown(name, A), name.replace(/\\.[^.]*$/, '') + '_lectura.md', 'text/markdown'); };",
+      "consumer": "#lectura",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/lectura.js",
+      "line": 159,
+      "function": "exportBar",
+      "source": "const pan = cv.closest('.lr-fig'); const ph = document.createElement('div'); ph.className = 'export-wrap'; pan.insertBefore(ph, cv); ph.append(exportBar(cv, 'lectura_scf'));",
+      "consumer": "#lectura",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/phonons.js",
+      "line": 130,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]', root).forEach(cv => cv.closest('.panel').querySelector('.ph').append(exportBar(cv, cv.dataset.export)));",
+      "consumer": "#fonones",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/phonons.js",
+      "line": 234,
+      "function": "downloadText",
+      "source": "$('#dlFdf', root).addEventListener('click', () => downloadText(D.fdf, 'si_fc.fdf'));",
+      "consumer": "#fonones",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/postproc.js",
+      "line": 88,
+      "function": "exportBar",
+      "source": "const addExp=()=>$$('#ppOut canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow'); if(!ph.querySelector('.export')) ph.append(exportBar(cv,cv.dataset.export)); });",
+      "consumer": "#post",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/postproc.js",
+      "line": 271,
+      "function": "downloadText",
+      "source": "try{ downloadText(writeStructure(cell,fm,fm==='fdf'?{systemLabel:'dftlab'}:{}), `${(src.split(' ')[0]||'estructura').replace(/\\.[^.]+$/,'')}.${ext}`); }catch(e){ toast('No se pudo escribir '+fm+': '+e.message); } });",
+      "consumer": "#post",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/postproc.js",
+      "line": 274,
+      "function": "download",
+      "source": "$('#geoPng',root).onclick=()=>{ const url=V3.snapshot(); fetch(url).then(r=>r.blob()).then(b=>download(b,'estructura.png')); };",
+      "consumer": "#post",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/postproc.js",
+      "line": 294,
+      "function": "downloadText",
+      "source": "downloadText(t,'informe_dftlab.md','text/markdown');",
+      "consumer": "#post",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/postproc.js",
+      "line": 299,
+      "function": "downloadText",
+      "source": "$('#repJson',root).onclick=()=>{ const o=F.filter(f=>f.data&&f.kind!=='live').map(f=>({name:f.name, kind:f.kind, sha256:f.hash, ...(f.link?{link:f.link}:{}), data:exportData(f)})); downloadText(JSON.stringify({dftlab:'postproceso', created:new Date().toISOString(), files:o}),'dftlab_postproceso.json','application/json'); };",
+      "consumer": "#post",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/potential.js",
+      "line": 113,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]', root).forEach((cv) => cv.closest('.panel').querySelector('.ph').append(exportBar(cv, cv.dataset.export)));",
+      "consumer": "#potencial",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/potential.js",
+      "line": 242,
+      "function": "downloadText",
+      "source": "$('#dlCsv', root).onclick = () => downloadText(csv(), 'funcion_trabajo_laminas.csv', 'text/csv');",
+      "consumer": "#potencial",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/potential.js",
+      "line": 243,
+      "function": "downloadText",
+      "source": "$('#dlFdf', root).onclick = () => downloadText(run().fdf, `${S.run}.fdf`);",
+      "consumer": "#potencial",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/pseudo.js",
+      "line": 12,
+      "function": "exportBar",
+      "source": "function addExports(root){ $$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph'); if(!ph.querySelector('.export')) ph.append(exportBar(cv,cv.dataset.export)); }); }",
+      "consumer": "#pseudos",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/pseudo.js",
+      "line": 148,
+      "function": "download",
+      "source": "$('#dlPsml').onclick=async()=>{ try{ const t=await gunzip64(PS[PSS.ps].psml); download(new Blob([t],{type:'application/xml'}),sp.el+'.psml'); }catch(e){ toast('No se pudo descomprimir: '+e.message); } };",
+      "consumer": "#pseudos",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/scf.js",
+      "line": 142,
+      "function": "downloadText",
+      "source": "$('#repFdf',root).onclick=()=>downloadText(cur().fdf, cur().id+'.fdf');",
+      "consumer": "#scf",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/scf.js",
+      "line": 189,
+      "function": "downloadText",
+      "source": "$('#luaDl',root).onclick=()=>downloadText(LUA_HOOK,'dftlab_scf_hook.lua');",
+      "consumer": "#scf",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/scf.js",
+      "line": 193,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });",
+      "consumer": "#scf",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/solvers.js",
+      "line": 100,
+      "function": "downloadText",
+      "source": "$('#fdfS',root).textContent=fdf; $('#dlS',root).onclick=()=>downloadText(fdf,'solvers.fdf');",
+      "consumer": "#solvers",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/solvers.js",
+      "line": 103,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]',root).forEach(cv=>{ const p=cv.closest('.panel').querySelector('.ph'); p.append(exportBar(cv,cv.dataset.export)); });",
+      "consumer": "#solvers",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/spin.js",
+      "line": 182,
+      "function": "downloadText",
+      "source": "$('#dlFe',root).onclick=()=>downloadText(F.fdf,'Fe_FM.fdf');",
+      "consumer": "#espin",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/spin.js",
+      "line": 183,
+      "function": "downloadText",
+      "source": "$('#dlNio',root).onclick=()=>downloadText(N.fdfFm||'','NiO_FM_U8.fdf');",
+      "consumer": "#espin",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/spin.js",
+      "line": 189,
+      "function": "exportBar",
+      "source": "$$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });",
+      "consumer": "#espin",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    },
+    {
+      "file": "app/dftlab/static/js/views/xc.js",
+      "line": 11,
+      "function": "exportBar",
+      "source": "function addExports(root){ $$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph'); if(!ph.querySelector('.export')) ph.append(exportBar(cv,cv.dataset.export)); }); }",
+      "consumer": "#xc",
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs",
+        "app/tests/ui/browser_resources.mjs"
+      ],
+      "preservation": "Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "app/dftlab/static/js/core/chart.js",
+      "bytes": 12156,
+      "sha256": "08644f3f5698f9d2a553b623ebba597e0e0477f6eebd6c0dcbfb3e80d6893a64"
+    },
+    {
+      "file": "app/dftlab/static/js/core/escape.js",
+      "bytes": 386,
+      "sha256": "ebbfb7487c11cd1980316897316dab2fc7679820b0672f6ba55046153d6d4f23"
+    },
+    {
+      "file": "app/dftlab/static/js/core/lifecycle.js",
+      "bytes": 1996,
+      "sha256": "b34e936879c0719397e6cdfe4d689871499cebe5343ab166954bf7937b0a68aa"
+    },
+    {
+      "file": "app/dftlab/static/js/core/scene.js",
+      "bytes": 1284,
+      "sha256": "66e235b7a41a19d41f1951133cecea71d13a270da297db7985a9260baf1b87d3"
+    },
+    {
+      "file": "app/dftlab/static/js/core/svgctx.js",
+      "bytes": 5884,
+      "sha256": "0fe3ecceaed52a4c23a316fab89331c8793b534319fe20511ebd699551cab9fd"
+    },
+    {
+      "file": "app/dftlab/static/js/core/three-view.js",
+      "bytes": 11673,
+      "sha256": "ccfa2ef6d105e1f9ab174d72c58931ab035e6c0a7b3ff1bc9cc48992790611cb"
+    },
+    {
+      "file": "app/dftlab/static/js/core/ui.js",
+      "bytes": 4084,
+      "sha256": "754193d669bf6a8c9192d0b094969927fd50f78bef98e788bcbcab7dae7393d9"
+    },
+    {
+      "file": "app/dftlab/static/js/crystal/bz.js",
+      "bytes": 9119,
+      "sha256": "d040717a94c0f1cde1a6432a97b132b9481096f2a1d5636c83de8447b9571bd6"
+    },
+    {
+      "file": "app/dftlab/static/js/crystal/elements.js",
+      "bytes": 9132,
+      "sha256": "cc2c2fa9ed184c3c8501f0977f1e55f94ffaed71dcd6a6e6bed849f4dd67c2ad"
+    },
+    {
+      "file": "app/dftlab/static/js/crystal/formats.js",
+      "bytes": 42918,
+      "sha256": "93e9b3337ad7e82be7ac50372d59c53fe56301c8ebd85fe23f33af61d457439c"
+    },
+    {
+      "file": "app/dftlab/static/js/crystal/kpath.js",
+      "bytes": 45597,
+      "sha256": "6b42f2c935af25e0c7472eb3464d7bf53abc2ba3344f818a41f35be02e4654f7"
+    },
+    {
+      "file": "app/dftlab/static/js/crystal/symmetry.js",
+      "bytes": 29374,
+      "sha256": "bdeafab89c0f881703ebe4ef0ff4b6eb42a0d0bff4a3020cc47d2b5413615952"
+    },
+    {
+      "file": "app/dftlab/static/js/main.js",
+      "bytes": 2881,
+      "sha256": "77227a116c3889e49b21bf47f5b9d7f345570b8f5a60b211a50098fbf3cdb5aa"
+    },
+    {
+      "file": "app/dftlab/static/js/physics/atom.js",
+      "bytes": 9683,
+      "sha256": "89b5a1d773656d5c4448d5f60b19799b17f6f6118448ac37203591519da826c3"
+    },
+    {
+      "file": "app/dftlab/static/js/physics/phonon.js",
+      "bytes": 10555,
+      "sha256": "6e7b0ed57e6f3a41f0cc194ca9cc1a52b6ad8360150e66f6abef03f7b090b60e"
+    },
+    {
+      "file": "app/dftlab/static/js/remote/index.js",
+      "bytes": 1440,
+      "sha256": "2d027e4fa9ff86620c8d402329173421cc6cbb09cb0575cabfcccdff722677c1"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/bands.js",
+      "bytes": 10821,
+      "sha256": "97c74b33531a0343bac3f879b7b554a877b851dd54c2d958fe439018e6b31ddb"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/dos.js",
+      "bytes": 1661,
+      "sha256": "a32478b3187295baff32198ec6387f5233323070046fbb91701762765efbc899"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/eig.js",
+      "bytes": 7635,
+      "sha256": "8357be42d563b7d78ef83bf404b53aa115ea352982ff99e1b71256e37a98047c"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/epsimg.js",
+      "bytes": 7108,
+      "sha256": "2e8c6cf4831c35863df46c4cf42b8e64ab18a84efaba2ec77f29c040bbab0c38"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/fc.js",
+      "bytes": 3105,
+      "sha256": "d00a74a6a1088ef45b15703d0c7e62cdcab6d902242c0b1b04d0ffef3a98a4ef"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/index.js",
+      "bytes": 6177,
+      "sha256": "198283d3b81eecdcf06ddb3cd0850f83d48c87c10bf59468088026a5019b5bc8"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/ion.js",
+      "bytes": 6803,
+      "sha256": "eb092f6356d002f8dbd5976d744e0a36011330ab7ee26fc514b5e8728c98fa0f"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/mde.js",
+      "bytes": 5311,
+      "sha256": "1989fd027944d58254cae8b666db910b302f9e0cc31341b9097ae892f50ed351"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/out.js",
+      "bytes": 32451,
+      "sha256": "095136811352a64384812830ca76a5ff52e7be0e0c8a237727eef768ba1eebee"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/outnotes.js",
+      "bytes": 78903,
+      "sha256": "8eaded03427213f77d45f2daa0112040a3aeeff28a2d6573eec12ad9b85509d9"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/pack.js",
+      "bytes": 8246,
+      "sha256": "4d189c0ec0a243ead33cbd6dd8b13833b148612d0c35050674b47984106ac994"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/pdos.js",
+      "bytes": 7329,
+      "sha256": "472ba055929a13d953e3be7b5a05933420bc4c5f6db73e90cf7ef4897476a05f"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/pseudo.js",
+      "bytes": 10033,
+      "sha256": "2c7b98a05e8686629f32c9ba478197cd9a0a5739dc326d642b7aeb985b0ec911"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/rho.js",
+      "bytes": 6889,
+      "sha256": "9cc4f45d25045a534abe669633aa32c97394f21456440cd2fef09aefdab850c9"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/runset.js",
+      "bytes": 5709,
+      "sha256": "b5415189ece714a5adeb636d8ed8e72159ea028e04d828947475546b9d1633e6"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/util.js",
+      "bytes": 7966,
+      "sha256": "5cac21ca84721bfa34ba74bcb03cf0d711945928695ff8da71fed897092bf9c3"
+    },
+    {
+      "file": "app/dftlab/static/js/tools/cellmesh.js",
+      "bytes": 2974,
+      "sha256": "94102b15d7ffeb04512f96ce38ef0793577b359ea91a542e0ac64f951d7a5ee2"
+    },
+    {
+      "file": "app/dftlab/static/js/tools/fdfgen.js",
+      "bytes": 10123,
+      "sha256": "9211f3d912d100527048ce759822b3b8303db0c9a8e833fe87f0328094282e04"
+    },
+    {
+      "file": "app/dftlab/static/js/views/bands.js",
+      "bytes": 22962,
+      "sha256": "080358a2c64457ae68cd16bd1ea0e32fd75b0eabae7992378ece78191ecad2f2"
+    },
+    {
+      "file": "app/dftlab/static/js/views/basis.js",
+      "bytes": 12901,
+      "sha256": "b4a2aa36be025e7e75dfb98cd4e874f17239ff40b60178d0fd455263560f7ccb"
+    },
+    {
+      "file": "app/dftlab/static/js/views/beyond.js",
+      "bytes": 16615,
+      "sha256": "f8818bc604c36520c4610e7dc486600481a695f6dd189722048072846c9da401"
+    },
+    {
+      "file": "app/dftlab/static/js/views/calc.js",
+      "bytes": 27443,
+      "sha256": "967024648c2c0654d9f6744976f41e66ed31858ba5d8e4523af63529806312f7"
+    },
+    {
+      "file": "app/dftlab/static/js/views/density.js",
+      "bytes": 33903,
+      "sha256": "4a8d6cc02e05f26df6ebadc1dd0b92763bd5dee6e1639058326ba9ce86aba2bd"
+    },
+    {
+      "file": "app/dftlab/static/js/views/dftu.js",
+      "bytes": 13127,
+      "sha256": "bed4428ce51f20ad54939a8cc4f994d7bb645eb1e02a5cbfeef97f1f3b915e75"
+    },
+    {
+      "file": "app/dftlab/static/js/views/estructura.js",
+      "bytes": 20501,
+      "sha256": "3add62b35e18174b551ef3d8fedde92f51f75b232ba709edae053ad382c71e31"
+    },
+    {
+      "file": "app/dftlab/static/js/views/forces.js",
+      "bytes": 51117,
+      "sha256": "47cb1f873223fe4d6771c551bce84c193e71da2fc9e0b9c6f422ab7f2e1c0dda"
+    },
+    {
+      "file": "app/dftlab/static/js/views/home.js",
+      "bytes": 1256,
+      "sha256": "ae30cfa6da9ea6aa71bd6bc7d1a3a0aec2e2954c8cb3826e23c4586cddab862b"
+    },
+    {
+      "file": "app/dftlab/static/js/views/ks.js",
+      "bytes": 18517,
+      "sha256": "1a85d2a9c81d31bce9140529833d4cb68adacc6562974d6e0659b15524e9bb88"
+    },
+    {
+      "file": "app/dftlab/static/js/views/lectura.js",
+      "bytes": 15068,
+      "sha256": "a5b2756bf2a128fb7986a029c082d78bb829f14280fd26d721490b0a0b2e67a5"
+    },
+    {
+      "file": "app/dftlab/static/js/views/phonons.js",
+      "bytes": 33273,
+      "sha256": "d7a70c01aa7ac55f77154eecac7a281d2bcc4f5ef6a4fadffb6dad06065e5330"
+    },
+    {
+      "file": "app/dftlab/static/js/views/postproc.js",
+      "bytes": 40824,
+      "sha256": "196b7a0b451179a638259e719be035c8acf2a23241e681b2d9e6a30b38f5a1c5"
+    },
+    {
+      "file": "app/dftlab/static/js/views/potential.js",
+      "bytes": 32854,
+      "sha256": "c2d77cc1f544121c6193b38cb9e24490ab57d8b30b4dc3cb0eecb8c8ec40428a"
+    },
+    {
+      "file": "app/dftlab/static/js/views/pseudo.js",
+      "bytes": 28803,
+      "sha256": "fc4c5695dc65acf2d7755bde454cee8ece739e945444c4a263712124c82995c2"
+    },
+    {
+      "file": "app/dftlab/static/js/views/registry.js",
+      "bytes": 4716,
+      "sha256": "fbee118e6b652fb50a06f464912780cd684fddbbff07540f6fb4ea38da5b5f19"
+    },
+    {
+      "file": "app/dftlab/static/js/views/scf.js",
+      "bytes": 20321,
+      "sha256": "43725e03165948cc0c58035a37e1a7734169686eb5f661602356bd2c8d84edc4"
+    },
+    {
+      "file": "app/dftlab/static/js/views/solvers.js",
+      "bytes": 13869,
+      "sha256": "acdf69ed2042e84320ea0951aaaa1d92f11d0d5f92af6d40c53ab83c11c92442"
+    },
+    {
+      "file": "app/dftlab/static/js/views/spin.js",
+      "bytes": 23964,
+      "sha256": "402bca3671d9614589babed36b54bf23c61f636ecc315c466af1e551efd9f11e"
+    },
+    {
+      "file": "app/dftlab/static/js/views/xc.js",
+      "bytes": 24706,
+      "sha256": "08786721d07518f580ddf92532723b7b04956a856abe0d2c8cb473af7ad83d37"
+    },
+    {
+      "file": "scripts/verify.mjs",
+      "bytes": 1509,
+      "sha256": "347cda85e94e2a87bddaf1f04c7de831b84ebf263c444ed09424fccdc4a9f8db"
+    },
+    {
+      "file": "app/scripts/test-browser.mjs",
+      "bytes": 1099,
+      "sha256": "4200586ae392731987f9d98ad9a80b60b128f634b67313f40cb14a32aab5ce3e"
+    },
+    {
+      "file": "app/package.json",
+      "bytes": 595,
+      "sha256": "f8bb71e207452d47f23681fe63f6adb9d17c17e3a82fe1a8159bacb19fa02863"
+    },
+    {
+      "file": "app/package-lock.json",
+      "bytes": 16103,
+      "sha256": "b2a63709e97d6adff0250d4947fdd9610a1d09fb55f01a09cafa3ca6fd03b17b"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "bytes": 1825,
+      "sha256": "f8417ab866909da0f163f3f1bfd68825656ced04d925137eb703688843d1d44a"
+    },
+    {
+      "file": ".github/workflows/python-references.yml",
+      "bytes": 1530,
+      "sha256": "04bc8bf158844e763a5a3e50107be5c38309e42b593be8d08705465029e4d663"
+    }
+  ]
+}
