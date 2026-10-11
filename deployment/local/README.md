@@ -412,3 +412,34 @@ Si autoría/preflight/package, sin ejecutar SIESTA). Comprueba productos,
 idempotencia, todos los bytes originales, locks públicos y guard de RECOVERY;
 conserva packet, instancia restaurada e informe. No califica journals activos,
 resume, validación científica ni RPO/RTO. No se ejecuta en CI o al cargar vistas.
+
+### Evidencia terminal local firmada (T-026a)
+
+`SlurmTerminalCollector` es un puerto interno de lectura para un sitio SLURM
+registrado. Exige contexto positivo del mismo job antes/después, historial
+`sacct --completion`, intervalo, clúster/usuario/token/root/script y locks nativos.
+Cola vacía, error de permisos, ambigüedad o requeue no producen evidencia.
+Conserva ReqTRES y AllocTRES por separado. La zona civil del productor JobComp
+se registra: TZ=UTC en el cliente no cambia los timestamps ya guardados.
+
+`LocalTerminalSigner` usa `TerminalSchedulerEvidence.signed_bytes()` de la API
+pública QRAFT, HMAC-SHA256 y un verificador registrado por ID con clave privada,
+validez acotada y floor UTC del proceso. Es confianza simétrica local; no una
+firma verificable por terceros. Claves fuera de logs, ArtifactStore y backups;
+no se reciben signer/clave/callbacks desde HTTP. Nadie retira autoridad ni abre
+admisión por esta entrega.
+
+La calificación explícita `qualify_terminal_evidence.py` usa un consumidor
+instalado -I, ambos motores y un run privado ya confirmado por su ledger.
+La captura raíz de solo lectura se hace desde el `wsl.exe` de Windows fijado,
+con argv exacto Ubuntu/root/sacct y job autorizado; su archivo/hash es una
+entrada **del operador para el ensayo**, no un protocolo de confianza HTTP.
+El driver valida la captura y los pins, vuelve a observar el contexto actual
+como jmc y pasa el recibo original firmado al `RunInspector.resume` público.
+
+En filetxt local, `Cluster=unknown` queda intacto en raw. Solo un protocolo
+registrado de la misma instancia permite correlacionarlo con el clúster
+observado en scontrol; esta interpretación se etiqueta como atestación local.
+No se habilita por defecto, no acredita otros clusters ni un servicio SSH/web.
+El puente automático, retiro/restore/resume ejecutado y su calificación esperan
+las siguientes entregas; no reusar un recibo vencido como permiso para lanzar.

@@ -17,7 +17,7 @@ from dftlab_platform.checkpoints import checked_path, write_new
 from dftlab_platform.contracts import canonical, loads
 from dftlab_platform.engines import PinnedEngines
 from dftlab_platform.local_runtime import private_directory
-from dftlab_platform.runtime_probe import Binary, BoundedCommands
+from dftlab_platform.runtime_probe import Binary, Observation
 from dftlab_platform.terminal_evidence import LocalTerminalSigner, SlurmTerminalCollector
 
 
@@ -31,6 +31,8 @@ def main():
     parser.add_argument("--sacct-sha256", required=True)
     parser.add_argument("--bridge-sha256", required=True)
     parser.add_argument("--timezone-sha256", required=True)
+    parser.add_argument("--history-file", type=Path, required=True)
+    parser.add_argument("--history-sha256", required=True)
     args = parser.parse_args()
     if os.name == "nt" or sys.flags.isolated != 1 or sys.version_info[:3] != (3, 12, 10) or "PYTHONPATH" in os.environ:
         raise RuntimeError("Installed isolated WSL Python 3.12.10 required")
@@ -47,33 +49,37 @@ def main():
     helper = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(helper)
     value, repo, owner, store, package, intent, ledger, port, verify = helper.context(root, config, engines)
-    receipt = ledger.snapshot(owner, intent["payload"]["operation_id"])["receipt"]
+    _, _, receipt = ledger.snapshot(owner, intent["payload"]["operation_id"])
     if receipt is None or receipt["payload"]["job"]["job_id"] != args.job:
         raise RuntimeError("Job not authorized by original durable receipt")
     sacct = Binary(Path("/usr/bin/sacct"), args.sacct_sha256)
-    bridge = Binary(Path("/mnt/c/Windows/System32/wsl.exe"), args.bridge_sha256)
     sacct.verified()
-    bridge.verified()
     timezone_file = Path("/etc/localtime")
     timezone_bytes = timezone_file.read_bytes()
     if hashlib.sha256(timezone_bytes).hexdigest() != args.timezone_sha256:
         raise RuntimeError("Registered local producer timezone changed")
     with timezone_file.open("rb") as stream:
         zone = ZoneInfo.from_file(stream)
+    raw = args.history_file.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != args.history_sha256:
+        raise RuntimeError("Operator history capture changed")
+    captured = loads(raw)
+    expected_argv = ["C:\\Windows\\System32\\wsl.exe", "-d", "Ubuntu", "-u", "root", "--", "/usr/bin/sacct", "--completion", "--jobs="+args.job, "--noheader", "--parsable2", "--format=JobID,User,Cluster,State,Start,End"]
+    if captured["argv"] != expected_argv or captured["bridge_sha256"] != args.bridge_sha256 or captured["sacct_sha256"] != args.sacct_sha256 or captured["timezone_sha256"] != args.timezone_sha256 or captured["scope"] != "OPERATOR_READONLY_WINDOWS_WSL_BRIDGE" or captured["returncode"] != 0:
+        raise RuntimeError("Operator readonly bridge capture not registered")
     class ReadonlyBridge:
         def run(self, argv, *, cwd, environment):
             expected = (str(sacct.verified()), "--completion", "--jobs="+args.job, "--noheader", "--parsable2", "--format=JobID,User,Cluster,State,Start,End")
             if argv != expected:
                 raise RuntimeError("Bridge refuses every other command/job")
-            actual = (str(bridge.verified()), "-d", "Ubuntu", "-u", "root", "--", *argv)
-            env = {**environment, "WSL_INTEROP": os.environ["WSL_INTEROP"]}
-            observation = BoundedCommands(timeout=15, max_output=65536).run(actual, cwd=output, environment=env)
-            bridge.verified()
+            # Explicit qualification injection from the operator's pinned
+            # Windows reader. This file is not a public service trust input.
+            # Positive current contexts/history intervals are still mandatory.
+            if len(raw) > 65536 or hashlib.sha256(args.history_file.read_bytes()).hexdigest() != args.history_sha256:
+                raise RuntimeError("Operator history source changed/exceeded bound")
             sacct.verified()
-            write_new(output/"root-bridge-observation.json", canonical({"argv": list(actual), "output": observation.output, "returncode": observation.returncode,
-                                                                      "bridge_sha256": args.bridge_sha256, "sacct_sha256": args.sacct_sha256,
-                                                                      "timezone_sha256": args.timezone_sha256}))
-            return observation
+            write_new(output/"root-bridge-observation.json", raw)
+            return Observation(captured["output"], captured["returncode"])
     private_key = secrets.token_bytes(32)
     keys = private_directory(output/"private-keys")
     write_new(keys/"terminal-hmac.key", private_key)  # never artifact/log/checkpoint
