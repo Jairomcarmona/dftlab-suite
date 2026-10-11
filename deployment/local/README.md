@@ -377,3 +377,38 @@ PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED donde los emite QRAFT: no se sustituyen
 por validación científica. Los límites de archivos/tamaño son política acotada
 del harness, no SLA medido. Esta prueba no acredita terminal, acceso remoto,
 restore/resume, finalización completa, admisión, calificación científica ni P4.
+
+### Checkpoint de control y restore cerrado (T-060a)
+
+`dftlab_platform.checkpoints.SQLiteCheckpointStore` implementa el puerto interno
+`CheckpointPort`. No hay ruta HTTP ni comando que reabra admisión. Esta primera
+versión guarda SQLite mediante Backup API bajo barrera de escritores y el
+ArtifactStore completo referenciado, incluidos chunks confirmados y blobs cuyo
+rename quedó sin publicar. Usa destinos nuevos; nunca overlay ni borrado.
+Los objetos de bootstrap de RecoveryCheckpoint viven fuera del índice anterior.
+El operador conserva por separado el digest esperado: SHA prueba integridad,
+no autoriza restaurar un packet de otra persona.
+
+La DB restaurada conserva IDs, productos, índices y claves idempotentes. Permanece
+RECOVERY; RUNNING pasa a OUTCOME_UNKNOWN. Nuevos submit/resume, EffectIntent,
+entrada RPC y autoridad del controlador quedan bloqueados hasta una futura
+reconciliación calificada. No hay salida automática ni botón de desbloqueo.
+
+**Alcance:** packet privado v1 para autoría/control sin ejecución nativa. Rechaza
+RUN, controller_authorities o scheduler_dispatches existentes; no omite sus
+journals ni promete un restore nativo completo. Sus límites configurados por
+instancia son límites de transferencia, no capacidad científica ni SLA.
+Sesiones/cookies y claves SSH/signers externas no forman parte de este packet.
+
+Calificación explícita, desde consumidor instalado fuera del checkout, Python -I
+sin PYTHONPATH y ambos motores verificados:
+
+```text
+python -I deployment/local/qualify_checkpoints.py --case NUEVO_CASO_AUTHORING --wheelhouse WHEELHOUSE --output NUEVO_DIRECTORIO_PRIVADO
+```
+
+El caso debe provenir de `qualify_native_handlers.py` (cuatro operaciones de
+Si autoría/preflight/package, sin ejecutar SIESTA). Comprueba productos,
+idempotencia, todos los bytes originales, locks públicos y guard de RECOVERY;
+conserva packet, instancia restaurada e informe. No califica journals activos,
+resume, validación científica ni RPO/RTO. No se ejecuta en CI o al cargar vistas.
