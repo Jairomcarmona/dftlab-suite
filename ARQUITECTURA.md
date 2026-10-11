@@ -2,9 +2,70 @@
 
 Este documento es el contrato que siguen todos los hilos que construyan un módulo de DFT Lab. Si algo aquí contradice a `PLAN_DFT_App.md` o a `MAPA_DE_CONTENIDOS.md`, manda este archivo: esos dos son anteriores a la decisión de que la app no ejecuta SIESTA.
 
-Estado al 10 de octubre de 2026. Versión publicada: https://claude.ai/artifact/C6hF2LuPiau6mkVUrf3GKD
+Estado al 11 de octubre de 2026: se adoptan los ADR-001…012 de la arquitectura V2.1 (§0). Las secciones 1–10 describen la aplicación actual y siguen vigentes salvo donde §0 indica lo contrario. Versión publicada del frontend: https://claude.ai/artifact/C6hF2LuPiau6mkVUrf3GKD
 
 ---
+
+## 0. Arquitectura V2.1: decisiones adoptadas
+
+La [propuesta maestra V2.1](PROPUESTA_MAESTRA_DFTLAB_V2.md) y su [plan](PLAN_IMPLEMENTACION_CLAUDE_CODE.md) definen el destino; los ADR de [`docs/adr/`](docs/adr/README.md) fijan las decisiones. **Adoptar un ADR no implementa nada:** cada decisión indica sus tickets pendientes. Los schemas y la OpenAPI de `contracts/` (Ola 1) serán la definición ejecutable; este archivo es la entrada al contrato vigente.
+
+| ADR | Decisión |
+|---|---|
+| [001](docs/adr/ADR-001-frontend-modular-dos-builds.md) | Frontend modular; build portátil y operativo desde una fuente; cálculo externo |
+| [002](docs/adr/ADR-002-aprender-produccion-procedencia.md) | Aprender y producción separados; promoción explícita a borrador; origen/finalidad/procedencia/evaluación |
+| [003](docs/adr/ADR-003-autoridades-qraft-hubbardflow-plataforma.md) | QRAFT dueño del runtime; HubbardFlow de LR-U; plataforma de operaciones e identidad |
+| [004](docs/adr/ADR-004-contratos-versionados-adaptadores.md) | Contratos JSON Schema/OpenAPI versionados; adaptadores sobre API pública |
+| [005](docs/adr/ADR-005-locks-nativos-canonicos-db-indices.md) | Locks y journals nativos canónicos; DB con operaciones e índices reconstruibles |
+| [006](docs/adr/ADR-006-hubbard-hf1-hf2.md) | Hubbard HF-1 primero; HF-2 tras contrato upstream |
+| [007](docs/adr/ADR-007-controlador-unico-reconciliacion-idempotencia.md) | Un controlador por run, reconciliación, idempotencia, `UNKNOWN` visible |
+| [008](docs/adr/ADR-008-servicio-local-ssh-autorizacion.md) | Servicio local seguro, SSH/terminal y autorización por recurso |
+| [009](docs/adr/ADR-009-politicas-gates-cientificos.md) | Políticas y gates científicos versionados; evidencia antes de calificación |
+| [010](docs/adr/ADR-010-almacen-retencion-sqlite-postgres.md) | ArtifactStore, retención y reproducción; SQLite local, PostgreSQL web |
+| [011](docs/adr/ADR-011-despliegues-por-target-workers-fijados.md) | Despliegue por target; workers fijados durante cada campaña |
+| [012](docs/adr/ADR-012-releases-migraciones-catalogo-capabilities.md) | Releases compatibles, migraciones y catálogo de capabilities probado |
+
+ADR-013 (React y TypeScript) sigue **propuesto**; ADR-014 (entorno Python de referencias) es independiente de V2.1. Los ADR-003, 004, 006, 007 y 012 tienen puntos marcados «pendiente C2» que esperan el inventario de API de los motores (`docs/compatibility/`); la asignación de autoridad no depende de ese inventario.
+
+### 0.1 Dos builds de una fuente (ADR-001)
+
+| Build | Uso | Servicio |
+|---|---|---|
+| Portátil, `dist/dftlab.html` | Aprender, preparar, leer y exportar offline (lo que existe hoy) | No; lo remoto queda oculto |
+| Operativo | Lo anterior más Campañas, Remoto y Proyectos | Servicio en loopback (después, web autenticado) |
+
+No se duplican pantallas. El navegador sigue sin ejecutar SIESTA; enviar un cálculo es una acción explícita contra la API, nunca un efecto de montaje.
+
+### 0.2 Capas y dependencias
+
+| Capa | Dónde | Puede depender de |
+|---|---|---|
+| Presentación | `js/views/`, `core/` (DOM, charts, visor) | Aplicación frontend, módulos puros |
+| Aplicación frontend | `js/application/`, `js/sdk/` (destino) | Contratos y SDK; nunca SSH ni scheduler |
+| Módulos puros | `js/siesta/`, `js/crystal/`, `js/physics/` | Nada de DOM ni de framework |
+| Servicio de plataforma | `platform/` (destino, Codex X2) | Puertos abstractos y contratos; dominio sin HTTP/SSH/DB |
+| Integración científica | `platform/.../integrations/` | Solo API pública de QRAFT y HubbardFlow |
+| Dominio científico | Repositorios de QRAFT y HubbardFlow | Sin cambios desde la plataforma |
+
+Las reglas de imports se verificarán en CI. QRAFT y HubbardFlow no se copian al repositorio.
+
+### 0.3 ViewScope (ADR-001)
+
+El router ya crea un ámbito por montaje (`core/lifecycle.js`, `createViewScope`, bloque B) y lo pasa como `render(el, view)`. Ese ámbito es el `ViewScope` de V2.1: T-012 lo amplía con workers y disposables, y T-013 añade stores por proyecto/área en lugar de estado compartido entre vistas. Tras cada `await`, una vista comprueba `view.alive`.
+
+### 0.4 Servicio y autoridad (ADR-003, 005, 007, 008)
+
+- **Quién decide qué:** QRAFT ejecuta (locks, intentos, journal); HubbardFlow decide LR-U (plan, gates, análisis); la plataforma administra proyectos, operaciones, identidad, conexiones y archivos. La plataforma no guarda otro DAG.
+- **Estado:** los locks y journals nativos son canónicos; la DB guarda operaciones e índices reconstruibles. Cuatro dimensiones: scheduler, ejecución, integridad y evaluación científica.
+- **Operaciones:** 202 + operation ID, idempotency key, intención persistida antes del efecto, envío reconciliable (`SUBMISSION_UNKNOWN`), un controlador por run con fencing, cancelar es una solicitud.
+- **Servicio local:** loopback con Host/Origin, bootstrap de un uso, cookie HttpOnly y CSRF; sin acceso desde `file://`. La terminal SSH es una capacidad privilegiada explícita, no el mecanismo de ejecución.
+
+### 0.5 Qué cambia en las secciones siguientes
+
+- §1 se conserva íntegra (rigor, idioma, defaults físicos, navegador sin SIESTA). En el build operativo la app además coordina ejecución externa a través del servicio.
+- §3: las vistas reciben `render(el, view)`; registrar suscripciones con `view.onTheme` en vez de `onTheme` global.
+- §8 queda **sustituida por [ADR-008](docs/adr/ADR-008-servicio-local-ssh-autorizacion.md)**: no hay token impreso ni `session.run('sbatch …')` como forma de lanzar trabajos; la fachada `remote` se conserva.
+- `ARQUITECTURA.md` §§1–10 sigue siendo el contrato de los módulos actuales hasta que cada ticket migre su parte.
 
 ## 1. Decisiones ya tomadas (no se reabren)
 
@@ -73,6 +134,8 @@ DFT_App/
 - Un módulo nuevo que rompa estas reglas no se integra.
 
 ## 3. Contrato de un módulo (una pantalla)
+
+> Desde el bloque B el router llama `render(el, view)` con un ámbito de vista (`core/lifecycle.js`); el ejemplo de abajo muestra la forma histórica `mount(root)`. Ver §0.3.
 
 Un módulo nuevo es **un archivo** `js/views/<id>.js`, **opcionalmente un JSON** en `js/data/` y **una línea** en `views/registry.js`. No toca otros archivos salvo `css/app.css`, y solo para añadir clases nuevas al final.
 
@@ -266,6 +329,8 @@ node scripts/build.mjs                       # → dist/dftlab.html (~11.5 MB, i
 - **Paralelo:** dos hilos no deben editar a la vez `registry.js`, `app.css` ni `build.mjs`; cada sección usa su propio `css/views/<id>.css`. El hilo que añade un módulo hace su cambio en `registry.js` al final, en una sola edición pequeña: relee el archivo justo antes y vuelve a leerlo después para verificar.
 
 ## 8. Extensión futura: terminal SSH y conexión al clúster
+
+> **Sustituida por [ADR-008](docs/adr/ADR-008-servicio-local-ssh-autorizacion.md) el 2026-10-11.** Se conserva como registro del diseño anterior; donde difiera, manda el ADR (sesión con bootstrap de un uso, verificación de origen, ejecución por `SchedulerGateway` y no por `session.run`).
 
 Manuel planea añadir una terminal para conectarse por SSH a sus servidores. **No está implementada.** El punto de extensión ya existe:
 

@@ -72,6 +72,8 @@ Cada cambio va con fixture de consumidor y sin copiar código al árbol de la pl
 | U-Q4 | Documentar `workflow-event@1.0` con `sequence` monótona por run, `event_id` estable y política de rotación del JSONL | La plataforma referencia eventos nativos con cursor/replay (§6.2) | Media |
 | U-Q5 | `resume` que acepte evidencia de terminación del scheduler (estado `sacct` firmado por la plataforma) en vez de solo la bandera `--previous-job-terminal` | Reconciliación §13.2; hoy la garantía depende de una afirmación | Media |
 | U-Q6 | Fijar el schema de la salida `--json` de `check`/`status`/`run inspect` (o declararla no contractual) | La API muestra estado observado; sin schema no hay fixture de consumidor | Baja |
+| U-Q7 | Punto de comprobación público antes de lanzar un intento y antes de publicar estado/evidencia (callback o token de generación que el runtime verifica) | ADR-007: hoy no hay fencing; los `ResourceLease` de [`execution/resource_coordinator.py`][Q-rc] son reservas de CPU/nodos, no propiedad del run, y los `Lock` son de hilo | Alta para multi-worker |
+| U-Q8 | Campos tipados (o una extensión namespaced documentada) en `CapabilityDescriptor` para modos/targets, soporte de cancel/resume y referencias de pruebas | ADR-012: hoy solo hay `capability_id`, `kind`, `implementation_version`, contratos de entrada/salida, `engine` y `metadata` libre | Media |
 
 No hace falta en QRAFT: un `cancel` propio (lo hace SchedulerGateway con `scancel` sobre la allocation), un nuevo enum de catálogo (los estados `DESIGNED…SCIENTIFICALLY_QUALIFIED` son de la plataforma) ni un almacén de artefactos.
 
@@ -94,4 +96,5 @@ No hace falta en QRAFT: un `cancel` propio (lo hace SchedulerGateway con `scance
 [Q-cc166]: https://github.com/Jairomcarmona/siestaflow/blob/4d996ea7c580e5638e470bbf32624c88fd762f7d/src/qraft/execution/canonical_controller.py#L166
 [Q-reg]: https://github.com/Jairomcarmona/siestaflow/blob/4d996ea7c580e5638e470bbf32624c88fd762f7d/src/qraft/contracts/plugins.py#L124
 [Q-sig]: https://github.com/Jairomcarmona/siestaflow/blob/4d996ea7c580e5638e470bbf32624c88fd762f7d/src/qraft/execution/slurm_environment.py#L221
+[Q-rc]: https://github.com/Jairomcarmona/siestaflow/blob/4d996ea7c580e5638e470bbf32624c88fd762f7d/src/qraft/execution/resource_coordinator.py#L124
 [Q-cli1918]: https://github.com/Jairomcarmona/siestaflow/blob/4d996ea7c580e5638e470bbf32624c88fd762f7d/src/qraft/cli.py#L1918
