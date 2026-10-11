@@ -56,6 +56,22 @@ class Recovery(unittest.TestCase):
         original = resource_json("fixtures/operation-request/valid/submit-run.json");original["project_id"] = self.project
         self.assertEqual(self.repo.accept(self.owner, original), (failed, False))
 
+    def test_resume_intent_uses_server_profile_and_binds_resume_run(self):
+        resume = resource_json("fixtures/resume-plan/valid/partial-reuse.json")
+        resume["project_id"] = self.project
+        reads = SQLiteReadModels(self.repo);reads.put(self.owner, "RESUME_PLAN", resume)
+        resume_id = resume["payload"]["resume_plan_id"]
+        request = {"action": "EXECUTE_RESUME_PLAN", "project_id": self.project, "target": {"kind": "RESUME_PLAN", "id": resume_id, "expected_revision": resume["payload"]["plan_revision"]}, "payload": {"resume_plan_id": resume_id}, "idempotency_key": "execute-resume-key"}
+        operation_id = self.repo.accept(self.owner, request)[0]["record_id"]
+        self.repo.claim("fixture-processor")
+        intent = self.intent(operation_id)
+        intent["payload"].update(action="EXECUTE_RESUME_PLAN", run_id=resume["payload"]["run_id"]);reseal(intent)
+        wrong = copy.deepcopy(intent);wrong["payload"]["run_id"] = "other-run";reseal(wrong)
+        self.problem("PRECONDITION_FAILED", self.repo.persist_effect_intent, operation_id, 2, "fixture-processor", wrong)
+        self.assertEqual(self.repo.persist_effect_intent(operation_id, 2, "fixture-processor", intent), intent)
+        self.repo.recover()
+        self.assertEqual(self.repo.operation(self.owner, operation_id)["payload"]["result"]["receipt"]["payload"]["profile"], intent["payload"]["profile"])
+
     def test_persisted_intent_cannot_be_replaced_or_resolved_as_absent(self):
         operation_id = self.submission()
         intent = self.intent(operation_id)

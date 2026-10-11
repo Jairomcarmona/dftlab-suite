@@ -274,8 +274,17 @@ class SQLiteRepository:
                 raise Problem("PRECONDITION_FAILED")
             operation, request = self._operation_document(row[0]), loads(row[1])
             payload, intent = operation["payload"], document["payload"]
-            if payload["state"] != "RUNNING" or payload["revision"] != revision or intent["operation_id"] != operation_id or intent["action"] != payload["action"] or document["project_id"] != operation["project_id"] or intent["profile"]["profile_id"] != request.get("profile_ref"):
+            if payload["state"] != "RUNNING" or payload["revision"] != revision or intent["operation_id"] != operation_id or intent["action"] != payload["action"] or document["project_id"] != operation["project_id"]:
                 raise Problem("PRECONDITION_FAILED")
+            if request.get("profile_ref") is not None and intent["profile"]["profile_id"] != request["profile_ref"]:
+                raise Problem("PRECONDITION_FAILED")
+            if payload["action"] == "EXECUTE_RESUME_PLAN":
+                target = db.execute("SELECT document FROM resources WHERE resource_id=? AND kind='RESUME_PLAN' AND project_id=?", (request["target"]["id"], operation["project_id"])).fetchone()
+                if not target or target[0] is None:
+                    raise Problem("PRECONDITION_FAILED")
+                resume = self.contracts.validate("resume-plan", loads(target[0]))
+                if resume["payload"]["run_id"] != intent["run_id"]:
+                    raise Problem("PRECONDITION_FAILED")
             previous = self._effect_intent(db, operation_id)
             if previous:
                 if previous != document:
