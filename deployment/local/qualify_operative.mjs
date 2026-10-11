@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
+import fs from 'node:fs';
 import {chromium} from '../../app/node_modules/playwright/index.mjs';
 
 const [python,state]=process.argv.slice(2);
@@ -55,7 +56,22 @@ try{
   assert.equal(await page.evaluate(()=>window.__unsafeInline),undefined,'Inline JS forbidden');
   assert.deepEqual(errors,[],'No lazy-route or session page errors');
   await page.reload();await page.locator('[data-remote-group]').waitFor();
-  assert.equal(await page.getByRole('button',{name:'Crear proyecto',exact:true}).count(),0,'Reload has read session only without persisted CSRF');
+  assert.equal(await page.getByRole('button',{name:'Crear proyecto',exact:true}).count(),1,'Reload recovers CSRF from cookie without browser persistence');
+  await page.selectOption('[aria-label="Proyecto activo"]',{label:'Si <b>literal</b>'});
+  await page.locator('[data-draft-panel]').waitFor();
+  await page.fill('[aria-label="Título del borrador"]','Si <img> borrador');
+  await page.fill('[aria-label="Dataset de aprendizaje"]','ld-si');
+  await page.setInputFiles('[aria-label="Estructura exportada de Aprender"]',{name:'si.json',mimeType:'application/json',buffer:fs.readFileSync(new URL('../../contracts/fixtures/structure-revision/valid/si-diamond.json',import.meta.url))});
+  await page.getByRole('button',{name:'Promover a borrador',exact:true}).click();
+  await page.locator('[data-draft-metadata]').filter({hasText:'NOT_EVALUATED'}).waitFor();
+  assert.ok((await page.locator('[data-draft-metadata]').textContent()).includes('LEARNING_PROMOTION; finalidad: EXPLORATORY; procedencia: PARTIAL'));
+  assert.equal(await page.locator('[data-draft-panel] img').count(),0);
+  await page.getByRole('button',{name:'Cambiar finalidad a OPERATIONAL',exact:true}).click();
+  await page.locator('[data-draft-metadata]').filter({hasText:'finalidad: OPERATIONAL'}).waitFor();
+  await page.reload();await page.locator('[data-remote-group]').waitFor();
+  await page.selectOption('[aria-label="Proyecto activo"]',{label:'Si <b>literal</b>'});
+  await page.locator('[data-draft-metadata]').filter({hasText:'finalidad: OPERATIONAL'}).waitFor();
+  assert.ok(!requests.some(r=>r.method==='POST'&&/\/(validate|campaigns|plans|runs|submit|resume)(?:\/|$)/.test(r.url)),'Promotion and revision never submit calculations');
   await context.close();invoke('stop');
   const second=invoke('start','/scientific');
   assert.notEqual(second.instance_id,runtime.instance_id);

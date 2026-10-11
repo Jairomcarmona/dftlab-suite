@@ -11,8 +11,8 @@
     "structureWriterFormats": 6,
     "datasets": 16,
     "datasetBytes": 10678665,
-    "ownJavascriptFiles": 60,
-    "ownJavascriptLines": 11728,
+    "ownJavascriptFiles": 61,
+    "ownJavascriptLines": 11817,
     "exportSourceCalls": 52,
     "scientificModules": 25
   },
@@ -2338,9 +2338,14 @@
   ],
   "sourceFiles": [
     {
+      "file": "app/dftlab/static/js/application/draft-panel.js",
+      "bytes": 4016,
+      "sha256": "fc31dc5189ec9ebc10e1948fef026401eea7f73399e1a4d929a3de5072f010bf"
+    },
+    {
       "file": "app/dftlab/static/js/application/operative-shell.js",
-      "bytes": 4752,
-      "sha256": "a4a0ca15491ec0b177ab72b020058dfa7121c981588b9fbebe97d9d13f3a2ee3"
+      "bytes": 5233,
+      "sha256": "fd545efc09c56f87222e082c7cb747b5c365e3f8fde7021abd7117bb8250f8e1"
     },
     {
       "file": "app/dftlab/static/js/core/chart.js",
@@ -2409,8 +2414,8 @@
     },
     {
       "file": "app/dftlab/static/js/learn/promote.js",
-      "bytes": 1479,
-      "sha256": "1ae796fea241bd29c6e5d0769cc42a3965cff368af64921ef88a7462bee5acf7"
+      "bytes": 855,
+      "sha256": "08dd0e1711e05e96f0f3bd8460a1fe1cb31a9c4ab5d2dd398c8bd0ba4a0da34a"
     },
     {
       "file": "app/dftlab/static/js/main.js",
@@ -2434,8 +2439,8 @@
     },
     {
       "file": "app/dftlab/static/js/sdk/client.js",
-      "bytes": 3424,
-      "sha256": "482565fe68a3ab1adf6c74fba9c806127a38b19e769e659a43edbe3f5dc338ec"
+      "bytes": 4868,
+      "sha256": "11e4c49509020b47bd7c057b2bf99a10639c6f4d504f57f6ac9e17ba93a88ad0"
     },
     {
       "file": "app/dftlab/static/js/sdk/contracts.js",

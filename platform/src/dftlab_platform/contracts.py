@@ -6,6 +6,7 @@ opaque values: this module never computes or rewrites them.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 import hashlib
 from importlib.resources import files
 import json
@@ -87,12 +88,21 @@ class ContractError(ValueError):
         super().__init__("Document does not satisfy the platform contract")
 
 
+@lru_cache(maxsize=1)
+def _bundled_schema_bytes() -> tuple[bytes, ...]:
+    # Installed bundle is immutable for this process. Cache only original bytes,
+    # never a mutable schema/document supplied to a caller. Meta-schema checking
+    # belongs at bundle load, not at every record or HTTP error construction.
+    directory = files("dftlab_platform").joinpath("resources/contracts/schemas")
+    documents = tuple(p.read_bytes() for p in directory.iterdir() if p.name.endswith(".schema.json"))
+    for document in documents:
+        Draft202012Validator.check_schema(json.loads(document))
+    return documents
+
+
 class Contracts:
     def __init__(self):
-        directory = files("dftlab_platform").joinpath("resources/contracts/schemas")
-        schemas = [json.loads(p.read_text("utf-8")) for p in directory.iterdir() if p.name.endswith(".schema.json")]
-        for schema in schemas:
-            Draft202012Validator.check_schema(schema)
+        schemas = [json.loads(data) for data in _bundled_schema_bytes()]
         self._schemas = {s["$id"]: s for s in schemas}
         api = resource_json("openapi/dftlab-api.v1.json")
         self.openapi = api

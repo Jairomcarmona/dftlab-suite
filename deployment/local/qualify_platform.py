@@ -34,7 +34,13 @@ def main() -> int:
     uv = shutil.which("uv")
 
     def run(name: str, command: list[str], cwd: Path = ROOT) -> str:
-        result = subprocess.run(command, cwd=cwd, env=environment, text=True, encoding="utf-8", errors="replace", capture_output=True, timeout=180)
+        try:
+            result = subprocess.run(command, cwd=cwd, env=environment, text=True, encoding="utf-8", errors="replace", capture_output=True, timeout=180)
+        except subprocess.TimeoutExpired as error:
+            partial = b"".join(value if isinstance(value, bytes) else (value or "").encode("utf-8") for value in (error.stdout, error.stderr))
+            (output / f"{name}.log").write_bytes(partial)
+            report["commands"].append({"name": name, "exit_code": None, "timed_out": True, "log_sha256": hashlib.sha256(partial).hexdigest()})
+            raise RuntimeError(f"{name}: timeout after 180 seconds; see its partial log") from None
         text = result.stdout + result.stderr
         (output / f"{name}.log").write_text(text, encoding="utf-8")
         report["commands"].append({"name": name, "argv": command, "exit_code": result.returncode, "log_sha256": hashlib.sha256(text.encode()).hexdigest()})

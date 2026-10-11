@@ -35,10 +35,10 @@ class Problem(Exception):
         return {"type": "urn:dftlab:problem:" + self.code.lower().replace("_", "-"), "title": self.code.replace("_", " "), "status": self.status, "code": self.code, "request_id": request_id or identifier()}
 
 
-def envelope(schema: str, project: str, payload: dict, *, record_id: str | None = None) -> dict:
+def envelope(schema: str, project: str, payload: dict, *, record_id: str | None = None, contracts: Contracts | None = None) -> dict:
     value = {"schema_id": "dftlab." + schema, "schema_version": "0.1.0", "record_id": record_id or identifier(), "project_id": project, "producer": {"package": "dftlab-platform", "version": __version__.replace(".dev", "-dev."), "commit": None, "algorithm": None}, "created_at": now(), "payload": payload, "native_contract_refs": []}
     value["integrity"] = {"status": "VERIFIED", "canonicalization": "jcs-rfc8785", "algorithm": "sha-256", "digest": digest(value)}
-    Contracts().validate(schema, value)
+    (contracts or Contracts()).validate(schema, value)
     return value
 
 
