@@ -10,7 +10,8 @@ export function createViewer(host, {camera=[12,8,14]}={}){
   const ctl=new OrbitControls(cam, renderer.domElement); ctl.enableDamping=true;
   scene.add(new THREE.AmbientLight(0xffffff,.62)); const dl=new THREE.DirectionalLight(0xffffff,.62); dl.position.set(3,5,4); cam.add(dl); scene.add(cam);
   const root=new THREE.Group(); scene.add(root);
-  const labels=[];
+  const labels=[], shared=new WeakSet();
+  const inScene=o=>{ while(o){ if(o===scene) return true; o=o.parent; } return false; };
   cam.position.set(...camera); ctl.target.set(0,0,0); ctl.update();
   function resize(){ const r=host.getBoundingClientRect(); if(!r.width) return; renderer.setSize(r.width,r.height,false); renderer.domElement.style.width='100%'; renderer.domElement.style.height='100%'; cam.aspect=r.width/Math.max(1,r.height); cam.updateProjectionMatrix(); }
   const ro=new ResizeObserver(resize); ro.observe(host); resize();
@@ -21,14 +22,34 @@ export function createViewer(host, {camera=[12,8,14]}={}){
   const api={
     THREE, scene, cam, ctl, root, renderer,
     group(){ const g=new THREE.Group(); root.add(g); return g; },
-    clear(g){ while(g.children.length){ const c=g.children.pop(); c.geometry?.dispose?.(); } for (let i=labels.length-1;i>=0;i--) if(labels[i].group===g){ labels[i].el.remove(); labels.splice(i,1); } },
+    // Vacía un grupo y libera lo que el visor posee: geometrías, materiales y texturas de todos los
+    // descendientes (una vez cada uno aunque se compartan dentro del grupo). Lo marcado con share() no se libera.
+    clear(g){ const own=new Set(); while(g.children.length){ const c=g.children[g.children.length-1]; g.remove(c); collect(c,own); } disposeAll(own,shared);
+      for (let i=labels.length-1;i>=0;i--) if(labels[i].group===g || !inScene(labels[i].group)){ labels[i].el.remove(); labels.splice(i,1); } },
+    // Recurso (geometría, material, textura) que no pertenece al visor: clear()/destroy() no lo liberan.
+    share(r){ if (r) shared.add(r); return r; },
     label(g, text, v){ const d=document.createElement('div'); d.className='lbl3'; d.textContent=text; host.appendChild(d); labels.push({el:d,v:new THREE.Vector3(...v),group:g}); },
     view(pos, target=[0,0,0]){ cam.position.set(...pos); ctl.target.set(...target); ctl.update(); },
     color(name){ return new THREE.Color(css(name)); },
     snapshot(){ renderer.render(scene,cam); return renderer.domElement.toDataURL('image/png'); },
-    destroy(){ alive=false; ro.disconnect(); renderer.dispose(); host.innerHTML=''; }
+    // Idempotente: para el bucle, desconecta el observador y los controles, libera la escena y el
+    // contexto WebGL (si no, cada visor creado deja un contexto vivo hasta agotar el límite del navegador).
+    destroy(){ if(!alive) return; alive=false; ro.disconnect(); ctl.dispose(); api.clear(root);
+      for (const l of labels) l.el.remove(); labels.length=0;
+      renderer.dispose(); renderer.forceContextLoss(); host.innerHTML=''; }
   };
   return api;
+}
+
+// Recoge geometrías, materiales y texturas de un objeto y sus descendientes.
+export function collect(obj, out=new Set()){
+  obj.traverse(o=>{ if(o.geometry) out.add(o.geometry);
+    for (const m of [].concat(o.material||[])){ out.add(m); for (const v of Object.values(m)) if(v && v.isTexture) out.add(v); } });
+  return out;
+}
+// Libera cada recurso una vez, salvo los marcados como compartidos.
+export function disposeAll(resources, shared){
+  for (const r of resources) if(!shared?.has(r)) r.dispose?.();
 }
 
 // ---- structure: atoms {el, pos:[x,y,z], color, r}, bonds [[i,j]], cell 3x3 rows ----

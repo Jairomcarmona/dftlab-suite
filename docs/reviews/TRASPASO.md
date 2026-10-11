@@ -28,8 +28,7 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 
 ## Pendiente
 
-- **C/D:** hechos (ver «Bloques C y D»). **G:** hecho (ver «Bloque G»). **H:** sin empezar.
-- **H (heredado de B):** `ResizeObserver` por canvas en `core/chart.js`; liberación de geometrías/materiales/texturas en `core/three-view.js`; medir antes de introducir workers.
+- **C/D:** hechos (ver «Bloques C y D»). **G:** hecho (ver «Bloque G»). **H:** hecho (ver «Bloque H»).
 - **F:** alcance frontend verificado en `codex/bloque-f`, PR #5, CI Windows/Linux en verde. Queda fijar el entorno Python de regeneración de referencias. Ver entrega F al final de esta nota.
 - La auditoría de E cubre las rutas de datos importados; no se revisaron las 19 vistas línea a línea.
 
@@ -48,9 +47,17 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 - **Pendientes:** un tramo de un paso escrito a propósito en BandLines se trata como salto; BandPoints se une en orden; el `.fdf` no se usa para confirmar el camino.
 - **Siguiente paso:** **H**. Si H toca `drawBands`, conservar `segmentSeries(x, y, b.path.breaks)`.
 
+## Bloque H (recursos y rendimiento)
+
+- **Rama:** `claude/bloque-h-recursos-16vtfq`, desde `main` @ `b691f25`, rebasada sobre `0851268` (F, C/D y G fusionados). Commit de la corrección: `e5016aa`; PR #9 «H: liberación de recursos y medición de rendimiento». Tras fusionar, la punta de `main` es su commit de fusión (`git log -1 origin/main`).
+- **Cambios:** `core/three-view.js` (`clear` libera geometrías, materiales y texturas de todo el subárbol; `destroy` idempotente con `OrbitControls.dispose` y `forceContextLoss`; `share` para recursos no propios; `collect`/`disposeAll` exportadas); `core/chart.js` (un `ResizeObserver` común, `releaseChart`/`releaseCharts`); `main.js` (el ámbito de vista libera los gráficos); `views/bands.js` (nube k e isosuperficie); `views/postproc.js` (una línea: destruir el visor de geometría antes de reconstruir paneles).
+- **Pruebas:** `app/tests/ui/run_resources_tests.mjs` 15/0 (en `scripts/verify.mjs`); `app/tests/ui/browser_resources.mjs` en verde (36 fallos en `0851268`), añadida a `app/scripts/test-browser.mjs` con límite de 300 s (tarda ~85 s en Linux con SwiftShader). Sin regresiones: `verify.mjs` completo, `browser_regressions` 24/0, `browser_lifecycle` en verde; manifiesto `baseline-v1` 480 archivos correcto (Node 22.22.0, Linux, Playwright 1.56.1 local).
+- **Mediciones:** `docs/reviews/MEDICIONES_H.md` (`app/tests/perf/measure_views.mjs`, `measure_parsers.mjs`; no forman parte de CI). Montón JS estable (≈20 MB tras 4 recorridos). Kohn–Sham con Xe: tarea de ~2 s, la única por encima de 1 s; fonones ~0.3 s; isosuperficie de bandas ~0.25 s; lectores de archivos reales de hasta 5 MB en decenas de ms.
+- **Pendientes:** decidir un worker para `solveAtom` (Kohn–Sham) tras medir en el equipo de uso; no medido con GPU real, equipos modestos ni mallas de usuario mayores que 108³.
+
 ## Siguiente paso
 
-Bloque **G** hecho (ver «Bloque G»). Sigue **H**. Las vistas reciben `render(el, view)`: comprobar `view.alive` tras cada `await`.
+Bloques A–H hechos. Queda de F el entorno Python fijado (`codex/entorno-python`) y, si se confirma con mediciones en el equipo de uso, el worker de Kohn–Sham. Las vistas reciben `render(el, view)`: comprobar `view.alive` tras cada `await`.
 
 ## Reglas a respetar
 
