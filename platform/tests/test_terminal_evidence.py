@@ -11,7 +11,7 @@ from dftlab_platform.contracts import canonical
 from dftlab_platform.domain import Problem
 from dftlab_platform.runtime_probe import Observation, ProbeFailure
 from dftlab_platform.terminal_evidence import LocalTerminalSigner, SlurmTerminalCollector
-from test_slurm import Slurm
+import test_slurm
 
 
 @dataclass(frozen=True)
@@ -61,7 +61,7 @@ class History:
 
 class TerminalEvidence(unittest.TestCase):
     def setUp(self):
-        self.fixture = Slurm()
+        self.fixture = test_slurm.Slurm()
         self.fixture.setUp()
         self.port = self.fixture.prepare_identity()
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
