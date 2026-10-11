@@ -225,6 +225,58 @@ for (const c of ledgerVectors?.cases ?? []) {
   if (got !== c.expect) fail(`controller-ledger-rules ${c.name}: expected ${c.expect}, evaluator gives ${got}`);
 }
 
+// ADR-017 Adenda 2: veredicto de reanudación del controlador. La primera regla que aplica decide.
+// NOT_ESTABLISHED de check_resume es neutral; la base positiva es el checkpoint, el libro y la revalidación nativa.
+export function evaluateControllerResume(dag, c) {
+  const LAUNCHED = new Set(['REFERENCE', 'PERTURBATION']);
+  const sorted = (xs) => [...xs].sort();
+  const cr = c.check_resume;
+  const cid = c.checkpoint.loads ? c.checkpoint.campaign_digest : null;
+  const refuse = (reason, blocking = []) => ({ decision: 'REFUSE', reason, checkpoint_identity: cid, blocking: sorted(blocking), continuation: null });
+  if (cr === null) return refuse('RESUME_EVIDENCE_INVALID');
+  if (cr.native_status === 'IDENTITY_MISMATCH') return refuse('RESUME_INPUTS_CHANGED', cr.changed);
+  if (cr.native_status !== 'NOT_ESTABLISHED' || cr.assessment !== 'NOT_ESTABLISHED' || cr.changed.length
+    || cr.reusable_response_ids.length || cr.physical_equivalence !== 'NOT_ESTABLISHED') return refuse('RESUME_STATUS_UNRECOGNIZED');
+  if (!c.checkpoint.loads || (c.ledger.checkpoint_identity !== null && cid !== c.ledger.checkpoint_identity)) return refuse('CHECKPOINT_IDENTITY_MISMATCH');
+  const kind = new Map(dag.map((n) => [n.node_id, n.kind]));
+  const receipts = new Map(c.receipts.map((r) => [r.node_id, r]));
+  const settled = new Map(c.ledger.settled.map((s) => [s.node_id, s]));
+  const finished = new Set(c.ledger.finished_unsettled);
+  const launched = c.receipts.filter((r) => LAUNCHED.has(kind.get(r.node_id)));
+  const inconsistent = [
+    ...c.ledger.settled.filter((s) => receipts.get(s.node_id)?.state !== s.native_state || receipts.get(s.node_id)?.evidence_digest !== s.evidence_digest),
+    ...launched.filter((r) => !settled.has(r.node_id) && !finished.has(r.node_id)),
+  ].map((x) => x.node_id);
+  if (inconsistent.length) return refuse('LEDGER_CHECKPOINT_INCONSISTENT', inconsistent);
+  const failed = launched.filter((r) => r.state !== 'VALIDATED').map((r) => r.node_id);
+  if (failed.length) return refuse('SETTLED_FAILURE_PRESENT', failed);
+  const invalidated = new Set(c.receipts.filter((r) => r.state !== 'VALIDATED' || r.revalidation === 'INVALID').map((r) => r.node_id));
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const n of dag) if (!invalidated.has(n.node_id) && n.dependencies.some((d) => invalidated.has(d))) { invalidated.add(n.node_id); grew = true; }
+  }
+  const invalid = launched.filter((r) => r.revalidation !== 'RETAINED' || invalidated.has(r.node_id)).map((r) => r.node_id);
+  if (invalid.length) return refuse('SETTLED_EVIDENCE_INVALID', invalid);
+  return {
+    decision: 'CONTINUE', reason: 'TECHNICAL_CONTINUATION', checkpoint_identity: cid, blocking: [],
+    continuation: {
+      retained: sorted(launched.map((r) => r.node_id)),
+      recovered: sorted(launched.filter((r) => !settled.has(r.node_id)).map((r) => r.node_id)),
+      launch_pending: sorted(dag.filter((n) => LAUNCHED.has(n.kind) && !receipts.has(n.node_id)).map((n) => n.node_id)),
+    },
+  };
+}
+const resumeVectors = doc('fixtures/controller-resume-rules/cases.json');
+if (!resumeVectors?.cases?.length) fail('controller-resume-rules: missing conformance vectors');
+for (const c of resumeVectors?.cases ?? []) {
+  const got = evaluateControllerResume(resumeVectors.dag, c);
+  const { decision, reason, checkpoint_identity, blocking, continuation } = c.expect;
+  if (JSON.stringify(got) !== JSON.stringify({ decision, reason, checkpoint_identity, blocking, continuation })) {
+    fail(`controller-resume-rules ${c.name}: expected ${decision}/${reason}, evaluator gives ${JSON.stringify(got)}`);
+  }
+  if (JSON.stringify(c.expect.check_resume) !== JSON.stringify(c.check_resume)) fail(`controller-resume-rules ${c.name}: check_resume must be copied literally`);
+}
+
 for (const f of failures) console.error(`FAIL ${f}`);
 console.log(`contracts: ${schemaFiles.length} schemas, ${manifest.length} fixtures, ${opIds.size} API operations; ${failures.length} failures.`);
 if (failures.length) process.exit(1);

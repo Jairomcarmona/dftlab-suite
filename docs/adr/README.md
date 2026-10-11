@@ -20,6 +20,6 @@ Cada ADR tiene estado, contexto, decisión, alternativas, consecuencias, contrat
 | [014](ADR-014-python-reference-environment.md) | Entorno aislado para regenerar referencias | Implementado (bloque F) |
 | [015](ADR-015-hubbardflow-capa-bajo-qraft.md) | HubbardFlow como capa obligatoria bajo QRAFT | Aceptado |
 | [016](ADR-016-borradores-comandos-recuperacion.md) | Borradores, comandos tipados, revisión del agregado, recuperación y CSRF tras recarga | Aceptado |
-| [017](ADR-017-tarea-controladora-qraft-hf1.md) | Tarea controladora en QRAFT para HF-1: reserva, lanzamiento directo, cancelación y recuperación | Aceptado con Adenda 1 (#52); pendiente U-Q9/U-H7 |
+| [017](ADR-017-tarea-controladora-qraft-hf1.md) | Tarea controladora en QRAFT para HF-1: reserva, lanzamiento directo, cancelación y recuperación | Aceptado con Adendas 1 (#52) y 2 (HubbardFlow #43); pendiente U-Q9/U-H7 |
 
 Fuente: [propuesta maestra V2.1](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) §19.1. Resumen operativo en [ARQUITECTURA.md](../../ARQUITECTURA.md) §0.
