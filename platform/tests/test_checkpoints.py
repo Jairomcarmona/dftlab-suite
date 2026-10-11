@@ -223,6 +223,25 @@ class Checkpoints(unittest.TestCase):
         self.assertFalse(self.destination.exists())
         self.problem(self.store.restore, self.packet, checkpoint["integrity"]["digest"], self.packet/"inside")
 
+    def test_missing_empty_original_is_not_fabricated_but_open_empty_stage_is_restored(self):
+        _, record = self.upload(b"", "empty-original-upload")
+        self.artifacts._path("blobs", record["payload"]["artifact_id"]).unlink()
+        self.problem(self.create)
+        self.assertFalse((self.packet/"checkpoint.json").exists())
+        # Other live instance, before stage() has created its empty file.
+        root = self.root/"stage-before-create"
+        root.mkdir()
+        repo = SQLiteRepository(root/"state.sqlite")
+        owner = repo.ensure_principal("owner")
+        project = repo.create_project(owner, {"name": "stage", "idempotency_key": "empty-stage-project"})[0]["project_id"]
+        artifacts = LocalArtifactStore(root/"artifacts", SQLiteArtifactIndex(repo))
+        upload = artifacts.stage(owner, {"project_id": project, "kind": "siesta.output", "media_type": "application/octet-stream", "size_bytes": 0, "sha256": hashlib.sha256(b"").hexdigest(), "idempotency_key": "empty-staged-upload"})["upload_id"]
+        artifacts._path("staging", upload).unlink()
+        adapter = SQLiteCheckpointStore(repo, artifacts)
+        checkpoint = adapter.create(owner, project, root/"packet", self.engines)
+        restored = adapter.restore(root/"packet", checkpoint["integrity"]["digest"], root/"restored")
+        self.assertTrue(restored.artifacts.verify(owner, restored.artifacts.commit(owner, upload)["payload"]["artifact_id"]))
+
     def test_copy_failure_keeps_restored_gate_closed_and_originals_intact(self):
         _, record = self.upload()
         checkpoint = self.create()

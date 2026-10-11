@@ -227,7 +227,7 @@ class SQLiteCheckpointStore:
             entries = []
             for (category, key), value in sorted(expected.items()):
                 source = self.artifacts._path(category, key)
-                if not source.exists() and value["size_bytes"] != 0:
+                if not source.exists() and (value["size_bytes"] != 0 or value["sha256"] is not None):
                     raise Problem("PRECONDITION_FAILED")
                 sha = copy_original(source if source.exists() else None, files/category/key, value["size_bytes"], value["sha256"])
                 entries.append({**value, "sha256": sha})
@@ -258,6 +258,8 @@ class SQLiteCheckpointStore:
             checkpoint = self.contracts.validate("recovery-checkpoint", loads(stream.read(16*1024**2+1)))
         payload = checkpoint["payload"]
         if checkpoint["integrity"]["status"] != "VERIFIED" or checkpoint["integrity"]["digest"] != expected_digest or payload["db_snapshot"]["method"] != "SQLITE_BACKUP_API" or payload["journal_cursors"]:
+            raise Problem("PRECONDITION_FAILED")
+        if not {"qraft", "hubbardflow"} <= {pin["engine"] for pin in payload["engine_versions"]}:
             raise Problem("PRECONDITION_FAILED")
         objects = []
         for reference in (payload["db_snapshot"]["artifact"], payload["artifact_manifest"]):
