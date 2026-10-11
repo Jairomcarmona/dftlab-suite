@@ -372,7 +372,7 @@ Añadido el 2026-10-11 tras la [auditoría P5–P10](docs/reviews/2026-10-11-aud
 |---|---|
 | T-028 (G-05, G-06) | [Ficha de slabs](docs/scientific-protocols/SLABS.md) aceptada: celda con a3 ⟂ superficie, terminación, atom map, equivalencia de caras y restricciones ([WF-SURFACE](docs/scientific-protocols/WF-SURFACE.md) S-1) |
 | T-029 | [Ficha de presets](docs/scientific-protocols/PRESETS.md) aceptada; S-01, S-03 y S-07 esperan U-Q14, U-Q15 y U-Q16 y se muestran `DESIGNED` hasta entonces |
-| T-030 | El validador de QRAFT es el preflight autoritativo; el frontend lo replica con fixtures comunes |
+| T-030 | El validador de QRAFT es el preflight autoritativo; el frontend lo replica con fixtures comunes. [Ficha de preflight](docs/scientific-protocols/PREFLIGHT.md) aceptada y U-Q17 en QRAFT |
 | T-035 | [ADR-018](docs/adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) (aceptado, QRAFT), [WF-EOS](docs/scientific-protocols/WF-EOS.md) aceptada, U-Q10 y U-Q11 |
 | T-036 (fat bands y masas) | [WF-ELECTRONIC](docs/scientific-protocols/WF-ELECTRONIC.md) aceptada, U-Q13 |
 | T-040 | WF-SURFACE aceptada, U-Q12 y DL-02 con el caso de corrección dipolar |

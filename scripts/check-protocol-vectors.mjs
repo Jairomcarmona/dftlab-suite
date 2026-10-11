@@ -82,6 +82,34 @@ const runners = {
       return [`tipo desconocido ${c.kind}`];
     };
   },
+  async PREFLIGHT(doc) {
+    const o = await import(pathToFileURL(path.join(root, doc.oracle)));
+    const tol = doc.arithmetic_tolerance;
+    // Lo que SIESTA haría con el input: primer error (resolución o tipo, en orden de aparición) o el valor de la etiqueta.
+    const outcome = c => {
+      const r = o.resolve(c.files, c.root);
+      if (r.error) return { error: r.error };
+      const present = Object.values(r.values).sort((a, b) => r.labels.indexOf(a.label) - r.labels.indexOf(b.label));
+      for (const v of present) {
+        const name = Object.keys(doc.registry).find(k => o.normalizeLabel(k) === o.normalizeLabel(v.label));
+        if (!name || v.kind !== 'scalar') continue;
+        const s = o.scalarValue(r, v.label, doc.registry[name], doc.units);
+        if (s.error) return { error: s.error };
+      }
+      const s = o.scalarValue(r, c.label, doc.registry[c.label], doc.units);
+      return s.source === 'DEFAULT' ? { MeshCutoff_Ry: doc.registry[c.label].default, default: true } : { MeshCutoff_Ry: s.value, default: false };
+    };
+    return c => {
+      if (c.kind === 'scalar') return close(outcome(c), c.expect, tol, 'SIESTA');
+      if (c.kind === 'block') {
+        const r = o.resolve(c.files, c.root);
+        const b = r.values?.[o.normalizeLabel(c.label)];
+        return close(b ? { rows: b.rows.map(x => x.split(/\s+/).map(Number)) } : r, c.expect, tol, 'bloque');
+      }
+      if (c.kind === 'unused') return close(o.unusedLabels(o.resolve(c.files, c.root), c.fdf_log), c.expect, tol, 'no consultadas');
+      return [`tipo desconocido ${c.kind}`];
+    };
+  },
 };
 
 for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.cases.json')).sort()) {

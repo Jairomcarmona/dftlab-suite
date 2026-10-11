@@ -54,6 +54,24 @@ Mismo entorno, más `vibra` y `denchar` del mismo `siesta-env`. Pseudos `pbe/O.p
 | `MD.NumCGSteps` | `MD.NumCGSteps 0` y `2` | 5.4.2 lo usa como valor de `MD.Steps` (0 y 3 pasos CG) |
 | Denchar | `WriteDenchar T`, `WriteWaveFunctions T`, `Denchar.TypeOfRun 3D` sobre la caja completa, 60³ | Densidad en electrones/Bohr³; paso (Max − Min)/(N − 1); integral 8.0004 electrones |
 
+## Lectura FDF (T-030)
+
+Mismo entorno. H2O en caja de 10 Å, base SZ, un paso SCF; cada corrida cambia solo la parte del FDF indicada. Los archivos de entrada, el `fdf.*.log` o el stderr de cada corrida y los valores esperados están en [`preflight.cases.json`](../../scientific-protocols/vectors/preflight.cases.json), generado por `build_fdf_cases.py`.
+
+| Corrida | Entrada | Resultado de SIESTA |
+|---|---|---|
+| `dup`, `spell`, `lowcase` | `MeshCutoff` repetida o escrita como `mesh_cutoff`, `meshcutoff … RY` | Gana la primera aparición; etiquetas y unidades sin distinguir mayúsculas, `.`, `_` ni `-` |
+| `inc`, `inc2` | `%include extra.fdf` antes y después de la definición | 150 Ry (el incluido) y 250 Ry (la raíz) |
+| `red` | `MeshCutoff < mc.val` (solo el valor) y `< mc.fdf` (con la etiqueta) | «Label MeshCutoff not found in mc.val»; con `mc.fdf`, 120 Ry |
+| `blk` | `%block LatticeVectors < lat.dat` | Celda del archivo |
+| `nounit`, `badunit`, `ev`, `units` | `100`, `100 Ang`, `1360.57 eV`, `1.2d2 ry` | «no unit specified», «Incompatible dimensions», 100.0000505 Ry, 120 Ry |
+| `intreal`, `realbad` | `MaxSCFIterations 2.0`, `DM.Tolerance abc` | «no integer value», «no real value for DM.Tolerance» |
+| `typo` | `MeshCutof 300 Ry` | Default de 300 Ry (`# default value` en `fdf.*.log`); la etiqueta no aparece en `fdf.*.log` |
+| `comment`, `bang`, `semi` | `#`, `!`, `;` tras el valor | Valor escrito |
+| `cyc`, `miss` | Include cíclico y de archivo inexistente | «Too many nested fdf files», «Cannot open» |
+
+Todas las corridas que abortaron terminaron con código de salida 0, sin `Job completed` ni `0_NORMAL_EXIT`.
+
 ## Límites
 
 No se ejecutaron `fat`, `macroave` ni `fcbuild`; solo se comprobó que están en el entorno. `vibra` y `denchar` se ejecutaron para los presets. El caso de superficie es simétrico, neutro y sin corrección dipolar. Las corridas no se suben a Git; se reproducen con estos scripts.
