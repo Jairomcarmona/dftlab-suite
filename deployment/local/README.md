@@ -1,14 +1,15 @@
-# Instalación local de la base de platform/ (X2)
+# Instalación local de platform/ (Ola 2)
 
-Esto acredita empaquetado, importación y ciclo de un proceso vacío. No hay API HTTP, cálculo real, DAG de plataforma, persistencia, SQLite, sesión, CSRF, SSH ni workers. T-057 empieza con una instalación de wheel fuera del checkout; la instalación operativa completa requiere las entregas posteriores. HubbardFlow será obligatorio bajo QRAFT en el runtime operativo conforme al ADR-015, conservando un paquete externo fijado, pero aún no hay integración científica.
+La distribución instalada contiene API /api/v1, identidad/proyectos, operaciones y artefactos SQLite, sesión/CSRF, cliente operativo y procesador independiente. Conserva el HTML portátil offline. No acredita cálculo real ni SSH/HPC; HubbardFlow es obligatorio bajo QRAFT y sin restricción de licencia (ADR-015). T-057 queda calificado para esta base instalada, no para la integración científica de Ola 3.
 
 ## Compilar y calificar desde fuente
 
-Usar CPython **3.12.10** y uv **0.11.14**. Los requisitos del build están fijados en `platform/uv.lock`, separado del entorno de referencias científicas F.
+Usar Node **24.18.0**, CPython **3.12.10** y uv **0.11.14**. Desde una copia limpia, en `app/` ejecutar `npm ci`, `npm run build` y `npm run browser:install`; volver a la raíz. Los requisitos del build están fijados en `platform/uv.lock`, separado del entorno de referencias científicas F. Python exige el manifest de activos generado; no depende de un dist versionado.
 
 ```powershell
 uv python install 3.12.10
 uv sync --project platform --locked --python 3.12.10
+$env:REQUIRE_OPERATIVE_BROWSER = '1'
 uv run --project platform --locked python -X utf8 deployment/local/qualify_platform.py
 ```
 
@@ -18,6 +19,7 @@ En WSL usar **un entorno diferente del `.venv` nativo Windows**:
 
 ```bash
 export UV_PROJECT_ENVIRONMENT="$PWD/runtime/platform-venv-wsl"
+export REQUIRE_OPERATIVE_BROWSER=1
 uv sync --project platform --locked --python 3.12.10
 uv run --project platform --locked python -X utf8 deployment/local/qualify_platform.py --output runtime/platform-qualification-wsl
 ```
@@ -26,13 +28,14 @@ Si el worktree fue creado por Git de Windows, sus rutas `.git` pueden no ser leg
 
 ## Instalar el artefacto sin checkout ni PYTHONPATH
 
-Descargar el wheel del artefacto CI y su informe, o copiar el generado arriba. Verificar su SHA-256 contra el `report.json` de **esa ejecución y target**. El wheel no depende de `app/` ni de una copia de fuente.
+Descargar wheel, `runtime-requirements.txt` y report.json del artefacto CI, o copiar los generados arriba. Verificar ambos SHA-256 contra el informe de **esa ejecución y target**. El wheel incorpora contratos y activos operativos; no necesita Node, app/ ni checkout en el equipo consumidor. Instalar primero las dependencias con hashes (requiere acceso al índice Python, o un wheelhouse previamente preparado) y después el wheel local sin resolver dependencias.
 
 Windows PowerShell, desde una carpeta ajena al repositorio:
 
 ```powershell
 Get-FileHash .\dftlab_platform-0.1.0.dev0-py3-none-any.whl -Algorithm SHA256
 uv venv --python 3.12.10 .venv
+uv pip install --python .venv\Scripts\python.exe --require-hashes -r .\runtime-requirements.txt
 uv pip install --python .venv\Scripts\python.exe --no-index --no-deps .\dftlab_platform-0.1.0.dev0-py3-none-any.whl
 .\.venv\Scripts\dftlab-platform.exe start --state-dir .\launcher-state
 .\.venv\Scripts\dftlab-platform.exe status --state-dir .\launcher-state
@@ -44,13 +47,14 @@ Linux/WSL, también fuera del repositorio:
 ```bash
 sha256sum dftlab_platform-0.1.0.dev0-py3-none-any.whl
 uv venv --python 3.12.10 .venv
+uv pip install --python .venv/bin/python --require-hashes -r ./runtime-requirements.txt
 uv pip install --python .venv/bin/python --no-index --no-deps ./dftlab_platform-0.1.0.dev0-py3-none-any.whl
 .venv/bin/dftlab-platform start --state-dir ./launcher-state
 .venv/bin/dftlab-platform status --state-dir ./launcher-state
 .venv/bin/dftlab-platform stop --state-dir ./launcher-state
 ```
 
-El resultado JSON siempre incluye `scope: process-placeholder`. No hay `/health` de un servicio ni endpoints de negocio. Una reserva abandonada no se roba: `start` falla y `status` informa starting/unknown; la recuperación operativa se diseñará en X6/X7. No borrar archivos de una instancia mientras pueda estar viva ni reutilizar este lease para jobs. El esqueleto no mantiene autoridad de ejecución.
+El resultado JSON incluye `scope: local-api` y una URL loopback sin credenciales. Abrirla, o usar `start --open`, y seleccionar access.json del directorio de estado privado antes de 120 s. La URL sirve el cliente y /api/v1; el puerto y --base-path son configurables por el launcher. Una reserva abandonada no se roba: start falla; recover-local exige locks de API/procesador libres y conserva DB/artefactos. El lease local no concede autoridad sobre jobs remotos. Reiniciar invalida sesiones y emite un bootstrap nuevo; tras recargar el navegador la cookie permite leer, pero editar exige acceso nuevo porque CSRF no se persiste.
 
 ## T-010: paquetes de motores realmente instalados
 

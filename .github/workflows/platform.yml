@@ -21,7 +21,7 @@ jobs:
       matrix:
         os: [windows-2022, ubuntu-24.04]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -30,12 +30,23 @@ jobs:
         with:
           version: '0.11.14'
           enable-cache: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.18.0'
+      - name: Build both frontend targets and install pinned browser
+        working-directory: app
+        run: |
+          npm ci
+          npm run build
+          npx playwright install --with-deps chromium
       - name: Install pinned Python and locked build dependencies
         run: |
           uv python install 3.12.10
           uv sync --project platform --locked --python 3.12.10
       - name: Build and qualify an installed wheel outside the checkout
         run: uv run --project platform --locked python -X utf8 deployment/local/qualify_platform.py
+        env:
+          REQUIRE_OPERATIVE_BROWSER: '1'
       - name: Validate authoritative schemas, fixtures and OpenAPI
         run: uv run --project platform --locked python -X utf8 contracts/scripts/validate_fixtures.py
       - name: Check source preservation

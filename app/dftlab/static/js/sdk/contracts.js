@@ -49,6 +49,13 @@ export async function verifyEnvelope(name,value){
     if(await digest(unsigned)!==value.integrity.digest)throw new ContractError([{pointer:'/integrity/digest',code:'PRECONDITION_FAILED',message:'Envelope digest mismatch'}]);
   }return value;
 }
+export function validateApi(operation,status,value){
+  const validator=validators['api_'+operation+'_'+status];
+  if(typeof validator!=='function')throw new Error('Unknown API contract');
+  try{jsonTree(value);}catch{throw new ContractError([{pointer:'',code:'VALIDATION_FAILED',message:'Invalid JSON value'}]);}
+  if(!validator(value))throw new ContractError(validator.errors.slice(0,32).map(e=>({pointer:e.instancePath,code:'VALIDATION_FAILED',message:`Schema rule: ${e.keyword}`})));
+  return value;
+}
 export function consumerState(schema,value,valid=true){
   if(!valid)return {display_state:'UNKNOWN',is_pass:false,is_certified:false};
   const p=value.payload??value.body??{};

@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {createClient} from '../../dftlab/static/js/sdk/client.js';
+import {promoteStructure} from '../../dftlab/static/js/learn/promote.js';
+import {createViewScope,mountView} from '../../dftlab/static/js/core/lifecycle.js';
+
+const origin='http://127.0.0.1:12345',baseUrl=origin+'/lab/api/v1/';
+const calls=[];
+const fetcher=async(url,options)=>{
+  calls.push({url:String(url),options});
+  const body=String(url).endsWith('/session')?{principal_id:'usr-alice',csrf_token:'c'.repeat(48),expires_at:'2026-10-11T05:00:00Z'}:String(url).endsWith('/health')?{status:'OK',api_version:'0.1.1'}:[];
+  return {ok:true,status:options.method==='DELETE'?204:201,json:async()=>body};
+};
+assert.throws(()=>createClient({baseUrl:'https://elsewhere/api/v1/',origin,fetcher}));
+const client=createClient({baseUrl,origin,fetcher});
+await assert.rejects(()=>client.createProject('Si',crypto.randomUUID()),/fresh/);
+assert.equal(calls.length,0);
+await client.login('b'.repeat(48));await client.handshake();await client.logout();
+assert.equal(calls[0].options.headers['X-CSRF-Token'],undefined);
+assert.equal(JSON.parse(calls[0].options.body).bootstrap_token,'b'.repeat(48));
+assert.equal(calls.at(-1).options.headers['X-CSRF-Token'],'c'.repeat(48));
+assert.ok(calls.every(c=>c.url.startsWith(baseUrl)&&!c.url.includes('bbbb')&&c.options.credentials==='same-origin'));
+assert.equal(client.canEdit,false);assert.equal(client.principalId,null);
+const fixture=JSON.parse(fs.readFileSync(new URL('../../../contracts/fixtures/structure-revision/valid/si-diamond.json',import.meta.url)));
+const original=JSON.stringify(fixture);let seq=0;
+const first=promoteStructure({structure:fixture,projectId:'prj-real',learningDatasetId:'ld-si',physicalModelRef:'rec-model',numericalPolicyRef:'rec-policy',now:'2026-10-11T05:00:00Z',id:()=>String(++seq)});
+const second=promoteStructure({structure:fixture,projectId:'prj-real',learningDatasetId:'ld-si',physicalModelRef:'rec-model',numericalPolicyRef:'rec-policy',id:()=>String(++seq)});
+assert.notEqual(first.intent.payload.draft_id,second.intent.payload.draft_id);
+assert.notEqual(first.structure.payload.structure_id,fixture.payload.structure_id);
+assert.equal(first.intent.payload.purpose,'EXPLORATORY');assert.equal(first.structure.integrity.status,'UNVERIFIED');
+assert.equal(first.structure.project_id,'prj-real');assert.equal(JSON.stringify(fixture),original);
+assert.deepEqual(first.structure.payload.sites,fixture.payload.sites);
+assert.equal(calls.length,4,'Promotion sends no request');
+let release,mounted=0;
+const scope=createViewScope();const mounting=mountView({load:()=>new Promise(resolve=>{release=resolve;})},{},scope);
+scope.dispose();release({mount:()=>{mounted++;}});await mounting;assert.equal(mounted,0,'Late lazy module cannot mount resources');
+console.log('SDK origin/CSRF/bootstrap, promotion isolation and stale lazy import passed.');

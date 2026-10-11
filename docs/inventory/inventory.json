@@ -11,8 +11,8 @@
     "structureWriterFormats": 6,
     "datasets": 16,
     "datasetBytes": 10678665,
-    "ownJavascriptFiles": 57,
-    "ownJavascriptLines": 11611,
+    "ownJavascriptFiles": 60,
+    "ownJavascriptLines": 11728,
     "exportSourceCalls": 52,
     "scientificModules": 25
   },
@@ -23,7 +23,7 @@
       "chapter": null,
       "title": "Inicio",
       "file": "app/dftlab/static/js/views/home.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -36,7 +36,7 @@
       "chapter": "1",
       "title": "Kohn–Sham",
       "file": "app/dftlab/static/js/views/ks.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -49,7 +49,7 @@
       "chapter": "2",
       "title": "Pseudopotenciales",
       "file": "app/dftlab/static/js/views/pseudo.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -62,7 +62,7 @@
       "chapter": "3",
       "title": "Intercambio y correlación",
       "file": "app/dftlab/static/js/views/xc.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -75,7 +75,7 @@
       "chapter": "4",
       "title": "Base, malla y puntos k",
       "file": "app/dftlab/static/js/views/basis.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -88,7 +88,7 @@
       "chapter": "5",
       "title": "Ciclo autoconsistente",
       "file": "app/dftlab/static/js/views/scf.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -101,7 +101,7 @@
       "chapter": "6",
       "title": "Diagonalización y orden N",
       "file": "app/dftlab/static/js/views/solvers.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -114,7 +114,7 @@
       "chapter": "7",
       "title": "Bandas, DOS y óptica",
       "file": "app/dftlab/static/js/views/bands.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -127,7 +127,7 @@
       "chapter": "8",
       "title": "DFT+U",
       "file": "app/dftlab/static/js/views/dftu.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -140,7 +140,7 @@
       "chapter": "9",
       "title": "Densidad y cargas",
       "file": "app/dftlab/static/js/views/density.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -153,7 +153,7 @@
       "chapter": "10",
       "title": "Potencial y función trabajo",
       "file": "app/dftlab/static/js/views/potential.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -166,7 +166,7 @@
       "chapter": "11",
       "title": "Espín y magnetismo",
       "file": "app/dftlab/static/js/views/spin.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -179,7 +179,7 @@
       "chapter": "12",
       "title": "Lectura anotada del .out",
       "file": "app/dftlab/static/js/views/lectura.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -192,7 +192,7 @@
       "chapter": "13",
       "title": "Fonones",
       "file": "app/dftlab/static/js/views/phonons.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -205,7 +205,7 @@
       "chapter": "14",
       "title": "Fuerzas, estrés y relajación",
       "file": "app/dftlab/static/js/views/forces.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -218,7 +218,7 @@
       "chapter": "15",
       "title": "Más allá de DFT",
       "file": "app/dftlab/static/js/views/beyond.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs"
@@ -231,7 +231,7 @@
       "chapter": null,
       "title": "Estructura y entrada",
       "file": "app/dftlab/static/js/views/estructura.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs",
@@ -246,7 +246,7 @@
       "chapter": null,
       "title": "Calculadoras",
       "file": "app/dftlab/static/js/views/calc.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs",
@@ -261,7 +261,7 @@
       "chapter": null,
       "title": "Mis archivos de SIESTA",
       "file": "app/dftlab/static/js/views/postproc.js",
-      "consumer": "main.js → registry.VIEWS → render(el, view)",
+      "consumer": "main.js → registry.VIEWS → load() → mount(el, view)",
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs",
         "app/tests/ui/browser_resources.mjs",
@@ -2338,6 +2338,11 @@
   ],
   "sourceFiles": [
     {
+      "file": "app/dftlab/static/js/application/operative-shell.js",
+      "bytes": 4752,
+      "sha256": "a4a0ca15491ec0b177ab72b020058dfa7121c981588b9fbebe97d9d13f3a2ee3"
+    },
+    {
       "file": "app/dftlab/static/js/core/chart.js",
       "bytes": 12156,
       "sha256": "08644f3f5698f9d2a553b623ebba597e0e0477f6eebd6c0dcbfb3e80d6893a64"
@@ -2349,8 +2354,8 @@
     },
     {
       "file": "app/dftlab/static/js/core/lifecycle.js",
-      "bytes": 4261,
-      "sha256": "a32e1e99b4e8800652256ee51dcb4fd2495b58a655a81a98f989ca750b43815a"
+      "bytes": 4427,
+      "sha256": "605cdfd63d513dd8d01275722232c953011c8084d42f787e80fed4471a4ae57c"
     },
     {
       "file": "app/dftlab/static/js/core/scene.js",
@@ -2403,9 +2408,14 @@
       "sha256": "bdeafab89c0f881703ebe4ef0ff4b6eb42a0d0bff4a3020cc47d2b5413615952"
     },
     {
+      "file": "app/dftlab/static/js/learn/promote.js",
+      "bytes": 1479,
+      "sha256": "1ae796fea241bd29c6e5d0769cc42a3965cff368af64921ef88a7462bee5acf7"
+    },
+    {
       "file": "app/dftlab/static/js/main.js",
-      "bytes": 3328,
-      "sha256": "3d5df0386edef6f788fa44fe12441b569b4988b20dbac8b400ae098b5df4a26b"
+      "bytes": 3489,
+      "sha256": "308dd108468d55ed65d23fc0c05e699a4c9ea72f40cd1101d8f205fdeaf234af"
     },
     {
       "file": "app/dftlab/static/js/physics/atom.js",
@@ -2423,14 +2433,19 @@
       "sha256": "2d027e4fa9ff86620c8d402329173421cc6cbb09cb0575cabfcccdff722677c1"
     },
     {
+      "file": "app/dftlab/static/js/sdk/client.js",
+      "bytes": 3424,
+      "sha256": "482565fe68a3ab1adf6c74fba9c806127a38b19e769e659a43edbe3f5dc338ec"
+    },
+    {
       "file": "app/dftlab/static/js/sdk/contracts.js",
-      "bytes": 4216,
-      "sha256": "d287ca2817e10773736b2716f5a7b1b878d6d361479e2383e208edbbd174273c"
+      "bytes": 4721,
+      "sha256": "35d79d3c03af0f58864402db7bb57ef7494c6c09f5fcce6ad4f6073ae297adac"
     },
     {
       "file": "app/dftlab/static/js/sdk/validators.generated.js",
-      "bytes": 754900,
-      "sha256": "e58c529abb5f3a8b56d97c497082dac3b1e634df263984d0945296cded591ef1"
+      "bytes": 1084495,
+      "sha256": "f4353671f7bc176d739c82d757f67ca16b5a57dd02db5135e78a5d91598727cf"
     },
     {
       "file": "app/dftlab/static/js/siesta/bands.js",
@@ -2599,8 +2614,8 @@
     },
     {
       "file": "app/dftlab/static/js/views/registry.js",
-      "bytes": 4716,
-      "sha256": "fbee118e6b652fb50a06f464912780cd684fddbbff07540f6fb4ea38da5b5f19"
+      "bytes": 4039,
+      "sha256": "83279032b3c0a23f217f1e229f62cfaa6230e4ecce56731406122bef1990daa7"
     },
     {
       "file": "app/dftlab/static/js/views/scf.js",
@@ -2624,8 +2639,8 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 1671,
-      "sha256": "6f6fe2f971273232b05f6b9385cd14bc2ba1f2adc2fd10c9f4f849cbdeed7b84"
+      "bytes": 1752,
+      "sha256": "65b48c618e2f6fcde2d60079ccfcb74a1b11cad5d25669358a3ecb82893dba03"
     },
     {
       "file": "app/scripts/test-browser.mjs",

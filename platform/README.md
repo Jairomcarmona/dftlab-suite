@@ -9,7 +9,7 @@ inline de OpenAPI sin descargar referencias. JCS solo se aplica a envelopes
 de plataforma y requests; los digests nativos se conservan sin recalcular.
 El estado de un consumidor no concede certificación científica ni ejecución.
 
-Desde la raíz, `uv sync --project platform --locked` y
+Tras `npm ci` y `npm run build` en app/, desde la raíz `uv sync --project platform --locked` y
 `uv run --project platform --locked python deployment/local/qualify_platform.py`
 construyen e instalan en un entorno temporal externo. Las dependencias de ese
 entorno se exportan del lock y se exigen sus hashes. La puerta ejecuta todas
@@ -101,6 +101,39 @@ sin restricción de licencia (ADR-015). Terminal/WS no se ofrecen hasta X9.
 El launcher sigue X7b antes de usar el servicio instalado con acceso local.
 
 ## Runtime instalado (Ola 2, X7b)
+
+## Distribución operativa y portátil (Ola 2, X8)
+
+Desde una copia limpia: instalar Node 24.18.0; en `app/`, `npm ci` y
+`npm run build`. Después, desde la raíz, `uv sync --project platform --locked
+--python 3.12.10` y la calificación instalada documentada en deployment/local/.
+El build de Python falla si faltan los activos operativos; el sdist los conserva
+para reconstruirse sin Node ni checkout. No se versiona dist/.
+
+Un único frontend produce los HTML portátiles offline y `dist/operative/` ESM
+con módulos por demanda. Wheel/sdist solo incluyen los archivos declarados por
+el manifest SHA-256; el servicio verifica sus hashes y sirve esa allowlist,
+incluido un base path como /lab/. No sirve source, manifest, tokens, DB ni chunks
+viejos. CSP permite WASM y prohíbe eval JavaScript/scripts inline; se conserva
+style-src unsafe-inline por los estilos actuales, sin ampliar script-src.
+
+`start --open` abre el cliente; seleccionar access.json del directorio privado
+antes de 120 s. La sesión habilita Proyectos y campañas tras handshake, con
+edición por API /api/v1 e idempotencia. No hay controles de ejecución mientras
+capabilities no acrediten motores. Recargar conserva lectura por cookie pero
+no persiste CSRF: reiniciar el launcher emite un acceso nuevo para editar.
+
+La costura pura `learn/promote.js` exporta nueva StructureRevision/RunIntent,
+IDs nuevos, EXPLORATORY y procedencia learning separada, sin mutar dataset,
+certificar resultados ni enviar requests. La persistencia/interfaz de promoción
+T-014 está bloqueada por la ausencia de un contrato de creación de drafts en C3;
+no se inventa otro endpoint ni se considera completo ese ticket.
+
+La CI califica el wheel fuera del checkout y, en navegador real Windows/Linux,
+las 19 vistas, módulos lazy, CSP, autenticación, proyectos, reinicio y base paths.
+Las pruebas portátiles recorren también las 19 vistas sin servicio ni red.
+
+## Uso del runtime instalado
 
 `dftlab-platform start|status|stop --state-dir <directorio-local>` inicia la
 API loopback en puerto libre y un procesador durable separado. Admite
