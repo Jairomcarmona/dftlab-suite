@@ -480,3 +480,10 @@ Los 15 cambios del inventario C2 quedan trazados por grupos coherentes. Los PR u
 - **Pendiente bloque1/P4:** implementar Adenda1 normativa y resolver HubbardFlow#43 en ADR/fixtures antes de la ruta dependiente de resume; completar U-Q9 en el mismo PR11 con tests1–7 instalados Windows/WSL, U-H7 en PR propio, fijar ambos commits/wheels y sustituir el fallo explícito HF-1 solo tras esas entregas. Calificar HF-1 real WSL con cancelación durante SCF y resume tras caída, RuntimeProbe fresco y originales conservados; capability como máximo CONTRACT_TESTED hasta entonces. P4, gen2/finalización y C3#30/#35/#44/#47 siguen abiertos en sus consumidores; sin admisión EXPLORATORY.
 - **Pendiente bloque2:** espera P4 cerrado; no iniciado.
 - **Pendiente bloque3:** espera P6 cerrado; no iniciado. Siguiente paso dependiente: implementar U-Q9/U-H7 según Adenda1 y obtener el mapeo de resume de issue43; Codex no modifica contratos/ADR.
+
+## Auditoría P5–P10 (Claude)
+
+- **Rama:** `claude/project-thread-15so4f`, desde `main` @ `9710b9e`. Solo documentos; sin código, sin tocar QRAFT, HubbardFlow ni ramas de Codex.
+- **Cambios:** [auditoría](2026-10-11-auditoria-p5-p10.md) con 17 hallazgos y evidencia de SIESTA 5.4.2 en `evidencia-p5-p10/`; [ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) propuesto; fichas `docs/scientific-protocols/` (WF-EOS, WF-ELECTRONIC, WF-SURFACE); U-Q10…U-Q13 en el inventario de QRAFT; plan §19 con la compuerta de diseño y dependencias de entrada.
+- **Pendiente de Manuel:** decidir ADR-018 (recomendada la opción A, QRAFT) y adoptar o no la compuerta de §19. DL-02 sigue ABIERTA en `backlog_gates.json`; la auditoría añade evidencia sin cambiar ese archivo.
+- **Siguiente paso:** con ADR-018 decidido, aceptar las fichas y crear sus vectores antes de asignar T-035, T-036 fino y T-040.

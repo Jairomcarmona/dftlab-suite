@@ -1,0 +1,11 @@
+# Fichas de entrada de protocolos científicos
+
+Una ficha fija las decisiones de un workflow científico **antes** de escribir código: geometría, opciones de SIESTA, cantidad que se mide, gates y vectores de prueba. No fija tolerancias, que van en la política versionada del protocolo ([ADR-009](../adr/ADR-009-politicas-gates-cientificos.md)). Una ficha aceptada es la entrada de Codex y del revisor ([plan §19](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md#19-auditoría-p5p10-y-compuerta-de-diseño)).
+
+| Ficha | Ticket | Estado |
+|---|---|---|
+| [WF-EOS](WF-EOS.md) | T-035 | Borrador; depende de ADR-018 |
+| [WF-ELECTRONIC fino](WF-ELECTRONIC.md) | T-036 | Borrador; depende de ADR-018 |
+| [WF-SURFACE](WF-SURFACE.md) | T-040 | Borrador; depende de ADR-018 y de DL-02 |
+
+WF-HUBBARD no tiene ficha aquí: su protocolo es de HubbardFlow y su ejecución está en [ADR-017](../adr/ADR-017-tarea-controladora-qraft-hf1.md).
