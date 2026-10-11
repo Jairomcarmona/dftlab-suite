@@ -40,3 +40,6 @@ stores.subscribe(()=>{ if (scope?.context.project) route(); });
 window.addEventListener('hashchange', route);
 $('#menuBtn').onclick=()=>{ side.classList.add('open'); const s=document.createElement('div'); s.className='scrim'; s.onclick=()=>{ side.classList.remove('open'); s.remove(); }; document.body.appendChild(s); };
 route();
+if (typeof __DFTLAB_OPERATIVE__ !== 'undefined' && __DFTLAB_OPERATIVE__) {
+  import('./application/operative-shell.js').then(module=>module.attach({stores}));
+}

@@ -72,6 +72,12 @@ def main() -> int:
                 if hashlib.sha256(archive.read("dftlab_platform/resources/contracts/" + relative)).hexdigest() != expected:
                     raise RuntimeError("Bundled contracts differ from authoritative sources")
             report["bundled_contract_sha256"] = bundled
+            manifest = json.loads(archive.read("dftlab_platform/resources/operative/manifest.json"))
+            for entry in manifest["files"]:
+                data = archive.read("dftlab_platform/resources/operative/"+entry["path"])
+                if len(data) != entry["size_bytes"] or hashlib.sha256(data).hexdigest() != entry["sha256"]:
+                    raise RuntimeError("Bundled operative asset differs from manifest")
+            report["bundled_operative_manifest"] = manifest
         for artifact in sorted(build.iterdir()):
             report["artifacts"].append({"file": artifact.name, "bytes": artifact.stat().st_size, "sha256": hashlib.sha256(artifact.read_bytes()).hexdigest()})
         with tempfile.TemporaryDirectory(prefix="dftlab-installed-") as temporary:
@@ -90,6 +96,7 @@ def main() -> int:
             python = venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
             requirements = isolated / "requirements.txt"
             run("runtime-lock-export", [uv, "export", "--project", str(ROOT / "platform"), "--locked", "--no-dev", "--no-emit-project", "--format", "requirements-txt", "--output-file", str(requirements)])
+            shutil.copyfile(requirements, build / "runtime-requirements.txt")
             run("runtime-dependencies", [uv, "pip", "install", "--python", str(python), "--require-hashes", "-r", str(requirements)], cwd=isolated)
             run("wheel-install", [uv, "pip", "install", "--python", str(python), "--no-index", "--no-deps", str(wheel)], cwd=isolated)
             shutil.copytree(ROOT / "platform" / "tests", isolated / "tests", ignore=shutil.ignore_patterns("__pycache__"))
@@ -97,11 +104,18 @@ def main() -> int:
             # test directory is added, never the platform source checkout.
             script = "import unittest,sys; suite=unittest.defaultTestLoader.discover(sys.argv[1]); result=unittest.TextTestRunner(verbosity=2).run(suite); sys.exit(not result.wasSuccessful())"
             run("installed-tests", [str(python), "-I", "-c", script, str(isolated / "tests")], cwd=isolated)
+            if environment.get("REQUIRE_OPERATIVE_BROWSER") == "1":
+                node = shutil.which("node")
+                if not node:
+                    raise RuntimeError("Mandatory operative browser requires pinned Node")
+                run("operative-browser", [node, str(ROOT / "deployment/local/qualify_operative.mjs"), str(python), str(isolated / "browser-state")], cwd=isolated)
+                report["operative_browser_passed"] = True
         after = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in source_paths}
         report["authoritative_sources_unchanged"] = before == after
         if before != after:
             raise RuntimeError("Platform sources changed during qualification")
         report["installed_without_checkout_or_pythonpath"] = True
+        report["artifacts"] = [{"file": artifact.name, "bytes": artifact.stat().st_size, "sha256": hashlib.sha256(artifact.read_bytes()).hexdigest()} for artifact in sorted(build.iterdir())]
         report["scope"] = "installed platform and bundled contracts; no scientific/HPC qualification"
         report["success"] = True
     except (OSError, RuntimeError, subprocess.TimeoutExpired) as error:

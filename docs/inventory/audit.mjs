@@ -18,11 +18,10 @@ function files(relative) {
 }
 const code = files(base.slice(0, -1)).filter(f => f.endsWith('.js'));
 const registry = read(base + 'views/registry.js');
-const modules = Object.fromEntries([...registry.matchAll(/import \* as (\w+) from '\.\/(.+?)';/g)].map(m => [m[1], base + 'views/' + m[2]]));
-const views = [...registry.matchAll(/\{id:'([^']+)', group:'([^']+)', num:'([^']*)', title:'([^']+)', render:(\w+)\.mount/g)].map(m => {
-  const file = modules[m[5]];
+const views = [...registry.matchAll(/\{id:'([^']+)', group:'([^']+)', num:'([^']*)', title:'([^']+)', load:\(\)=>import\('\.\/(.+?)'\)/g)].map(m => {
+  const file = base + 'views/' + m[5];
   assert(file, `Unmapped view ${m[1]}`);
-  return {id: m[1], group: m[2], chapter: m[3] || null, title: m[4], file, consumer: 'main.js → registry.VIEWS → render(el, view)', tests: catalogue.viewTests[m[1]], preservation: 'Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia.'};
+  return {id: m[1], group: m[2], chapter: m[3] || null, title: m[4], file, consumer: 'main.js → registry.VIEWS → load() → mount(el, view)', tests: catalogue.viewTests[m[1]], preservation: 'Conservar montaje, unidades, datasets, navegación y exportaciones observables; migración por equivalencia.'};
 });
 assert.deepEqual(Object.keys(catalogue.viewTests).sort(), views.map(v => v.id).sort());
 const body = read(base + 'siesta/index.js').match(/const PARSERS = \{([\s\S]*?)\n\};/)[1];

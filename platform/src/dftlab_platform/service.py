@@ -21,6 +21,8 @@ def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessi
     app.state.sessions = sessions
     app.state.settings = settings
     app.add_middleware(SecurityMiddleware, settings=settings)
+    from .web_assets import mount_assets
+    mount_assets(app, settings.base_path)
     api = settings.base_path + "/api/v1"
 
     def problem_response(error):

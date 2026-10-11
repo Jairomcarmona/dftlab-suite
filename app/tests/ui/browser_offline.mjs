@@ -36,6 +36,12 @@ try {
       const input = fs.readFileSync(await download.path(), 'utf8');
       assert.match(input, /%block BandLines/);
       assert.match(input, /NumberOfAtoms\s+2/);
+      for (const id of ['inicio','ks','pseudos','xc','base','scf','solvers','bandas','dftu','densidad','potencial','espin','lectura','fonones','fuerzas','beyond','calc','post']) {
+        await page.locator('a[data-id="'+id+'"]').click();
+        await page.waitForFunction(id => document.querySelector('[data-view="'+id+'"]')?.children.length>0, id, {timeout:30_000});
+        assert.equal(await page.locator('.callout.warn').filter({hasText:'Esta sección no pudo cargarse'}).count(),0,'Offline view '+id+' loads');
+      }
+      assert.equal(await page.locator('[data-operative-access], [data-remote-group]').count(),0,'Portable build has no remote SDK shell');
       assert.deepEqual(unexpected, [], 'No network or sibling asset requests');
       assert.deepEqual(errors, [], 'No offline page or console errors');
       console.log(`${name}: isolated file://, inline WASM SG 227, cF2 path, WebGL and FDF download passed (network disabled).`);

@@ -78,6 +78,10 @@ export function createViewScope(context = {}){
 // Adaptador incremental: registry.render y módulos históricos mount/destroy comparten ámbito.
 // Una limpieza devuelta por un mount async que termine tras salir se ejecuta inmediatamente.
 export async function mountView(module, host, scope){
+  if (typeof module.load === 'function') {
+    module = await module.load();
+    if (!scope.alive) return; // a late lazy import cannot mount abandoned resources
+  }
   const mount = module.render || module.mount;
   if (typeof mount !== 'function') throw new TypeError('Vista sin render()/mount()');
   if (typeof module.destroy === 'function') scope.own(module);
