@@ -281,3 +281,49 @@ antes de intent, después del commit y después de un efecto externo simulado.
 Comprueba persistencia, exclusión concurrente, rollback de reserva duplicada,
 ack perdido y reconciliación sin reenvío. No presenta estos tests como caídas
 SLURM reales, SIESTA convergente o fencing del controlador nativo.
+
+### Puerto local SLURM y diagnóstico real (T-024b / T-058b)
+
+`SlurmSchedulerPort` requiere un sitio registrado por el operador, pins de
+sbatch/scontrol/squeue, identidad POSIX, paquete/script verificados y escritor
+privado de evidencias. Cada observación acotada se conserva como ArtifactRef
+original con hash. Se correlacionan clúster, usuario/UID, token, JobName,
+WorkDir, Command y SubmitTime observado en UTC. Un único gate durable
+`SQLiteSubmissionLedger.enter_rpc` comprueba claim activo y confirma la entrada
+antes del RPC; una segunda entrada se rechaza incluso después de una caída.
+Errores/ack ambiguo o cola vacía conservan incertidumbre, sin reenvío.
+
+Solo para esta laptop WSL local, con reloj y sitio compartidos. No acredita
+historia terminal, arrays, sitios remotos ni ausencia tras restore. El script
+del worker puede estar junto al paquete nativo para conservar su manifiesto
+original, pero debe ser registrado/verificado por el operador; nunca se recibe
+una ruta de ejecución del cliente HTTP. No se habilitan endpoints/capabilities.
+
+`qualify_slurm_gateway.py` es un diagnóstico **explícito**, fuera de tests/CI.
+Desde un consumidor WSL Linux privado con Python 3.12.10, instalar el wheel de
+platform y ambos wheels fijados del target WSL: exportar dependencias con
+`uv export --project platform --frozen --no-dev --no-emit-project --extra engines`,
+instalarlas con `uv pip install --require-hashes -r ...`, luego los tres wheels
+con `--no-index --no-deps` y comprobar `uv pip check`. Ejecutar con Python `-I`,
+sin PYTHONPATH ni checkout en sys.path. No reinstalar/configurar SIESTA/SLURM.
+
+El JSON privado `--config` contiene exactamente `sbatch`, `scontrol`, `squeue`
+(cada uno `{path, sha256}` observado del binario instalado), `cluster`,
+`remote_user`, `uid`, `partition`, `account` y `qos`, aprobados por el operador.
+El directorio `--output` debe ser nuevo y privado sobre Linux local; conservar
+DB, artefactos, logs y resultado. No versionar configuración/evidencia real.
+
+```sh
+/ruta/consumidor/bin/python -I /ruta/qualify_slurm_gateway.py --config /ruta/site.json --wheelhouse /ruta/wheelhouse-wsl --output /home/usuario/.local/state/dftlab-qualification/caso-nuevo
+```
+
+El harness crea un PLAN sintético solo para diagnóstico del scheduler, no una
+campaña científica admitida. Prueba muerte de proceso antes del intent, tras
+su commit y después de aceptación real antes de guardar el ack. Solo los dos
+últimos casos con RPC lanzan jobs: un CPU, 128 MB, límite de un minuto y sleep
+de 30 segundos; sin MPI/SIESTA. Después de perder el ack, solo consulta por
+token/contexto. Si no puede demostrar el job, falla y conserva UNKNOWN: no
+reenvía. El recibo forense de inyección no se usa como prueba de reconciliación.
+Se conservan NOT_ESTABLISHED y la separación submit/lifecycle/science. Este
+diagnóstico no cierra P4, ni acredita admisión, controlador nativo, terminal,
+fencing nativo, checkpoint/restore o calificación científica.
