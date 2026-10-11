@@ -17,6 +17,8 @@ dependencies = [
 
 [project.scripts]
 dftlab-platform = "dftlab_platform.launcher:main"
+dftlab-platform-api = "dftlab_platform.launcher:main"
+dftlab-platform-processor = "dftlab_platform.processor:main"
 
 [dependency-groups]
 dev = [
