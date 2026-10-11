@@ -71,6 +71,35 @@ ZIP/tar, ni se ejecutan importaciones. Los originales son ESSENTIAL; no hay GC
 que pueda borrarlos como caché. Retención/GC por runs y FinalizationReceipt del
 conjunto científico completo se califican en T-060/Ola 3, no por este upload.
 
+## API y sesión (Ola 2, X7a)
+
+`service.create_app` recibe Repository, ArtifactStore, ReadModels, Sessions y
+LocalSettings. FastAPI transporta los contratos originales; no genera una
+segunda versión con Pydantic ni acepta modelos más permisivos. Los errores
+son Problem RFC 9457 sin valores importados, paths ni tracebacks secretos.
+FastAPI 0.143.0 / Uvicorn 0.54.0 y Pydantic transitivo están fijados en uv.lock.
+
+Todas las rutas de cliente son `/api/v1` bajo el base_path configurado.
+Health es público. Bootstrap de un uso/caducidad establece cookie HttpOnly,
+SameSite=Strict y devuelve CSRF; tokens solo en memoria, sin HTTP issuer, query,
+logs ni localStorage. Host/Origin exactos, incluido puerto; `null`, DNS rebinding,
+cookies duplicadas, CSRF de otra sesión y compresión se rechazan. Loopback HTTP
+usa cookie sin Secure; un despliegue TLS/web requiere su adapter/configuración
+propia y cookie Secure, no exponer esta configuración local a la red.
+
+Proyectos, operaciones de lectura, artefactos y replay autorizan owner/proyecto.
+ReadModels es un puerto de índices reconstruibles; el adapter SQLite conserva
+las cuatro dimensiones y refs nativas, valida CAS y no sustituye journals.
+Callbacks/eventos antiguos nunca escriben una proyección por sí mismos.
+Replay máximo 500 eventos / 8 MiB; evento individual 256 KiB; JSON/chunks
+acotados. SSE entrega replay finito; no aloja ejecutores ni autoridad en sockets.
+
+Los comandos científicos devuelven ENGINE_UNAVAILABLE hasta aclarar payloads
+de C3 y calificar adapters Ola 3. Capabilities devuelve []: no acredita motores
+instalados en este wheel ni EXECUTION. QRAFT requiere HubbardFlow bajo él,
+sin restricción de licencia (ADR-015). Terminal/WS no se ofrecen hasta X9.
+El launcher sigue X7b antes de usar el servicio instalado con acceso local.
+
 ## Base de proceso anterior (Ola 0, X2)
 
 Distribución `dftlab-platform` / paquete `dftlab_platform`, CPython 3.12.10 y uv 0.11.14 fijados, con dependencias de validación y build bloqueadas. En X5 todavía no hay campañas, sesiones, CSRF, SQLite ni API HTTP. El entry point `dftlab-platform start|status|stop` conserva por ahora el proceso de prueba de X2.

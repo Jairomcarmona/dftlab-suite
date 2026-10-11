@@ -1,0 +1,9 @@
+"""Rebuildable read-model port. Native journals remain scientific authority."""
+from typing import Protocol
+from .domain import Principal
+
+
+class ReadModels(Protocol):
+    def target(self, owner: Principal, kind: str, resource_id: str) -> dict: ...
+    def get(self, owner: Principal, kind: str, resource_id: str) -> dict: ...
+    def replay(self, owner: Principal, run_id: str, after: str | None, limit: int) -> dict: ...
