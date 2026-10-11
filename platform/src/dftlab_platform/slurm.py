@@ -122,7 +122,7 @@ class SlurmSchedulerPort:
         if matches != [self.site.cluster]:
             raise Problem("PRECONDITION_FAILED")
 
-    def _job(self, intent, job_id, root, evidence):
+    def _job_context(self, intent, job_id, root, evidence):
         if re.fullmatch(r"[1-9][0-9]*", job_id) is None:
             raise Problem("PRECONDITION_FAILED")
         output, reference = self._command(intent, self.site.scontrol, ("--oneliner", "show", "job", job_id), root, "job-context")
@@ -144,7 +144,10 @@ class SlurmSchedulerPort:
         if submitted < recorded or submitted > datetime.now(timezone.utc):
             raise Problem("PRECONDITION_FAILED")
         return {"job_id": job_id, "cluster": self.site.cluster, "remote_user": self.site.remote_user,
-                "submitted_at": submitted.isoformat().replace("+00:00", "Z")}
+                "submitted_at": submitted.isoformat().replace("+00:00", "Z")}, output
+
+    def _job(self, intent, job_id, root, evidence):
+        return self._job_context(intent, job_id, root, evidence)[0]
 
     def _receipt(self, intent, status, job, evidence):
         payload = {key: intent["payload"][key] for key in ("operation_id", "attempt_token", "package_ref", "profile", "scheduler", "authority_generation")}
