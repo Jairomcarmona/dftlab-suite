@@ -88,6 +88,10 @@ class BoundedCommands:
         except subprocess.TimeoutExpired:
             failed = True
             stop()
+        except BaseException:
+            # A caller interruption must not leave its diagnostic child alive.
+            stop()
+            raise
         finally:
             child.wait(timeout=5)
             reader.join(timeout=1)

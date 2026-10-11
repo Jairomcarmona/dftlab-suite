@@ -5,6 +5,7 @@ import hashlib
 import os
 from pathlib import Path
 import sys
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -131,6 +132,26 @@ class RuntimeProbe(unittest.TestCase):
         for script in ("import time;time.sleep(10)", "import sys;sys.stdout.write('x'*100000);sys.stdout.flush()"):
             with self.assertRaises(ProbeFailure):
                 runner.run((sys.executable, "-I", "-c", script), **arguments)
+        # Inject an interruption after a real owned child has been created.
+        # Verify cleanup, not just that an exception was propagated.
+        created = []
+        original = subprocess.Popen
+        def interrupted(*args, **kwargs):
+            child = original(*args, **kwargs)
+            created.append(child)
+            wait = child.wait
+            first = True
+            def wait_once(*args, **kwargs):
+                nonlocal first
+                if first:
+                    first = False
+                    raise KeyboardInterrupt()
+                return wait(*args, **kwargs)
+            child.wait = wait_once
+            return child
+        with patch("dftlab_platform.runtime_probe.subprocess.Popen", interrupted), self.assertRaises(KeyboardInterrupt):
+            runner.run((sys.executable, "-I", "-c", "import time;time.sleep(10)"), **arguments)
+        self.assertIsNotNone(created[0].poll())
 
 
 if __name__ == "__main__":
