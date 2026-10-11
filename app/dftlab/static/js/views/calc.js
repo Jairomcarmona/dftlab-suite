@@ -2,6 +2,7 @@
 // smearing, gas de electrones y energía de formación. Todo corre en el navegador; cada resultado se exporta.
 import { $, $$, css, alpha, onTheme, esc, fmt, downloadText, seg } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
+import { fftGood, validateCellInputs, LIMITS } from '../tools/cellmesh.js';
 import X from '../data/pseudo_xc.json';
 import SI from '../data/si_lda.json';
 
@@ -23,7 +24,6 @@ function cellMatrix(a,b,c,al,be,ga){ const r=Math.PI/180, ca=Math.cos(al*r), cb=
   const v1=[a,0,0], v2=[b*cg,b*sg,0], cx=c*cb, cy=c*(ca-cb*cg)/sg; return [v1,v2,[cx,cy,Math.sqrt(Math.max(c*c-cx*cx-cy*cy,0))]]; }
 const cross=(u,v)=>[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]], dot=(u,v)=>u[0]*v[0]+u[1]*v[1]+u[2]*v[2], norm=u=>Math.hypot(...u);
 function recip(M){ const V=dot(M[0],cross(M[1],M[2])); return {V, B:[cross(M[1],M[2]),cross(M[2],M[0]),cross(M[0],M[1])].map(v=>v.map(x=>2*Math.PI*x/V))}; }
-const fftGood=n=>{ for(;;n++){ let m=n; for(const p of [2,3,5]) while(m%p===0) m/=p; if(m===1) return n; } };
 
 // ---------- unit converter ----------
 const UNITS={energy:{eV:1,Ry:RY,Ha:HA,meV:1e-3,'kJ/mol':1/96.485332,'kcal/mol':1/23.060548,'cm⁻¹':1/8065.54393,'K (k_B T)':8.617333262e-5,'THz (h ν)':4.135667696e-3},
@@ -110,10 +110,16 @@ export function mount(root){
   // ===== cell / k-mesh / mesh =====
   const PRE={Si:[3.8403,3.8403,3.8403,60,60,60],Mg:[4.52,4.52,18.08,90,90,90],Gr:[2.464,2.464,6.711,90,90,120]};
   let fdfBlock='';
+  function cellMsg(html){ $('#cellOut',root).innerHTML=html; fdfBlock=''; $('#cellPre',root).textContent=''; }
   function doCell2(){
-    const L=['a','b','c'].map(k=>+$('#c_'+k,root).value), ang=['a','b','g'].map(k=>+$('#ang_'+k,root).value);
-    const C=cellMatrix(L[0],L[1],L[2],ang[0],ang[1],ang[2]); const {V,B}=recip(C); const dk=+$('#c_dk',root).value, ec=+$('#c_ec',root).value, sh=$('#c_sh',root).value;
+    const val=validateCellInputs({L:['a','b','c'].map(k=>$('#c_'+k,root).value), ang:['a','b','g'].map(k=>$('#ang_'+k,root).value),
+      dk:$('#c_dk',root).value, ec:$('#c_ec',root).value, sh:$('#c_sh',root).value});
+    if(!val.ok){ cellMsg(val.editing&&!val.errors.length?'<dt>estado</dt><dd>completa todos los campos para calcular</dd>'
+      :`<dt>entrada no válida</dt><dd style="color:var(--bad)">${val.errors.map(esc).join('<br>')}</dd>`); return; }
+    const {L,ang,dk,ec,sh}=val.values;
+    const C=cellMatrix(L[0],L[1],L[2],ang[0],ang[1],ang[2]); const {V,B}=recip(C);
     const nk=B.map(b=>Math.max(1,Math.ceil(norm(b)/dk)));
+    if(nk.some(n=>n>LIMITS.maxK)){ cellMsg(`<dt>entrada no válida</dt><dd style="color:var(--bad)">La malla k superaría ${LIMITS.maxK} puntos por eje: aumenta Δk</dd>`); return; }
     const h=Math.PI/Math.sqrt(ec)*BOHR; const nm=L.map(l=>fftGood(Math.ceil(l/h)));
     const kcut=Math.min(...nk.map((n,i)=>n*L[i]))/2;
     $('#cellOut',root).innerHTML=`<dt>volumen</dt><dd>${fmt(V,3)} Å³</dd><dt>|b₁|, |b₂|, |b₃|</dt><dd>${B.map(b=>fmt(norm(b),3)).join(', ')} Å⁻¹</dd>
@@ -125,7 +131,7 @@ export function mount(root){
   const setCell2=p=>{ ['a','b','c'].forEach((k,i)=>$('#c_'+k,root).value=p[i]); ['a','b','g'].forEach((k,i)=>$('#ang_'+k,root).value=p[i+3]); doCell2(); };
   $('#cellSi',root).onclick=()=>setCell2(PRE.Si); $('#cellMg',root).onclick=()=>setCell2(PRE.Mg); $('#cellGr',root).onclick=()=>setCell2(PRE.Gr);
   $$('.fields input,.fields select',$('#c_dk',root).closest('.pb')).forEach(i=>i.addEventListener('input',doCell2));
-  $('#cellFdf',root).onclick=()=>downloadText(fdfBlock,'kgrid_mesh.fdf');
+  $('#cellFdf',root).onclick=()=>{ if(fdfBlock) downloadText(fdfBlock,'kgrid_mesh.fdf'); };
   setCell2(PRE.Si);
 
   // ===== Birch–Murnaghan =====
