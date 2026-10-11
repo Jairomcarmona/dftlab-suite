@@ -36,7 +36,9 @@ class Commands:
 class Slurm(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
-        self.parent = Path(self.temporary.name)
+        # Windows runner TEMP may use an 8.3 alias. The managed registry uses
+        # canonical paths; keep the fixture within the same production policy.
+        self.parent = Path(self.temporary.name).resolve()
         self.root = self.parent/"package"
         self.root.mkdir(mode=0o700)
         self.script = self.root/"submit.slurm"
