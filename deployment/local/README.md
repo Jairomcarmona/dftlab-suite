@@ -214,3 +214,35 @@ el valor y los reportes `REVIEW` anteriores; no modifica tolerancias de gates
 ni acredita convergencia/ciencia. El resultado conserva `NOT_ESTABLISHED`.
 Runtime, admisión, fencing, SLURM real y recuperación/restore siguen sujetos a
 sus pruebas separadas; no habilitar capabilities a partir de esta evidencia.
+### Autoridad local y publicación transaccional (T-025a)
+
+`LocalAuthorityManager` mantiene un lock del kernel por proyecto/run durante
+la vida completa del controlador, incluido su shutdown. `SQLiteAuthorityStore`
+implementa el puerto `AuthorityStore`; guarda el ControllerAuthorityRecord
+original, autoriza owner/proyecto y comprueba identidad exacta, generación,
+expiración UTC y reloj interno. El guard añade deadline monotónico y pérdida
+sticky. Heartbeat, callback y publicación están serializados dentro del proceso.
+
+El callback se puede conectar al `authority_check` público fijado de QRAFT;
+comprueba generación y vincula el primer fingerprint nativo opaco del
+controlador registrado, sin recalcularlo. El lock se mantiene fuera del
+callback. `publish(writer)` exige un escritor SQL interno de confianza: verifica
+antes y después en la misma transacción y revierte si la autoridad cambia o
+vence durante la escritura. Los bytes se preparan/fsync antes; archivos/eventos
+brutos del motor no pasan a ser publicación autoritativa por existir.
+
+Este bloque califica solamente la base local con fixtures y procesos de prueba.
+El recibo usa SITE_LOCK/checked_at=NONE y automatic_takeover=DISABLED: no afirma
+haber comprobado el controlador real donde lanza/publica ni ofrece un endpoint.
+Un registro existente, incluso vencido o tras caída de proceso, impide adquirir
+otro controlador. Cerrar el guard libera el kernel, conserva la identidad SQL
+y no demuestra que hayan terminado MPI, launchers o jobs. No borrar lockfiles
+ni retirar leases para desbloquear un run. Terminación verificada y recuperación
+explícita quedan para los bloques de runtime/restore; no se habilita takeover.
+
+Todas las instancias del mismo store deben usar el mismo directorio privado de
+locks local. No usar SQLite/locks bajo /mnt/c, NFS/SSHFS/SMB para el worker WSL.
+Este mecanismo no anuncia fencing distribuido en sitios remotos. La CI prueba
+rechazo de un segundo proceso, caída real, lease vencida, generación vieja,
+rollback por expiración durante publicación y concurrencia con heartbeat,
+sin motores, scheduler o datos del usuario.
