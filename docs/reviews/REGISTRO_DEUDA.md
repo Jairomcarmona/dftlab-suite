@@ -53,6 +53,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | X1 | T-001/T-002: inventario P0 y baseline reproducible; T-003…006 contrastados con A–H | Ola 0 | Implementado; baseline/CI Windows+Linux y referencias Python verdes @ `13ce7b9`; auditoría WSL igual; implementación `e6720dc`; pendiente autorización | PR #16; `docs/inventory/` |
 | X2 | Base de platform/, borrador T-010 y comienzo T-057 | Ola 0 | Wheel/proceso vacío instalado Windows+Linux CI; motores instalados/probados Windows+WSL; cinco checks verdes @ `0c92734`; ciencia/HPC pendientes; autorizado, CI de integración pendiente | PR #17; workflow propio |
 | X3 | Ola 1: frontera pública y contratos upstream de QRAFT/HubbardFlow | Ola 1 | En curso; ciencia y tolerancias preservadas; U-H0 según ADR-015; U-H5 diferido a HF-2 | PR y calificación pendientes |
+| X4 | T-012/T-013: ViewScope y stores por área/proyecto | Ola 1 | Implementado; npm test completo y cinco checks Windows/Linux/Python SUCCESS @ `fbea11a`; ciencia/tolerancias intactas; X8 sigue | PR #18; implementación `a2eb2ec` |
 
 ## A. Calculadoras: `fftGood` sin dominio
 

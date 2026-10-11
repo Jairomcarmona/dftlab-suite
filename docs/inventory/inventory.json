@@ -11,8 +11,8 @@
     "structureWriterFormats": 6,
     "datasets": 16,
     "datasetBytes": 10678665,
-    "ownJavascriptFiles": 54,
-    "ownJavascriptLines": 11385,
+    "ownJavascriptFiles": 55,
+    "ownJavascriptLines": 11548,
     "exportSourceCalls": 52,
     "scientificModules": 25
   },
@@ -2349,13 +2349,18 @@
     },
     {
       "file": "app/dftlab/static/js/core/lifecycle.js",
-      "bytes": 1996,
-      "sha256": "b34e936879c0719397e6cdfe4d689871499cebe5343ab166954bf7937b0a68aa"
+      "bytes": 4261,
+      "sha256": "a32e1e99b4e8800652256ee51dcb4fd2495b58a655a81a98f989ca750b43815a"
     },
     {
       "file": "app/dftlab/static/js/core/scene.js",
       "bytes": 1284,
       "sha256": "66e235b7a41a19d41f1951133cecea71d13a270da297db7985a9260baf1b87d3"
+    },
+    {
+      "file": "app/dftlab/static/js/core/stores.js",
+      "bytes": 4573,
+      "sha256": "48fbb6422b939199c0958f903a92736aab4635dcf86782ff29193bc3b07fe268"
     },
     {
       "file": "app/dftlab/static/js/core/svgctx.js",
@@ -2399,8 +2404,8 @@
     },
     {
       "file": "app/dftlab/static/js/main.js",
-      "bytes": 2881,
-      "sha256": "77227a116c3889e49b21bf47f5b9d7f345570b8f5a60b211a50098fbf3cdb5aa"
+      "bytes": 3328,
+      "sha256": "3d5df0386edef6f788fa44fe12441b569b4988b20dbac8b400ae098b5df4a26b"
     },
     {
       "file": "app/dftlab/static/js/physics/atom.js",
@@ -2609,13 +2614,13 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 1509,
-      "sha256": "347cda85e94e2a87bddaf1f04c7de831b84ebf263c444ed09424fccdc4a9f8db"
+      "bytes": 1583,
+      "sha256": "1d7927de03bfccc34a6476552d3459ae07de2e2c26fbdaf9d8e1bd76f2878c37"
     },
     {
       "file": "app/scripts/test-browser.mjs",
-      "bytes": 1099,
-      "sha256": "4200586ae392731987f9d98ad9a80b60b128f634b67313f40cb14a32aab5ce3e"
+      "bytes": 1137,
+      "sha256": "04935f8a4103bccd2b779314e1c03ea64f7151c62f55840bd1f1189bd342b520"
     },
     {
       "file": "app/package.json",
