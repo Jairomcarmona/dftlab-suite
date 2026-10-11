@@ -84,6 +84,16 @@ X5/X6/X7 implementarán los contratos ya publicados por C3: validación efectiva
 
 ## Ola 1: fronteras públicas de los motores (X3)
 
+Ola 2 X7b sustituye el proceso de prueba por API loopback y procesador separados.
+Después de instalar el wheel: `dftlab-platform start --state-dir <ruta-local>`;
+consultar `status`, detener con `stop`. Un base path opcional se pasa al arranque
+con `--base-path /lab`. Seleccionar el `access.json` privado en el cliente X8;
+caduca en 120 s y no debe copiarse al navegador mediante URL ni persistencia.
+Si un crash deja la reserva, `recover-local` exige ambos locks libres y conserva
+SQLite/artefactos. No usar directorios compartidos/NFS. El wheel no instala motores
+ni acredita ejecución científica. La calificación instalada prueba el ciclo HTTP,
+reinicio, identidad estable, sesión revocada y rechazo de reparación con API viva.
+
 El lock actualizado fija commits fusionados en las ramas de integración de cada motor. Conserva `DRAFT_NOT_AN_OPERATIONAL_RELEASE`: disponer de una API pública y de consumidores CI no acredita una ejecución SIESTA, MPI, SSH, SLURM ni HF-1 real. Los informes `evidence/*_ola1.json` separan instalación, API importada y CLI de esas calificaciones pendientes. Los informes de Ola 0 permanecen intactos.
 
 - **QRAFT:** importar `qraft.api` (`API_VERSION = "1.0"`). Es la ruta de composición, compilación, preparación, inspección y controlador canónico. Para compilar un mapping con el mismo digest que un archivo, aportar sus `source_bytes` originales; el motor verifica que describen el mismo mapping. Sin esos bytes, la representación JSON canónica declarada define una identidad distinta. Los locks antiguos no se recanonicalizan.

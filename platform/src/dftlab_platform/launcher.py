@@ -1,12 +1,9 @@
-"""Ephemeral process lifecycle, with no HTTP, campaigns, sessions or durable state.
-
-The placeholder only proves an installed entry point can own/start/stop its own
-process. This lease must never become an authority for runs, jobs or operations.
-"""
+"""Local installed API/processor lifecycle. Never a remote controller authority."""
 
 from __future__ import annotations
 
 import argparse
+import ctypes
 import json
 import os
 from pathlib import Path
@@ -15,6 +12,7 @@ import subprocess
 import sys
 import time
 import uuid
+import webbrowser
 
 from . import __version__
 
@@ -44,7 +42,17 @@ def _write(path: Path, data: dict) -> None:
     try:
         with os.fdopen(os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "w", encoding="utf-8") as stream:
             json.dump(data, stream)
-        os.replace(temporary, path)
+        deadline = time.monotonic()+1.0
+        while True:
+            try:
+                os.replace(temporary, path)
+                break
+            except PermissionError as error:
+                # Windows readers can briefly deny rename of an open heartbeat.
+                # Retry this owned atomic write, never truncate the live record.
+                if os.name != "nt" or error.winerror not in {5, 32} or time.monotonic() >= deadline:
+                    raise
+                time.sleep(0.01)
     finally:
         temporary.unlink(missing_ok=True)
 
@@ -60,7 +68,7 @@ def _lease(state: Path) -> dict | None:
 def _status(state: Path) -> dict:
     lease = _lease(state)
     if lease is None:
-        return {"status": "stopped", "version": __version__, "scope": "process-placeholder"}
+        return {"status": "stopped", "version": __version__, "scope": "local-api"}
     pulse = _read(state / "heartbeat.json")
     if pulse is None or pulse.get("instance_id") != lease["instance_id"]:
         status = "starting"
@@ -68,7 +76,7 @@ def _status(state: Path) -> dict:
         status = "running"
     else:
         status = "unknown"  # Do not infer process death or reuse a stale lease.
-    return {"status": status, "version": __version__, "scope": "process-placeholder", "instance_id": lease["instance_id"], "pid": pulse.get("pid") if pulse else None}
+    return {"status": status, "version": __version__, "scope": "local-api", "instance_id": lease["instance_id"], "pid": pulse.get("pid") if pulse else None, "url": pulse.get("url") if pulse else None, "api_version": pulse.get("api_version") if pulse else None}
 
 
 def _owned(state: Path, instance: str) -> bool:
@@ -89,8 +97,9 @@ def _wait_stopped(state: Path, instance: str) -> bool:
     return False
 
 
-def _start(state: Path) -> tuple[dict, int]:
-    state.mkdir(mode=0o700, parents=True, exist_ok=True)
+def _start(state: Path, base_path="") -> tuple[dict, int]:
+    from .local_runtime import private_directory
+    state = private_directory(state)
     instance = str(uuid.uuid4())
     lock = state / "launcher.lock"
     try:
@@ -104,14 +113,14 @@ def _start(state: Path) -> tuple[dict, int]:
     kwargs = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {"start_new_session": True}
     try:
         child = subprocess.Popen(
-            [sys.executable, "-m", "dftlab_platform.launcher", "_run", "--state-dir", str(state), "--instance-id", instance],
-            cwd=state, env=environment, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            [sys.executable, "-I", "-m", "dftlab_platform.launcher", "_run", "--state-dir", str(state), "--instance-id", instance, "--base-path", base_path],
+            cwd=state.parent, env=environment, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             **kwargs,
         )
         deadline = time.monotonic() + TIMEOUT_SECONDS
         while time.monotonic() < deadline:
             if child.poll() is not None:
-                raise RuntimeError(f"Placeholder exited before readiness ({child.returncode})")
+                raise RuntimeError("Local runtime exited before readiness")
             status = _status(state)
             if status["status"] == "running" and status.get("instance_id") == instance:
                 return status, 0
@@ -124,8 +133,8 @@ def _start(state: Path) -> tuple[dict, int]:
             lock.unlink()
         raise
     except RuntimeError:
-        if _owned(state, instance):
-            lock.unlink()
+        # The API may have started a processor before failing. Keep the lease
+        # until recover-local proves both local kernel locks are free.
         raise
 
 
@@ -134,60 +143,88 @@ def _stop(state: Path) -> tuple[dict, int]:
     if current is None:
         return _status(state), 0
     instance = current["instance_id"]
-    _request_stop(state, instance)
-    if _wait_stopped(state, instance):
-        # Another CLI may have started a new instance: never request its stop.
-        return {"status": "stopped", "instance_id": instance, "version": __version__, "scope": "process-placeholder"}, 0
-    return {"error": "STOP_TIMEOUT", **_status(state)}, 2
-
-
-def _run(state: Path, instance: str) -> int:
-    stop_requested = False
-
-    def handle_signal(_number, _frame):
-        nonlocal stop_requested
-        stop_requested = True
-
-    signal.signal(signal.SIGTERM, handle_signal)
-    signal.signal(signal.SIGINT, handle_signal)
+    handle = None
+    if os.name == "nt":
+        pulse = _read(state / "heartbeat.json")
+        if pulse and pulse.get("instance_id") == instance:
+            kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+            kernel.OpenProcess.argtypes = [ctypes.c_uint32, ctypes.c_int, ctypes.c_uint32]
+            kernel.OpenProcess.restype = ctypes.c_void_p
+            handle = kernel.OpenProcess(0x00100000, False, pulse["pid"])
     try:
-        while not stop_requested and _owned(state, instance):
-            request = _read(state / f"stop-{instance}.json")
-            if request is not None and request.get("instance_id") == instance:
-                break
-            _write(state / "heartbeat.json", {"instance_id": instance, "pid": os.getpid(), "updated_at": time.time()})
-            time.sleep(HEARTBEAT_SECONDS)
+        _request_stop(state, instance)
+        if _wait_stopped(state, instance):
+            # Wait only; never terminate a PID. Capture the Windows process
+            # handle before cooperative stop so PID recycling cannot change it.
+            if handle:
+                kernel.WaitForSingleObject.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+                kernel.WaitForSingleObject.restype = ctypes.c_uint32
+                if kernel.WaitForSingleObject(handle, int(TIMEOUT_SECONDS*1000)) != 0:
+                    return {"error": "STOP_TIMEOUT", "status": "unknown"}, 2
+            return {"status": "stopped", "instance_id": instance, "version": __version__, "scope": "local-api"}, 0
+        return {"error": "STOP_TIMEOUT", **_status(state)}, 2
     finally:
+        if handle:
+            kernel.CloseHandle.argtypes = [ctypes.c_void_p]
+            kernel.CloseHandle(handle)
+
+
+def _run(state: Path, instance: str, base_path="") -> int:
+    from .runtime import serve
+    code = serve(state, instance, base_path)
+    if code == 0:
         # Only release the lease still owned by this child. No PID based kills.
         if _owned(state, instance):
             (state / "heartbeat.json").unlink(missing_ok=True)
             (state / "launcher.lock").unlink(missing_ok=True)
         (state / f"stop-{instance}.json").unlink(missing_ok=True)
-    return 0
+    return code
+
+
+def _recover_local(state: Path):
+    from .local_runtime import local_lock, private_directory
+    state = private_directory(state)
+    with local_lock(state / "service.guard"), local_lock(state / "processor.guard"):
+        lease = _lease(state)
+        if lease is None:
+            return _status(state), 0
+        # Kernel locks prove no previous API/processor is alive; this repairs
+        # only local runtime bookkeeping, never remote run authority.
+        instance = lease["instance_id"]
+        if _owned(state, instance):
+            for name in ("access.json", "heartbeat.json", "launcher.lock", f"stop-{instance}.json"):
+                (state / name).unlink(missing_ok=True)
+        return {"status": "stopped", "scope": "local-api", "version": __version__}, 0
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="DFT Lab installation/process skeleton (no API or calculations)")
-    parser.add_argument("command", choices=["start", "status", "stop", "_run"])
+    parser = argparse.ArgumentParser(description="DFT Lab local API and durable processor")
+    parser.add_argument("command", choices=["start", "status", "stop", "recover-local", "_run"])
     parser.add_argument("--state-dir", type=Path, default=_default_state())
     parser.add_argument("--instance-id", help=argparse.SUPPRESS)
+    parser.add_argument("--base-path", default="")
+    parser.add_argument("--open", action="store_true", help="Open the operative distribution in the browser")
     args = parser.parse_args()
-    state = args.state_dir.expanduser().resolve()
+    state = args.state_dir.expanduser().absolute()
     try:
         if args.command == "_run":
             if not args.instance_id:
                 raise ValueError("Missing instance ownership identifier")
-            return _run(state, str(uuid.UUID(args.instance_id)))
+            return _run(state, str(uuid.UUID(args.instance_id)), args.base_path)
         if args.command == "start":
-            result, code = _start(state)
+            result, code = _start(state, args.base_path)
+            if code == 0 and args.open:
+                webbrowser.open(result["url"])
         elif args.command == "stop":
             result, code = _stop(state)
+        elif args.command == "recover-local":
+            result, code = _recover_local(state)
         else:
             result, code = _status(state), 0
         print(json.dumps(result, sort_keys=True))
         return code
-    except (OSError, ValueError, KeyError, TypeError, RuntimeError) as error:
-        print(json.dumps({"status": "unknown", "error": "LAUNCHER_ERROR", "detail": str(error)}), file=sys.stderr)
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError):
+        print(json.dumps({"status": "unknown", "error": "LAUNCHER_ERROR"}), file=sys.stderr)
         return 2
 
 
