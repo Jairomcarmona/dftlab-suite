@@ -30,7 +30,7 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 
 - **C/D, G, H:** sin empezar. Ver el registro (`addTexts` de `postproc.js` para EIG/KP; `f.text()` para mallas; `.dftlab.json` sin `unpackDftlab` en `refresh()`).
 - **H (heredado de B):** `ResizeObserver` por canvas en `core/chart.js`; liberación de geometrías/materiales/texturas en `core/three-view.js`; medir antes de introducir workers.
-- **F:** alcance frontend implementado en `codex/bloque-f`; CI del PR pendiente de confirmar. Queda fijar el entorno Python de regeneración de referencias. Ver entrega F al final de esta nota.
+- **F:** alcance frontend verificado en `codex/bloque-f`, PR #5, CI Windows/Linux en verde. Queda fijar el entorno Python de regeneración de referencias. Ver entrega F al final de esta nota.
 - La auditoría de E cubre las rutas de datos importados; no se revisaron las 19 vistas línea a línea.
 
 ## Siguiente paso
@@ -48,7 +48,7 @@ Bloques **C y D** (importación coherente de archivos científicos en `views/pos
 - **Carpeta aislada:** `C:\Users\Jairo\Downloads\DFTQUANTUMLAB\dftlab-suite-codex-bloque-f`. La carpeta principal permaneció sin cambios.
 - **Cambios:** `npm test` como puerta completa; `test:node` parcial explícita; build con esbuild local sin fallback de contenedor; preview Node sólo en loopback; Playwright 1.56.1 y lockfile; CI instala Chromium y ejecuta navegador obligatorio con `REQUIRE_BROWSER=1`. Pruebas existentes A/E y B usan dependencia local y fallan si falta; nombres hostiles mediante FilePayload también en Windows. Nueva prueba de ambos HTML aislados y sin red; smoke Moyo obligatorio. El build usa tipografías de sistema sin enlaces externos opcionales. Guía de copia limpia en `docs/development/INSTALL_AND_VERIFY.md`.
 - **Pruebas locales:** Windows, Node 24.18.0, npm 11.16.0. `npm ci` + `npm test`: referencias 341/81/26/101, estructuras 371 y formatos 71; calc 51, escape 15 y lifecycle Node 21; servidor; A/E navegador 24/0; B en verde; ambos HTML offline con WASM/SG 227/cF2/WebGL/exportación FDF; smoke fetch/inline/global. Manifiesto 480 SHA-256 correcto. Comprobación negativa: sin Chromium, exit 1.
-- **PR y CI:** pendiente de apertura/confirmación en Windows 2022 y Ubuntu 24.04. Actualizar esta línea con evidencia antes del traspaso final.
+- **PR y CI:** [PR #5](https://github.com/Jairomcarmona/dftlab-suite/pull/5). **SHA verificado:** `5b67a2ab4ec47cc8f982bb5c55124990684a32ec`; [ejecución 38106584161](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38106584161), ambos jobs `Verify (windows-2022)` / `Verify (ubuntu-24.04)` completados con `success`, incluyendo checkout limpio, `npm ci`, navegador y offline. Esta nota posterior registra el resultado sin cambiar código; comprobar los checks de la punta actual del PR antes de integrar.
 - **Pendiente F:** entorno Python fijado y validado para regenerar referencias; se consumen las actuales sin modificación. Permanecen los tres avisos `import.meta` heredados, con ruta inline comprobada; no se cambió vendor para ocultarlos.
 - **Límite de esta entrega:** router, vistas, `app/src`, física, tolerancias y `baseline-v1` intactos. `dist` sin seguimiento. C/D se trabajan en paralelo; esta entrega no los corrige ni integra. No se ejecutó SIESTA.
 - **Continuidad F:** revisar el PR y sus checks antes de integrar; si se continúa en la regeneración Python, abrir tarea y rama específica. No reutilizar ramas de C/D ni modificar su implementación como parte de F.
