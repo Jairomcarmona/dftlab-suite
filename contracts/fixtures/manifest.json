@@ -56,6 +56,12 @@
       "rule": "Lock nativo QRAFT por referencia."
     },
     {
+      "path": "fixtures/native-contract-ref/valid/qraft-controller-reservation.json",
+      "schema": "native-contract-ref.schema.json",
+      "expect": "valid",
+      "rule": "Descriptor de reserva del controlador HF-1 por referencia (ADR-017 §4); sin commit fijado todavía."
+    },
+    {
       "path": "fixtures/native-contract-ref/invalid/short-commit.json",
       "schema": "native-contract-ref.schema.json",
       "expect": "invalid",
@@ -378,6 +384,18 @@
       "schema": "capability-descriptor.schema.json",
       "expect": "invalid",
       "rule": "Ejecución exige RUNTIME_VERIFIED y ruta canónica completa."
+    },
+    {
+      "path": "fixtures/capability-descriptor/valid/hf1-controller.json",
+      "schema": "capability-descriptor.schema.json",
+      "expect": "valid",
+      "rule": "HF-1 como CONTROLLER (ADR-017): cancelación cooperativa, resume verificado y sin admisión de ejecución hasta calificar."
+    },
+    {
+      "path": "fixtures/capability-descriptor/invalid/controller-without-cooperative-cancel.json",
+      "schema": "capability-descriptor.schema.json",
+      "expect": "invalid",
+      "rule": "Un CONTROLLER exige cancelación COOPERATIVE y resume no afirmado (ADR-017 §5–§6)."
     },
     {
       "path": "fixtures/admission-receipt/valid/exploratory.json",

@@ -1,0 +1,70 @@
+{
+  "schema_id": "dftlab.capability-descriptor",
+  "schema_version": "0.1.0",
+  "record_id": "rec-capability-descriptor-hf1",
+  "project_id": null,
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "capability_id": "hubbardflow.hf1.lr-u",
+    "version": "0.1.0",
+    "catalog_state": "DESIGNED",
+    "admitted_for": [],
+    "input_schemas": [
+      "dftlab.hubbard-layer-message@0.1"
+    ],
+    "output_schemas": [
+      "dftlab.analysis-result@0.1"
+    ],
+    "protocol": null,
+    "modes": [
+      "HF_1"
+    ],
+    "targets": [
+      "LOCAL_WSL2",
+      "SLURM"
+    ],
+    "engine_versions": [
+      {
+        "engine": "qraft",
+        "distribution": "qraft-hpc",
+        "version": "0.2.0"
+      },
+      {
+        "engine": "hubbardflow",
+        "distribution": "hubbardflow",
+        "version": "0.1.2"
+      }
+    ],
+    "supports": {
+      "cancel": "COOPERATIVE",
+      "resume": "NATIVE_VERIFIED"
+    },
+    "execution_shape": "CONTROLLER",
+    "canonical_path": {
+      "describe": "OK",
+      "validate": "OK",
+      "compile": "OK",
+      "prepare": "MISSING",
+      "transport": "MISSING",
+      "execute": "MISSING",
+      "collect": "MISSING",
+      "recover": "MISSING"
+    },
+    "test_refs": [
+      "docs/adr/ADR-017-tarea-controladora-qraft-hf1.md"
+    ]
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}
