@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/artifact-ref.schema.json",
+  "title": "ArtifactRef",
+  "description": "Referencia a un artefacto: ID y digest/tipo esperado. Sin credenciales, rutas de ejecución ni URLs (§5.5).",
+  "type": "object",
+  "required": [
+    "artifact_id",
+    "sha256",
+    "media_type"
+  ],
+  "properties": {
+    "artifact_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "sha256": {
+      "$ref": "defs.schema.json#/$defs/sha256_hex"
+    },
+    "media_type": {
+      "type": "string",
+      "pattern": "^[a-z]+/[A-Za-z0-9.+-]+$"
+    },
+    "role": {
+      "$ref": "defs.schema.json#/$defs/namespaced_id"
+    }
+  },
+  "additionalProperties": false
+}

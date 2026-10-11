@@ -1,0 +1,15 @@
+{
+  "action": "SUBMIT_RUN",
+  "project_id": "prj-demo",
+  "target": {
+    "kind": "PLAN",
+    "id": "pln-1",
+    "expected_revision": 3
+  },
+  "payload": {
+    "plan_id": "pln-1",
+    "package_id": "pkg-1",
+    "admission_purpose": "EXPLORATORY"
+  },
+  "idempotency_key": "01J9ZK4Q7W8E2R5T6Y"
+}

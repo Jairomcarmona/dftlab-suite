@@ -1,0 +1,61 @@
+{
+  "schema_id": "dftlab.validation-receipt",
+  "schema_version": "0.1.0",
+  "record_id": "rec-validation-receipt",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "validator": {
+      "name": "dftlab.preflight",
+      "version": "0.1.0"
+    },
+    "authority": "AUTHORITATIVE",
+    "input_refs": [
+      {
+        "artifact_id": "art-si.fdf",
+        "sha256": "d35274bf9a9c8eafedc5880cd28c961f5f1d0d9635bc5fe7b77dce9e64070df1",
+        "media_type": "text/plain"
+      }
+    ],
+    "policies": [
+      {
+        "policy_id": "dftlab.preflight-heuristics",
+        "version": "0.1.0",
+        "digest": "16f2163913bd030b53336c0877dc8a4c8116928f646532e63aac2a02e5197825"
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "KGRID_SPARSE",
+        "severity": "WARNING",
+        "rule_kind": "HEURISTIC",
+        "message": "Malla k menor que la heurística de la política.",
+        "location": null
+      }
+    ],
+    "decision": "ACCEPTED_WITH_WARNINGS",
+    "overrides": [
+      {
+        "code": "KGRID_SPARSE",
+        "rule_kind": "HARD_RULE",
+        "principal_id": "u-1",
+        "justification": "prueba exploratoria",
+        "at": "2026-10-11T05:00:00Z"
+      }
+    ],
+    "scope": "si.fdf"
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

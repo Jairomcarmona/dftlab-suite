@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/artifact-record.schema.json",
+  "title": "ArtifactRecord",
+  "description": "Artefacto verificado o en staging (ADR-010 §4). El nombre de archivo no es identidad; el localizador es privado y opaco.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.artifact-record"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "artifact_id",
+        "kind",
+        "media_type",
+        "size_bytes",
+        "sha256",
+        "integrity_state",
+        "retention_class",
+        "producer_ref",
+        "input_refs",
+        "parser",
+        "locator_id"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "kind": {
+          "$ref": "defs.schema.json#/$defs/namespaced_id"
+        },
+        "media_type": {
+          "type": "string",
+          "pattern": "^[a-z]+/[A-Za-z0-9.+-]+$"
+        },
+        "size_bytes": {
+          "$ref": "defs.schema.json#/$defs/safe_count"
+        },
+        "sha256": {
+          "$ref": "defs.schema.json#/$defs/sha256_hex"
+        },
+        "integrity_state": {
+          "enum": [
+            "STAGED",
+            "VERIFIED",
+            "INCOMPLETE",
+            "MISSING",
+            "ALTERED"
+          ]
+        },
+        "retention_class": {
+          "enum": [
+            "ESSENTIAL",
+            "RECOVERY_SEED",
+            "OPTIONAL_LARGE",
+            "PREVIEW",
+            "CACHE"
+          ]
+        },
+        "producer_ref": {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "OPERATION",
+                "RUN_ATTEMPT",
+                "IMPORT",
+                "BUILTIN"
+              ]
+            },
+            "id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            }
+          },
+          "additionalProperties": false
+        },
+        "input_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "artifact-ref.schema.json"
+          }
+        },
+        "parser": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "name",
+                "version"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "locator_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "array": {
+          "type": "object",
+          "required": [
+            "dtype",
+            "shape",
+            "dimension_order",
+            "byte_order",
+            "unit"
+          ],
+          "properties": {
+            "dtype": {
+              "enum": [
+                "float32",
+                "float64",
+                "int32",
+                "int64",
+                "complex64",
+                "complex128",
+                "uint8"
+              ]
+            },
+            "shape": {
+              "type": "array",
+              "items": {
+                "$ref": "defs.schema.json#/$defs/safe_count"
+              },
+              "minItems": 1
+            },
+            "dimension_order": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "minItems": 1
+            },
+            "byte_order": {
+              "enum": [
+                "little",
+                "big"
+              ]
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "missing_value": {
+              "anyOf": [
+                {
+                  "type": [
+                    "number",
+                    "string"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "units": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "original_name": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "https://dftlab.invalid/problems/idempotency-key-reused",
+  "title": "Clave reutilizada con otra solicitud",
+  "status": 409,
+  "code": "IDEMPOTENCY_KEY_REUSED",
+  "request_id": "req-1",
+  "operation_id": "op-1"
+}

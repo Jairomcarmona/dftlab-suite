@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/problem.schema.json",
+  "title": "Problem Details",
+  "description": "RFC 9457 con código estable; sin secretos ni rutas del host (ADR-004 §8). Catálogo en errors/error-codes.json.",
+  "type": "object",
+  "required": [
+    "type",
+    "title",
+    "status",
+    "code",
+    "request_id"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "status": {
+      "type": "integer",
+      "minimum": 400,
+      "maximum": 599
+    },
+    "code": {
+      "$ref": "defs.schema.json#/$defs/code"
+    },
+    "request_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "detail": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "instance": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "pointer",
+          "code",
+          "message"
+        ],
+        "properties": {
+          "pointer": {
+            "type": "string",
+            "pattern": "^(/[^/]*)*$"
+          },
+          "code": {
+            "$ref": "defs.schema.json#/$defs/code"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "operation_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    }
+  },
+  "additionalProperties": false
+}

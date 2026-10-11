@@ -1,0 +1,20 @@
+{
+  "event_id": "ev-1",
+  "stream_id": "run-1",
+  "sequence": 0,
+  "occurred_at": "2026-10-11T05:00:00Z",
+  "recorded_at": "2026-10-11T05:00:00Z",
+  "type": "operation.state_changed",
+  "schema_version": "0.1.0",
+  "project_id": "prj-demo",
+  "operation_id": "op-1",
+  "run_id": "run-1",
+  "attempt_id": null,
+  "payload": {
+    "operation_id": "op-1",
+    "from": "RUNNING",
+    "to": "SUCCEEDED",
+    "revision": 4
+  },
+  "evidence_refs": []
+}

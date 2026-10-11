@@ -1,0 +1,52 @@
+{
+  "schema_id": "dftlab.operation-record",
+  "schema_version": "0.1.0",
+  "record_id": "rec-operation-record",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "operation_id": "op-1",
+    "action": "SUBMIT_RUN",
+    "state": "OUTCOME_UNKNOWN",
+    "revision": 4,
+    "request_hash": "c3f7bdf537c46724392c4428e47e04c148c56966190c3c9ed92114800c9f35bb",
+    "idempotency_key": "01J9ZK4Q7W8E2R5T6Y",
+    "idempotency_scope": {
+      "owner_principal_id": "u-1",
+      "project_id": "prj-demo"
+    },
+    "owner_principal_id": "u-1",
+    "accepted_at": "2026-10-11T05:00:00Z",
+    "updated_at": "2026-10-11T06:00:00Z",
+    "target_refs": [
+      {
+        "kind": "PLAN",
+        "id": "pln-1",
+        "revision": 3
+      }
+    ],
+    "result": {
+      "run_id": "run-1",
+      "submission_receipt_id": "rec-submission-receipt"
+    },
+    "error": null,
+    "event_cursor": "op-1:7",
+    "key_retention": {
+      "effects_alive": true,
+      "retain_until": null
+    }
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

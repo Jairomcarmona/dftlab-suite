@@ -1,0 +1,82 @@
+{
+  "schema_id": "dftlab.capability-qualification-record",
+  "schema_version": "0.1.0",
+  "record_id": "rec-capability-qualification-record",
+  "project_id": null,
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "capability_id": "dftlab.siesta.single-point",
+    "capability_version": "0.1.0",
+    "adapter_version": "0.1.0",
+    "engines": [
+      {
+        "engine": "qraft",
+        "distribution": "qraft-hpc",
+        "version": "0.2.0",
+        "commit": "4d996ea7c580e5638e470bbf32624c88fd762f7d",
+        "distribution_sha256": null
+      }
+    ],
+    "protocol": null,
+    "hubbard_mode": null,
+    "executable_profile": {
+      "profile_id": "prof-hpc",
+      "revision": 2,
+      "launcher": "srun"
+    },
+    "tested_scope": "Si bulk, 2 átomos",
+    "dimensions": {
+      "contract": {
+        "state": "PASS",
+        "evidence": [
+          {
+            "artifact_id": "art-q-pass",
+            "sha256": "a1a36a73ee7b16bf52d13e8e7f3cf152ac2cc0cf1a62b3edde6bd77c853815f6",
+            "media_type": "application/octet-stream"
+          }
+        ]
+      },
+      "runtime": {
+        "state": "PASS",
+        "evidence": [
+          {
+            "artifact_id": "art-q-pass",
+            "sha256": "a1a36a73ee7b16bf52d13e8e7f3cf152ac2cc0cf1a62b3edde6bd77c853815f6",
+            "media_type": "application/octet-stream"
+          }
+        ]
+      },
+      "science": {
+        "state": "NOT_ESTABLISHED",
+        "evidence": []
+      },
+      "recovery": {
+        "state": "NOT_ESTABLISHED",
+        "evidence": []
+      },
+      "target": {
+        "state": "PASS",
+        "evidence": [
+          {
+            "artifact_id": "art-q-pass",
+            "sha256": "a1a36a73ee7b16bf52d13e8e7f3cf152ac2cc0cf1a62b3edde6bd77c853815f6",
+            "media_type": "application/octet-stream"
+          }
+        ]
+      }
+    }
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/analysis-result.schema.json",
+  "title": "AnalysisResult",
+  "description": "Resultado de análisis: algoritmo/política, datasets y evaluaciones; nunca reemplaza originales.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.analysis-result"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "analysis_id",
+        "observable_kind",
+        "model",
+        "input_refs",
+        "algorithm",
+        "result_dataset_refs",
+        "assessment_refs",
+        "limits"
+      ],
+      "properties": {
+        "analysis_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "observable_kind": {
+          "$ref": "defs.schema.json#/$defs/namespaced_id"
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "input_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/evidence_ref"
+          },
+          "minItems": 1
+        },
+        "algorithm": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "policy"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "policy": {
+              "$ref": "defs.schema.json#/$defs/policy_ref"
+            }
+          },
+          "additionalProperties": false
+        },
+        "result_dataset_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/id"
+          }
+        },
+        "assessment_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "minItems": 1
+        },
+        "limits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

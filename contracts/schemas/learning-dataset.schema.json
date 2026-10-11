@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/learning-dataset.schema.json",
+  "title": "LearningDataset",
+  "description": "Manifiesto de un dataset didáctico (ADR-002). Nunca operativo.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.learning-dataset"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "dataset_id",
+        "title",
+        "description",
+        "classification",
+        "license",
+        "references",
+        "files"
+      ],
+      "properties": {
+        "dataset_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "classification": {
+          "allOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/classification"
+            },
+            {
+              "properties": {
+                "origin": {
+                  "enum": [
+                    "BUILTIN_EXAMPLE",
+                    "DIDACTIC_SIMULATION"
+                  ]
+                },
+                "purpose": {
+                  "const": "EDUCATIONAL"
+                }
+              }
+            }
+          ]
+        },
+        "license": {
+          "type": "object",
+          "required": [
+            "spdx",
+            "text"
+          ],
+          "properties": {
+            "spdx": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "text": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "citation"
+            ],
+            "properties": {
+              "citation": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "doi": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "sha256",
+              "media_type"
+            ],
+            "properties": {
+              "path": {
+                "$ref": "defs.schema.json#/$defs/relative_path"
+              },
+              "sha256": {
+                "$ref": "defs.schema.json#/$defs/sha256_hex"
+              },
+              "media_type": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

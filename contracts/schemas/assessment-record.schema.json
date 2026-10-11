@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/assessment-record.schema.json",
+  "title": "AssessmentRecord",
+  "description": "Evaluación con autoridad del protocolo propietario (ADR-009). Sin booleano `valid`: estado nativo, regla, evidencia y alcance.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.assessment-record"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "assessment_id",
+        "subject_refs",
+        "assessment_type",
+        "protocol",
+        "rule",
+        "native_status",
+        "passport_state",
+        "reasons",
+        "evidence",
+        "scope",
+        "supersedes"
+      ],
+      "properties": {
+        "assessment_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "subject_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "minItems": 1
+        },
+        "assessment_type": {
+          "$ref": "defs.schema.json#/$defs/namespaced_id"
+        },
+        "protocol": {
+          "$ref": "defs.schema.json#/$defs/policy_ref"
+        },
+        "rule": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "native_status": {
+          "$ref": "defs.schema.json#/$defs/native_status"
+        },
+        "passport_state": {
+          "$ref": "defs.schema.json#/$defs/passport_state"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/evidence_ref"
+          }
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "supersedes": {
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bounds": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "lower",
+                "upper"
+              ],
+              "properties": {
+                "lower": {
+                  "$ref": "defs.schema.json#/$defs/quantity"
+                },
+                "upper": {
+                  "$ref": "defs.schema.json#/$defs/quantity"
+                },
+                "kind": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quantity_semantics": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "quantity_kind",
+                "usable_as"
+              ],
+              "properties": {
+                "quantity_kind": {
+                  "enum": [
+                    "U_scalar_charge",
+                    "Ueff_Dudarev",
+                    "J",
+                    "V"
+                  ]
+                },
+                "usable_as": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "U_scalar_charge",
+                      "Ueff_Dudarev",
+                      "J",
+                      "V"
+                    ]
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "native_status": {
+                "properties": {
+                  "value": {
+                    "const": "NOT_ESTABLISHED"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "passport_state": {
+                "const": "NOT_ESTABLISHED"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "passport_state": {
+                "const": "PASS"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "quantity_semantics": {
+                "properties": {
+                  "quantity_kind": {
+                    "const": "U_scalar_charge"
+                  }
+                },
+                "required": [
+                  "quantity_kind"
+                ]
+              }
+            },
+            "required": [
+              "quantity_semantics"
+            ]
+          },
+          "then": {
+            "properties": {
+              "quantity_semantics": {
+                "properties": {
+                  "usable_as": {
+                    "items": {
+                      "const": "U_scalar_charge"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

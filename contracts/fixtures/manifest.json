@@ -1,0 +1,579 @@
+{
+  "description": "Cada fixture con su schema, resultado esperado y regla. `consumer` fija el tratamiento que deben dar SDK/UI.",
+  "fixtures": [
+    {
+      "path": "fixtures/envelope/valid/verified-digest.json",
+      "schema": "envelope.schema.json",
+      "expect": "valid",
+      "rule": "Digest JCS correcto (el check Node lo recalcula)."
+    },
+    {
+      "path": "fixtures/envelope/valid/unverified-null-digest.json",
+      "schema": "envelope.schema.json",
+      "expect": "valid",
+      "rule": "UNVERIFIED admite digest null."
+    },
+    {
+      "path": "fixtures/envelope/invalid/unknown-top-level-field.json",
+      "schema": "envelope.schema.json",
+      "expect": "invalid",
+      "rule": "Campo de primer nivel desconocido."
+    },
+    {
+      "path": "fixtures/envelope/invalid/verified-without-digest.json",
+      "schema": "envelope.schema.json",
+      "expect": "invalid",
+      "rule": "VERIFIED exige digest."
+    },
+    {
+      "path": "fixtures/envelope/invalid/extension-not-namespaced.json",
+      "schema": "envelope.schema.json",
+      "expect": "invalid",
+      "rule": "Extensiones solo namespaced."
+    },
+    {
+      "path": "fixtures/artifact-ref/valid/basic.json",
+      "schema": "artifact-ref.schema.json",
+      "expect": "valid",
+      "rule": "ID, digest y tipo."
+    },
+    {
+      "path": "fixtures/artifact-ref/invalid/with-host-path.json",
+      "schema": "artifact-ref.schema.json",
+      "expect": "invalid",
+      "rule": "Una ArtifactRef no lleva rutas del host."
+    },
+    {
+      "path": "fixtures/artifact-ref/invalid/with-url.json",
+      "schema": "artifact-ref.schema.json",
+      "expect": "invalid",
+      "rule": "Una URL no autoriza acceso."
+    },
+    {
+      "path": "fixtures/native-contract-ref/valid/qraft-workflow-lock.json",
+      "schema": "native-contract-ref.schema.json",
+      "expect": "valid",
+      "rule": "Lock nativo QRAFT por referencia."
+    },
+    {
+      "path": "fixtures/native-contract-ref/invalid/short-commit.json",
+      "schema": "native-contract-ref.schema.json",
+      "expect": "invalid",
+      "rule": "Commit completo de 40 hex."
+    },
+    {
+      "path": "fixtures/native-contract-ref/invalid/contract-without-version.json",
+      "schema": "native-contract-ref.schema.json",
+      "expect": "invalid",
+      "rule": "Contrato nativo con @MAJOR.MINOR."
+    },
+    {
+      "path": "fixtures/structure-revision/valid/si-diamond.json",
+      "schema": "structure-revision.schema.json",
+      "expect": "valid",
+      "rule": "Si diamante, fraccionarias."
+    },
+    {
+      "path": "fixtures/structure-revision/invalid/cartesian-without-unit.json",
+      "schema": "structure-revision.schema.json",
+      "expect": "invalid",
+      "rule": "Cartesianas exigen unidad."
+    },
+    {
+      "path": "fixtures/structure-revision/invalid/position-2d.json",
+      "schema": "structure-revision.schema.json",
+      "expect": "invalid",
+      "rule": "Posición de tres componentes."
+    },
+    {
+      "path": "fixtures/species-definition/valid/si.json",
+      "schema": "species-definition.schema.json",
+      "expect": "valid",
+      "rule": "Especie Si."
+    },
+    {
+      "path": "fixtures/species-definition/invalid/z-out-of-range.json",
+      "schema": "species-definition.schema.json",
+      "expect": "invalid",
+      "rule": "Z fuera de rango."
+    },
+    {
+      "path": "fixtures/physical-model/valid/pbe.json",
+      "schema": "physical-model.schema.json",
+      "expect": "valid",
+      "rule": "Sin Hubbard."
+    },
+    {
+      "path": "fixtures/physical-model/valid/hubbard-u-scalar-charge.json",
+      "schema": "physical-model.schema.json",
+      "expect": "valid",
+      "rule": "U_scalar_charge con su fuente nativa."
+    },
+    {
+      "path": "fixtures/physical-model/invalid/ueff-without-derivation.json",
+      "schema": "physical-model.schema.json",
+      "expect": "invalid",
+      "rule": "§8.4: Ueff exige evidencia de derivación."
+    },
+    {
+      "path": "fixtures/numerical-policy/valid/scf.json",
+      "schema": "numerical-policy.schema.json",
+      "expect": "valid",
+      "rule": "Política con tolerancia exacta como string."
+    },
+    {
+      "path": "fixtures/numerical-policy/invalid/null-without-reason.json",
+      "schema": "numerical-policy.schema.json",
+      "expect": "invalid",
+      "rule": "Ausente = null + motivo."
+    },
+    {
+      "path": "fixtures/numerical-policy/valid/null-with-reason.json",
+      "schema": "numerical-policy.schema.json",
+      "expect": "valid",
+      "rule": "Null con motivo."
+    },
+    {
+      "path": "fixtures/run-intent/valid/promoted-to-draft.json",
+      "schema": "run-intent.schema.json",
+      "expect": "valid",
+      "rule": "Ejemplo promovido a borrador."
+    },
+    {
+      "path": "fixtures/run-intent/invalid/educational-purpose.json",
+      "schema": "run-intent.schema.json",
+      "expect": "invalid",
+      "rule": "ADR-002: un intent no es educativo."
+    },
+    {
+      "path": "fixtures/run-intent/invalid/without-draft.json",
+      "schema": "run-intent.schema.json",
+      "expect": "invalid",
+      "rule": "ADR-002: sin borrador no hay intent."
+    },
+    {
+      "path": "fixtures/artifact-record/valid/siesta-output.json",
+      "schema": "artifact-record.schema.json",
+      "expect": "valid",
+      "rule": "Salida verificada."
+    },
+    {
+      "path": "fixtures/artifact-record/invalid/negative-size.json",
+      "schema": "artifact-record.schema.json",
+      "expect": "invalid",
+      "rule": "Tamaño no negativo."
+    },
+    {
+      "path": "fixtures/artifact-record/invalid/unsafe-size.json",
+      "schema": "artifact-record.schema.json",
+      "expect": "invalid",
+      "rule": "Entero fuera del rango seguro de JS."
+    },
+    {
+      "path": "fixtures/result-dataset/valid/imported-bands.json",
+      "schema": "result-dataset.schema.json",
+      "expect": "valid",
+      "rule": "Importación con procedencia parcial."
+    },
+    {
+      "path": "fixtures/result-dataset/invalid/import-verified-without-evidence.json",
+      "schema": "result-dataset.schema.json",
+      "expect": "invalid",
+      "rule": "ADR-002: importación no es verificada sin evidencia."
+    },
+    {
+      "path": "fixtures/assessment-record/valid/not-established.json",
+      "schema": "assessment-record.schema.json",
+      "expect": "valid",
+      "rule": "Terminación técnica exitosa y veredicto NOT_ESTABLISHED (ver run-projection/valid/completed-not-established).",
+      "consumer": {
+        "display_state": "NOT_ESTABLISHED",
+        "is_pass": false,
+        "is_certified": false
+      }
+    },
+    {
+      "path": "fixtures/assessment-record/valid/native-future-enum.json",
+      "schema": "assessment-record.schema.json",
+      "expect": "valid",
+      "rule": "Enum nativo futuro: valida (vocabulario abierto) y se proyecta como NOT_ESTABLISHED.",
+      "consumer": {
+        "display_state": "NOT_ESTABLISHED",
+        "is_pass": false,
+        "is_certified": false
+      }
+    },
+    {
+      "path": "fixtures/assessment-record/invalid/platform-future-enum.json",
+      "schema": "assessment-record.schema.json",
+      "expect": "invalid",
+      "rule": "Enum de plataforma futuro y versión 0.2: el validador 0.1 lo rechaza.",
+      "consumer": {
+        "display_state": "UNKNOWN",
+        "is_pass": false,
+        "is_certified": false
+      }
+    },
+    {
+      "path": "fixtures/assessment-record/invalid/not-established-shown-as-pass.json",
+      "schema": "assessment-record.schema.json",
+      "expect": "invalid",
+      "rule": "NOT_ESTABLISHED nunca se proyecta como PASS."
+    },
+    {
+      "path": "fixtures/assessment-record/invalid/boolean-valid.json",
+      "schema": "assessment-record.schema.json",
+      "expect": "invalid",
+      "rule": "No existe booleano valid."
+    },
+    {
+      "path": "fixtures/assessment-record/invalid/u-used-as-ueff.json",
+      "schema": "assessment-record.schema.json",
+      "expect": "invalid",
+      "rule": "§8.4: U_scalar_charge no se usa como Ueff."
+    },
+    {
+      "path": "fixtures/assessment-record/invalid/pass-without-evidence.json",
+      "schema": "assessment-record.schema.json",
+      "expect": "invalid",
+      "rule": "PASS exige evidencia."
+    },
+    {
+      "path": "fixtures/learning-dataset/valid/builtin-example.json",
+      "schema": "learning-dataset.schema.json",
+      "expect": "valid",
+      "rule": "Ejemplo con procedencia verificada sigue siendo educativo."
+    },
+    {
+      "path": "fixtures/learning-dataset/invalid/operational-purpose.json",
+      "schema": "learning-dataset.schema.json",
+      "expect": "invalid",
+      "rule": "Un dataset didáctico no es operativo."
+    },
+    {
+      "path": "fixtures/learning-dataset/invalid/path-escape.json",
+      "schema": "learning-dataset.schema.json",
+      "expect": "invalid",
+      "rule": "Ruta sin '..'."
+    },
+    {
+      "path": "fixtures/operation-request/valid/submit-run.json",
+      "schema": "operation-request.schema.json",
+      "expect": "valid",
+      "rule": "Envío con clave y revisión esperada."
+    },
+    {
+      "path": "fixtures/operation-request/invalid/client-sets-owner.json",
+      "schema": "operation-request.schema.json",
+      "expect": "invalid",
+      "rule": "Owner lo deriva el servidor."
+    },
+    {
+      "path": "fixtures/operation-request/invalid/short-key.json",
+      "schema": "operation-request.schema.json",
+      "expect": "invalid",
+      "rule": "Clave de 16 a 128 caracteres."
+    },
+    {
+      "path": "fixtures/operation-request/invalid/submit-without-profile.json",
+      "schema": "operation-request.schema.json",
+      "expect": "invalid",
+      "rule": "SUBMIT_RUN exige perfil."
+    },
+    {
+      "path": "fixtures/operation-record/valid/submit-succeeded.json",
+      "schema": "operation-record.schema.json",
+      "expect": "valid",
+      "rule": "Operación terminada; el run puede seguir."
+    },
+    {
+      "path": "fixtures/operation-record/valid/submit-outcome-unknown.json",
+      "schema": "operation-record.schema.json",
+      "expect": "valid",
+      "rule": "Ack perdido: operación incierta."
+    },
+    {
+      "path": "fixtures/operation-record/invalid/failed-without-error.json",
+      "schema": "operation-record.schema.json",
+      "expect": "invalid",
+      "rule": "FAILED exige Problem."
+    },
+    {
+      "path": "fixtures/operation-record/invalid/key-expiring-with-live-effects.json",
+      "schema": "operation-record.schema.json",
+      "expect": "invalid",
+      "rule": "Con efectos vivos la clave no caduca."
+    },
+    {
+      "path": "fixtures/run-projection/valid/completed-not-established.json",
+      "schema": "run-projection.schema.json",
+      "expect": "valid",
+      "rule": "Terminación técnica exitosa con ciencia NOT_ESTABLISHED.",
+      "consumer": {
+        "display_state": "NOT_ESTABLISHED",
+        "is_pass": false,
+        "is_certified": false
+      }
+    },
+    {
+      "path": "fixtures/run-projection/valid/ssh-lost-unknown.json",
+      "schema": "run-projection.schema.json",
+      "expect": "valid",
+      "rule": "SSH perdido: UNKNOWN, no fallido.",
+      "consumer": {
+        "display_state": "UNKNOWN",
+        "is_failed": false
+      }
+    },
+    {
+      "path": "fixtures/run-projection/invalid/never-observed-running.json",
+      "schema": "run-projection.schema.json",
+      "expect": "invalid",
+      "rule": "Sin observación el valor es UNKNOWN."
+    },
+    {
+      "path": "fixtures/resume-plan/valid/partial-reuse.json",
+      "schema": "resume-plan.schema.json",
+      "expect": "valid",
+      "rule": "Reutiliza, invalida y siembra con motivo."
+    },
+    {
+      "path": "fixtures/resume-plan/invalid/without-expiry.json",
+      "schema": "resume-plan.schema.json",
+      "expect": "invalid",
+      "rule": "Caducidad obligatoria."
+    },
+    {
+      "path": "fixtures/validation-receipt/valid/heuristic-override.json",
+      "schema": "validation-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Override experto de heurística registrado."
+    },
+    {
+      "path": "fixtures/validation-receipt/invalid/override-hard-rule.json",
+      "schema": "validation-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Una regla de integridad no se anula."
+    },
+    {
+      "path": "fixtures/analysis-result/valid/hubbard.json",
+      "schema": "analysis-result.schema.json",
+      "expect": "valid",
+      "rule": "Análisis con evaluación enlazada."
+    },
+    {
+      "path": "fixtures/analysis-result/invalid/without-assessment.json",
+      "schema": "analysis-result.schema.json",
+      "expect": "invalid",
+      "rule": "Un análisis enlaza su evaluación."
+    },
+    {
+      "path": "fixtures/capability-descriptor/valid/offline-reader.json",
+      "schema": "capability-descriptor.schema.json",
+      "expect": "valid",
+      "rule": "Lector actual: IMPLEMENTED, sin ejecución (ADR-012 Migración)."
+    },
+    {
+      "path": "fixtures/capability-descriptor/invalid/execution-not-verified.json",
+      "schema": "capability-descriptor.schema.json",
+      "expect": "invalid",
+      "rule": "Ejecución exige RUNTIME_VERIFIED y ruta canónica completa."
+    },
+    {
+      "path": "fixtures/admission-receipt/valid/exploratory.json",
+      "schema": "admission-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Exploración admitida sin calificación."
+    },
+    {
+      "path": "fixtures/admission-receipt/invalid/qualified-without-qualification.json",
+      "schema": "admission-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Un resultado calificado exige su CapabilityQualificationRecord."
+    },
+    {
+      "path": "fixtures/controller-authority-record/valid/no-fencing-conservative.json",
+      "schema": "controller-authority-record.schema.json",
+      "expect": "valid",
+      "rule": "Sin fencing en QRAFT (U-Q7): takeover deshabilitado."
+    },
+    {
+      "path": "fixtures/controller-authority-record/invalid/takeover-without-fencing.json",
+      "schema": "controller-authority-record.schema.json",
+      "expect": "invalid",
+      "rule": "ADR-007 §4."
+    },
+    {
+      "path": "fixtures/submission-receipt/valid/ack-lost.json",
+      "schema": "submission-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Ack perdido: SUBMISSION_UNKNOWN, sin job.",
+      "consumer": {
+        "resubmit_allowed": false
+      }
+    },
+    {
+      "path": "fixtures/submission-receipt/valid/accepted.json",
+      "schema": "submission-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Aceptado con identidad de job."
+    },
+    {
+      "path": "fixtures/submission-receipt/invalid/accepted-without-job.json",
+      "schema": "submission-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Aceptado exige identidad de job."
+    },
+    {
+      "path": "fixtures/submission-receipt/invalid/absent-without-evidence.json",
+      "schema": "submission-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Una consulta vacía no basta."
+    },
+    {
+      "path": "fixtures/runtime-probe-receipt/valid/slurm-mpi.json",
+      "schema": "runtime-probe-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Probe con validez acotada."
+    },
+    {
+      "path": "fixtures/runtime-probe-receipt/invalid/without-validity.json",
+      "schema": "runtime-probe-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Un probe caduca."
+    },
+    {
+      "path": "fixtures/finalization-receipt/valid/published.json",
+      "schema": "finalization-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Conjunto completo publicado."
+    },
+    {
+      "path": "fixtures/finalization-receipt/invalid/published-with-missing.json",
+      "schema": "finalization-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "No se publica un conjunto incompleto."
+    },
+    {
+      "path": "fixtures/recovery-checkpoint/valid/sqlite.json",
+      "schema": "recovery-checkpoint.schema.json",
+      "expect": "valid",
+      "rule": "Snapshot con API de backup."
+    },
+    {
+      "path": "fixtures/recovery-checkpoint/invalid/live-file-copy.json",
+      "schema": "recovery-checkpoint.schema.json",
+      "expect": "invalid",
+      "rule": "No se copia una DB activa."
+    },
+    {
+      "path": "fixtures/capability-qualification-record/valid/single-point.json",
+      "schema": "capability-qualification-record.schema.json",
+      "expect": "valid",
+      "rule": "Calificación por tupla con dimensiones separadas."
+    },
+    {
+      "path": "fixtures/capability-qualification-record/invalid/missing-dimension.json",
+      "schema": "capability-qualification-record.schema.json",
+      "expect": "invalid",
+      "rule": "Las cinco dimensiones son obligatorias."
+    },
+    {
+      "path": "fixtures/event-record/valid/operation-state.json",
+      "schema": "event-record.schema.json",
+      "expect": "valid",
+      "rule": "Evento tipado."
+    },
+    {
+      "path": "fixtures/event-record/valid/future-type.json",
+      "schema": "event-record.schema.json",
+      "expect": "valid",
+      "rule": "Tipo desconocido: valida, el consumidor lo ignora.",
+      "consumer": {
+        "ignored": true
+      }
+    },
+    {
+      "path": "fixtures/event-record/invalid/sequence-zero.json",
+      "schema": "event-record.schema.json",
+      "expect": "invalid",
+      "rule": "La secuencia empieza en 1."
+    },
+    {
+      "path": "fixtures/event-record/invalid/wrong-payload.json",
+      "schema": "event-record.schema.json",
+      "expect": "invalid",
+      "rule": "Payload del tipo conocido."
+    },
+    {
+      "path": "fixtures/event-record/valid/resync.json",
+      "schema": "event-record.schema.json",
+      "expect": "valid",
+      "rule": "Señal de resync."
+    },
+    {
+      "path": "fixtures/problem/valid/key-reused.json",
+      "schema": "problem.schema.json",
+      "expect": "valid",
+      "rule": "Problem con código estable."
+    },
+    {
+      "path": "fixtures/problem/invalid/without-code.json",
+      "schema": "problem.schema.json",
+      "expect": "invalid",
+      "rule": "Código obligatorio."
+    },
+    {
+      "path": "fixtures/problem/invalid/with-host-path.json",
+      "schema": "problem.schema.json",
+      "expect": "invalid",
+      "rule": "Sin campos libres que filtren rutas."
+    },
+    {
+      "path": "fixtures/hubbard-layer-message/valid/resolve-plan-request.json",
+      "schema": "hubbard-layer-message.schema.json",
+      "expect": "valid",
+      "rule": "Entrada serializable (U-H2)."
+    },
+    {
+      "path": "fixtures/hubbard-layer-message/valid/resolve-plan-response.json",
+      "schema": "hubbard-layer-message.schema.json",
+      "expect": "valid",
+      "rule": "Plan nativo con digest conservado y NOT_ESTABLISHED.",
+      "consumer": {
+        "display_state": "NOT_ESTABLISHED",
+        "is_pass": false,
+        "is_certified": false
+      }
+    },
+    {
+      "path": "fixtures/hubbard-layer-message/invalid/tau-as-float.json",
+      "schema": "hubbard-layer-message.schema.json",
+      "expect": "invalid",
+      "rule": "Tokens de certificación viajan como string."
+    },
+    {
+      "path": "fixtures/hubbard-layer-message/valid/analyze-response.json",
+      "schema": "hubbard-layer-message.schema.json",
+      "expect": "valid",
+      "rule": "CERTIFIED de la inversa no es U certificado.",
+      "consumer": {
+        "display_state": "NOT_ESTABLISHED",
+        "is_pass": false,
+        "is_certified": false
+      }
+    },
+    {
+      "path": "fixtures/hubbard-layer-message/invalid/analyze-as-ueff.json",
+      "schema": "hubbard-layer-message.schema.json",
+      "expect": "invalid",
+      "rule": "El análisis LR produce U_scalar_charge."
+    },
+    {
+      "path": "fixtures/hubbard-layer-message/valid/check-resume-response.json",
+      "schema": "hubbard-layer-message.schema.json",
+      "expect": "valid",
+      "rule": "check_resume sin efectos (U-H4)."
+    }
+  ]
+}

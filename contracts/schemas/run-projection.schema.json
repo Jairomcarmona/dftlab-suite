@@ -1,0 +1,328 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/run-projection.schema.json",
+  "title": "RunProjection",
+  "description": "Proyección reconstruible de un run: cuatro dimensiones con fuente y última observación (ADR-005 §3–4). No controla el DAG.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.run-projection"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "current_attempt_id",
+        "native_refs",
+        "dimensions",
+        "source_revision",
+        "snapshot_cursor"
+      ],
+      "properties": {
+        "run_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "current_attempt_id": {
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "native_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "native-contract-ref.schema.json"
+          }
+        },
+        "dimensions": {
+          "type": "object",
+          "required": [
+            "scheduler",
+            "execution",
+            "integrity",
+            "science"
+          ],
+          "properties": {
+            "scheduler": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "source",
+                "observed_at"
+              ],
+              "properties": {
+                "value": {
+                  "enum": [
+                    "UNKNOWN",
+                    "NOT_SUBMITTED",
+                    "SUBMISSION_UNKNOWN",
+                    "PENDING",
+                    "RUNNING",
+                    "COMPLETED",
+                    "FAILED",
+                    "CANCELLED",
+                    "TIMEOUT",
+                    "PREEMPTED",
+                    "NODE_FAIL",
+                    "OUT_OF_MEMORY"
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "observed_at": {
+                  "anyOf": [
+                    {
+                      "$ref": "defs.schema.json#/$defs/timestamp"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "native": {
+                  "anyOf": [
+                    {
+                      "$ref": "defs.schema.json#/$defs/native_status"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "if": {
+                "properties": {
+                  "observed_at": {
+                    "type": "null"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "value": {
+                    "const": "UNKNOWN"
+                  }
+                }
+              }
+            },
+            "execution": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "source",
+                "observed_at"
+              ],
+              "properties": {
+                "value": {
+                  "enum": [
+                    "UNKNOWN",
+                    "PREPARED",
+                    "SUBMITTED",
+                    "RUNNING",
+                    "COLLECTING",
+                    "COMPLETED",
+                    "INTERRUPTED",
+                    "FAILED",
+                    "CANCELLED"
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "observed_at": {
+                  "anyOf": [
+                    {
+                      "$ref": "defs.schema.json#/$defs/timestamp"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "native": {
+                  "anyOf": [
+                    {
+                      "$ref": "defs.schema.json#/$defs/native_status"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "if": {
+                "properties": {
+                  "observed_at": {
+                    "type": "null"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "value": {
+                    "const": "UNKNOWN"
+                  }
+                }
+              }
+            },
+            "integrity": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "source",
+                "observed_at"
+              ],
+              "properties": {
+                "value": {
+                  "enum": [
+                    "UNKNOWN",
+                    "STAGED",
+                    "VERIFIED",
+                    "INCOMPLETE",
+                    "MISSING",
+                    "ALTERED"
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "observed_at": {
+                  "anyOf": [
+                    {
+                      "$ref": "defs.schema.json#/$defs/timestamp"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "native": {
+                  "anyOf": [
+                    {
+                      "$ref": "defs.schema.json#/$defs/native_status"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "if": {
+                "properties": {
+                  "observed_at": {
+                    "type": "null"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "value": {
+                    "const": "UNKNOWN"
+                  }
+                }
+              }
+            },
+            "science": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "source",
+                "observed_at"
+              ],
+              "properties": {
+                "value": {
+                  "enum": [
+                    "UNKNOWN",
+                    "PASS",
+                    "FAIL",
+                    "NOT_APPLICABLE",
+                    "NOT_ESTABLISHED",
+                    "REVIEW"
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "observed_at": {
+                  "anyOf": [
+                    {
+                      "$ref": "defs.schema.json#/$defs/timestamp"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "native": {
+                  "anyOf": [
+                    {
+                      "$ref": "defs.schema.json#/$defs/native_status"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "if": {
+                "properties": {
+                  "observed_at": {
+                    "type": "null"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "value": {
+                    "const": "UNKNOWN"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "source_revision": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "snapshot_cursor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "previous_attempt_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/id"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

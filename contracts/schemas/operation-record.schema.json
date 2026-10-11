@@ -1,0 +1,245 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/operation-record.schema.json",
+  "title": "OperationRecord",
+  "description": "Registro durable de una operación. La transición se persiste antes de notificar (transitions/operation-transitions.json).",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.operation-record"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "operation_id",
+        "action",
+        "state",
+        "revision",
+        "request_hash",
+        "idempotency_key",
+        "idempotency_scope",
+        "owner_principal_id",
+        "accepted_at",
+        "updated_at",
+        "target_refs",
+        "result",
+        "error",
+        "event_cursor",
+        "key_retention"
+      ],
+      "properties": {
+        "operation_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "action": {
+          "enum": [
+            "VALIDATE_INPUT",
+            "CREATE_CAMPAIGN",
+            "CREATE_PLAN",
+            "PREPARE_PACKAGE",
+            "SUBMIT_RUN",
+            "CANCEL_RUN",
+            "CREATE_RESUME_PLAN",
+            "EXECUTE_RESUME_PLAN",
+            "RECONCILE_RUN"
+          ]
+        },
+        "state": {
+          "enum": [
+            "PENDING",
+            "RUNNING",
+            "OUTCOME_UNKNOWN",
+            "SUCCEEDED",
+            "FAILED",
+            "REJECTED",
+            "CANCELLED"
+          ]
+        },
+        "revision": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "request_hash": {
+          "$ref": "defs.schema.json#/$defs/sha256_hex"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{16,128}$"
+        },
+        "idempotency_scope": {
+          "type": "object",
+          "required": [
+            "owner_principal_id",
+            "project_id"
+          ],
+          "properties": {
+            "owner_principal_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "project_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            }
+          },
+          "additionalProperties": false
+        },
+        "owner_principal_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "accepted_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "updated_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "target_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind",
+              "id"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "revision": {
+                "$ref": "defs.schema.json#/$defs/revision"
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "problem.schema.json"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "event_cursor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "key_retention": {
+          "type": "object",
+          "required": [
+            "effects_alive",
+            "retain_until"
+          ],
+          "properties": {
+            "effects_alive": {
+              "type": "boolean"
+            },
+            "retain_until": {
+              "anyOf": [
+                {
+                  "$ref": "defs.schema.json#/$defs/timestamp"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "FAILED",
+                  "REJECTED"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "$ref": "problem.schema.json"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "SUCCEEDED",
+                  "PENDING",
+                  "RUNNING"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "key_retention": {
+                "properties": {
+                  "effects_alive": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "key_retention": {
+                "properties": {
+                  "retain_until": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "description": "Mientras haya efectos vivos la clave no caduca (retain_until null).",
+      "title": "payload"
+    }
+  }
+}

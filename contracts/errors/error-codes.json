@@ -1,0 +1,23 @@
+{
+  "description": "Códigos estables de Problem Details (ADR-004 §8). Un rechazo científico no es un error HTTP: es un AssessmentRecord. Añadir un código es un cambio de contrato menor; cambiar el significado de uno existente es mayor.",
+  "codes": {
+    "VALIDATION_FAILED": {"status": 422, "meaning": "El cuerpo no cumple su schema; errors[] lleva JSON Pointer por campo."},
+    "UNSUPPORTED_SCHEMA_VERSION": {"status": 422, "meaning": "schema_version incompatible; no se migra en sitio."},
+    "IDEMPOTENCY_KEY_REUSED": {"status": 409, "meaning": "Misma clave y ámbito con otro request_hash."},
+    "REVISION_CONFLICT": {"status": 412, "meaning": "expected_revision no coincide con la revisión actual."},
+    "PRECONDITION_FAILED": {"status": 412, "meaning": "Una precondición del plan, recibo o admisión ya no se cumple (caducidad, digest, perfil)."},
+    "NOT_AUTHENTICATED": {"status": 401, "meaning": "Sin sesión válida."},
+    "FORBIDDEN": {"status": 403, "meaning": "El principal no tiene permiso sobre el recurso/acción."},
+    "ORIGIN_REJECTED": {"status": 403, "meaning": "Host u Origin no admitidos (incluye origen null)."},
+    "CSRF_REJECTED": {"status": 403, "meaning": "Falta o no coincide el token CSRF."},
+    "NOT_FOUND": {"status": 404, "meaning": "Recurso inexistente o no visible para el principal."},
+    "ADMISSION_REJECTED": {"status": 409, "meaning": "Admisión denegada; el AdmissionReceipt lleva los motivos."},
+    "CAPABILITY_NOT_ADMITTED": {"status": 409, "meaning": "La capability no está admitida para esa finalidad (ADR-012)."},
+    "ENGINE_UNAVAILABLE": {"status": 503, "meaning": "El motor o la capa requerida no está instalado o no responde; no implica fallo del run."},
+    "CURSOR_EXPIRED": {"status": 410, "meaning": "El historial de eventos ya no cubre el cursor; consultar el snapshot y reanudar desde su cursor."},
+    "PAYLOAD_TOO_LARGE": {"status": 413, "meaning": "Supera el límite declarado del endpoint."},
+    "RANGE_NOT_SATISFIABLE": {"status": 416, "meaning": "Rango de transferencia inválido para la identidad del origen."},
+    "RATE_LIMITED": {"status": 429, "meaning": "Límite de solicitudes; retryable."},
+    "INTERNAL": {"status": 500, "meaning": "Error interno con request_id; sin detalles sensibles."}
+  }
+}

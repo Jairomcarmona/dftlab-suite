@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/finalization-receipt.schema.json",
+  "title": "FinalizationReceipt",
+  "description": "Finalización consolidada y publicación condicionada (ADR-010 §5, §25.4).",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.finalization-receipt"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "attempt_id",
+        "native_refs",
+        "journal_cursor",
+        "expected_artifacts",
+        "verified_artifacts",
+        "missing",
+        "validation_refs",
+        "assessment_refs",
+        "authority_generation",
+        "state"
+      ],
+      "properties": {
+        "run_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "attempt_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "native_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "native-contract-ref.schema.json"
+          },
+          "minItems": 1
+        },
+        "journal_cursor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "expected_artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "artifact-ref.schema.json"
+          },
+          "minItems": 1
+        },
+        "verified_artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "artifact-ref.schema.json"
+          }
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "$ref": "artifact-ref.schema.json"
+          }
+        },
+        "validation_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/id"
+          }
+        },
+        "assessment_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/id"
+          }
+        },
+        "authority_generation": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "state": {
+          "enum": [
+            "PENDING",
+            "PUBLISHED",
+            "FAILED_VERIFICATION"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "PUBLISHED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "missing": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ],
+      "title": "payload"
+    }
+  }
+}
