@@ -58,3 +58,7 @@ Los scripts de análisis están en `docs/development/evidencia/`. Cada criterio 
 | DL-15 | GaAs/AlAs (001), potencial promedio: VBO = 0.574 eV (rango declarado 0.35 a 0.65; exp ≈ 0.53). |
 
 No se pudo probar DL-06 (Pyodide): el proxy bloquea `cdn.jsdelivr.net`. DL-04 (ELF propio) no se intentó.
+
+## DL-06, ASE en Pyodide
+
+Pyodide 0.27.7 y ASE 3.29.0 funcionan juntos: bulk Si, slab Al(111) y escritura de extxyz y cif, con numpy, scipy y matplotlib de la distribución de Pyodide. Carga en frío 12.8 s en Node y 13.3 s en Chromium headless con servidor local, unos 40 MB de archivos. El proxy de este entorno bloquea `cdn.jsdelivr.net` y `unpkg.com`, pero `git clone`, `npm pack` y el tarball de `github.com/pyodide/pyodide/releases` sí funcionan. Scripts en `docs/development/evidencia/pyodide_ase_*`. No se probó pymatgen ni calculadores.

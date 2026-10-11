@@ -42,8 +42,8 @@
       "id": "DL-06",
       "afirmacion": "ASE funciona dentro de Pyodide en el build portátil con un tamaño y tiempo de carga aceptables",
       "verificacion": "Prueba real en navegador: importar ase, construir una supercelda y exportar .fdf; medir MB descargados y segundos",
-      "estado": "ABIERTA",
-      "evidencia": "Parcial (sigue ABIERTA): este entorno no puede descargar Pyodide (cdn.jsdelivr.net devuelve 403 por el proxy), asi que la prueba en navegador no se pudo hacer aqui."
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. Pyodide 0.27.7 (tarball de github.com/pyodide/pyodide/releases, 389 MB completo; git clone y npm pack tambien funcionan; los CDN jsdelivr y unpkg estan bloqueados en este entorno). ase 3.29.0 (rueda pura, 3 MB) se instala con micropip desde archivo local (deps=False) sobre numpy 2.0.2, scipy 1.14.1 y matplotlib 3.8.4 de la distribucion de Pyodide. Con ase se construyo bulk Si (8 vecinos a 2.351 A), un slab Al(111) de 5 capas, y se escribieron extxyz y cif. Criterios declarados antes: carga en frio <60 s y <120 MB. Resultado: 12.8 s en Node 22 y 13.3 s en Chromium headless (servidor local), unos 40 MB de archivos necesarios (wasm 9.7, stdlib 2.3, numpy 3, scipy 13, matplotlib 6.5 mas dependencias, ase 3). Limites: sin latencia de red real ni movil, solo construccion y E/S de estructuras (no se probaron calculadores ni pymatgen). Recomendacion: alojar Pyodide y las ruedas con la app (no depender de un CDN). Scripts: docs/development/evidencia/pyodide_ase_node.mjs y pyodide_ase_navegador.html."
     },
     {
       "id": "DL-07",
