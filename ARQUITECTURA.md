@@ -25,7 +25,7 @@ La [propuesta maestra V2.1](PROPUESTA_MAESTRA_DFTLAB_V2.md) y su [plan](PLAN_IMP
 | [011](docs/adr/ADR-011-despliegues-por-target-workers-fijados.md) | Despliegue por target; workers fijados durante cada campaña |
 | [012](docs/adr/ADR-012-releases-migraciones-catalogo-capabilities.md) | Releases compatibles, migraciones y catálogo de capabilities probado |
 
-ADR-013 (React y TypeScript) sigue **propuesto**; ADR-014 (entorno Python de referencias) es independiente de V2.1. [ADR-015](docs/adr/ADR-015-hubbardflow-dependencia-privada-opcional.md): HubbardFlow es una dependencia privada y opcional; la plataforma no lo empaqueta ni lo redistribuye y funciona sin él. Los ADR-003, 004, 006, 007 y 012 tienen puntos marcados «pendiente C2» que esperan el inventario de API de los motores (`docs/compatibility/`); la asignación de autoridad no depende de ese inventario.
+ADR-013 (React y TypeScript) sigue **propuesto**; ADR-014 (entorno Python de referencias) es independiente de V2.1. [ADR-015](docs/adr/ADR-015-hubbardflow-capa-privada-bajo-qraft.md): HubbardFlow es una capa obligatoria bajo QRAFT, mantenida en un repositorio privado aparte y sin redistribución pública. Los ADR-003, 004, 006, 007 y 012 tienen puntos marcados «pendiente C2» que esperan el inventario de API de los motores (`docs/compatibility/`); la asignación de autoridad no depende de ese inventario.
 
 ### 0.1 Dos builds de una fuente (ADR-001)
 
@@ -47,7 +47,7 @@ No se duplican pantallas. El navegador sigue sin ejecutar SIESTA; enviar un cál
 | Integración científica | `platform/.../integrations/` | Solo API pública de QRAFT y HubbardFlow |
 | Dominio científico | Repositorios de QRAFT y HubbardFlow | Sin cambios desde la plataforma |
 
-Las reglas de imports se verificarán en CI. QRAFT y HubbardFlow no se copian al repositorio. HubbardFlow lo instala aparte quien tenga acceso (ADR-015).
+Las reglas de imports se verificarán en CI. QRAFT y HubbardFlow no se copian al repositorio. HubbardFlow se fija por commit desde su repositorio privado (ADR-015).
 
 ### 0.3 ViewScope (ADR-001)
 

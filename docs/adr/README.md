@@ -18,6 +18,6 @@ Cada ADR tiene estado, contexto, decisión, alternativas, consecuencias, contrat
 | [012](ADR-012-releases-migraciones-catalogo-capabilities.md) | Releases, migraciones y catálogo de capabilities | Aceptado; pendiente C2 |
 | [013](ADR-013-react-typescript-ui.md) | Interfaz con React y TypeScript | Propuesto |
 | [014](ADR-014-python-reference-environment.md) | Entorno aislado para regenerar referencias | Implementado (bloque F) |
-| [015](ADR-015-hubbardflow-dependencia-privada-opcional.md) | HubbardFlow como dependencia privada y opcional | Aceptado |
+| [015](ADR-015-hubbardflow-capa-privada-bajo-qraft.md) | HubbardFlow como capa obligatoria y privada bajo QRAFT | Aceptado |
 
 Fuente: [propuesta maestra V2.1](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) §19.1. Resumen operativo en [ARQUITECTURA.md](../../ARQUITECTURA.md) §0.
