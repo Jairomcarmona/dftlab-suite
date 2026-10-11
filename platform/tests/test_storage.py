@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 from dftlab_platform.contracts import ContractError, Contracts, resource_json
-from dftlab_platform.domain import Operations, Principal, Processor, Problem, identifier, reseal
+from dftlab_platform.domain import Operations, Principal, Processor, Problem, envelope, identifier, now, reseal
 from dftlab_platform.storage import SQLiteRepository
 
 
@@ -25,7 +25,7 @@ class Storage(unittest.TestCase):
         self.directory.cleanup()
 
     def request(self, key="operation-key-001", revision=1):
-        return {"action": "VALIDATE_INPUT", "project_id": self.project["project_id"], "target": {"kind": "PROJECT", "id": self.project["project_id"], "expected_revision": revision}, "payload": {}, "idempotency_key": key}
+        return {"action": "VALIDATE_INPUT", "project_id": self.project["project_id"], "target": {"kind": "PROJECT", "id": self.project["project_id"], "expected_revision": revision}, "payload": {"draft": {"draft_id": "draft-fixture", "revision": 1}}, "idempotency_key": key}
 
     def assertProblem(self, code, function, *args, **kwargs):
         with self.assertRaises(Problem) as caught:
@@ -68,7 +68,7 @@ class Storage(unittest.TestCase):
         self.assertProblem("NOT_FOUND", self.repo.events, self.bob, self.project["project_id"])
         self.assertProblem("REVISION_CONFLICT", self.repo.accept, self.alice, self.request("another-operation-key"))
         changed = self.request()
-        changed["payload"] = {"other": True}
+        changed["payload"]["draft"]["revision"] = 2
         self.assertProblem("IDEMPOTENCY_KEY_REUSED", self.repo.accept, self.alice, changed)
         with closing(sqlite3.connect(self.path, isolation_level=None)) as db:
             self.assertEqual(db.execute("SELECT count(*) FROM operations").fetchone()[0], 1)
@@ -99,15 +99,7 @@ class Storage(unittest.TestCase):
         self.repo.claim("processor")
         self.repo.recover()
         self.assertProblem("REVISION_CONFLICT", self.repo.transition, op_id, 2, "SUCCEEDED", result={"confirmed": True}, processor_id="processor")
-        manifest = resource_json("fixtures/manifest.json")["fixtures"]
-        fixture = next(item for item in manifest if item["schema"] == "submission-receipt.schema.json" and item["expect"] == "valid" and "accepted.json" in item["path"])
-        receipt = resource_json(fixture["path"])
-        receipt["project_id"] = self.project["project_id"]
-        receipt["payload"]["operation_id"] = op_id
-        receipt["payload"]["status"] = "RECONCILED_FOUND"
-        receipt["integrity"]["status"] = "VERIFIED"
-        reseal(receipt)
-        Contracts().validate("submission-receipt", receipt)
+        receipt = envelope("operation-resolution-receipt", self.project["project_id"], {"operation_id": op_id, "action": "VALIDATE_INPUT", "effect_class": "LOCAL_ATOMIC", "finding": "LOCAL_EFFECT_COMMITTED", "resulting_state": "SUCCEEDED", "product_refs": [{"kind": "VALIDATION_RECEIPT", "id": "fixture-product"}], "recovered_at": now(), "evidence": []})
         completed = self.repo.transition(op_id, 3, "SUCCEEDED", result={"receipt": receipt})
         self.assertEqual(completed["payload"]["state"], "SUCCEEDED")
         self.assertFalse(completed["payload"]["key_retention"]["effects_alive"])

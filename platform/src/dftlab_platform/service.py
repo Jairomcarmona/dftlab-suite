@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.concurrency import run_in_threadpool
 
-from .contracts import Contracts, ContractError, canonical, loads
+from .contracts import BASE, Contracts, ContractError, canonical, loads
 from .domain import Operations, Problem
 from .security import LocalSettings, Sessions, SecurityMiddleware, PrivateErrors, session_cookie, single_header
 
@@ -124,11 +124,13 @@ def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessi
                 action, kind, name = action_routes[operation]
                 if document["action"] != action or document["target"]["kind"] != kind or document["target"]["id"] != params[name]:
                     raise Problem("VALIDATION_FAILED")
+                if action == "VALIDATE_INPUT":
+                    contracts.validate_ref(BASE+"schemas/operation-request.schema.json#/$defs/validate_input_payload", document["payload"])
                 target = await run_in_threadpool(readmodels.target, owner, kind, params[name])
                 if document["project_id"] != target["project_id"]:
                     raise Problem("NOT_FOUND")
-                # These open payloads do not define scientific command semantics.
-                # Until Ola 3 adapters qualify them, do not accept an effect.
+                # A typed command is not execution admission. Until Ola 3
+                # adapters qualify this scope, do not accept an effect.
                 raise Problem("ENGINE_UNAVAILABLE")
             if operation in {"getRun", "getResumePlan"}:
                 kind, key = ("RUN", "run_id") if operation == "getRun" else ("RESUME_PLAN", "resume_plan_id")
