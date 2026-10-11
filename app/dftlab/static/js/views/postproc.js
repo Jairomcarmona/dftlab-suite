@@ -1,7 +1,7 @@
 // Postproceso: drop SIESTA output files, get plots, tables and exports. Nothing is executed; files are only read.
 import { $, $$, css, alpha, esc, fmt, download, downloadText, seg, toast } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
-import { bandEdges, analyzeGap, computeDOS, groupPDOS, sumPDOS, integratePDOS, opticalSpectrum, toPlain, packBands, packDOS, packStructure, packContents, planarAverage, gridIntegral } from '../siesta/index.js';
+import { bandEdges, segmentSeries, segmentIndex, analyzeGap, computeDOS, groupPDOS, sumPDOS, integratePDOS, opticalSpectrum, toPlain, packBands, packDOS, packStructure, packContents, planarAverage, gridIntegral } from '../siesta/index.js';
 import { createFileSet } from '../siesta/runset.js';
 import { writeStructure } from '../crystal/formats.js';
 import { cartToFrac, formula, analyze, isMoyoReady, initMoyo, cellParameters, volume } from '../crystal/symmetry.js';
@@ -128,12 +128,13 @@ export function mount(root, view){
   function drawBands(id,b,ef){
     const E0=ef??b.fermi, st=S.bands; const x=Array.from(b.x);
     const cols=[css('--up'),css('--dn')];
-    const series=[]; b.bands.forEach((sp,s)=>sp.forEach(band=>series.push({d:x.map((xx,i)=>[xx,band[i]-E0]),color:b.nSpin>1?cols[s]:css('--accent'),width:1.4,nohover:true})));
-    const ed=bandEdges(b);
+    const br=b.path?.breaks||[], segOf=segmentIndex(x.length,br), jumps=b.path?.jumps||[];   // tramos del camino k: no se unen entre sí
+    const series=[]; b.bands.forEach((sp,s)=>sp.forEach(band=>series.push({d:segmentSeries(x,Array.from(band,e=>e-E0),br),color:b.nSpin>1?cols[s]:css('--accent'),width:1.4,nohover:true})));
+    const ed=bandEdges(b), pathNote=jumps.length?` · tramos sin unir en ${jumps.map(j=>j.from+'|'+j.to).join(', ')}`:'';
     const ticks=b.labels.map(l=>({x:l.x,label:l.label}));
     chart($('#cv_'+id,root),{xlim:[x[0],x[x.length-1]],ylim:[st.emin,st.emax],xlabel:'',ylabel:'E − E_F (eV)',series,xticks:ticks,vlines:ticks.map(t=>({x:t.x,color:css('--line')})),hlines:[{y:0,dash:[4,3],label:'E_F'}],legend:false,
-      csv:()=>{ let s='# '+b.bands.length+' spin channel(s); x (1/Ang), E-EF (eV) per band\nx,'+b.bands.flatMap((sp,si)=>sp.map((_,j)=>`s${si+1}b${j+1}`)).join(',')+'\n'; for(let i=0;i<x.length;i++) s+=x[i]+','+b.bands.flatMap(sp=>sp.map(bd=>(bd[i]-E0).toFixed(5))).join(',')+'\n'; return s; },
-      read:(xx,yy)=>{ if(xx==null) return ed.metallic?'Metal: bandas cruzan E_F.':`gap ${fmt(ed.gap,3)} eV, ${ed.direct?'directo':'indirecto'}`; return `<span>k <b>${fmt(xx,3)} Å⁻¹</b></span><span>E − E_F <b>${fmt(yy,3)} eV</b></span>`; },readEl:$('#rd_'+id,root)});
+      csv:()=>{ let s='# '+b.bands.length+' spin channel(s); x (1/Ang), E-EF (eV) per band; segment: k-path segment (consecutive rows of different segments are not joined)\n'+(b.path?.note?'# '+b.path.note+'\n':'')+'x,segment,'+b.bands.flatMap((sp,si)=>sp.map((_,j)=>`s${si+1}b${j+1}`)).join(',')+'\n'; for(let i=0;i<x.length;i++) s+=x[i]+','+segOf[i]+','+b.bands.flatMap(sp=>sp.map(bd=>(bd[i]-E0).toFixed(5))).join(',')+'\n'; return s; },
+      read:(xx,yy)=>{ if(xx==null) return esc((ed.metallic?'Metal: bandas cruzan E_F.':`gap ${fmt(ed.gap,3)} eV, ${ed.direct?'directo':'indirecto'}`)+pathNote); return `<span>k <b>${fmt(xx,3)} Å⁻¹</b></span><span>E − E_F <b>${fmt(yy,3)} eV</b></span>`; },readEl:$('#rd_'+id,root)});
   }
   function drawPdos(id,p){
     const mode=S.pdosMode, groups=groupPDOS(p, mode==='total'?[]:mode.split('+'), 'total'), E=Array.from(p.energy), ef=p.fermi;
@@ -283,7 +284,7 @@ export function mount(root, view){
       if(o.spinMoment) t+=`- Momento de espín ${o.spinMoment.abs} muB\n`;
       if(o.finalEnergy) t+='\n| término | eV |\n|---|---|\n'+Object.entries(o.finalEnergy).filter(([k,v])=>isFinite(v)).map(([k,v])=>`| ${k} | ${v} |`).join('\n')+'\n';
       if(o.warnings?.length) t+='\nAvisos de SIESTA:\n\n'+o.warnings.slice(0,20).map(w=>'- '+w.text).join('\n')+'\n'; }
-    for (const f of get('bands')){ const e=bandEdges(f.data); t+=`\n## Bandas (${f.name})\n\n- ${f.data.nBands} bandas, ${f.data.nSpin} canal(es), ${f.data.nk} puntos k\n- ${e.metallic?'metal':`gap ${e.gap?.toFixed(4)} eV, ${e.direct?'directo':'indirecto'}`}\n`; }
+    for (const f of get('bands')){ const e=bandEdges(f.data); t+=`\n## Bandas (${f.name})\n\n- ${f.data.nBands} bandas, ${f.data.nSpin} canal(es), ${f.data.nk} puntos k\n- ${e.metallic?'metal':`gap ${e.gap?.toFixed(4)} eV, ${e.direct?'directo':'indirecto'}`}\n- camino k: ${f.data.path?.segments?.length??'?'} tramo(s)${f.data.path?.note?'; '+f.data.path.note:''}\n`; }
     for (const f of get('eig')){ t+=`\n## Autovalores (${f.name})\n\n- ${f.data.nk} puntos k, ${f.data.nBands} bandas; pesos: ${f.link?.weights||'uniformes (1/nk)'}; coordenadas k: ${f.link?.kpoints||'no disponibles'}\n`+(f.link?.note?`- Aviso: ${f.link.note}\n`:''); }
     for (const f of get('dftlab-pack')){ const c=packContents(f.data); t+=`\n## Paquete (${f.name})\n\n- ${f.data.generator||'?'}; E_F ${f.data.fermi} eV; gap ${f.data.gap?.gap ?? '?'} eV (${f.data.gap?.type ?? '?'})\n`+(c.extras.length?`- No visualizado en Postproceso: ${c.extras.map(x=>x.label).join('; ')}\n`:''); }
     for (const f of get('grid')){ t+=`\n## Malla (${f.name})\n\n- ${f.data.mesh.join(' x ')}, ${f.data.nspin} espín(es), unidades ${f.data.units}\n`; }

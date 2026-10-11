@@ -10,6 +10,7 @@ const tasks = [
   'app/tests/siesta/run_outnotes_tests.mjs',
   'app/tests/siesta/run_fc_tests.mjs',
   'app/tests/siesta/run_import_tests.mjs',
+  'app/tests/siesta/run_bands_path_tests.mjs',
   'app/tests/crystal/run_tests.mjs',
   'app/tests/ui/run_calc_tests.mjs',
   'app/tests/ui/run_escape_tests.mjs',

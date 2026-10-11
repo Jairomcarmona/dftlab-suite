@@ -38,7 +38,7 @@ Ejecutar desde `app/`:
 | --- | --- |
 | `npm test` | Puerta completa: referencias científicas existentes, pruebas Node de A/E/B y C/D, build, servidor Node y las cinco suites de navegador. |
 | `npm run test:node` | Referencias, pruebas Node, build y servidor; **no** acredita navegador ni offline. |
-| `npm run test:browser` | A/E, ciclo de vida B, importación C/D (`browser_import.mjs`), dos HTML offline y los tres modos de carga Moyo; requiere build previo. |
+| `npm run test:browser` | A/E, ciclo de vida B, importación C/D (`browser_import.mjs`), tramos del camino k G (`browser_bands.mjs`), dos HTML offline y los tres modos de carga Moyo; requiere build previo. |
 | `npm run build` | Genera las dos variantes HTML con esbuild local. |
 | `npm run serve` | Vista previa en `http://127.0.0.1:8000/`, después del build. |
 | `npm run serve -- --port 8080` | Vista previa con otro puerto. Ctrl+C detiene el servidor. |
