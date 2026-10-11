@@ -22,6 +22,33 @@ autorizado de contratos; `npm test` comprueba que los generados coinciden y
 ejecuta los mismos fixtures, JCS e integridad. Los contratos siguen en 0.1.x;
 esta implementación no cambia su versión ni los schemas de Claude.
 
+## Dominio y persistencia (Ola 2, X6a)
+
+`domain.Repository` es el puerto de identidad, proyectos y operaciones;
+`storage.SQLiteRepository` es su adaptador local, con migración versionada,
+WAL, foreign keys y transacciones explícitas. No usar NFS/SMB ni compartir
+el archivo entre hosts. Cada proyecto tiene un owner persistente. La API y
+PostgreSQL podrán usar el mismo puerto; no se ha calificado PostgreSQL aquí.
+
+Aceptar un comando conserva atómicamente request, OperationRecord, outbox,
+evento y revisión del agregado. La clave se limita a owner/proyecto y el hash
+JCS incluye el request completo. Un reintento idéntico devuelve el mismo ID;
+una clave con otro request falla; el CAS de revisión impide dos comandos
+distintos sobre la misma revisión. Aceptación no significa éxito del efecto.
+
+El `Processor` consume claims durables fuera de HTTP. Los handlers científicos
+no están registrados: faltan adaptadores de Ola 3 y semánticas de payload de
+campañas. Un handler ausente produce FAILED con evidencia de no efecto;
+una excepción o pérdida de confirmación conserva OUTCOME_UNKNOWN y no reenvía.
+`recover()` requiere arranque **exclusivo**, con el procesador anterior detenido;
+no toma control de workers vivos. La sesión/launcher que impone esto sigue X7.
+
+`checkpoint()` usa el backup consistente de SQLite. Conserva identidades y
+outbox, pero no es aún el RecoveryCheckpoint completo de DB+artefactos+journals
+de T-060: no habilita admisión operativa ni acredita recuperación HPC.
+Las pruebas instaladas incluyen concurrencia, autorización, rollback,
+reconciliación con fixture, callback tardío, corrupción y restauración de DB.
+
 ## Base de proceso anterior (Ola 0, X2)
 
 Distribución `dftlab-platform` / paquete `dftlab_platform`, CPython 3.12.10 y uv 0.11.14 fijados, con dependencias de validación y build bloqueadas. En X5 todavía no hay campañas, sesiones, CSRF, SQLite ni API HTTP. El entry point `dftlab-platform start|status|stop` conserva por ahora el proceso de prueba de X2.
