@@ -7,15 +7,15 @@
       "id": "DL-01",
       "afirmacion": "Los átomos fantasma para corrección BSSE se definen con número atómico negativo y conservan la base sin carga en la versión fijada de SIESTA",
       "verificacion": "Ejecutar un caso mínimo con fantasma, leer el .out y comprobar orbitales presentes, carga cero y energía finita; citar la sección del manual de la versión fijada",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Manual SIESTA 5.4.2: ChemicalSpeciesLabel, 'Negative atomic numbers are used for ghost atoms'; PAO.Basis, off-site (ghost) orbitals 'useful for the counterpoise correction for BSSE'. Corrida H2 + H fantasma (especie '2 -1 H_ghost'): 'floating PAOs', Total number of electrons 1.0 = Total ionic charge 1.0, Etot=-11.970955 Ry finito, salida 0. Ver docs/development/EVIDENCIA_SIESTA_542.md"
     },
     {
       "id": "DL-02",
       "afirmacion": "El potencial en malla (.VH o .VT) comparte referencia de energía con el nivel de Fermi del .out",
       "verificacion": "Calcular Φ de un metal con valor experimental conocido (p. ej. Al(111)) y comparar con tolerancia declarada ANTES de ejecutar",
       "estado": "ABIERTA",
-      "evidencia": ""
+      "evidencia": "Parcial (sigue ABIERTA): el manual define .VH como Hartree + pseudopotencial local (potencial electrostático) y .VT como local+Hartree+Vxc; no declara su referencia respecto de Fermi. Falta el test numérico en Al(111)."
     },
     {
       "id": "DL-03",
@@ -36,7 +36,7 @@
       "afirmacion": "La constante dieléctrica estática necesaria para la corrección de defectos cargados es obtenible con SIESTA (ε∞ por óptica + parte iónica por cargas de Born)",
       "verificacion": "Demostrar un flujo de cargas de Born (p. ej. por polarización de fase de Berry) en un material de referencia y comparar con valor publicado; si no se puede, la corrección se declara no disponible",
       "estado": "ABIERTA",
-      "evidencia": ""
+      "evidencia": "Parcial (sigue ABIERTA): el manual 5.4.2 documenta BornCharge + PolarizationGrids (escribe SystemLabel.BC) por diferencias finitas con MD.TypeOfRun FC; la parte iónica de ε0 (LO-TO) la hace Vibra, 'not yet distributed with SIESTA'. Falta probarlo en un material de referencia."
     },
     {
       "id": "DL-06",
