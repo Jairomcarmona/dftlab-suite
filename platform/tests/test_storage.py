@@ -100,8 +100,11 @@ class Storage(unittest.TestCase):
         self.repo.recover()
         self.assertProblem("REVISION_CONFLICT", self.repo.transition, op_id, 2, "SUCCEEDED", result={"confirmed": True}, processor_id="processor")
         receipt = envelope("operation-resolution-receipt", self.project["project_id"], {"operation_id": op_id, "action": "VALIDATE_INPUT", "effect_class": "LOCAL_ATOMIC", "finding": "LOCAL_EFFECT_COMMITTED", "resulting_state": "SUCCEEDED", "product_refs": [{"kind": "VALIDATION_RECEIPT", "id": "fixture-product"}], "recovered_at": now(), "evidence": []})
-        completed = self.repo.transition(op_id, 3, "SUCCEEDED", result={"receipt": receipt})
-        self.assertEqual(completed["payload"]["state"], "SUCCEEDED")
+        self.assertProblem("PRECONDITION_FAILED", self.repo.transition, op_id, 3, "SUCCEEDED", result={"receipt": receipt})
+        # A declaration without a committed product cannot resolve success.
+        receipt = envelope("operation-resolution-receipt", self.project["project_id"], {"operation_id": op_id, "action": "VALIDATE_INPUT", "effect_class": "LOCAL_ATOMIC", "finding": "LOCAL_EFFECT_ABSENT", "resulting_state": "FAILED", "product_refs": [], "recovered_at": now(), "evidence": []})
+        completed = self.repo.transition(op_id, 3, "FAILED", result={"receipt": receipt}, error=Problem("OPERATION_INTERRUPTED").document())
+        self.assertEqual(completed["payload"]["state"], "FAILED")
         self.assertFalse(completed["payload"]["key_retention"]["effects_alive"])
         self.assertIsNone(self.repo.claim("processor-next"))
 

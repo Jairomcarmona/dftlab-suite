@@ -69,6 +69,13 @@ class SQLiteRepository:
                 connection.execute("INSERT INTO effect_migrations VALUES(1)")
             elif effects != [1]:
                 raise ValueError("Explicit effect migration required")
+            connection.execute("CREATE TABLE IF NOT EXISTS product_migrations(version INTEGER PRIMARY KEY)")
+            products = [r[0] for r in connection.execute("SELECT version FROM product_migrations ORDER BY version")]
+            if not products:
+                connection.execute("CREATE TABLE operation_products(operation_id TEXT PRIMARY KEY REFERENCES operations(operation_id), processor_id TEXT NOT NULL, kind TEXT NOT NULL, product_id TEXT NOT NULL UNIQUE REFERENCES resources(resource_id), revision INTEGER NOT NULL, document TEXT NOT NULL, document_hash TEXT NOT NULL)")
+                connection.execute("INSERT INTO product_migrations VALUES(1)")
+            elif products != [1]:
+                raise ValueError("Explicit product migration required")
             connection.commit()
         if os.name != "nt":
             self.path.chmod(0o600)
@@ -193,6 +200,62 @@ class SQLiteRepository:
             self._project(db, principal, row[1])
             return self._operation_document(row[0])
 
+    def complete_local(self, operation_id, revision, processor_id, products):
+        """Product + SUCCEEDED + event + outbox removal in one transaction.
+
+        Files must have been staged durably by the handler before this call.
+        This trusted port cannot run a handler, send a job or infer absence.
+        """
+        from .local_effects import validate_products
+        with self.transaction() as db:
+            row = db.execute("SELECT document,request FROM operations WHERE operation_id=?", (operation_id,)).fetchone()
+            if not row:
+                raise Problem("NOT_FOUND")
+            operation = self._operation_document(row[0])
+            refs = validate_products(self.contracts, operation, products)
+            product = products[0]
+            request = loads(row[1])
+            if product.kind == "CAMPAIGN":
+                if {"name": product.document["name"], "drafts": product.document["drafts"]} != request["payload"]:
+                    raise Problem("PRECONDITION_FAILED")
+            if product.kind == "RESUME_PLAN" and (product.document["payload"]["run_id"] != request["target"]["id"] or product.document["payload"]["from_attempt_id"] != request["payload"]["from_attempt_id"]):
+                raise Problem("PRECONDITION_FAILED")
+            encoded = canonical(product.document).decode()
+            previous = db.execute("SELECT processor_id,kind,product_id,revision,document,document_hash FROM operation_products WHERE operation_id=?", (operation_id,)).fetchone()
+            if previous:
+                # A lost local acknowledgement may repeat the commit call,
+                # but cannot overwrite a document or complete another claim.
+                if previous != (processor_id, product.kind, product.product_id, product.revision, encoded, digest(product.document)) or operation["payload"]["state"] != "SUCCEEDED" or operation["payload"]["revision"] != revision+1:
+                    raise Problem("PRECONDITION_FAILED")
+                return operation
+            claim = db.execute("SELECT processor_id FROM outbox WHERE operation_id=?", (operation_id,)).fetchone()
+            if operation["payload"]["state"] != "RUNNING" or operation["payload"]["revision"] != revision:
+                raise Problem("REVISION_CONFLICT")
+            if not claim or claim[0] != processor_id or db.execute("SELECT 1 FROM resources WHERE resource_id=?", (product.product_id,)).fetchone():
+                raise Problem("PRECONDITION_FAILED")
+            db.execute("INSERT INTO resources VALUES(?,?,?,?,?)", (product.product_id, product.kind, operation["project_id"], product.revision, encoded))
+            db.execute("INSERT INTO operation_products VALUES(?,?,?,?,?,?,?)", (operation_id, processor_id, product.kind, product.product_id, product.revision, encoded, digest(product.document)))
+            return self._transition(db, operation, revision, "SUCCEEDED", result={"product_refs": refs}, processor_id=processor_id)
+
+    def local_products(self, principal, operation_id):
+        """Authorized immutable evidence lookup, not a public read endpoint."""
+        from .local_effects import LocalProduct, validate_products
+        with self._connection() as db:
+            row = db.execute("SELECT document,owner_id,project_id FROM operations WHERE operation_id=?", (operation_id,)).fetchone()
+            if not row or row[1] != principal.principal_id:
+                raise Problem("NOT_FOUND")
+            self._project(db, principal, row[2])
+            operation = self._operation_document(row[0])
+            product = db.execute("SELECT p.kind,p.product_id,p.revision,p.document,p.document_hash,r.project_id,r.kind FROM operation_products p JOIN resources r ON p.product_id=r.resource_id WHERE p.operation_id=?", (operation_id,)).fetchone()
+            if not product:
+                return ()
+            document = loads(product[3])
+            if digest(document) != product[4] or product[5] != operation["project_id"] or product[6] != product[0]:
+                raise Problem("PRECONDITION_FAILED")
+            values = (LocalProduct(product[0], product[1], product[2], document),)
+            validate_products(self.contracts, operation, values)
+            return values
+
     def _operation_document(self, raw: str) -> dict:
         return self.contracts.validate("operation-record", loads(raw))
 
@@ -228,6 +291,17 @@ class SQLiteRepository:
             receipt = envelope("submission-receipt", operation["project_id"], {**fields, "status": "SUBMISSION_UNKNOWN", "job": None, "evidence": []}, contracts=self.contracts)
             result = {**(result or {}), "receipt": receipt}
         transition_guard(operation, destination, result, error, no_effect=no_effect, effect_intent=intent)
+        local_actions = resource_json("transitions/operation-transitions.json")["effect_classes"]["LOCAL_ATOMIC"]["actions"]
+        if destination == "FAILED" and payload["action"] in local_actions and db.execute("SELECT 1 FROM operation_products WHERE operation_id=?", (payload["operation_id"],)).fetchone():
+            raise Problem("PRECONDITION_FAILED")
+        if destination == "SUCCEEDED" and payload["action"] in local_actions:
+            product = db.execute("SELECT kind,product_id,revision,document,document_hash FROM operation_products WHERE operation_id=?", (payload["operation_id"],)).fetchone()
+            if not product or digest(loads(product[3])) != product[4]:
+                raise Problem("PRECONDITION_FAILED")
+            refs = [{"kind": product[0], "id": product[1], "revision": product[2]}]
+            actual = result.get("receipt", {}).get("payload", {}).get("product_refs") if payload["state"] == "OUTCOME_UNKNOWN" else result.get("product_refs")
+            if actual != refs:
+                raise Problem("PRECONDITION_FAILED")
         source = payload["state"]
         payload.update(state=destination, revision=revision+1, updated_at=now(), result=result, error=error)
         payload["key_retention"]["effects_alive"] = destination in {"PENDING", "RUNNING", "OUTCOME_UNKNOWN"}
