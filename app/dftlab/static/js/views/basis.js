@@ -1,6 +1,6 @@
 // Aprender 4 · Base y mallas: PAO orbitals, basis size, EnergyShift, MeshCutoff (with egg-box) and k-points,
 // all from real SIESTA runs on Si.
-import { $, $$, css, alpha, onTheme, fmt, seg } from '../core/ui.js';
+import { $, $$, css, alpha, fmt, seg } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import C from '../data/conv.json';
 
@@ -23,7 +23,7 @@ function theory(){ return `
   <p>Las energías absolutas casi nunca importan; importan las diferencias. Una diferencia converge antes que cada término, pero comprobarlo cuesta dos cálculos, no uno. Las curvas de esta página son el primer paso de cualquier proyecto con SIESTA.</p>
   <p class="src">Sankey y Niklewski, PRB 40, 3979 (1989) · Artacho et al., PSS(b) 215, 809 (1999) · Junquera et al., PRB 64, 235111 (2001) · Soler et al., JPCM 14, 2745 (2002) · Monkhorst y Pack, PRB 13, 5188 (1976).</p>`; }
 
-export function mount(root){
+export function mount(root, view){
   const S={bas:'DZP'};
   root.innerHTML=`
   <div class="pghead"><div>
@@ -117,5 +117,5 @@ export function mount(root){
   seg($('#bSel',root),S.bas,v=>{ S.bas=v; drawPao(); });
   $$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });
   const all=()=>{ drawPao(); drawEs(); basis(); drawMesh(); drawEgg(); drawK(); drawEsa(); };
-  onTheme(all); all();
+  view.onTheme(all); all();
 }

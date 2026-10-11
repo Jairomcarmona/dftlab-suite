@@ -1,5 +1,5 @@
 // Aprender 5 · Ciclo SCF: replay of real SIESTA runs, mixer comparison, energy terms, mixing-stability calculator.
-import { $, $$, css, alpha, onTheme, esc, fmt, downloadText, seg } from '../core/ui.js';
+import { $, $$, css, alpha, esc, fmt, downloadText, seg } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import D from '../data/scf_runs.json';
 
@@ -50,7 +50,7 @@ function theory(){ return `
 let cleanup=[];
 export function destroy(){ cleanup.forEach(f=>f()); cleanup=[]; }
 
-export function mount(root){
+export function mount(root, view){
   const runs=D.runs, lua=D.lua;
   const S={sys:'Si', sel:new Set(['lin005','lin025','lin095','pulay025','broyden025']), replay:'lin025', step:1e9, playing:0, w:0.25, L:18.08, metal:true, kerker:false, ytab:'dH'};
   const systems={Si:runs.filter(r=>r.id.indexOf('mg_')!==0), Mg:runs.filter(r=>r.id.indexOf('mg_')===0)};
@@ -192,5 +192,5 @@ export function mount(root){
   seg($('#ySel',root),S.ytab,v=>{ S.ytab=v; drawConv(); });
   $$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });
   const all=()=>{ chips(); drawConv(); drawRep(); drawMix(); drawTerms(); drawLua(); };
-  onTheme(all); all();
+  view.onTheme(all); all();
 }

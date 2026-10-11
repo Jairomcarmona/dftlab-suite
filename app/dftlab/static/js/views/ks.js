@@ -1,5 +1,5 @@
 // Aprender 1 · Kohn–Sham: the equations solved live for any atom (H–Xe) in the browser.
-import { $, $$, css, alpha, onTheme, esc, fmt, downloadText, seg, HA } from '../core/ui.js';
+import { $, $$, css, alpha, esc, fmt, downloadText, seg, HA } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import { solveAtom, configuration, confString, parseConfig, LL } from '../physics/atom.js';
 import { SYMBOLS } from '../crystal/elements.js';
@@ -26,7 +26,7 @@ function theory(){ return `
   <p>El átomo se trata esférico y sin polarización de espín. La ecuación radial se integra con Numerov en una malla logarítmica de 4000 puntos y cada autovalor se encuentra contando nodos. Esta es la misma ecuación que resuelve ONCVPSP antes de construir un pseudopotencial, y la que resuelve SIESTA para generar sus orbitales base.</p>
   <p class="src">Hohenberg y Kohn, PR 136, B864 (1964) · Kohn y Sham, PR 140, A1133 (1965) · Janak, PRB 18, 7165 (1978) · Perdew et al., PRL 49, 1691 (1982) · Vosko, Wilk y Nusair, CJP 58, 1200 (1980).</p>`; }
 
-export function mount(root){
+export function mount(root, view){
   const S={Z:14, charge:0, xc:'vwn', conf:null, res:null, ion:null, show:new Set(), rscale:'log', pot:'rV'};
   root.innerHTML=`
   <div class="pghead"><div>
@@ -76,7 +76,7 @@ export function mount(root){
     const conf=parseConfig($('#ksConf',root).value); if(!conf.length){ $('#ksStat',root).textContent='Configuración no válida.'; return; }
     const ne=conf.reduce((s,c)=>s+c.f,0);
     $('#ksStat',root).textContent='Calculando…'; $('#ksRun',root).disabled=true;
-    setTimeout(()=>{
+    view.timeout(()=>{
       const t=performance.now();
       try{
         S.res=solveAtom(S.Z,{conf,xc:S.xc});
@@ -163,5 +163,5 @@ export function mount(root){
     downloadText(t,`ks_atomo_${SYMBOLS[S.Z]}.txt`); };
 
   $$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });
-  onTheme(drawAll); setDefaults(); run();
+  view.onTheme(drawAll); setDefaults(); run();
 }

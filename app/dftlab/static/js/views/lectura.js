@@ -1,6 +1,6 @@
 // Aprender 12 · Lectura anotada del .out: un .out real de SIESTA bloque por bloque, con cada línea explicada y un diagnóstico.
 // También acepta el .out del usuario (arrastrar o elegir): usa los mismos lectores que «Mis archivos de SIESTA».
-import { $, $$, css, alpha, esc, fmt, onTheme, downloadText, seg, toast } from '../core/ui.js';
+import { $, $$, css, alpha, esc, fmt, downloadText, seg, toast } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import { analyzeOut, BLOCKS, reportMarkdown } from '../siesta/outnotes.js';
 import D from '../data/out_fe.json';
@@ -12,7 +12,7 @@ const MAXBYTES = 200e6;
 
 let cleanup = [];
 
-export function mount(root) {
+export function mount(root, view) {
   let A = null, name = '', isExample = false, cur = 0, pinned = -1, inline = false, showAll = false;
   root.innerHTML = `
   <div class="pghead"><div>
@@ -62,7 +62,7 @@ export function mount(root) {
   drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
   inp.addEventListener('change', () => { if (inp.files[0]) loadFile(inp.files[0]); inp.value = ''; });
   let own = null, redraw = null;
-  onTheme(() => { if (redraw && root.isConnected) redraw(); });
+  view.onTheme(() => { if (redraw) redraw(); });
   const setSrc = seg(q('#srcSeg'), 'ex', v => { if (v === 'ex') load(D.text, D.name, true); else if (own) load(own.text, own.name, false); });
   q('#inl').addEventListener('change', e => { inline = e.target.checked; renderMain(); });
   q('#repBtn').onclick = () => { if (A) downloadText(reportMarkdown(name, A), name.replace(/\.[^.]*$/, '') + '_lectura.md', 'text/markdown'); };
@@ -70,6 +70,7 @@ export function mount(root) {
   async function loadFile(f) {
     if (f.size > MAXBYTES) { toast('Archivo de más de 200 MB: no se carga.'); return; }
     const text = await f.text();
+    if (!view.alive) return;
     if (!/siesta|SIESTA|Start of run|redata:|initatom:/.test(text.slice(0, 200000))) { toast('Eso no parece un .out de SIESTA.'); return; }
     own = { name: f.name, text };
     const b = q('#srcSeg button[data-v="own"]'); b.disabled = false; b.textContent = f.name.length > 22 ? f.name.slice(0, 20) + '…' : f.name;

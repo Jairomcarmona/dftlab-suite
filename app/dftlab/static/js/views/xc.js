@@ -1,4 +1,4 @@
-import { $, $$, css, alpha, onTheme, HA } from '../core/ui.js';
+import { $, $$, css, alpha, HA } from '../core/ui.js';
 import { chart as coreChart, exportBar, interp } from '../core/chart.js';
 import X from '../data/pseudo_xc.json';
 function setup(cv){ const r=cv.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2); cv.width=Math.max(1,Math.round(r.width*dpr)); cv.height=Math.max(1,Math.round(r.height*dpr)); const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); return {c,W:r.width,H:r.height}; }
@@ -10,7 +10,7 @@ const LN = ['s','p','d','f'];
 function chart(cv,cfg){ const c={...cfg}; if (Array.isArray(cfg.shade) && typeof cfg.shade[0]==='number') c.shade=[{x0:cfg.shade[0],x1:cfg.shade[1],label:cfg.shade[2]}]; coreChart(cv,c); }
 function addExports(root){ $$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph'); if(!ph.querySelector('.export')) ph.append(exportBar(cv,cv.dataset.export)); }); }
 
-export function mount(root){
+export function mount(root, view){
   root.innerHTML=`
   <div class="pghead">
     <div>
@@ -204,5 +204,5 @@ export function mount(root){
   }
   
   
-  addExports(root); onTheme(()=>drawXC()); drawXC();
+  addExports(root); view.onTheme(()=>drawXC()); drawXC();
 }

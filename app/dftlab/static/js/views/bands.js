@@ -1,5 +1,5 @@
 // Section 8: bands, DOS/PDOS, ε(ω) and wavefunctions of Si, all linked by one selection.
-import { $, $$, css, alpha, rgb, fmt, seg, onTheme } from '../core/ui.js';
+import { $, $$, css, alpha, rgb, fmt, seg } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import { createViewer, drawStructure, drawBZ, isoSurface, meshFrom, hsl2rgb, cssRGB } from '../core/three-view.js';
 import D from '../data/si_lda.json';
@@ -19,7 +19,7 @@ async function loadWf(){
 }
 function decAt(w){ let best=null,d=1e9; for (const x of D.eps.decomp){ const dd=Math.abs(x.w-w); if(dd<d){d=dd;best=x;} } return d<0.06?best:null; }
 
-export function mount(root){
+export function mount(root, view){
   const S={ik:null, E:null, band:null, w:null, wLock:false, proj:'mix', mode:'post', wf:null, wfMode:'re', wfIso:0.3, view:'bz'};
   root.innerHTML=`
   <div class="pghead"><div><div class="kicker">Aprender · 7</div><h1>Bandas, densidad de estados y óptica del Si</h1>
@@ -152,7 +152,8 @@ export function mount(root){
 
   async function showWf(){
     if (!V || !S.wf) return; $('#vizRead').innerHTML='<span>Descomprimiendo funciones de onda…</span>';
-    let wf; try{ wf=await loadWf(); }catch(e){ $('#vizRead').innerHTML='<span>Este navegador no pudo descomprimir las funciones de onda.</span>'; return; }
+    let wf; try{ wf=await loadWf(); }catch(e){ if(view.alive) $('#vizRead').innerHTML='<span>Este navegador no pudo descomprimir las funciones de onda.</span>'; return; }
+    if (!view.alive || !V) return;
     const N=WFD.N, M=N+1, N3=N*N*N, base=(S.wf.ki*WFD.nb+S.wf.n)*2*N3, kc=B.kcart[wfK[S.wf.ki]], a=WFD.a;
     const re=new Float32Array(M*M*M), im=new Float32Array(M*M*M);
     for (let i=0;i<M;i++) for (let j=0;j<M;j++) for (let k=0;k<M;k++){ const p=((i%N)*N+(j%N))*N+(k%N); let r=wf[base+p]/127, m=wf[base+N3+p]/127;
@@ -178,9 +179,10 @@ export function mount(root){
 
   let raf=0;
   function emit(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(()=>{ chart(cB,bandsCfg()); chart(cD,dosCfg()); chart(cE,epsCfg()); epsRead(); drawDec(); $('#sideBody').innerHTML=sideHTML(); vizRead(); V?.update?.(); }); }
-  onTheme(()=>emit());
+  view.onTheme(()=>emit());
   $('#bandRead').innerHTML='Pasa el cursor por las bandas. <b>Clic</b> en una banda para ver su función de onda.';
   setView('bz'); emit();
-  mount.destroy=()=>V?.destroy();
+  view.add(()=>{ cancelAnimationFrame(raf); clearTimeout(isoT); });
+  mount.destroy=()=>{ V?.destroy(); V=null; };
 }
 export function destroy(){ mount.destroy?.(); }

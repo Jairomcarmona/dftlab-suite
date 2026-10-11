@@ -43,7 +43,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | ID | Hallazgo | Prioridad | Estado | PR/commit |
 |---|---|---|---|---|
 | A | `fftGood` y calculadora bloquean la pestaña con entradas vacías/0/NaN/Infinity | Alta | **Reproducido** → corregido en la rama `claude/fix-a-calc-validation` (PR del bloque A) | PR A |
-| B | Suscripciones de tema y callbacks de vistas anteriores | Alta | Confirmado por inspección (sin reproducción de navegador aún) | pendiente |
+| B | Suscripciones de tema y callbacks de vistas anteriores | Alta | **Reproducido** (58 fallos de navegador en `73dc701`) → corregido en PR #4 (rama `claude/bloque-b-ciclo-vida-pwt4cq`) | PR #4 |
 | C | Resultado EIG/KP depende del orden de carga | Alta | Confirmado por inspección (sin reproducción ejecutada aún) | pendiente |
 | D | `.RHO` leído como texto; `.dftlab.json` detectado sin visualización | Media | Confirmado por inspección | pendiente |
 | E | Metadatos y nombres de archivo se insertan en `innerHTML` | Media | **Reproducido** (incluido manejador `onerror` ejecutado) → corregido en la rama `claude/fix-e-safe-html` (PR del bloque E, apilado sobre A) | PR E |
@@ -63,11 +63,18 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 
 ## B. Ciclo de vida de vistas
 
-- **Prioridad:** alta (error visible y retención de closures/datos en cada montaje).
-- **Archivos:** `core/ui.js` (`onTheme`), `main.js` (`route`), todas las vistas que llaman `onTheme` (17 vistas: `ks`, `pseudo`, `potential`, `forces`, `density`, `scf`, `basis`, `postproc`, `phonons`, `spin`, `xc`, `dftu`, `calc`, `solvers`, `bands`, `beyond`, `lectura`), `potential.js:305` y `density.js:346` (ResizeObserver con `root.isConnected`).
-- **Inspección en `ae3f35e`:** `onTheme` no devuelve desuscriptor (`ui.js:43-46`); `route()` solo llama `destroy` si la vista lo define y reutiliza el mismo contenedor `#view` (`main.js:23-28`). 9 de las 19 vistas no tienen `destroy`.
-- **Reproducción:** pendiente (navegador: `#xc` → `#inicio` → Tema).
-- **Criterio de aceptación:** ver mensaje original del encargo (bloque B).
+- **Prioridad:** alta (error visible en navegación normal y retención de closures/datos en cada montaje).
+- **Archivos:** `core/ui.js` (`onTheme`), `main.js` (`route`), nuevo `core/lifecycle.js`, las 17 vistas que llaman `onTheme` (`ks`, `pseudo`, `potential`, `forces`, `density`, `scf`, `basis`, `postproc`, `phonons`, `spin`, `xc`, `dftu`, `calc`, `solvers`, `bands`, `beyond`, `lectura`) y `estructura` (async tras salir).
+- **Inspección en `ae3f35e`:** `onTheme` no devolvía desuscriptor; `route()` solo llamaba `destroy` si la vista lo definía y reutilizaba el mismo contenedor `#view`; 9 de las 19 vistas no tenían `destroy`; `potential.js` y `density.js` creaban un `ResizeObserver` nunca desconectado y usaban `root.isConnected` (siempre verdadero con el contenedor reutilizado); `phonons.js` y `lectura.js` también usaban `root.isConnected`.
+- **Reproducción (2026-10-11, `main` @ `73dc701`, Chromium + Playwright 1.56.1, `dist/dftlab.html` desde `file://` sin red):** `app/tests/ui/browser_lifecycle.mjs` → **58 fallos**. `#xc → #inicio → Tema` lanza `Cannot set properties of null (setting 'innerHTML')`; cada pantalla visitada deja 1 `MutationObserver` + 1 listener de `matchMedia` vivos (tras recorrer las 19 y 10 ciclos xc↔inicio: 28 y 28); los errores de callbacks antiguos aparecen incluso mientras se usa otra pantalla.
+- **Causa:** suscripciones globales sin propiedad: la vista no tenía forma de liberar lo registrado y el router no tenía un punto único de limpieza.
+- **Corrección (PR #4):**
+  - `onTheme(f)` devuelve una desuscripción idempotente.
+  - `core/lifecycle.js`: `createViewScope()` con `alive`, `signal` (AbortSignal), `add`, `guard`, `onTheme`, `timeout`, `interval`, `observer`, `own` y `dispose` (idempotente, orden inverso, una limpieza que falla no corta las demás; lo registrado tras salir se libera al instante).
+  - Router: un ámbito por montaje; libera el anterior (que ejecuta el `destroy` de la vista una sola vez), monta en un contenedor nuevo (`div.viewhost`) y pasa el ámbito como `render(el, view)`; ignora el error de una navegación ya superada.
+  - Vistas: `view.onTheme` en las 17; `ResizeObserver` de densidad/potencial con `view.observer` y `view.guard`; `setTimeout` de `ks` y fonones con `view.timeout`; frame y timer de bandas cancelados; lecturas async (postproceso, estructura, fonones, fuerzas, lectura, densidad, potencial, funciones de onda de bandas) comprueban `view.alive` tras cada `await`. En estructura y postproceso esto evita crear un visor 3D de módulo después de `destroy()`. `root.isConnected` ya no se usa como prueba de vigencia (`core/chart.js` lo sigue usando para su propio canvas, que sí se desconecta).
+- **Evidencia después:** `app/tests/ui/run_lifecycle_tests.mjs` (21 comprobaciones en Node con dobles de `matchMedia`/`MutationObserver`, incluida en `scripts/verify.mjs`; con el `ui.js` anterior falla: `off is not a function`). `browser_lifecycle.mjs`: todas en verde (19 pantallas: sin errores montada, sin errores al volver a inicio y cambiar tema, suscripciones de tema iguales a la base, sin bucles de `requestAnimationFrame` tras salir; 10× xc↔inicio sin acumulación; salir del postproceso durante la carga de un ejemplo no crea visor ni paneles y al volver carga sin errores). `browser_regressions.mjs` (A y E) 24/0.
+- **Límites / pendientes:** las pruebas de navegador no están en CI ni Playwright es dependencia fijada (bloque F; ejecutar con `REQUIRE_BROWSER=1`). La comprobación de bucles de animación ya pasaba antes del cambio (las vistas 3D tenían `destroy`): queda como guarda de regresión, no como fuga confirmada. Fuera de B y pendientes en H: `ResizeObserver` por canvas en `core/chart.js` y liberación fina de geometrías/materiales/texturas en `core/three-view.js`. Las lecturas async no se cancelan (terminan y se descartan); no hay `fetch` de red que abortar en esta versión.
 
 ## C. EIG/KP dependen del orden
 
@@ -107,7 +114,7 @@ Estado verificado, no solo declarado:
 | `npm test` | **Pendiente** | `app/package.json` solo tiene `build` y `serve` |
 | Fallback `/opt/run/tools/node_modules` | **Pendiente** | `app/scripts/build.mjs:8` |
 | `serve` depende de `python3` | **Pendiente** | `app/package.json` |
-| Pruebas de navegador | **Pendiente** | `browser_smoke.mjs` sale con 0 si falta Playwright; no está en CI |
+| Pruebas de navegador | **Pendiente** | `browser_smoke.mjs` sale con 0 si falta Playwright; `browser_regressions.mjs` (A, E) y `browser_lifecycle.mjs` (B) existen pero no están en CI |
 | Verificación offline del HTML | **Pendiente** | |
 | Dependencias de referencias Python fijadas | **Pendiente** | |
 | Procedimiento de copia limpia documentado | Parcial | README: `npm ci` + verify |

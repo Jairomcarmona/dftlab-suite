@@ -1,6 +1,6 @@
 // Aprender 13 · Fonones: Si en supercelda 2×2×2 (16 átomos) con desplazamientos finitos (SIESTA 5.4.2, MD.TypeOfRun FC, LDA/DZP).
 // El .FC se diagonaliza aquí: matriz dinámica D(q) con imágenes de Wigner–Seitz, dispersión, DOS y modo animado. Lector del .FC del usuario.
-import { $, $$, css, alpha, onTheme, fmt, esc, seg, toast, downloadText } from '../core/ui.js';
+import { $, $$, css, alpha, fmt, esc, seg, toast, downloadText } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import { createViewer } from '../core/three-view.js';
 import { parseFC, fcRows } from '../siesta/fc.js';
@@ -51,7 +51,7 @@ function branchSeries(path, bands, k, s){
 }
 const near = (arr, x) => { let b = 0; for (let i = 1; i < arr.length; i++) if (Math.abs(arr[i] - x) < Math.abs(arr[b] - x)) b = i; return b; };
 
-export function mount(root){
+export function mount(root, view){
   const cell = D.cell, n = D.meta.n, fc = blocksFromJSON(D.fc);
   const S = { unit: 'THz', model: 'full', idx: 0, branch: 5, amp: 1, play: true };
   const models = {
@@ -166,8 +166,7 @@ export function mount(root){
       vlines: pts.map(([l, v]) => ({ x: v * s, label: l, color: css('--bad'), dash: [3, 3] })),
       readEl: $('#rdDos', root), read: x => { if (x == null) return `integral = ${fmt(dos.integ, 3)} modos (6 esperados)`; const i = near(dos.E, x / s); return `${fmt(x, s > 10 ? 0 : 2)} → g = ${fmt(dos.g[i] / s, 3)}`; } });
   };
-  setTimeout(() => {
-    if (!root.isConnected) return;
+  view.timeout(() => {
     dos = phononDOS(M, { m: 18, sigma: 0.15, de: 0.02, emin: -0.5, emax: 17 });
     dos.integ = dos.g.reduce((a, b) => a + b, 0) * 0.02;
     const iTA = dos.E.findIndex(e => e > 3); let pk = iTA; for (let i = iTA; i < dos.E.length && dos.E[i] < 6; i++) if (dos.g[i] > dos.g[pk]) pk = i;
@@ -237,7 +236,7 @@ export function mount(root){
   // ---- archivo del usuario ----
   let uFiles = [];
   const msg = (t, bad) => { const m = $('#fcMsg', root); m.innerHTML = t; m.style.color = bad ? css('--bad') : ''; };
-  const readAll = async list => { uFiles = await Promise.all([...list].map(async f => ({ name: f.name, text: await f.text() }))); msg(`Cargados: ${uFiles.map(f => esc(f.name)).join(', ')}`); runUser(); };
+  const readAll = async list => { const files = await Promise.all([...list].map(async f => ({ name: f.name, text: await f.text() }))); if (!view.alive) return; uFiles = files; msg(`Cargados: ${uFiles.map(f => esc(f.name)).join(', ')}`); runUser(); };
   const drop = $('#fcDrop', root), inp = $('#fcIn', root);
   drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
   drop.addEventListener('dragleave', () => drop.classList.remove('over'));
@@ -256,7 +255,7 @@ export function mount(root){
       const nU = ['n1', 'n2', 'n3'].map(k => Math.max(1, +$('#' + k, root).value || 1)), first = Math.max(1, +$('#fcFirst', root).value || 1);
       const MU = buildModel(cellU, nU, fcU, first, { asr: true, ws: true });
       let segs = null, ticks = null, pathU;
-      try { if (!isMoyoReady()) await initMoyo('inline'); const kp = getExplicitKPathOrigCell(MU.prim, { referenceDistance: 0.02, symprec: 1e-3 });
+      try { if (!isMoyoReady()) await initMoyo('inline'); if (!view.alive) return; const kp = getExplicitKPathOrigCell(MU.prim, { referenceDistance: 0.02, symprec: 1e-3 });
         const P = kp.point_coords, lab = l => l === 'GAMMA' ? 'Γ' : l.replace(/_(\d)/, '$1');
         segs = kp.path.map(([A, B]) => [{ label: lab(A), f: P[A] }, { label: lab(B), f: P[B] }]); } catch (e) { segs = null; }
       if (!segs) segs = [[{ label: 'Γ', f: [0, 0, 0] }, { label: 'b₁/2', f: [.5, 0, 0] }], [{ label: 'b₁/2', f: [.5, 0, 0] }, { label: '(½,½,0)', f: [.5, .5, 0] }], [{ label: '(½,½,0)', f: [.5, .5, 0] }, { label: 'Γ', f: [0, 0, 0] }], [{ label: 'Γ', f: [0, 0, 0] }, { label: '(½,½,½)', f: [.5, .5, .5] }]];
@@ -286,7 +285,7 @@ export function mount(root){
   let uDraw = null;
 
   const draw = () => { drawDisp(); drawDos(); drawPhi(); uDraw?.(); };
-  onTheme(() => { draw(); setupViewer(); }); draw();
+  view.onTheme(() => { draw(); setupViewer(); }); draw();
   setupViewer(); setMode(); frame();
   mount.destroy = () => { cancelAnimationFrame(raf); V?.destroy(); V = null; };
 }

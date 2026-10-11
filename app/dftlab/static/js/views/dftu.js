@@ -1,5 +1,5 @@
 // Aprender 9 · DFT+U: NiO antiferromagnético con SIESTA, barrido de U y U por respuesta lineal (Cococcioni).
-import { $, $$, css, alpha, onTheme, fmt, downloadText, seg } from '../core/ui.js';
+import { $, $$, css, alpha, fmt, downloadText, seg } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import N from '../data/nio.json';
 
@@ -18,7 +18,7 @@ function theory(){ return `
   <p>No arregla la autointeracción de los estados s y p, no da energías de excitación correctas por sí misma y cambia la energía total de forma que solo se pueden comparar cálculos con el mismo U y los mismos proyectores. Para el gap de un óxido, un híbrido o GW suele ser más fiable; DFT+U es la opción barata que mantiene el costo de una GGA.</p>
   <p class="src">Anisimov, Zaanen y Andersen, PRB 44, 943 (1991) · Dudarev et al., PRB 57, 1505 (1998) · Cococcioni y de Gironcoli, PRB 71, 035105 (2005) · Sawatzky y Allen, PRL 53, 2339 (1984) · Cheetham y Hope, PRB 27, 6964 (1983).</p>`; }
 
-export function mount(root){
+export function mount(root, view){
   const S={U:4};
   const sc=N.scan, lr=N.lr, Umax=Math.max(...sc.map(s=>s.U));
   root.innerHTML=`
@@ -98,5 +98,5 @@ export function mount(root){
   $('#fdfPre',root).textContent=N.fdf; $('#dlFdf',root).onclick=()=>downloadText(N.fdf,'NiO_U4.fdf');
   $$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });
   const all=()=>{ drawPd(); drawGap(); drawMom(); drawLr(); drawH(); };
-  onTheme(all); all();
+  view.onTheme(all); all();
 }

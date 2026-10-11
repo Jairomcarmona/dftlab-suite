@@ -1,5 +1,5 @@
 // Aprender · 6 — Cómo se resuelve H c = ε S c: diagonalización, OMM y orden N, con corridas reales de SIESTA en Si de 8 a 1000 átomos.
-import { $, $$, css, alpha, onTheme, fmt, downloadText, seg } from '../core/ui.js';
+import { $, $$, css, alpha, fmt, downloadText, seg } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import D from '../data/solvers.json';
 
@@ -25,7 +25,7 @@ function theory(){ return `
 
 function powfit(pts){ const p=pts.filter(q=>q[0]>=64); if(p.length<2) return null; const xs=p.map(q=>Math.log(q[0])), ys=p.map(q=>Math.log(q[1])); const n=xs.length, mx=xs.reduce((a,b)=>a+b)/n, my=ys.reduce((a,b)=>a+b)/n; let sxy=0,sxx=0; xs.forEach((x,i)=>{sxy+=(x-mx)*(ys[i]-my); sxx+=(x-mx)**2;}); const b=sxy/sxx; return {b,a:Math.exp(my-b*mx)}; }
 
-export function mount(root){
+export function mount(root, view){
   const R=D.runs.filter(r=>r.rc==null||r.rc===4);
   const by=k=>R.filter(r=>r.solver===k).sort((a,b)=>a.nat-b.nat);
   const fits={}; KEYS.forEach(k=>fits[k]=powfit(by(k).map(r=>[r.nat,r.time])));
@@ -102,5 +102,5 @@ export function mount(root){
   seg($('#stSel',root),String(S.step),v=>{ S.step=+v; drawS(); });
   $$('canvas[data-export]',root).forEach(cv=>{ const p=cv.closest('.panel').querySelector('.ph'); p.append(exportBar(cv,cv.dataset.export)); });
   const all=()=>{ drawT(); drawE(); drawRc(); drawS(); drawX(); };
-  onTheme(all); all();
+  view.onTheme(all); all();
 }

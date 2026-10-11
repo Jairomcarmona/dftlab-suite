@@ -1,4 +1,4 @@
-import { $, $$, css, alpha, onTheme, HA, fmt, download, toast } from '../core/ui.js';
+import { $, $$, css, alpha, HA, fmt, download, toast } from '../core/ui.js';
 import { chart as coreChart, exportBar, interp } from '../core/chart.js';
 import X from '../data/pseudo_xc.json';
 import L from '../data/pseudo_lib.json';
@@ -181,7 +181,7 @@ function levels(cv,p,sp){ // columns by l; shaded = what the pseudo keeps
   $('#psLevNote').innerHTML=`Línea continua: niveles del átomo completo. Línea punteada azul: niveles del pseudoátomo, que solo tiene la valencia y la reproduce a menos de 10<sup>−5</sup> Ha. ${coreS.length?`El nivel más hondo está ${Math.round(emin/Math.max(...valS.map(s=>s[3])))} veces más abajo que el último nivel de valencia.`:''}`;
 }
 
-export function mount(root){
+export function mount(root, view){
   root.innerHTML=`
   <div class="pghead">
     <div>
@@ -222,5 +222,5 @@ export function mount(root){
   drawVal();
 
 
-  addExports(root); onTheme(()=>drawPseudo()); drawPseudo();
+  addExports(root); view.onTheme(()=>drawPseudo()); drawPseudo();
 }

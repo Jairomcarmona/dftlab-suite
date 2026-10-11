@@ -43,7 +43,7 @@ function theory(){ return `
 let V3=null;
 export function destroy(){ if(V3){ V3.destroy(); V3=null; } }
 
-export function mount(root){
+export function mount(root, view){
   const S={ base:null, cell:null, src:'', sym:null, path:null, symprec:1e-3, view:'st', p:{...DEFAULTS, label:'si'}, q:{...SCHED_DEFAULTS} };
   root.innerHTML=`
   <div class="pghead"><div>
@@ -112,7 +112,8 @@ export function mount(root){
 
   // ---------- structure ----------
   async function setCell(cell, src, {keepBase=false}={}){
-    if(!isMoyoReady()){ try{ await initMoyo('inline'); }catch(e){ toast('No se pudo cargar moyo: '+e.message); } }
+    if(!isMoyoReady()){ try{ await initMoyo('inline'); }catch(e){ if(view.alive) toast('No se pudo cargar moyo: '+e.message); } }
+    if(!view.alive) return;   // V3 es de módulo: un setCell tardío no debe crear un visor tras destroy()
     S.cell=normalizeCell(cell); S.src=src; if(!keepBase) S.base=S.cell;
     try{ S.sym=analyze(S.cell,{symprec:S.symprec}); }catch(e){ S.sym=null; }
     try{ S.path=getPathOrigCell(S.cell,{symprec:S.symprec}); }catch(e){ S.path=null; }
@@ -145,7 +146,7 @@ export function mount(root){
   }
   seg($('#vSel',root),'st',v=>{ S.view=v; draw3(); });
   $('#pre',root).onchange=e=>{ const k=e.target.value; if(!k) return; const c=PRESETS[k]; const lab=k.split(' ')[0].replace(/[^A-Za-z0-9]/g,'').toLowerCase()||'sys'; S.p.label=lab; $('[data-k="label"]',root).value=lab; setCell(c,k+' (ejemplo)'); };
-  async function readFile(f){ const t=await f.text(); try{ const c=readStructure(t,{filename:f.name}); const lab=f.name.replace(/\.[^.]+$/,'').replace(/[^A-Za-z0-9_]/g,'')||'sys'; S.p.label=lab; $('[data-k="label"]',root).value=lab; setCell(c,f.name); }catch(e){ toast('No pude leer '+f.name+': '+e.message); } }
+  async function readFile(f){ const t=await f.text(); if(!view.alive) return; try{ const c=readStructure(t,{filename:f.name}); const lab=f.name.replace(/\.[^.]+$/,'').replace(/[^A-Za-z0-9_]/g,'')||'sys'; S.p.label=lab; $('[data-k="label"]',root).value=lab; setCell(c,f.name); }catch(e){ toast('No pude leer '+f.name+': '+e.message); } }
   $('#stFile',root).onchange=e=>{ if(e.target.files[0]) readFile(e.target.files[0]); e.target.value=''; };
   const dz=$('#stDrop',root); dz.addEventListener('dragover',e=>{ e.preventDefault(); dz.classList.add('over'); }); dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
   dz.addEventListener('drop',e=>{ e.preventDefault(); dz.classList.remove('over'); if(e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); });

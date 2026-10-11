@@ -1,5 +1,5 @@
 // Aprender 11 · Espín y magnetismo: Fe bcc ferromagnético frente a no magnético, y NiO ferromagnético frente a antiferromagnético (SIESTA 5.4.2, PBE).
-import { $, $$, css, alpha, onTheme, fmt, downloadText, seg } from '../core/ui.js';
+import { $, $$, css, alpha, fmt, downloadText, seg } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import D from '../data/espin.json';
 
@@ -20,7 +20,7 @@ function theory(){ return `
   <p>Es colineal y sin acoplamiento espín–órbita: el momento que sale es el de espín, no hay anisotropía magnética ni momento orbital, y las diferencias de energía FM–AFM son del orden de decenas de meV, comparables con la precisión de la base DZP y de la malla k. El valor de ΔE depende del funcional y de U; la tendencia con U es más confiable que el número absoluto. Convertir ΔE en una temperatura de Néel o de Curie requiere un modelo de Heisenberg (que no se ajusta aquí), por lo que no se muestra ninguna.</p>
   <p class="src">Stoner, Proc. R. Soc. A 165, 372 (1938) · Janak, PRB 16, 255 (1977) · Kramers, Physica 1, 182 (1934) · Anderson, PRB 79, 350 (1950) · Moruzzi, Janak y Williams, <i>Calculated Electronic Properties of Metals</i> (1978) · Cococcioni y de Gironcoli, PRB 71, 035105 (2005).</p>`; }
 
-export function mount(root){
+export function mount(root, view){
   const F=D.fe, N=D.nio, eos=F.eos, eA=eos.find(e=>e.a===F.aExp)||eos[0];
   const dEFe=(eA.Efm-eA.Enm)*1000;                                   // meV, a = a_exp
   const mMin=(k,fit)=>{ const lo=eos.reduce((b,e)=>Math.abs(e.a-fit.a0)<Math.abs(b.a-fit.a0)?e:b); return lo; };
@@ -188,5 +188,5 @@ export function mount(root){
   $('#iIn',root).oninput=drawSt; $('#nIn',root).oninput=drawSt;
   $$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });
   const all=()=>{ drawFeB(); drawFeD(); drawFeE(); drawFeM(); drawPd(); drawDe(); drawMm(); drawTbl(); drawSt(); };
-  onTheme(all); all();
+  view.onTheme(all); all();
 }

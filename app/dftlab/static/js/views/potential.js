@@ -1,5 +1,5 @@
 // Aprender 10 · Potencial electrostático y función trabajo: promedio planar y macroscópico de V en láminas de Al y Mg (SIESTA 5.4.2, LDA, DZP).
-import { $, $$, css, alpha, onTheme, fmt, esc, seg, downloadText } from '../core/ui.js';
+import { $, $$, css, alpha, fmt, esc, seg, downloadText } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import { parseGrid, planarAverage } from '../siesta/rho.js';
 import D from '../data/potencial.json';
@@ -48,7 +48,7 @@ function macroAvg(v, L, w) {
   return pass(pass(Float64Array.from(v)));
 }
 
-export function mount(root) {
+export function mount(root, view) {
   const S = { run: 'al111_n9', q: 'vh', exp: 0 };
   const bySeries = (r) => r.curve;
   root.innerHTML = `
@@ -273,7 +273,7 @@ export function mount(root) {
   }
   function addFiles(files) {
     const err = $('#userErr', root); err.hidden = true;
-    Promise.all([...files].map((f) => f.arrayBuffer().then((b) => [f, b]))).then((list) => {
+    Promise.all([...files].map((f) => f.arrayBuffer().then((b) => [f, b]))).then(view.guard((list) => {
       try {
         for (const [f, buf] of list) {
           if (/\.out$/i.test(f.name)) {
@@ -285,7 +285,7 @@ export function mount(root) {
         if (!U.grid) throw new Error('falta un archivo de malla (.VH o .VT)');
         $('#userBox', root).hidden = false; drawUser();
       } catch (e) { err.hidden = false; err.textContent = 'No se pudo leer: ' + e.message; }
-    });
+    }));
   }
   const drop = $('#drop', root), inp = $('#fileIn', root);
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
@@ -300,8 +300,8 @@ export function mount(root) {
   seg($('#sysSel', root), S.run, (v) => { S.run = v; drawV(); drawRho(); drawFdf(); });
   seg($('#qSel', root), S.q, (v) => { S.q = v; drawV(); });
   const all = () => { drawV(); drawRho(); drawN(); drawTables(); drawSens(); drawFdf(); };
-  onTheme(() => { drawV(); drawRho(); drawN(); drawUser(); });
+  view.onTheme(() => { drawV(); drawRho(); drawN(); drawUser(); });
   all();
-  new ResizeObserver(() => { if (root.isConnected && root.offsetParent) { drawV(); drawRho(); drawN(); drawUser(); } }).observe(root);
+  view.observer(new ResizeObserver(view.guard(() => { if (root.offsetParent) { drawV(); drawRho(); drawN(); drawUser(); } }))).observe(root);
 }
 export function destroy() {}
