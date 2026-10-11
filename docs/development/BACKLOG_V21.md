@@ -49,9 +49,9 @@ Grupo, idea, dudas que la bloquean y estado de viabilidad (detalle en el anexo).
 
 ## Registro de dudas lógicas
 
-El texto completo (afirmación, cómo se verifica, estado y evidencia) está en el JSON. Todas están **ABIERTAS** salvo DL-01, DL-02, DL-03, DL-05, DL-07, DL-08, DL-09, DL-13, DL-14 y DL-15 (resueltas):
+El texto completo (afirmación, cómo se verifica, estado y evidencia) está en el JSON. Todas están **ABIERTAS** salvo DL-01, DL-02, DL-03, DL-05, DL-07, DL-08, DL-09, DL-12, DL-13, DL-14 y DL-15 (resueltas):
 
-DL-01 átomos fantasma (BSSE) (RESUELTA: manual + corrida) · DL-02 referencia de `.VH` y Fermi (RESUELTA) · DL-03 densidad con core para Bader (RESUELTA) · DL-04 ELF propio · DL-05 constante dieléctrica estática (cargas de Born) (RESUELTA: Z* e ε_ion; falta ε∞ y FNV) · DL-06 ASE en Pyodide · DL-07 error de Kramers-Kronig (RESUELTA) · DL-08 suma de `.contrib.EPSIMG` (RESUELTA) · DL-09 API de COHP en sisl (RESUELTA: existe como métodos, ver JSON; falta fijar versión y probar sobre fixture) · DL-10 DOI del informe externo · DL-11 licencia de Bader · DL-12 demanda de usuarios · DL-13 capacidades de la versión fijada de SIESTA (RESUELTA) · DL-14 termodinámica del gas (RESUELTA con salvedad de ZPE) · DL-15 offsets de banda por potencial promedio (RESUELTA).
+DL-01 átomos fantasma (BSSE) (RESUELTA: manual + corrida) · DL-02 referencia de `.VH` y Fermi (RESUELTA) · DL-03 densidad con core para Bader (RESUELTA) · DL-04 ELF propio · DL-05 constante dieléctrica estática (cargas de Born) (RESUELTA: Z* e ε_ion; falta ε∞ y FNV) · DL-06 ASE en Pyodide · DL-07 error de Kramers-Kronig (RESUELTA) · DL-08 suma de `.contrib.EPSIMG` (RESUELTA) · DL-09 API de COHP en sisl (RESUELTA: existe como métodos, ver JSON; falta fijar versión y probar sobre fixture) · DL-10 DOI del informe externo · DL-11 licencia de Bader · DL-12 existencia de las campañas en la literatura (RESUELTA por decisión de Manuel; la demanda real no se mide) · DL-13 capacidades de la versión fijada de SIESTA (RESUELTA) · DL-14 termodinámica del gas (RESUELTA con salvedad de ZPE) · DL-15 offsets de banda por potencial promedio (RESUELTA).
 
 ## Límites
 

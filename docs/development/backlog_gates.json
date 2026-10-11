@@ -82,10 +82,10 @@
     },
     {
       "id": "DL-12",
-      "afirmacion": "Existe demanda de usuarios reales que justifica el orden de prioridades de las campañas",
-      "verificacion": "Decision de Manuel (2026-10-11): en vez de entrevistas, minar el corpus de articulos al que tiene acceso. Procedimiento propuesto, a confirmar antes de ejecutar: (1) fijar por escrito la lista de tipos de calculo (las campañas de la lista) y el corpus, el periodo y la consulta; (2) contar cuantos articulos reportan cada tipo, con DFT y con SIESTA o codigos de base local por separado; (3) declarar ANTES de mirar los conteos el umbral que cuenta como 'justifica prioridad' (p. ej. orden de campañas = orden por conteo, y una campaña entra a la Ola 1 solo si supera un conteo minimo fijado); (4) muestrear a mano una parte de las clasificaciones automaticas para estimar el error. Limite que se declara: esto mide lo que se publica, no la disposicion a usar la plataforma; no sustituye una validacion con usuarios si mas adelante se quiere ese dato.",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "afirmacion": "Las campañas de cálculo del backlog corresponden a resultados que la literatura DFT reporta (existen físicamente). El orden de prioridad entre ellas es una decisión de producto de Manuel, no una compuerta lógica.",
+      "verificacion": "Decisión de Manuel (2026-10-11): no hace falta entrevistar ni minar papers; si un cálculo se reporta en la literatura, existe como resultado, aunque nadie lo use hoy. Se verifica citando al menos un tipo de resultado publicado por cada campaña (docs de investigación), con la salvedad de DL-10 sobre los DOI.",
+      "estado": "RESUELTA",
+      "evidencia": "Decisión de Manuel en el hilo del proyecto (2026-10-11). Resultados publicados por tipo de campaña (termodinámica de equilibrio, catálisis y electrocatálisis, interfaces y energía) en /mnt/project-files/dftlab-investigacion/resultados_publicados_dft.md, con fuentes enlazadas en la propia nota; los DOI de los informes externos siguen sin verificar (DL-10). No se midió demanda ni disposición de uso: eso no se afirma."
     },
     {
       "id": "DL-13",
