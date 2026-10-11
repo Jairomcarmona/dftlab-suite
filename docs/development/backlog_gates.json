@@ -70,8 +70,8 @@
       "id": "DL-10",
       "afirmacion": "Los DOI del informe de ChatGPT existen y corresponden a lo citado",
       "verificacion": "Verificar cada DOI manualmente contra su editor; no se pudo desde el entorno de Claude",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Decisión de Manuel en el hilo del proyecto (2026-10-11): los DOI no importan. Ninguna compuerta del backlog se apoya en una cita del informe externo; las afirmaciones se verifican contra el manual de SIESTA y corridas propias. Los 89 DOI del informe de ChatGPT siguen sin verificar (el proxy bloquea Crossref) y no deben citarse como fuente en documentos del producto sin comprobarlos."
     },
     {
       "id": "DL-11",
@@ -83,9 +83,9 @@
     {
       "id": "DL-12",
       "afirmacion": "Las campañas de cálculo del backlog corresponden a resultados que la literatura DFT reporta (existen físicamente). El orden de prioridad entre ellas es una decisión de producto de Manuel, no una compuerta lógica.",
-      "verificacion": "Decisión de Manuel (2026-10-11): no hace falta entrevistar ni minar papers; si un cálculo se reporta en la literatura, existe como resultado, aunque nadie lo use hoy. Se verifica citando al menos un tipo de resultado publicado por cada campaña (docs de investigación), con la salvedad de DL-10 sobre los DOI.",
+      "verificacion": "Decisión de Manuel (2026-10-11): no hace falta entrevistar ni minar papers; si un cálculo se reporta en la literatura, existe como resultado, aunque nadie lo use hoy. Se verifica citando al menos un tipo de resultado publicado por cada campaña (docs de investigación).",
       "estado": "RESUELTA",
-      "evidencia": "Decisión de Manuel en el hilo del proyecto (2026-10-11). Resultados publicados por tipo de campaña (termodinámica de equilibrio, catálisis y electrocatálisis, interfaces y energía) en /mnt/project-files/dftlab-investigacion/resultados_publicados_dft.md, con fuentes enlazadas en la propia nota; los DOI de los informes externos siguen sin verificar (DL-10). No se midió demanda ni disposición de uso: eso no se afirma."
+      "evidencia": "Decisión de Manuel en el hilo del proyecto (2026-10-11). Resultados publicados por tipo de campaña (termodinámica de equilibrio, catálisis y electrocatálisis, interfaces y energía) en /mnt/project-files/dftlab-investigacion/resultados_publicados_dft.md, con fuentes enlazadas en la propia nota. No se midió demanda ni disposición de uso: eso no se afirma."
     },
     {
       "id": "DL-13",
