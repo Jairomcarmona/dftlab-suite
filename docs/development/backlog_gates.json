@@ -107,6 +107,27 @@
       "verificacion": "Calcular un offset de una heterounión de referencia y comparar con valor publicado; tolerancia declarada antes",
       "estado": "ABIERTA",
       "evidencia": ""
+    },
+    {
+      "id": "DL-16",
+      "afirmacion": "La API REST de Materials Project acepta llamadas directas desde el navegador (CORS) con la API key en cabecera; si no, la llamada debe pasar por el servicio local",
+      "verificacion": "Petición real desde el HTML portátil y desde el build servido con una key de prueba; registrar cabeceras CORS de la respuesta y fecha",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-17",
+      "afirmacion": "Los términos de uso de Materials Project permiten esta integración con atribución CC BY 4.0, y el subconjunto GNoME (no comercial) se puede excluir de forma fiable en la consulta",
+      "verificacion": "Leer y citar la página oficial de términos (materialsproject.org/about/terms) con fecha; probar que la consulta excluye batch_id gnome_r2scan_statics",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-18",
+      "afirmacion": "La estructura del endpoint de resumen de MP (red y sitios en formato pymatgen) se convierte sin pérdida a StructureRevision sin depender de pymatgen",
+      "verificacion": "Fixture con la respuesta JSON de varios materiales (incluido uno con ocupación parcial o desorden) comparada con el CIF de MP del mismo mp-id; tolerancia declarada antes",
+      "estado": "ABIERTA",
+      "evidencia": ""
     }
   ],
   "ideas": [
@@ -800,6 +821,60 @@
         },
         {
           "criterio": "Los umbrales no se modifican para que pase una prueba",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "titulo": "Conexión opcional a Materials Project para descargar estructuras",
+      "grupo": "Editor y Python",
+      "estado": "PROPUESTO",
+      "dudas": [
+        "DL-16",
+        "DL-17",
+        "DL-18"
+      ],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Idea 1 aceptada (la importación produce una StructureRevision con transformación IMPORT)",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Decidido dónde vive la API key según DL-16 (navegador del usuario o secreto del servicio, ADR-008); nunca incrustada en la app",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Sin API key la app se comporta igual que antes, incluido el build portátil sin red (prueba de regresión)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "La estructura importada conserva mp-id, versión de la base, fecha, licencia y digest de la respuesta en parameters de IMPORT",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Los resultados con elementos sin pseudo en la biblioteca del usuario, con +U o r2SCAN, o inestables (energía sobre el casco) se marcan; fixture que falla si no",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Ningún registro GNoME aparece en los resultados (fixture que falla)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Los valores de MP se muestran solo como referencia externa y no alimentan ninguna evaluación científica (ADR-018)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Una key inválida, sin red o con límite de peticiones da un error claro y no deja estado a medias",
           "evidencia": ""
         }
       ]

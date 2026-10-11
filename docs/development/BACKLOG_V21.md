@@ -46,12 +46,13 @@ Grupo, idea, dudas que la bloquean y estado de viabilidad (detalle en el anexo).
 | 10 | Campañas nuevas: formación y defectos, superficie, relajación, NEB, interfaces, elásticas, MD, STM | DL-05, DL-15 | Ver anexo; defectos cargados y offsets con hueco |
 | 19 | Priorización por demanda | DL-12 | Después; requiere entrevistas |
 | 20 | Termodinámica y catálisis (formación, casco, T y p finitas, adsorción, CHE, volcán) | DL-01, DL-02, DL-13, DL-14 | Ola; P6 a P8 |
+| 22 | Conexión opcional a Materials Project: el usuario pega su API key y descarga estructuras en Herramientas | DL-16, DL-17, DL-18 | Ola; tras idea 1; T-028, T-031; ver anexo §5 |
 
 ## Registro de dudas lógicas
 
 El texto completo (afirmación, cómo se verifica, estado y evidencia) está en el JSON. Todas están **ABIERTAS** salvo DL-01 y DL-09:
 
-DL-01 átomos fantasma (BSSE) (RESUELTA: manual + corrida) · DL-02 referencia de `.VH` y Fermi · DL-03 densidad con core para Bader · DL-04 ELF propio · DL-05 constante dieléctrica estática (cargas de Born) · DL-06 ASE en Pyodide · DL-07 error de Kramers-Kronig · DL-08 suma de `.contrib.EPSIMG` · DL-09 API de COHP en sisl (RESUELTA: existe como métodos, ver JSON; falta fijar versión y probar sobre fixture) · DL-10 DOI del informe externo · DL-11 licencia de Bader · DL-12 demanda de usuarios · DL-13 capacidades de la versión fijada de SIESTA · DL-14 termodinámica del gas · DL-15 offsets de banda por potencial promedio.
+DL-01 átomos fantasma (BSSE) (RESUELTA: manual + corrida) · DL-02 referencia de `.VH` y Fermi · DL-03 densidad con core para Bader · DL-04 ELF propio · DL-05 constante dieléctrica estática (cargas de Born) · DL-06 ASE en Pyodide · DL-07 error de Kramers-Kronig · DL-08 suma de `.contrib.EPSIMG` · DL-09 API de COHP en sisl (RESUELTA: existe como métodos, ver JSON; falta fijar versión y probar sobre fixture) · DL-10 DOI del informe externo · DL-11 licencia de Bader · DL-12 demanda de usuarios · DL-13 capacidades de la versión fijada de SIESTA · DL-14 termodinámica del gas · DL-15 offsets de banda por potencial promedio · DL-16 CORS de la API de Materials Project · DL-17 términos de Materials Project y exclusión de GNoME · DL-18 conversión de la estructura de MP sin pymatgen.
 
 ## Límites
 
