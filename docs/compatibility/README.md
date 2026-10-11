@@ -30,7 +30,7 @@ La regla es la misma en todos los casos: el original es del motor, y la platafor
 
 ## Cambios upstream para la Ola 1 (Codex)
 
-Por orden de bloqueo: **U-H0** (licencia y rama de HubbardFlow, decisión de Manuel), **U-Q1** (ruta canónica pública en QRAFT), **U-H1/U-H2** (fachada pública de HubbardFlow), **U-Q3** (extensión pública del preparador y del controlador), **U-H3** (schemas de análisis y estado con `NOT_ESTABLISHED`), y después U-Q7 (fencing, antes de varios workers), U-Q2, U-Q4, U-Q5, U-Q8, U-H4, U-Q6 y U-H6. U-H5 (export de fragmentos) es solo para HF-2. El detalle está en la sección 5 de cada inventario. Cada cambio lleva un fixture de consumidor y se fija por commit nuevo en `engine-versions.lock.json` (T-010).
+Por orden de bloqueo: **U-H0** (licencia y rama de HubbardFlow, decisión de Manuel), **U-Q1** (ruta canónica pública en QRAFT), **U-H1/U-H2** (fachada pública de HubbardFlow), **U-Q3** (extensión pública del preparador y del controlador), **U-H3** (schemas de análisis y estado con `NOT_ESTABLISHED`), y después U-Q7 (fencing, antes de varios workers), U-Q2, U-Q4, U-Q5, U-Q8, U-H4, U-Q6 y U-H6. U-H5 (export de fragmentos) es solo para HF-2. Tras la calificación HF-1 contra QRAFT `41043ed` se añadieron **U-Q9** (tarea `controller`) y **U-H7** (modo controlador de HubbardFlow), que bloquean HF-1 juntos ([ADR-017](../adr/ADR-017-tarea-controladora-qraft-hf1.md)). El detalle está en la sección 5 de cada inventario. Cada cambio lleva un fixture de consumidor y se fija por commit nuevo en `engine-versions.lock.json` (T-010).
 
 ## Respuesta a los puntos «pendiente C2» de los ADR
 
