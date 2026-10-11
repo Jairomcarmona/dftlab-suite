@@ -1,6 +1,7 @@
 # ADR-011: despliegues y empaquetado por target; workers fijados durante cada campaña
 
 Estado: **aceptado** el 2026-10-11 (T-007). Implementación pendiente: X2 (esqueleto `platform/`, launcher, T-057), P3/P4, P9, P10.
+Enmendado por [ADR-015](ADR-015-hubbardflow-dependencia-privada-opcional.md): HubbardFlow no se empaqueta ni se redistribuye; es una dependencia privada opcional.
 Fecha: 2026-10-11. Fuente: [propuesta maestra](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) §15.5, §16, §25.6.
 
 ## Contexto
