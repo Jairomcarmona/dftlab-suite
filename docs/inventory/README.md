@@ -4,7 +4,7 @@ Esta entrega describe la aplicación existente. No añade capacidades de cálcul
 
 ## T-001: alcance y conservación
 
-El registro tiene **19 vistas** (15 capítulos), **7 paneles de calculadoras**, **23 rutas de lectura SIESTA** (22 entradas del dispatcher más mallas binarias), **6 familias de lectura estructural y 6 formatos de escritura**, **16 datasets / 10 678 665 bytes**. Hay **54 JS propios / 11 385 líneas**, **25 módulos científicos** y **52 sitios de llamadas de exportación**. Estos conceptos tienen definiciones distintas: no sumar aliases, llamadas dinámicas y formatos como si fueran una única métrica de capacidades.
+El registro tiene **19 vistas** (15 capítulos), **7 paneles de calculadoras**, **23 rutas de lectura SIESTA** (22 entradas del dispatcher más mallas binarias), **6 familias de lectura estructural y 6 formatos de escritura**, **16 datasets / 10 678 665 bytes**. El snapshot actual, regenerado tras X4, tiene **55 JS propios / 11 548 líneas**, **25 módulos científicos** y **52 sitios de llamadas de exportación**. Estos conceptos tienen definiciones distintas: no sumar aliases, llamadas dinámicas y formatos como si fueran una única métrica de capacidades.
 
 El checker lee el registro y las fuentes sin ejecutar módulos DOM; exige correspondencia entre las entradas descubiertas y el catálogo, comprueba la existencia de las pruebas citadas, hashes y matriz regenerada. No acredita cobertura científica de cada símbolo. Si una vista o dataset se añade sin inventariar, o una fuente cambia sin revisión del inventario, falla.
 
@@ -15,7 +15,7 @@ node docs/inventory/audit.mjs --write
 git diff -- docs/inventory/
 ```
 
-La comprobación funciona también en Linux/WSL con Node 24.18.0, sin npm ni Python. No se añade a la CI de la app en este bloque: su ejecución local queda registrada; las suites existentes siguen siendo la puerta de comportamiento. La conexión futura de este checker a CI se hará sin invadir los archivos de otros bloques.
+La comprobación funciona también en Linux/WSL con Node 24.18.0, sin npm ni Python. X1 lo verificó localmente. X4 lo añade a `scripts/verify.mjs` y por tanto a `npm test`/CI Windows y Linux; exige regenerar y revisar el inventario al cambiar las fuentes, sin modificar `ci.yml`. Las suites existentes siguen siendo la puerta de comportamiento.
 
 | Capa/artefacto | Fuente conservada | Uso y política |
 |---|---|---|
