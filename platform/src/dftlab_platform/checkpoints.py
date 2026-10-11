@@ -6,6 +6,7 @@ journals require a qualified quiescence/terminal adapter, not a DB write lock.
 No HTTP route, credentials, implicit overwrite, GC or admission reopening.
 """
 from dataclasses import dataclass
+from contextlib import closing
 import hashlib
 import os
 from pathlib import Path
@@ -291,12 +292,12 @@ class SQLiteCheckpointStore:
         state = destination/"state.sqlite"
         copy_original(objects[0][0], state, objects[0][1], objects[0][2])
         # Set recovery before returning/opening an API; never a live restored DB.
-        with sqlite3.connect(state) as db:
+        with closing(sqlite3.connect(state)) as db, db:
             db.execute("UPDATE instance_recovery SET mode='RECOVERY',checkpoint=? WHERE singleton=1", (canonical(checkpoint).decode(),))
             if db.execute("SELECT changes()").fetchone()[0] != 1:
                 raise Problem("PRECONDITION_FAILED")
         # Gate is already durable even if validation or file copy now fails.
-        with sqlite3.connect(state) as db:
+        with closing(sqlite3.connect(state)) as db:
             if db.execute("PRAGMA integrity_check").fetchall() != [("ok",)] or db.execute("PRAGMA foreign_key_check").fetchall():
                 raise Problem("PRECONDITION_FAILED")
             revisions, records, uploads, pending = self._metadata(db)

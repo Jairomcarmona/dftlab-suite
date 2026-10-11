@@ -3,12 +3,10 @@
 No native engine, scientific job, credentials or scheduler in tests/CI.
 """
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import closing
 import copy
 import hashlib
 import os
 from pathlib import Path
-import sqlite3
 import tempfile
 from threading import Event
 import unittest
@@ -19,8 +17,8 @@ from dftlab_platform.artifacts import LocalArtifactStore
 from dftlab_platform.authority_storage import SQLiteAuthorityStore
 from dftlab_platform.authority import utcnow
 from dftlab_platform.checkpoints import SQLiteCheckpointStore
-from dftlab_platform.contracts import canonical, loads, resource_json
-from dftlab_platform.domain import Problem, identifier, reseal
+from dftlab_platform.contracts import loads, resource_json
+from dftlab_platform.domain import Problem, identifier
 from dftlab_platform.storage import SQLiteRepository
 
 
