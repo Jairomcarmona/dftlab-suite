@@ -1033,6 +1033,7 @@
         "kpathCartesian",
         "reciprocalAxes"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/views/estructura.js"
       ],
@@ -1059,6 +1060,7 @@
         "colorOf",
         "elementInfo"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/core/scene.js",
         "app/dftlab/static/js/crystal/formats.js",
@@ -1110,6 +1112,7 @@
         "writeStructure",
         "density"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/tools/fdfgen.js",
         "app/dftlab/static/js/views/estructura.js",
@@ -1145,8 +1148,10 @@
         "getExplicitKPathOrigCell",
         "primitiveCellFromPath",
         "prettyLabel",
-        "bandPlotTicks"
+        "bandPlotTicks",
+        "BAND_PATH_DATA"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/views/estructura.js",
         "app/dftlab/static/js/views/phonons.js"
@@ -1208,8 +1213,11 @@
         "analyzeAsync",
         "standardize",
         "operationsFromNumber",
-        "spaceGroupType"
+        "spaceGroupType",
+        "initMoyo",
+        "isMoyoReady"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/core/scene.js",
         "app/dftlab/static/js/crystal/bz.js",
@@ -1238,6 +1246,7 @@
         "solveState",
         "solveAtom"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/views/ks.js"
       ],
@@ -1268,6 +1277,7 @@
         "dispersion",
         "phononDOS"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/views/phonons.js"
       ],
@@ -1288,6 +1298,7 @@
         "shiftToFermi",
         "bandEdges"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js",
         "app/dftlab/static/js/siesta/pack.js"
@@ -1305,6 +1316,7 @@
         "parseDOS",
         "integrateDOS"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js"
       ],
@@ -1323,6 +1335,7 @@
         "computeDOS",
         "countElectrons"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js",
         "app/dftlab/static/js/siesta/pdos.js"
@@ -1343,6 +1356,7 @@
         "opticalSpectrum",
         "addDrude"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js"
       ],
@@ -1358,6 +1372,7 @@
         "parseFC",
         "fcRows"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js",
         "app/dftlab/static/js/views/phonons.js"
@@ -1374,7 +1389,23 @@
       "exports": [
         "detectKind",
         "detectAndParse",
-        "parseMany"
+        "parseMany",
+        "toPlain"
+      ],
+      "reexports": [
+        "app/dftlab/static/js/siesta/out.js",
+        "app/dftlab/static/js/siesta/bands.js",
+        "app/dftlab/static/js/siesta/eig.js",
+        "app/dftlab/static/js/siesta/pdos.js",
+        "app/dftlab/static/js/siesta/dos.js",
+        "app/dftlab/static/js/siesta/epsimg.js",
+        "app/dftlab/static/js/siesta/ion.js",
+        "app/dftlab/static/js/siesta/pseudo.js",
+        "app/dftlab/static/js/siesta/mde.js",
+        "app/dftlab/static/js/siesta/rho.js",
+        "app/dftlab/static/js/siesta/pack.js",
+        "app/dftlab/static/js/siesta/fc.js",
+        "app/dftlab/static/js/siesta/util.js"
       ],
       "consumers": [
         "app/dftlab/static/js/siesta/runset.js",
@@ -1393,6 +1424,7 @@
         "parseIonXML",
         "parseIon"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js"
       ],
@@ -1411,6 +1443,7 @@
         "parseXV",
         "parseStructOut"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js"
       ],
@@ -1429,6 +1462,7 @@
         "fdfBlock",
         "parseOut"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js",
         "app/dftlab/static/js/siesta/outnotes.js"
@@ -1451,6 +1485,7 @@
         "analyzeOut",
         "reportMarkdown"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/views/lectura.js"
       ],
@@ -1475,6 +1510,7 @@
         "packStructure",
         "packContents"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js",
         "app/dftlab/static/js/siesta/runset.js"
@@ -1497,8 +1533,10 @@
         "groupPDOS",
         "integratePDOS",
         "listSpecies",
-        "listAtoms"
+        "listAtoms",
+        "parsePDOSKP"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js"
       ],
@@ -1516,6 +1554,7 @@
         "radialCharge",
         "parsePseudo"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js"
       ],
@@ -1538,6 +1577,7 @@
         "lineProfile",
         "planarAverage"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js",
         "app/dftlab/static/js/siesta/runset.js",
@@ -1561,6 +1601,7 @@
         "relink",
         "createFileSet"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/views/postproc.js"
       ],
@@ -1599,6 +1640,7 @@
         "attrStr",
         "toPlain"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/bands.js",
         "app/dftlab/static/js/siesta/dos.js",
@@ -1626,6 +1668,7 @@
         "fftGood",
         "validateCellInputs"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/views/calc.js"
       ],
@@ -1647,6 +1690,7 @@
         "SCHED_DEFAULTS",
         "jobScript"
       ],
+      "reexports": [],
       "consumers": [
         "app/dftlab/static/js/views/estructura.js"
       ],

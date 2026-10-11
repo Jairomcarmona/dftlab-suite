@@ -57,7 +57,11 @@ const exportSites = code.filter(f => f.includes('/views/') || f.endsWith('/core/
       preservation: 'Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga.'}))));
 const scientificModules = code.filter(f => /\/(siesta|crystal|physics|tools)\//.test(f)).map(file => ({
   file, sha256: hash(file),
-  exports: [...read(file).matchAll(/export (?:async )?(?:function|const|class) (\w+)/g)].map(m => m[1]),
+  exports: [...new Set([
+    ...[...read(file).matchAll(/export (?:async )?(?:function|const|class) (\w+)/g)].map(m => m[1]),
+    ...[...read(file).matchAll(/export\s*\{([^}]+)\}/g)].flatMap(m => m[1].split(',').map(item=>item.trim().split(/\s+as\s+/).at(-1)).filter(Boolean)),
+  ])],
+  reexports: [...read(file).matchAll(/export\s+(?:\*|\{[^}]+\})\s+from\s+['"]([^'"]+)['"]/g)].map(m => path.posix.normalize(path.posix.join(path.posix.dirname(file),m[1]))),
   consumers: code.filter(f => f !== file && [...read(f).matchAll(/from ['"]([^'"]+)['"]/g)].some(m => path.resolve(root, path.dirname(f), m[1]) === path.resolve(root, file))),
   tests: file.includes('/physics/phonon') ? ['app/tests/siesta/run_fc_tests.mjs']
     : file.includes('/physics/atom') ? ['app/tests/ui/browser_lifecycle.mjs','app/tests/perf/measure_views.mjs']
