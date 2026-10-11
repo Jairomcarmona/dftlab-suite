@@ -75,7 +75,7 @@ class Budgets(unittest.TestCase):
         first = self.operation()
         hold = self.reserve(first)
         second = self.operation()
-        self.repo.recover_inflight()
+        self.repo.recover()
         self.now += timedelta(seconds=61)
         self.assertEqual(self.reserve(first), hold)
         self.reject(self.reserve, second, 40)
