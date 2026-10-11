@@ -15,7 +15,7 @@
       "afirmacion": "El potencial en malla (.VH o .VT) comparte referencia de energía con el nivel de Fermi del .out",
       "verificacion": "Calcular Φ de un metal con valor experimental conocido (p. ej. Al(111)) y comparar con tolerancia declarada ANTES de ejecutar",
       "estado": "RESUELTA",
-      "evidencia": "SIESTA 5.4.2, slab Al(111) 5 capas, a=4.05 A, PBE, SZP, 40 A de celda, SaveElectrostaticPotential. Promedio planar de .VH en vacio = -0.0853 eV (plano, igual al maximo); Fermi del .out = -4.2616 eV; Phi = V_vac - E_F = 4.176 eV. Valor experimental Al(111) ~4.25 eV; tolerancia declarada antes de correr: +-0.3 eV; diferencia 0.07 eV. Conclusion: .VH y el Fermi del .out comparten referencia. Detalle y comando en docs/development/EVIDENCIA_SIESTA_542.md"
+      "evidencia": "Ya estaba hecho en el modulo Aprender 10 (app/dftlab/static/js/views/potential.js, datos app/dftlab/static/js/data/potencial.json, corridas /mnt/project-files/DFT_App/corridas/wf.tar.gz): Phi = V_vac - E_F con E_F del .out y V_vac del promedio planar de .VH, SIESTA 5.4.2 LDA DZP. Al(111) 5 capas: Phi 4.09 eV; con EnergyShift 5 meV 4.39 (9 capas 4.26); experimento 4.24-4.26 (Grepstad 1976; Eastment y Mee 1973). Replica independiente en esta sesion (PBE, SZP, tolerancia +-0.3 eV declarada antes): 4.176 eV. Conclusion: .VH y el Fermi del .out comparten referencia. Detalle en docs/development/EVIDENCIA_SIESTA_542.md"
     },
     {
       "id": "DL-03",
