@@ -59,6 +59,29 @@ const runners = {
       return [`tipo desconocido ${c.kind}`];
     };
   },
+  async SLABS(doc) {
+    const o = await import(pathToFileURL(path.join(root, doc.oracle)));
+    // Longitudes en Å: tolerancia absoluta; las referencias hechas a mano tienen 6 decimales.
+    const near = (abs) => (a, e, w) => {
+      if (typeof e === 'number') return typeof a === 'number' && Math.abs(a - e) <= abs + doc.arithmetic_tolerance.rel * Math.abs(e) ? [] : [`${w}: ${a} ≠ ${e}`];
+      if (e === null || typeof e !== 'object') return a === e ? [] : [`${w}: ${JSON.stringify(a)} ≠ ${JSON.stringify(e)}`];
+      if (Array.isArray(e)) return Array.isArray(a) && a.length === e.length ? e.flatMap((x, i) => near(abs)(a[i], x, `${w}[${i}]`)) : [`${w}: longitud ${a?.length} ≠ ${e.length}`];
+      if (a === null || typeof a !== 'object') return [`${w}: falta`];
+      return [...new Set([...Object.keys(e), ...Object.keys(a)])].flatMap(k => near(abs)(a[k], e[k], `${w}.${k}`));
+    };
+    const exact = near(doc.arithmetic_tolerance.abs_A), ref = near(doc.reference_tolerance_A);
+    return c => {
+      if (c.kind === 'reference') {
+        const s = o.buildSlab(c.bulk, c.spec);
+        return [...ref(o.slabInvariants(c.reference), c.expect, 'referencia'), ...ref(o.slabInvariants(s), c.expect, 'construida')];
+      }
+      if (c.kind === 'build') return exact(o.buildSlab(c.bulk, c.spec), c.expect, 'lámina');
+      if (c.kind === 'bottom_planes') return exact(o.bottomPlaneAtoms(o.buildSlab(c.bulk, c.spec), c.k), c.expect, 'índices');
+      if (c.kind === 'constraints') return exact(o.renderConstraints(c.n_atoms, c.fixed), c.expect, 'restricciones');
+      if (c.kind === 'invariants') return exact(o.slabInvariants(c.geometry), c.expect, 'invariantes');
+      return [`tipo desconocido ${c.kind}`];
+    };
+  },
 };
 
 for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.cases.json')).sort()) {
