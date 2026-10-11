@@ -133,3 +133,41 @@ La salida debe ser una carpeta nueva en runtime/ ignorado. El script instala pla
 El caso tiene parámetros explícitos de fixture, no defaults universales ni tolerancias de validación científica. REVIEW (UNKNOWN_LABEL/UNDECLARED_GOVERNED_VALUE) se conserva; el reporte dice NOT_ESTABLISHED y execution_performed=false. Esto verifica la distribución/API/authoring/package, no los gates T-022 runtime/T-023/T-059…062. No habilitar comandos HTTP ni anunciar una capability con este reporte.
 
 En la observación local WSL, sbatch --test-only aceptó partition=local/account=default/qos=normal. QRAFT exige siesta_executable sin slash al renderizar el script; el perfil observado usa siesta con PATH explícito a la instalación MPI existente. El worker debe verificar cuál ejecutable resuelve, su hash/version/build y MPI/threads antes de ejecutar, mediante RuntimeProbeReceipt. No trasladar este perfil a otro sitio como configuración válida por defecto.
+
+### Observación local del worker SLURM (T-023a)
+
+`qualify_runtime_probe.py` se ejecuta explícitamente con Python POSIX 3.12.10,
+instalando el wheel de platform en un venv externo y usando `python -I`.
+No envía trabajos ni lanza MPI. En WSL el directorio nuevo de evidencia debe
+estar en el filesystem Linux privado, no bajo `/mnt/c`.
+
+```sh
+/path/to/installed/venv/bin/python -I deployment/local/qualify_runtime_probe.py \
+  --config /private/operator-probe.json \
+  --profile-bytes /private/original-profile.json \
+  --output /private/new-probe-evidence
+```
+
+La configuración pertenece al operador y nunca se acepta como comando HTTP.
+Tiene exactamente `project_id`, `profile_id`, `revision`, `partition`, `node`,
+`ranks`, `threads_per_rank`, `memory_mb`, y los pins `executable`, `mpi`, `sinfo`,
+`scontrol`, `sbatch`. Cada pin contiene `path` absoluto y `sha256` de los bytes
+resueltos; `mpi` es null para serial con un único rank. La calificación local
+actual observa una partición con un solo nodo IDLE; no interpreta hostlists
+remotos ni modifica SLURM. No ejecuta module commands; cualquier perfil que
+los necesite requiere una calificación posterior.
+
+Se preserva el nombre de invocación de aliases verificados como mpirun/orterun.
+Se comprueban los pins antes de ejecutar diagnósticos y al terminar; cada
+comando tiene límites de tiempo y salida, sin shell ni stdin. Se prueba
+almacenamiento privado local, fsync de archivo/directorio y renombrado. Los
+recibos usan el schema original RuntimeProbeReceipt y caducan en 15 minutos.
+Los detalles y hashes se conservan en evidencia privada, sin publicarlos en CI.
+
+El hash del perfil correlaciona bytes, **no valida su política nativa**. Ranks
+son la reserva solicitada; `MPI_RANK_EXECUTION` permanece NOT_ESTABLISHED hasta
+una ejecución real. Una observación de binarios no verifica librerías dinámicas,
+no es un sandbox frente al propio operador, no acredita resultados científicos
+y no habilita listCapabilities/admisión. T-023 sigue abierto hasta el worker,
+el envío durable, fencing y una corrida real calificada. Los tests de CI usan
+pins sintéticos y un puerto de diagnósticos; no requieren motores ni scheduler.
