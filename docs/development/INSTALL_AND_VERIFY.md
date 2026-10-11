@@ -36,9 +36,9 @@ Ejecutar desde `app/`:
 
 | Comando | Alcance |
 | --- | --- |
-| `npm test` | Puerta completa: referencias científicas existentes, pruebas Node de A/E/B, build, servidor Node y las cuatro suites de navegador. |
+| `npm test` | Puerta completa: referencias científicas existentes, pruebas Node de A/E/B y C/D, build, servidor Node y las cinco suites de navegador. |
 | `npm run test:node` | Referencias, pruebas Node, build y servidor; **no** acredita navegador ni offline. |
-| `npm run test:browser` | A/E, ciclo de vida B, dos HTML offline y los tres modos de carga Moyo; requiere build previo. |
+| `npm run test:browser` | A/E, ciclo de vida B, importación C/D (`browser_import.mjs`), dos HTML offline y los tres modos de carga Moyo; requiere build previo. |
 | `npm run build` | Genera las dos variantes HTML con esbuild local. |
 | `npm run serve` | Vista previa en `http://127.0.0.1:8000/`, después del build. |
 | `npm run serve -- --port 8080` | Vista previa con otro puerto. Ctrl+C detiene el servidor. |
@@ -59,7 +59,7 @@ La CI hace checkout limpio, `npm ci`, instalación de Chromium, verificación de
 
 El build elimina únicamente los enlaces opcionales a Google Fonts/preconnect de la plantilla para evitar solicitudes de red del entregable. Se usan los fallbacks tipográficos de sistema ya existentes en CSS. No se modificaron la plantilla fuente, las vistas, el router, vendor ni algoritmos científicos. Los tres avisos heredados de `import.meta` en el bundle IIFE permanecen: las rutas inline usadas por el HTML se prueban; el smoke independiente prueba fetch/inline/global sobre los módulos ES servidos.
 
-Las regresiones A/E y B también recorren el HTML compilado sin red. El smoke Moyo usa un servidor HTTP local para comprobar explícitamente la ruta fetch; no debe confundirse ese caso con una prueba offline.
+Las regresiones A/E, B y C/D también recorren el HTML compilado sin red. El smoke Moyo usa un servidor HTTP local para comprobar explícitamente la ruta fetch; no debe confundirse ese caso con una prueba offline.
 
 ## Límites
 

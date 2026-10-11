@@ -3,31 +3,20 @@
 // C: .EIG y .KP dan el mismo resultado en cualquier orden y se recalculan al quitar o sustituir el .KP.
 // D: mallas binarias (.RHO) leídas como bytes y visualizadas; .dftlab.json con bandas, DOS y estructura,
 //    nombrando lo que no se visualiza; archivos truncados o malformados dan un error visible.
-// Necesita Playwright + Chromium. Sin ellos se OMITE de forma visible (exit 0) salvo REQUIRE_BROWSER=1, que lo convierte en fallo.
+// Necesita Playwright + Chromium locales fijados. Si faltan, falla, igual que las demás suites F.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createRequire } from 'node:module';
+import { chromium } from 'playwright';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const HTML = path.resolve(HERE, '../../dist/dftlab.html');
 const FX = path.resolve(HERE, '../siesta/fixtures');
-const need = process.env.REQUIRE_BROWSER === '1';
-let chromium;
-try {
-  const req = createRequire(import.meta.url);
-  const roots = [undefined, ...(process.env.NODE_PATH || '').split(path.delimiter).filter(Boolean)];
-  for (const r of roots) { try { chromium = (r ? createRequire(path.join(r, 'x.js'))('playwright') : req('playwright')).chromium; break; } catch {} }
-  if (!chromium) throw new Error('playwright no instalado');
-} catch (e) {
-  console.log(`browser import: SKIPPED (${e.message}). Defina REQUIRE_BROWSER=1 para que sea un fallo.`);
-  process.exit(need ? 1 : 0);
-}
 if (!fs.existsSync(HTML)) { console.log('Falta dist/dftlab.html: ejecute "node scripts/build.mjs".'); process.exit(1); }
 
 let pass = 0, fail = 0; const bad = [];
 const check = (n, c, d = '') => { if (c) pass++; else { fail++; bad.push(n + ' ' + d); } };
-const browser = await chromium.launch({ args: ['--no-sandbox'] });
+const browser = await chromium.launch({ args: ['--enable-unsafe-swiftshader'] });
 const url = pathToFileURL(HTML).href;
 const file = (name, buffer) => ({ name, mimeType: 'application/octet-stream', buffer: Buffer.from(buffer) });
 const EIG = fs.readFileSync(path.join(FX, 'si/si.EIG')), KP = fs.readFileSync(path.join(FX, 'si/si.KP'), 'utf8');
@@ -59,6 +48,7 @@ async function exportJson(p) {
 const status = (p, name) => p.evaluate((n) => [...document.querySelectorAll('#fileTab tbody tr')].find((r) => r.cells[0].textContent === n)?.cells[3].textContent || '', name);
 
 // ---------------- C ----------------
+try {
 const orders = {
   'EIG→KP': [[file('si.EIG', EIG)], [file('si.KP', KPW)]],
   'KP→EIG': [[file('si.KP', KPW)], [file('si.EIG', EIG)]],
@@ -132,7 +122,7 @@ check('C mismo resultado en todos los órdenes', Object.values(results).every((e
   await p.close();
 }
 
-await browser.close();
+} finally { await browser.close(); }
 console.log(`browser import (C/D): ${pass} passed, ${fail} failed`);
 bad.forEach((b) => console.log('  FAIL', b));
 process.exit(fail ? 1 : 0);

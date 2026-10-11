@@ -137,6 +137,7 @@ Estado verificado, no solo declarado:
 - **Alcance:** sin cambios en router, vistas, `app/src`, vendor, algoritmos ni tolerancias. Las cargas útiles con nombres hostiles se envían en memoria para que Windows no omita ese caso. No se trabajó C/D, G ni H.
 - **PR y CI:** [PR #5](https://github.com/Jairomcarmona/dftlab-suite/pull/5), SHA `5b67a2ab4ec47cc8f982bb5c55124990684a32ec`; [ejecución 38106584161](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38106584161): `Verify (windows-2022)` y `Verify (ubuntu-24.04)` completados con `success`. Checkout limpio, `npm ci`, instalación de Chromium y puerta completa, incluidos navegador y offline. La evidencia Linux procede de ese runner, no de la prueba local. Esta actualización posterior registra el resultado sin cambiar implementación.
 - **Pendiente F:** fijar y validar el entorno Python de regeneración de referencias en una entrega específica; no condiciona el build/frontend. No se ejecutó SIESTA.
+- **Integración posterior:** merge de `origin/main` @ `b9de59a` (PR #6, C/D) en `codex/bloque-f`; contenido C/D preservado. `browser_import.mjs` se añade al runner de navegador de `npm test` y, por él, a CI. Playwright local obligatorio y configuración WebGL de las demás pruebas; sin cambios en sus criterios científicos. Windows local: importación Node 75/0, navegador C/D 33/0 y puerta completa en verde. La regeneración Python se atenderá en rama independiente después de fusionar F.
 
 ## G. Discontinuidades del camino k
 
