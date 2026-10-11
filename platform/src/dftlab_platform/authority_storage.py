@@ -23,6 +23,7 @@ class SQLiteAuthorityStore:
         for value in (run, attempt, instance):
             self.contracts.validate_ref(BASE+"schemas/defs.schema.json#/$defs/id", value)
         with self.repository.transaction() as db:
+            self.repository._execution_ready(db)
             self.repository._project(db, owner, project)
             # No auto takeover even if expiry passed or the owner crashed.
             # Terminal proof and a future explicit recovery port are required.
@@ -41,6 +42,7 @@ class SQLiteAuthorityStore:
             return document
 
     def _checked(self, db, owner, record, observed):
+        self.repository._execution_ready(db)
         self.contracts.validate("controller-authority-record", record)
         self.repository._project(db, owner, record["project_id"])
         payload = record["payload"]

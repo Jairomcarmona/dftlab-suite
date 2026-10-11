@@ -76,6 +76,14 @@ class SQLiteRepository:
                 connection.execute("INSERT INTO product_migrations VALUES(1)")
             elif products != [1]:
                 raise ValueError("Explicit product migration required")
+            connection.execute("CREATE TABLE IF NOT EXISTS recovery_migrations(version INTEGER PRIMARY KEY)")
+            recovery = [row[0] for row in connection.execute("SELECT version FROM recovery_migrations ORDER BY version")]
+            if not recovery:
+                connection.execute("CREATE TABLE instance_recovery(singleton INTEGER PRIMARY KEY CHECK(singleton=1), mode TEXT NOT NULL CHECK(mode IN ('LIVE','RECOVERY')), checkpoint TEXT)")
+                connection.execute("INSERT INTO instance_recovery VALUES(1,'LIVE',NULL)")
+                connection.execute("INSERT INTO recovery_migrations VALUES(1)")
+            elif recovery != [1]:
+                raise ValueError("Explicit recovery migration required")
             connection.commit()
         if os.name != "nt":
             self.path.chmod(0o600)
@@ -109,6 +117,26 @@ class SQLiteRepository:
             principal = Principal(identifier())
             db.execute("INSERT INTO principals VALUES(?,?)", (principal.principal_id, handle))
             return principal
+
+    def _execution_ready(self, db):
+        row = db.execute("SELECT mode,checkpoint FROM instance_recovery WHERE singleton=1").fetchone()
+        if row is None or row[0] != "LIVE" or row[1] is not None:
+            raise Problem("PRECONDITION_FAILED")
+
+    def require_execution_ready(self):
+        """Internal guard, never a client toggle or an automatic recovery exit."""
+        with self._connection() as db:
+            self._execution_ready(db)
+
+    def restored_checkpoint(self):
+        with self._connection() as db:
+            row = db.execute("SELECT mode,checkpoint FROM instance_recovery WHERE singleton=1").fetchone()
+            if row is None or row[0] not in {"LIVE", "RECOVERY"}:
+                raise Problem("PRECONDITION_FAILED")
+            if row[0] == "LIVE":
+                self._execution_ready(db)
+                return None
+            return self.contracts.validate("recovery-checkpoint", loads(row[1]))
 
     def _project(self, db, principal: Principal, project_id: str) -> dict:
         row = db.execute("SELECT document,owner_id FROM projects WHERE project_id=?", (project_id,)).fetchone()
@@ -170,6 +198,8 @@ class SQLiteRepository:
                 if row[0] != hashed:
                     raise Problem("IDEMPOTENCY_KEY_REUSED")
                 return self._operation_document(row[1]), False
+            if request["action"] in {"SUBMIT_RUN", "EXECUTE_RESUME_PLAN"}:
+                self._execution_ready(db)
             target = request["target"]
             row = db.execute("SELECT revision,kind FROM resources WHERE resource_id=? AND project_id=?", (target["id"], request["project_id"])).fetchone()
             if row is None or row[1] != target["kind"]:
@@ -283,10 +313,18 @@ class SQLiteRepository:
 
     def claim(self, processor_id: str) -> dict | None:
         with self.transaction() as db:
-            row = db.execute("SELECT o.operation_id,o.document FROM outbox b JOIN operations o ON b.operation_id=o.operation_id WHERE b.processor_id IS NULL ORDER BY o.operation_id LIMIT 1").fetchone()
+            row = operation = None
+            for candidate in db.execute("SELECT o.operation_id,o.document FROM outbox b JOIN operations o ON b.operation_id=o.operation_id WHERE b.processor_id IS NULL ORDER BY o.operation_id"):
+                value = self._operation_document(candidate[1])
+                if value["payload"]["action"] in {"SUBMIT_RUN", "EXECUTE_RESUME_PLAN"}:
+                    try:
+                        self._execution_ready(db)
+                    except Problem:
+                        continue  # retained, not rejected or silently dispatched
+                row, operation = candidate, value
+                break
             if row is None:
                 return None
-            operation = self._operation_document(row[1])
             if operation["payload"]["state"] != "PENDING":
                 raise ValueError("Outbox and operation disagree; recovery required")
             db.execute("UPDATE outbox SET processor_id=?,claimed_at=? WHERE operation_id=? AND processor_id IS NULL", (processor_id, now(), row[0]))
@@ -358,6 +396,7 @@ class SQLiteRepository:
 
     def _persist_effect_intent(self, db, operation_id, revision, processor_id, document):
         """Trusted processor write-ahead boundary, never a client HTTP endpoint."""
+        self._execution_ready(db)
         self.contracts.validate("effect-intent", document)
         if document["integrity"]["status"] != "VERIFIED":
             raise Problem("PRECONDITION_FAILED")
