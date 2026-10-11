@@ -122,7 +122,19 @@ class LocalNativeQuiescenceSource:
                         raise Problem("PRECONDITION_FAILED")
                     record = self.repository.contracts.validate("controller-authority-record", loads(row[1]))
                     payload = record["payload"]
-                    if record["project_id"] != project or payload["run_id"] != run or record["integrity"]["status"] != "VERIFIED" or payload["automatic_takeover"] != "DISABLED" or payload["lease_expires_at"] is None or datetime.fromisoformat(payload["lease_expires_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc):
+                    if record["project_id"] != project or payload["run_id"] != run or record["integrity"]["status"] != "VERIFIED" or payload["automatic_takeover"] != "DISABLED":
+                        raise Problem("PRECONDITION_FAILED")
+                    if payload["lease_expires_at"] is None:
+                        # A retired namespace remains checkpointable only with
+                        # the explicit audited retirement, plus the fresh
+                        # positive source verification below. NULL alone is
+                        # neither evidence nor permission to omit a controller.
+                        if not payload["termination_evidence"] or "authority_retirements" not in {value[0] for value in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}:
+                            raise Problem("PRECONDITION_FAILED")
+                        retired = db.execute("SELECT owner_id,project_id,retired_document FROM authority_retirements WHERE run_id=? AND generation=?", (run, payload["generation"])).fetchone()
+                        if retired is None or retired[:2] != (owner.principal_id, project) or loads(retired[2]) != record:
+                            raise Problem("PRECONDITION_FAILED")
+                    elif datetime.fromisoformat(payload["lease_expires_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc):
                         raise Problem("PRECONDITION_FAILED")
                 key = hashlib.sha256(canonical([project, run])).hexdigest()
                 path = checked_path(self.directory/(key+".lock"))

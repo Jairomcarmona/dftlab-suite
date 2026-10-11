@@ -165,6 +165,43 @@ class Retirement(unittest.TestCase):
             self.assertEqual(db.execute("SELECT count(*) FROM scheduler_dispatches").fetchone()[0], 1)
             self.assertEqual(db.execute("SELECT count(*) FROM scheduler_rpc_entries").fetchone()[0], 0)
 
+    def test_live_lease_and_future_proof_are_not_retirement_authority(self):
+        original = self.record
+        self.record = loads(canonical(original))
+        self.record["payload"]["lease_expires_at"] = (self.now+timedelta(seconds=30)).isoformat()
+        reseal(self.record)
+        with self.repo.transaction() as db:
+            db.execute("UPDATE controller_authorities SET document=?", (canonical(self.record).decode(),))
+        self.reject(self.retire)
+        self.untouched()
+        with self.repo.transaction() as db:
+            db.execute("UPDATE controller_authorities SET document=?", (canonical(original).decode(),))
+        self.record = original
+        self.native = self.signer.sign(replace(self.native, observed_at=(self.now+timedelta(seconds=1)).isoformat(), expires_at=(self.now+timedelta(seconds=31)).isoformat()))
+        self.proof = self.upload(self.engines.qraft_contracts().canonical_json(self.native).encode())
+        self.reject(self.retire)
+        self.untouched()
+
+    def test_retired_namespace_needs_audit_and_fresh_positive_proof_to_freeze(self):
+        from dftlab_platform.contracts import resource_json
+        from dftlab_platform.native_checkpoints import LocalNativeQuiescenceSource, NativeCheckpointRegistration
+        retired = self.retire()
+        native = resource_json("fixtures/native-contract-ref/valid/qraft-workflow-lock.json")
+        native.update(contract="siestaflow.run-lock@1.0", artifact=self.proof)
+        registration = NativeCheckpointRegistration(self.project, self.run, self.package, native, self.observations, self.registration.verify, lambda root: "opaque-original-cursor")
+        source = LocalNativeQuiescenceSource(self.repo, (registration,), self.directory)
+        with source.freeze(self.owner, ((self.project, self.run),)) as snapshots:
+            self.assertEqual(snapshots[0].cursor, "opaque-original-cursor")
+        self.good = False
+        with self.assertRaises(Problem), source.freeze(self.owner, ((self.project, self.run),)):
+            self.fail("retired record bypassed positive evidence")
+        self.good = True
+        with self.repo.transaction() as db:
+            # Corrupt owned synthetic audit, never remove a real user history.
+            db.execute("UPDATE authority_retirements SET retired_document=?", (canonical(self.record).decode(),))
+        with self.assertRaises(Problem), source.freeze(self.owner, ((self.project, self.run),)):
+            self.fail("corrupt audit authorized freeze")
+
 
 if __name__ == "__main__":
     unittest.main()
