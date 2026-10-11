@@ -21,7 +21,7 @@ from dftlab_platform.artifacts import LocalArtifactStore
 from dftlab_platform.authority import LocalAuthorityManager
 from dftlab_platform.authority_storage import SQLiteAuthorityStore
 from dftlab_platform.contracts import canonical, loads
-from dftlab_platform.domain import Principal, envelope, identifier, now
+from dftlab_platform.domain import Principal, envelope, identifier, now, reseal
 from dftlab_platform.engines import PinnedEngines
 from dftlab_platform.local_runtime import private_directory
 from dftlab_platform.native_worker import NativeWorker, RegisteredNativeRun
@@ -203,6 +203,14 @@ def main():
         operation = repo.claim(processor)
         intent = envelope("effect-intent", project, {"effect_intent_id": identifier(), "operation_id": pending["record_id"], "action": "SUBMIT_RUN", "run_id": run_id,
                            "attempt_id": identifier(), "attempt_token": identifier(), "package_ref": package_ref, "profile": profile, "scheduler": "SLURM", "authority_generation": 1, "recorded_at": now()})
+        run_artifact = blob(store, owner, project, (package/"run.lock.json").read_bytes(), "qraft.run-lock", "application/json")
+        pin = engines.lock["engines"]["qraft"]
+        run_ref = {"engine": "qraft", "distribution": pin["distribution"], "version": pin["declared_version"], "commit": pin["commit"],
+                   "contract": str(run_envelope.contract), "digest": {"algorithm": "qraft.content-sha256-v1", "value": run_envelope.content_sha256},
+                   "artifact": run_artifact, "verification": {"status": "VERIFIED", "verified_at": now()}}
+        repo.contracts.validate("native-contract-ref", run_ref)
+        intent["native_contract_refs"] = [plan.document, run_ref]
+        reseal(intent)
         write(root/"effect-intent.json", canonical(intent))
         value = {"owner": owner.principal_id, "processor": processor, "run_id": run_id, "workflow_id": native.workflow_id,
                  "workflow_digest": native.workflow_lock_sha256, "run_digest": run_envelope.content_sha256, "profile_digest": native.execution_profile_sha256,
