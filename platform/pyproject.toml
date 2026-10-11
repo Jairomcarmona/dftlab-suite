@@ -9,8 +9,10 @@ description = "DFT Lab platform installation skeleton; no scientific execution y
 readme = "README.md"
 requires-python = "==3.12.10"
 dependencies = [
+    "fastapi==0.143.0",
     "jsonschema[format-nongpl]==4.26.0",
     "rfc8785==0.1.4",
+    "uvicorn==0.54.0",
 ]
 
 [project.scripts]
