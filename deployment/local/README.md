@@ -246,3 +246,38 @@ Este mecanismo no anuncia fencing distribuido en sitios remotos. La CI prueba
 rechazo de un segundo proceso, caída real, lease vencida, generación vieja,
 rollback por expiración durante publicación y concurrencia con heartbeat,
 sin motores, scheduler o datos del usuario.
+
+### Gateway de envío durable (T-024a / T-058a)
+
+`DurableSubmissions` es un puerto interno para un adaptador de sitio calificado;
+no se registra en el servicio predeterminado ni sustituye preparación/admisión.
+Usa EffectIntent y SubmissionReceipt originales. El adaptador registrado posee
+paquete/perfil verificados, argv administrado, observaciones privadas y prueba
+de correlación completa por token, usuario, clúster y contexto del paquete.
+Esta base no ejecuta sbatch ni acredita que exista ese adaptador calificado.
+
+`SQLiteSubmissionLedger` reserva un native run_id único y su attempt token en
+la misma transacción FULL/WAL que EffectIntent, bajo claim/revisión originales.
+Después confirma DISPATCH_STARTED antes de llamar al scheduler exactamente una
+vez. No es una promesa de exactly-once remota: un crash puede dejar el envío
+incierto. Se conserva UNKNOWN y no se vuelve a entrar al puerto submit, aun
+con timeout o consulta vacía. Otro comando para el mismo paquete/run se rechaza
+antes de confirmar su intent/reserva; preparar otro paquete crea otro RunID.
+Resume/retry requieren el flujo explícito y evidencia terminal, todavía pendiente.
+
+Un ack ACCEPTED verificado queda duradero antes de cerrar la Operation; si se
+pierde el commit de la operación, ese ack confirma que ocurrió el submit y se
+reconcilia como RECONCILED_FOUND sin cambiar la identidad del job. No establece
+su estado actual, terminación, integridad de resultados ni ciencia. Sin ack, el
+puerto de solo lectura debe probar la presencia; None conserva UNKNOWN. RESERVED
+tras una caída conserva incertidumbre: no se fabrica ausencia desde una DB que
+podría proceder de restore. Los seis campos del intent y las referencias nativas
+se preservan; generaciones/paquetes ajenos, inputs mutados y recibos inválidos
+no confirman éxito. El retiro/restore y evidencia positiva de ausencia quedan
+para recuperación calificada, nunca se inferirán de una cola vacía.
+
+La CI usa un scheduler sintético y procesos de prueba que mueren con os._exit
+antes de intent, después del commit y después de un efecto externo simulado.
+Comprueba persistencia, exclusión concurrente, rollback de reserva duplicada,
+ack perdido y reconciliación sin reenvío. No presenta estos tests como caídas
+SLURM reales, SIESTA convergente o fencing del controlador nativo.

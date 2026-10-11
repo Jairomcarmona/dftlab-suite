@@ -353,34 +353,37 @@ class SQLiteRepository:
         return self.contracts.validate("effect-intent", loads(row[0])) if row else None
 
     def persist_effect_intent(self, operation_id, revision, processor_id, document):
+        with self.transaction() as db:
+            return self._persist_effect_intent(db, operation_id, revision, processor_id, document)
+
+    def _persist_effect_intent(self, db, operation_id, revision, processor_id, document):
         """Trusted processor write-ahead boundary, never a client HTTP endpoint."""
         self.contracts.validate("effect-intent", document)
         if document["integrity"]["status"] != "VERIFIED":
             raise Problem("PRECONDITION_FAILED")
-        with self.transaction() as db:
-            row = db.execute("SELECT o.document,o.request,b.processor_id FROM operations o JOIN outbox b ON o.operation_id=b.operation_id WHERE o.operation_id=?", (operation_id,)).fetchone()
-            if not row or row[2] != processor_id:
+        row = db.execute("SELECT o.document,o.request,b.processor_id FROM operations o JOIN outbox b ON o.operation_id=b.operation_id WHERE o.operation_id=?", (operation_id,)).fetchone()
+        if not row or row[2] != processor_id:
+            raise Problem("PRECONDITION_FAILED")
+        operation, request = self._operation_document(row[0]), loads(row[1])
+        payload, intent = operation["payload"], document["payload"]
+        if payload["state"] != "RUNNING" or payload["revision"] != revision or intent["operation_id"] != operation_id or intent["action"] != payload["action"] or document["project_id"] != operation["project_id"]:
+            raise Problem("PRECONDITION_FAILED")
+        if request.get("profile_ref") is not None and intent["profile"]["profile_id"] != request["profile_ref"]:
+            raise Problem("PRECONDITION_FAILED")
+        if payload["action"] == "EXECUTE_RESUME_PLAN":
+            target = db.execute("SELECT document FROM resources WHERE resource_id=? AND kind='RESUME_PLAN' AND project_id=?", (request["target"]["id"], operation["project_id"])).fetchone()
+            if not target or target[0] is None:
                 raise Problem("PRECONDITION_FAILED")
-            operation, request = self._operation_document(row[0]), loads(row[1])
-            payload, intent = operation["payload"], document["payload"]
-            if payload["state"] != "RUNNING" or payload["revision"] != revision or intent["operation_id"] != operation_id or intent["action"] != payload["action"] or document["project_id"] != operation["project_id"]:
+            resume = self.contracts.validate("resume-plan", loads(target[0]))
+            if resume["payload"]["run_id"] != intent["run_id"]:
                 raise Problem("PRECONDITION_FAILED")
-            if request.get("profile_ref") is not None and intent["profile"]["profile_id"] != request["profile_ref"]:
+        previous = self._effect_intent(db, operation_id)
+        if previous:
+            if previous != document:
                 raise Problem("PRECONDITION_FAILED")
-            if payload["action"] == "EXECUTE_RESUME_PLAN":
-                target = db.execute("SELECT document FROM resources WHERE resource_id=? AND kind='RESUME_PLAN' AND project_id=?", (request["target"]["id"], operation["project_id"])).fetchone()
-                if not target or target[0] is None:
-                    raise Problem("PRECONDITION_FAILED")
-                resume = self.contracts.validate("resume-plan", loads(target[0]))
-                if resume["payload"]["run_id"] != intent["run_id"]:
-                    raise Problem("PRECONDITION_FAILED")
-            previous = self._effect_intent(db, operation_id)
-            if previous:
-                if previous != document:
-                    raise Problem("PRECONDITION_FAILED")
-                return previous
-            db.execute("INSERT INTO effect_intents VALUES(?,?)", (operation_id, canonical(document).decode()))
-            return document
+            return previous
+        db.execute("INSERT INTO effect_intents VALUES(?,?)", (operation_id, canonical(document).decode()))
+        return document
 
     def events(self, principal: Principal, project_id: str, after: int = 0) -> list[dict]:
         with self._connection() as db:
