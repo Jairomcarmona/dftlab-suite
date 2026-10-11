@@ -50,6 +50,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | F | Puerta de calidad reproducible | Media | Frontend fusionado; regeneración Python implementada y verificada en CI Linux x86_64 / WSL2, entrega mediante PR #8 | PR #5 fusionado @ `296bb15`; PR #8, CI @ `7ca6931` |
 | G | Bandas unen segmentos desconectados | Media | **Reproducido** (26 líneas cruzan U→K en el `.bands` de Si; 26/30 líneas verticales en U\|K/H\|P de los paquetes) → corregido en la rama `claude/bloque-g-camino-k-ud21bh` | PR G |
 | H | Recursos (ResizeObserver, escenas 3D) y cálculo pesado | Media | **Reproducido** (16 contextos WebGL vivos de 32 creados y aviso del navegador; 147 lienzos desconectados aún observados; buffers que crecen 358 → 682 en Bandas) → corregido en PR #9 (rama `claude/bloque-h-recursos-16vtfq`); rendimiento **medido**, sin workers por ahora | PR #9 |
+| X2 | Base de platform/, borrador T-010 y comienzo T-057 | Ola 0 | Wheel/proceso vacío y paquetes de motores instalados/probados Windows+WSL; ciencia/HPC pendiente, falta PR/CI y autorización | `codex/x2-platform-base`; workflow propio |
 
 ## A. Calculadoras: `fftGood` sin dominio
 

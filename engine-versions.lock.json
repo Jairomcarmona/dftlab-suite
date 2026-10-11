@@ -1,0 +1,200 @@
+{
+  "schema_version": "0.1.0-draft",
+  "status": "DRAFT_NOT_AN_OPERATIONAL_RELEASE",
+  "scope": "T-010 distribution/import evidence; no campaign capability qualification",
+  "python": "3.12.10",
+  "uv": "0.11.14",
+  "engine_probe_dependency_lock": "deployment/local/engine-probe/uv.lock",
+  "engines": {
+    "qraft": {
+      "repository": "https://github.com/Jairomcarmona/siestaflow",
+      "branch_hint": "main",
+      "commit": "4d996ea7c580e5638e470bbf32624c88fd762f7d",
+      "distribution": "qraft-hpc",
+      "declared_version": "0.2.0",
+      "module": "qraft",
+      "entrypoint": "qraft",
+      "declared_requires_python": ">=3.11",
+      "targets": {
+        "windows_native_x86_64": {
+          "status": "INSTALL_IMPORT_HELP_VERIFIED",
+          "installed_distribution": "qraft-hpc",
+          "installed_version": "0.2.0",
+          "wheel": {
+            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
+            "bytes": 466132,
+            "sha256": "82e4af0e5c6d914d8e4373ecfa7d576b9490c234511174185d2361fc1872321d"
+          },
+          "installed_file_manifest_sha256": "02ae8f0c4399162f3a6631f302c40d4b520596e199e304de745e3ff936a35a63",
+          "public_import": {
+            "exit_code": 0,
+            "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d"
+          },
+          "cli_help": {
+            "exit_code": 0,
+            "log_sha256": "d8d0d140626edeb330cbc3632eb4f4db2bef07caefa313fbe3b15b1f3137f2bf"
+          },
+          "environment": {
+            "os": "Windows",
+            "release": "11",
+            "machine": "AMD64",
+            "python": "3.12.10"
+          },
+          "dependency_versions": {
+            "setuptools": "80.9.0",
+            "wheel": "0.45.1",
+            "PyYAML": "6.0.2",
+            "numpy": "1.26.4",
+            "jsonschema": "4.23.0"
+          },
+          "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
+          "evidence_file": "deployment/local/evidence/windows_native_x86_64.json",
+          "evidence_sha256": "cdb73c6ee60f4513bd8274c09e050ddcb147c826c508063addf0bb20c514edb0",
+          "scientific_qualification": "PENDING",
+          "hpc_runtime_qualification": "PENDING"
+        },
+        "wsl2_linux_x86_64": {
+          "status": "INSTALL_IMPORT_HELP_VERIFIED",
+          "installed_distribution": "qraft-hpc",
+          "installed_version": "0.2.0",
+          "wheel": {
+            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
+            "bytes": 466087,
+            "sha256": "7fc9f605b9432ba844b0475bfb4dde1bb839964bff91b7ee55ef1d9698f473e7"
+          },
+          "installed_file_manifest_sha256": "b3c98c8164912ae308d2c4882765a74c2361c89aabdc701781e5a17ef794d433",
+          "public_import": {
+            "exit_code": 0,
+            "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d"
+          },
+          "cli_help": {
+            "exit_code": 0,
+            "log_sha256": "ca47c191262f0100c391ab68ca348d908d640a8ccca8f0c0c089a780ecf2402e"
+          },
+          "environment": {
+            "os": "Linux",
+            "release": "6.18.33.2-microsoft-standard-WSL2",
+            "machine": "x86_64",
+            "python": "3.12.10"
+          },
+          "dependency_versions": {
+            "setuptools": "80.9.0",
+            "wheel": "0.45.1",
+            "PyYAML": "6.0.2",
+            "numpy": "1.26.4",
+            "jsonschema": "4.23.0"
+          },
+          "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
+          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64.json",
+          "evidence_sha256": "737ea20be56a27c831da5eac2e3481d6d70f3b430f6f531f5cbbd794bf8dff67",
+          "scientific_qualification": "PENDING",
+          "hpc_runtime_qualification": "PENDING"
+        }
+      },
+      "operational_capabilities": {
+        "status": "PENDING",
+        "reason": "Canonical public route and real runtime qualification are outside X2; see C2 U-Q1/U-Q3 and ADR-012."
+      },
+      "source_archive_sha256": "8ae7d5c093d11e6413ab47518c53182c2f7ddbe556ce1adfb7ed385b62770f2a"
+    },
+    "hubbardflow": {
+      "repository": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE",
+      "branch_hint": "codex/hubbardflow-rename",
+      "commit": "e508f47aff1c6243deabb12915063b6b9d899d65",
+      "distribution": "hubbardflow",
+      "declared_version": "0.1.2",
+      "module": "hubbardflow",
+      "entrypoint": "hubbardflow",
+      "declared_requires_python": null,
+      "required_in_operational_platform": true,
+      "integration_mode": "HF-1 under QRAFT, ADR-015",
+      "targets": {
+        "windows_native_x86_64": {
+          "status": "INSTALL_IMPORT_HELP_VERIFIED",
+          "installed_distribution": "hubbardflow",
+          "installed_version": "0.1.2",
+          "wheel": {
+            "file": "hubbardflow-0.1.2-py3-none-any.whl",
+            "bytes": 518243,
+            "sha256": "23589d466acb786b29e322eb7c4a65e3b390b2cc0375b5a54818a1cfee02d5f1"
+          },
+          "installed_file_manifest_sha256": "bd4d036dae4ac28c63f10bfc017cac79282640a9110a515d7e8ef73b3fd054be",
+          "public_import": {
+            "exit_code": 0,
+            "log_sha256": "f0cf375f900b931628cc95974e769cf8b63c4e9424d66016c0e3fe6c68f56d2c"
+          },
+          "cli_help": {
+            "exit_code": 0,
+            "log_sha256": "ac6c7964ab7ed44651252df2988078dd57d7f1e31a01a52f2efa6fb05a7778d2"
+          },
+          "environment": {
+            "os": "Windows",
+            "release": "11",
+            "machine": "AMD64",
+            "python": "3.12.10"
+          },
+          "dependency_versions": {
+            "setuptools": "80.9.0",
+            "wheel": "0.45.1",
+            "PyYAML": "6.0.2",
+            "numpy": "1.26.4",
+            "jsonschema": "4.23.0"
+          },
+          "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
+          "evidence_file": "deployment/local/evidence/windows_native_x86_64.json",
+          "evidence_sha256": "cdb73c6ee60f4513bd8274c09e050ddcb147c826c508063addf0bb20c514edb0",
+          "scientific_qualification": "PENDING",
+          "hpc_runtime_qualification": "PENDING"
+        },
+        "wsl2_linux_x86_64": {
+          "status": "INSTALL_IMPORT_HELP_VERIFIED",
+          "installed_distribution": "hubbardflow",
+          "installed_version": "0.1.2",
+          "wheel": {
+            "file": "hubbardflow-0.1.2-py3-none-any.whl",
+            "bytes": 518240,
+            "sha256": "9de85bcbffa8baed796865649480d765fceacb9ebd85fe9c3056b2b82dfffac6"
+          },
+          "installed_file_manifest_sha256": "69e95544239c32f53e62e017c0980883d9b846e0d88a7aef24254b60b6e5f84f",
+          "public_import": {
+            "exit_code": 0,
+            "log_sha256": "f0cf375f900b931628cc95974e769cf8b63c4e9424d66016c0e3fe6c68f56d2c"
+          },
+          "cli_help": {
+            "exit_code": 0,
+            "log_sha256": "ac6c7964ab7ed44651252df2988078dd57d7f1e31a01a52f2efa6fb05a7778d2"
+          },
+          "environment": {
+            "os": "Linux",
+            "release": "6.18.33.2-microsoft-standard-WSL2",
+            "machine": "x86_64",
+            "python": "3.12.10"
+          },
+          "dependency_versions": {
+            "setuptools": "80.9.0",
+            "wheel": "0.45.1",
+            "PyYAML": "6.0.2",
+            "numpy": "1.26.4",
+            "jsonschema": "4.23.0"
+          },
+          "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
+          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64.json",
+          "evidence_sha256": "737ea20be56a27c831da5eac2e3481d6d70f3b430f6f531f5cbbd794bf8dff67",
+          "scientific_qualification": "PENDING",
+          "hpc_runtime_qualification": "PENDING"
+        }
+      },
+      "operational_capabilities": {
+        "status": "PENDING",
+        "reason": "Public facade U-H1/U-H2/U-H3 and HF-1 end-to-end qualification remain; no use of hubbardflow.domain internals."
+      },
+      "source_archive_sha256": "2eb98640edad96533181f568e7666885d93c4c5b0de392004b7c804ef5ebf83f"
+    }
+  },
+  "pending": [
+    "Operational release installation, real engine runtime and HF-1 scientific qualification remain PENDING; local metadata/import/help probes are verified separately.",
+    "No package installation or --help probe establishes numerical/scientific/runtime compatibility.",
+    "Do not load these packages into tools/reference-env (NumPy 2.2.6 conflicts with HubbardFlow NumPy <2).",
+    "An operational manifest/catalog needs the C3 contracts and ADR-012 qualification by target, capability and runtime."
+  ]
+}

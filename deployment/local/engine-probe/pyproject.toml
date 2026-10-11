@@ -1,0 +1,17 @@
+[project]
+name = "dftlab-engine-install-probe"
+version = "0.1.0"
+description = "Isolated packaging/import probe for the two pinned engines, not the scientific reference environment"
+requires-python = "==3.12.10"
+dependencies = [
+  "setuptools==80.9.0",
+  "wheel==0.45.1",
+  "PyYAML==6.0.2",
+  "numpy==1.26.4",
+  "jsonschema==4.23.0",
+]
+
+[tool.uv]
+package = false
+required-version = "==0.11.14"
+
