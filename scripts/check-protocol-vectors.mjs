@@ -39,6 +39,26 @@ const runners = {
       return [`tipo desconocido ${c.kind}`];
     };
   },
+  async PRESETS(doc) {
+    const o = await import(pathToFileURL(path.join(root, doc.oracle)));
+    const tol = doc.arithmetic_tolerance;
+    return c => {
+      if (c.kind === 'image') return close(o.imageInteraction(c.geometry, c.radii), c.expect, tol, 'imagen');
+      if (c.kind === 'parse') return close(o.parseRun(c.stdout), c.expect, tol, 'lectura');
+      if (c.kind === 'madelung') {
+        const got = { parsed_eV: o.parseRun(c.stdout).emadel_eV, formula_eV: o.madelungSC(c.charge, c.box_A) };
+        const errors = close(got, c.expect, tol, 'madelung');
+        // La línea de SIESTA tiene 6 decimales: debe coincidir con la fórmula a 1 µeV.
+        if (Math.abs(got.parsed_eV - got.formula_eV) > 1.5e-6) errors.push(`Emadel ${got.parsed_eV} ≠ fórmula ${got.formula_eV}`);
+        return errors;
+      }
+      if (c.kind === 'molecule') return close(o.evaluateMolecule(o.parseRun(c.stdout), c.intent), c.expect, tol, 'veredicto');
+      if (c.kind === 'relaxation') return close(o.evaluateRelaxation(o.parseRun(c.stdout), c.intent), c.expect, tol, 'veredicto');
+      if (c.kind === 'vibrations')
+        return close(o.evaluateVibrations(o.parseRun(c.stdout), o.parseFC(c.fc), c.cart, c.masses, c.policy), c.expect, tol, 'veredicto');
+      return [`tipo desconocido ${c.kind}`];
+    };
+  },
 };
 
 for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.cases.json')).sort()) {

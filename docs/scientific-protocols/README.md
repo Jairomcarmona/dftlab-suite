@@ -5,6 +5,7 @@ Una ficha fija las decisiones de un workflow científico **antes** de escribir c
 | Ficha | Ticket | Estado |
 |---|---|---|
 | [WF-EOS](WF-EOS.md) | T-035 | Lista para aceptar; 20 vectores en `vectors/`; política v1 pendiente de Manuel |
+| [Presets S-01…S-08](PRESETS.md) | T-029 | Lista para aceptar; 26 vectores en `vectors/`; política v1 y U-Q14…U-Q16 pendientes de Manuel |
 | [WF-ELECTRONIC fino](WF-ELECTRONIC.md) | T-036 | Borrador; dueño QRAFT (ADR-018) |
 | [WF-SURFACE](WF-SURFACE.md) | T-040 | Borrador; dueño QRAFT (ADR-018); depende de DL-02 |
 
