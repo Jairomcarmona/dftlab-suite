@@ -1,6 +1,6 @@
 // Aprender 15 · Más allá de DFT. Escalera de Jacob y gaps LDA/GGA/meta-GGA/híbrido/GW frente al experimento.
 // Todo viene de la literatura (data/beyond_dft.json, con referencia por columna); solo el gap del Si de SIESTA es propio.
-import { $, $$, css, alpha, onTheme, esc, seg, downloadText } from '../core/ui.js';
+import { $, $$, css, alpha, esc, seg, downloadText } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import B from '../data/beyond_dft.json';
 import X from '../data/pseudo_xc.json';
@@ -16,7 +16,7 @@ function stats(id, set){
 }
 const mcol = () => ({lsda:css('--e1'), pbesol:css('--orb-p'), tpss:css('--orb-d'), hse:css('--warn'), hse03:css('--orb-f'), g0w0:css('--ok'), gw0:css('--accent'), gw:css('--up')});
 
-export function mount(root){
+export function mount(root, view){
   const S = {on: new Set(['lsda','hse03','g0w0','gw']), log:false};
   root.innerHTML = `
   <div class="pghead"><div>
@@ -119,6 +119,6 @@ export function mount(root){
 
   $$('canvas[data-export]',root).forEach(cv=>cv.closest('.panel').querySelector('.ph').append(exportBar(cv,cv.dataset.export)));
   errTab(); table();
-  const draw=()=>drawSc(); onTheme(draw); draw();
+  const draw=()=>drawSc(); view.onTheme(draw); draw();
 }
 export function destroy(){}

@@ -12,6 +12,7 @@ const tasks = [
   'app/tests/crystal/run_tests.mjs',
   'app/tests/ui/run_calc_tests.mjs',
   'app/tests/ui/run_escape_tests.mjs',
+  'app/tests/ui/run_lifecycle_tests.mjs',
   'app/scripts/build.mjs',
 ];
 

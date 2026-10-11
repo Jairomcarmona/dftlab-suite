@@ -1,7 +1,7 @@
 // Aprender 14 · Fuerzas, estrés y relajación (SIESTA 5.4.2, LDA/DZP).
 // Fuerza frente a −dE/dr en H₂O (Hellmann–Feynman + Pulay), egg-box, tolerancia del SCF; relajaciones CG/Broyden/FIRE de H₂O
 // y CG de la vacancia en Si (64 − 1 átomos) en 3D; E(a) con estrés y celda variable. Lector de la relajación del usuario (.out o .ANI).
-import { $, $$, css, alpha, onTheme, fmt, esc, seg, downloadText } from '../core/ui.js';
+import { $, $$, css, alpha, fmt, esc, seg, downloadText } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import { createViewer } from '../core/three-view.js';
 import { parseOut, parseANI } from '../siesta/index.js';
@@ -111,7 +111,7 @@ function trajViewer(host, camera){
 const bondsByDistance = (Z, pos, scale = 1.2) => { const b = []; for (let i = 0; i < Z.length; i++) for (let j = i + 1; j < Z.length; j++)
   if (nrm(sub(pos[i], pos[j])) < scale * (covalentRadius(Z[i]) + covalentRadius(Z[j]))) b.push([i, j]); return b; };
 
-export function mount(root){
+export function mount(root, view){
   // ---------- números derivados ----------
   const hfStats = {}; for (const k of Object.keys(SETS)){ const H = D.hf[k], dd = [];
     // derivada de 5 puntos (error h⁴); la de 3 puntos se guarda para mostrar su error de truncamiento (h²)
@@ -341,6 +341,7 @@ export function mount(root){
   const setU = i => { ui = i; $('#uStep', root).value = i; $('#uStepO', root).textContent = i; uv.show(i); drawU(); };
   const loadU = async f => {
     const text = await f.text();
+    if (!view.alive) return;
     try {
       let frames, Z, E = [], F = [], P = [], cell = null, info = '';
       if (/\.ani$/i.test(f.name) || !/Siesta|siesta:/.test(text.slice(0, 20000))){
@@ -382,7 +383,7 @@ export function mount(root){
   seg($('#hfSel', root), S.hf, v => { S.hf = v; drawHF(); });
   seg($('#eSel', root), S.e, v => { S.e = v; drawEos(); });
   const draw = () => { drawHF(); drawEgg(); drawTol(); drawRel(); drawVac(); drawEos(); drawVC(); drawU(); };
-  onTheme(() => { draw(); hv.rebuild(); hv.show(S.hi); vv.rebuild(); vv.show(S.vi); if (U){ uv.rebuild(); uv.show(ui); } });
+  view.onTheme(() => { draw(); hv.rebuild(); hv.show(S.hi); vv.rebuild(); vv.show(S.vi); if (U){ uv.rebuild(); uv.show(ui); } });
   draw(); initH(); vv.set(vSpec()); setV(S.vi);
   mount.destroy = () => { clearInterval(hTimer); clearInterval(uTimer); hv.destroy(); vv.destroy(); uv.destroy(); };
 }

@@ -1,6 +1,6 @@
 // Herramientas · Calculadoras: unidades, celda → malla k y MeshCutoff, Birch–Murnaghan, masa efectiva,
 // smearing, gas de electrones y energía de formación. Todo corre en el navegador; cada resultado se exporta.
-import { $, $$, css, alpha, onTheme, esc, fmt, downloadText, seg } from '../core/ui.js';
+import { $, $$, css, alpha, esc, fmt, downloadText, seg } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import { fftGood, validateCellInputs, LIMITS } from '../tools/cellmesh.js';
 import X from '../data/pseudo_xc.json';
@@ -50,7 +50,7 @@ function theory(){ return `
   <p>En metales la ocupación se suaviza con una función de ancho σ para que la integral sobre k converja con menos puntos. Fermi–Dirac es física a temperatura T; Gauss converge rápido pero sesga la energía; Methfessel–Paxton y Marzari–Vanderbilt (<i>cold smearing</i>) cancelan el error de orden más bajo a cambio de ocupaciones fuera de [0, 1].</p>
   <p class="src">Monkhorst y Pack, PRB 13, 5188 (1976) · Moreno y Soler, PRB 45, 13891 (1992) · Birch, PR 71, 809 (1947) · Methfessel y Paxton, PRB 40, 3616 (1989) · Marzari et al., PRL 82, 3296 (1999).</p>`; }
 
-export function mount(root){
+export function mount(root, view){
   root.innerHTML=`
   <div class="pghead"><div>
     <div class="kicker">Herramientas</div><h1>Calculadoras</h1>
@@ -244,5 +244,5 @@ export function mount(root){
 
   $$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });
   const redraw=()=>{ doBM(); doMass(); doSmear(); };
-  onTheme(redraw); doMass(); doSmear();
+  view.onTheme(redraw); doMass(); doSmear();
 }

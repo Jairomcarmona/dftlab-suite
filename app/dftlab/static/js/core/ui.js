@@ -39,10 +39,13 @@ export function seg(container, value, onChange){
 export function panel({title, sub='', id='', cls='', body='', tools=''}){
   return `<section class="panel ${cls}" ${id?`id="${id}"`:''}><div class="ph"><h2>${title}</h2><div class="btnrow">${tools}${sub?`<span class="sub">${sub}</span>`:''}</div></div><div class="pb">${body}</div></section>`;
 }
-// theme observer: call f when colors change
+// theme observer: call f when colors change. Devuelve la desuscripción (idempotente); las vistas
+// deben usar view.onTheme(f) (core/lifecycle.js), que la libera al abandonar la vista.
 export function onTheme(f){
-  try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', f); }catch(e){}
-  new MutationObserver(f).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  let mq=null; try{ mq=matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener('change', f); }catch(e){ mq=null; }
+  const mo=new MutationObserver(f); mo.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  let on=true;
+  return ()=>{ if(!on) return; on=false; mo.disconnect(); try{ mq?.removeEventListener('change', f); }catch(e){} };
 }
 export const HA=27.211386245988, RY=13.605693122994, BOHR=0.529177210903;
 export const LN=['s','p','d','f','g'];

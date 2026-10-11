@@ -1,5 +1,5 @@
 // Aprender 9 · Densidad y cargas: ρ, Δρ = ρ − Σρ_atómica en planos y perfiles, y cargas de Mulliken, Hirshfeld y Voronoi (SIESTA 5.4.2, LDA).
-import { $, $$, css, alpha, rgb, onTheme, fmt, esc, seg, download, downloadText, toast } from '../core/ui.js';
+import { $, $$, css, alpha, rgb, fmt, esc, seg, download, downloadText, toast } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import { parseGrid, planeSlice, planarAverage, sampleFrac, gridIntegral } from '../siesta/rho.js';
 import D from '../data/rho.json';
@@ -102,7 +102,7 @@ function csvOfPlane(P, vals, ref, name) {
 }
 function pngOf(cv, name) { cv.toBlob((b) => b && download(b, name + '.png'), 'image/png'); }
 
-export function mount(root) {
+export function mount(root, view) {
   const S = { sys: 'mgo', field: 'drho', scale: 'sqrt', sat: 0, basis: 'DZP', hover: null };
   let heatApi = null, userGrid = null;
   const sysBtn = (list, id) => `<div class="seg" id="${id}">${list.map(([v, l]) => `<button data-v="${v}">${l}</button>`).join('')}</div>`;
@@ -311,7 +311,7 @@ export function mount(root) {
   }
   function loadUser(file) {
     const err = $('#userErr', root); err.hidden = true;
-    file.arrayBuffer().then((buf) => {
+    file.arrayBuffer().then(view.guard((buf) => {
       try {
         userGrid = parseGrid(buf, file.name);
         const g = userGrid, tot = gridIntegral(g);
@@ -320,7 +320,7 @@ export function mount(root) {
           ['∫ sobre la celda', fmt(tot, 4) + (g.units === 'e/Bohr³' ? ' e' : '')], ['celda a, b, c', g.cell.map((v) => fmt(Math.hypot(...v), 3)).join(', ') + ' Å']].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
         drawUser();
       } catch (e) { userGrid = null; $('#userBox', root).hidden = true; err.hidden = false; err.textContent = 'No se pudo leer ' + file.name + ': ' + e.message; }
-    });
+    }));
   }
   const drop = $('#drop', root), inp = $('#fileIn', root);
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
@@ -342,7 +342,7 @@ export function mount(root) {
   $('#dlFdf', root).onclick = () => downloadText(sys().fdfText, `${sys().formula.replace(/[₀-₉]/g, (c) => c.charCodeAt(0) - 8320)}_densidad.fdf`);
   function all() { drawMap(); drawLines(); drawCharges(); drawOrb(); drawFdf(); }
   const redraw = () => { drawMap(); drawLines(); drawCharges(); drawUser(); };
-  onTheme(redraw); all();
-  new ResizeObserver(() => { if (root.isConnected && root.offsetParent) { drawMap(); drawUser(); } }).observe(root);
+  view.onTheme(redraw); all();
+  view.observer(new ResizeObserver(view.guard(() => { if (root.offsetParent) { drawMap(); drawUser(); } }))).observe(root);
 }
 export function destroy() {}

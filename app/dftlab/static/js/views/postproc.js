@@ -1,5 +1,5 @@
 // Postproceso: drop SIESTA output files, get plots, tables and exports. Nothing is executed; files are only read.
-import { $, $$, css, alpha, onTheme, esc, fmt, download, downloadText, seg, toast } from '../core/ui.js';
+import { $, $$, css, alpha, esc, fmt, download, downloadText, seg, toast } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
 import { parseMany, bandEdges, analyzeGap, computeDOS, groupPDOS, sumPDOS, integratePDOS, opticalSpectrum, toPlain } from '../siesta/index.js';
 import { writeStructure } from '../crystal/formats.js';
@@ -22,7 +22,7 @@ async function gunzipB64(b64){
 }
 async function sha256(text){ try{ const h=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)); return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join(''); }catch(e){ return ''; } }
 
-export function mount(root){
+export function mount(root, view){
   const F = []; // {name, size, text, kind, data, error, hash}
   root.innerHTML=`
   <div class="pghead"><div>
@@ -61,6 +61,7 @@ export function mount(root){
     for (let i=0;i<rest.length;i++) F.push({ name:rest[i].name, size:rest[i].text.length, text:rest[i].text, ...parsed[i], hash:await sha256(rest[i].text) });
     for (const it of lua){ let data=null, error=null; try{ data=it.text.split(/\n/).filter(l=>l.trim()).map(l=>JSON.parse(l)); }catch(e){ error='JSON inválido en '+it.name; }
       F.push({ name:it.name, size:it.text.length, text:it.text, kind:'live', data, error, hash:await sha256(it.text) }); }
+    if (!view.alive) return;   // la lectura terminó después de abandonar la vista: no crear visores ni paneles
     refresh();
   }
   function label(f){ return f.name.replace(/\.(out|fdf|bands|EIG|KP|PDOS\.xml|PDOS|DOS|EPSIMG|XV|STRUCT_OUT|MDE|ANI|FA|ion\.xml|ion|jsonl|log|dftlab\.json)$/i,''); }
@@ -234,7 +235,7 @@ export function mount(root){
       $('#geoPng',root).onclick=()=>{ const url=V3.snapshot(); fetch(url).then(r=>r.blob()).then(b=>download(b,'estructura.png')); };
     }catch(e){ $('#geo3',root).textContent='Sin WebGL: '+e.message; }
     try{ if(!isMoyoReady()) await initMoyo('inline'); const a=analyze(cell,{symprec:1e-3}); sg=`${esc(a.international)} (${a.number}), ${a.crystal_system}`; }catch(e){ sg='—'; }
-    if($('#geoKv',root)) kv();
+    if(view.alive) kv();
   }
 
   // ---------- report ----------
@@ -251,6 +252,6 @@ export function mount(root){
     downloadText(t,'informe_dftlab.md','text/markdown');
   };
   $('#repJson',root).onclick=()=>{ const o=F.filter(f=>f.data&&f.kind!=='live').map(f=>({name:f.name, kind:f.kind, sha256:f.hash, data:toPlain(f.data)})); downloadText(JSON.stringify({dftlab:'postproceso', created:new Date().toISOString(), files:o}),'dftlab_postproceso.json','application/json'); };
-  onTheme(()=>refresh());
+  view.onTheme(()=>refresh());
   fileTable();
 }
