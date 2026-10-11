@@ -1,0 +1,20 @@
+[project]
+name = "dftlab-reference-env"
+version = "0.1.0"
+description = "Isolated environment for the existing scientific reference generators"
+requires-python = "==3.12.10"
+dependencies = [
+  "numpy==2.2.6",
+  "scipy==1.15.3",
+  "ase==3.26.0",
+  "spglib==2.7.0",
+  "seekpath==2.2.2",
+  "sisl==0.16.4",
+]
+
+[tool.uv]
+package = false
+required-version = "==0.11.14"
+environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+required-environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+no-build = true

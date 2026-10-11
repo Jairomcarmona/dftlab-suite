@@ -30,7 +30,7 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 
 - **C/D:** hechos (ver «Bloques C y D»). **G, H:** sin empezar.
 - **H (heredado de B):** `ResizeObserver` por canvas en `core/chart.js`; liberación de geometrías/materiales/texturas en `core/three-view.js`; medir antes de introducir workers.
-- **F:** alcance frontend verificado en `codex/bloque-f`, PR #5, CI Windows/Linux en verde. Queda fijar el entorno Python de regeneración de referencias. Ver entrega F al final de esta nota.
+- **F:** PR #5 fusionado @ `296bb15`, después de CI Windows/Linux en verde con C/D. Entorno Python implementado en `codex/entorno-python`, pendiente de calificación CI y revisión. Ver entregas F al final de esta nota.
 - La auditoría de E cubre las rutas de datos importados; no se revisaron las 19 vistas línea a línea.
 
 ## Bloques C y D (importación en Postproceso)
@@ -60,3 +60,14 @@ Bloque **G** (discontinuidades del camino k): `siesta/bands.js` (`.bands` con `B
 - **Límite de esta entrega:** router, vistas, `app/src`, física, tolerancias y `baseline-v1` intactos. `dist` sin seguimiento. C/D se trabajan en paralelo; esta entrega no los corrige ni integra. No se ejecutó SIESTA.
 - **Continuidad F:** revisar el PR y sus checks antes de integrar; si se continúa en la regeneración Python, abrir tarea y rama específica. No reutilizar ramas de C/D ni modificar su implementación como parte de F.
 - **Integración C/D en F:** se incorporó `origin/main` @ `b9de59a` (PR #6) mediante merge, preservando el registro C/D y su implementación. `npm test` y CI ejecutan ahora también `browser_import.mjs` con Playwright local y sin omisiones; verificación Windows local: importación Node 75/0 y navegador C/D 33/0, junto a las demás suites en verde. El alcance del PR #5 sigue siendo F; el entorno Python se realizará después de su fusión, en `codex/entorno-python`.
+
+## Entrega F: entorno Python de referencias
+
+- **Entrega anterior integrada:** [PR #5](https://github.com/Jairomcarmona/dftlab-suite/pull/5), SHA verificado `e4a4a28e3052956ac91f4945947fb1e8f532ea71`; [CI 38107177262](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38107177262): Windows 2022 y Ubuntu 24.04 en verde, incluida importación C/D. Fusión en `main`: `296bb15b9f77e58be716adf6b10c886d8ca83d53`.
+- **Rama / base:** `codex/entorno-python`, desde `296bb15`. SHA de implementación: consultar `git rev-parse origin/codex/entorno-python` después de `git fetch origin`; evidencia de CI se registrará tras completar la calificación.
+- **Carpeta aislada:** `C:\Users\Jairo\Downloads\DFTQUANTUMLAB\dftlab-suite-entorno-python`; copia de origen y carpeta principal intactas.
+- **Cambios:** proyecto no empaquetado `tools/reference-env`, CPython 3.12.10 y uv 0.11.14 fijados; seis dependencias científicas fijadas y lock transitivo con hashes. Sólo binarios Linux x86_64, WSL2 para Windows. Workflow Python separado, sin modificar CI frontend. [Guía de instalación/regeneración](../development/PYTHON_REFERENCES.md).
+- **Calificación:** cuatro generadores originales y seis suites Node en copia temporal; outputs e informe de procedencia en `runtime/`, sin modificar ni sustituir las referencias originales. La aceptación usa aserciones/tolerancias existentes. Los logs y artefactos permiten revisar diferencias de hashes.
+- **Pruebas locales:** WSL2 Ubuntu x86_64, CPython 3.12.10, uv 0.11.14, Node 24.18.0. Lock instalado con 19 paquetes binarios. Generación completa y suites contra resultados nuevos: 341/0, 81/0, 26/0, 101/0, C/D 75/0, cristalografía 371/371 y 71/71 formatos. Fuentes intactas según informe; 480 SHA-256 históricos correctos. Destinos fuente y carpeta existente rechazados (exit 2). Tres JSON nuevos difieren de los históricos; ninguno fue sustituido. `git diff --check` correcto; contenido ajeno a F de ambos documentos preservado por comparación con `296bb15`.
+- **Pendiente F:** terminar calificación local/CI y revisar PR Python antes de integrarlo. No se promete soporte nativo Windows para sisl 0.16.4 ni identidad binaria entre BLAS/sistemas; frontend verificado en ambos sistemas. No se ejecutó SIESTA.
+- **Alcance protegido:** sin cambios en vistas, router, lectores, bandas, generadores científicos, `app/src` ni tolerancias. Sólo se actualizaron F en este traspaso y en el registro. G/H continúan en sus ramas; `dist` sigue fuera de Git.

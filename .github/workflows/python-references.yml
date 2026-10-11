@@ -1,0 +1,47 @@
+name: Python references
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: python-references-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regenerate:
+    name: Regenerate references (ubuntu-24.04)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.18.0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.11.14'
+          enable-cache: false
+      - name: Install exact Python and locked binary dependencies
+        run: |
+          uv python install 3.12.10
+          uv sync --project tools/reference-env --locked --python 3.12.10
+      - name: Regenerate in isolation and check existing scientific assertions
+        run: uv run --project tools/reference-env --locked python -X utf8 scripts/regenerate_references.py
+      - name: Verify tracked sources were not modified
+        run: git diff --exit-code
+      - name: Store qualification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: reference-qualification-linux
+          path: runtime/reference-validation/
+          if-no-files-found: error
+          retention-days: 14

@@ -47,7 +47,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | C | Resultado EIG/KP depende del orden de carga | Alta | **Reproducido** (EIG→KP: primer peso 0.00390625 en vez de 0.005, sin coordenadas k) → corregido en la rama `claude/bloques-c-d-importacion-qke0lu` | PR C/D |
 | D | `.RHO` leído como texto; `.dftlab.json` detectado sin visualización | Media | **Reproducido** («archivo de malla demasiado corto»; paquete «leído» sin paneles) → corregido en la misma rama | PR C/D |
 | E | Metadatos y nombres de archivo se insertan en `innerHTML` | Media | **Reproducido** (incluido manejador `onerror` ejecutado) → corregido en la rama `claude/fix-e-safe-html` (PR del bloque E, apilado sobre A) | PR E |
-| F | Puerta de calidad reproducible | Media | **Parcialmente resuelto**: alcance frontend verificado en Windows/Linux en PR #5; regeneración Python pendiente | PR #5, `481ea00`, CI @ `5b67a2a` |
+| F | Puerta de calidad reproducible | Media | Frontend fusionado con CI Windows/Linux y C/D; entorno de regeneración Python aislado en `codex/entorno-python`, pendiente de calificación CI | PR #5 fusionado @ `296bb15`, CI @ `e4a4a28`; entrega Python separada |
 | G | Bandas unen segmentos desconectados | Media | Confirmado por inspección | pendiente |
 | H | Recursos (ResizeObserver, escenas 3D) y cálculo pesado | Media/baja | Fugas: confirmadas por inspección; rendimiento: pendiente de medición | pendiente |
 
@@ -126,7 +126,7 @@ Estado verificado, no solo declarado:
 | `serve` depende de `python3` | Resuelto en rama F | `scripts/serve.mjs`, Node, loopback; prueba del proceso real, GET/HEAD, 404, métodos y límites de rutas |
 | Pruebas de navegador | Verificadas en CI Windows/Linux (PR #5) | Playwright local 1.56.1 + lockfile; Chromium 1194; CI instala navegador y ejecuta A/E, B, offline y smoke Moyo. Sin skips por dependencias ausentes |
 | Verificación offline del HTML | Verificada en Windows y Linux (PR #5) | Cada HTML aislado en carpeta vacía, `file://`, contexto sin red y sin assets vecinos: WASM SG 227, camino cF2, WebGL y descarga FDF; sin errores ni solicitudes externas |
-| Dependencias de referencias Python fijadas | **Pendiente: regeneración, fuera del alcance frontend solicitado** | CI consume referencias versionadas sin regenerarlas ni alterar tolerancias |
+| Dependencias de referencias Python fijadas | Implementadas en `codex/entorno-python`; calificación CI pendiente | CPython 3.12.10, uv 0.11.14, versiones directas y `uv.lock`; Linux x86_64 / WSL2. Cuatro generadores y seis suites en copia aislada, sin alterar referencias originales ni tolerancias |
 | Procedimiento de copia limpia documentado | Resuelto en rama F | [Instalación y verificación](../development/INSTALL_AND_VERIFY.md): clone, `npm ci`, navegador local, `npm test`, Linux `--with-deps`, límites y artefactos |
 
 ### Entrega F: alcance y evidencia
@@ -138,6 +138,16 @@ Estado verificado, no solo declarado:
 - **PR y CI:** [PR #5](https://github.com/Jairomcarmona/dftlab-suite/pull/5), SHA `5b67a2ab4ec47cc8f982bb5c55124990684a32ec`; [ejecución 38106584161](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38106584161): `Verify (windows-2022)` y `Verify (ubuntu-24.04)` completados con `success`. Checkout limpio, `npm ci`, instalación de Chromium y puerta completa, incluidos navegador y offline. La evidencia Linux procede de ese runner, no de la prueba local. Esta actualización posterior registra el resultado sin cambiar implementación.
 - **Pendiente F:** fijar y validar el entorno Python de regeneración de referencias en una entrega específica; no condiciona el build/frontend. No se ejecutó SIESTA.
 - **Integración posterior:** merge de `origin/main` @ `b9de59a` (PR #6, C/D) en `codex/bloque-f`; contenido C/D preservado. `browser_import.mjs` se añade al runner de navegador de `npm test` y, por él, a CI. Playwright local obligatorio y configuración WebGL de las demás pruebas; sin cambios en sus criterios científicos. Windows local: importación Node 75/0, navegador C/D 33/0 y puerta completa en verde. La regeneración Python se atenderá en rama independiente después de fusionar F.
+
+### Continuación F: entorno Python de referencias
+
+- **Base:** PR #5 fusionado en `main` @ `296bb15b9f77e58be716adf6b10c886d8ca83d53`, después de integrar PR #6 (C/D), revisar diff y comprobar [CI 38107177262](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38107177262) Windows/Linux en verde @ `e4a4a28`. `browser_import.mjs` forma parte de `npm test` y CI (33/0).
+- **Rama:** `codex/entorno-python`, desde ese `main`, sin reutilizar la carpeta F ni intervenir G/H.
+- **Contrato:** entorno opcional independiente en `tools/reference-env/`, CPython 3.12.10, uv 0.11.14, NumPy 2.2.6, SciPy 1.15.3, ASE 3.26.0, spglib 2.7.0, seekpath 2.2.2, sisl 0.16.4. Lock transitivo con hashes, instalación `--locked`, sólo wheels.
+- **Plataforma:** Linux x86_64; WSL2 desde Windows. sisl 0.16.4 no publica wheel Windows y su build fuente falla con scikit-build-core actual. No se declara soporte nativo Windows para regeneración; el frontend conserva CI Windows/Linux.
+- **Verificación:** `scripts/regenerate_references.py` copia fuentes/fixtures, ejecuta los cuatro generadores originales y seis suites Node sobre resultados nuevos. Conserva informe, hashes y logs bajo `runtime/`; rechaza sobrescribir destinos y nunca promueve referencias. Workflow separado `Python references` en Ubuntu 24.04; evidencia como artefacto de 14 días.
+- **Evidencia local:** WSL2 Ubuntu x86_64, CPython 3.12.10, uv 0.11.14 y Node 24.18.0; instalación desde lock con 19 paquetes binarios. Regeneración completa: lectores 341/0, RHO 81/0, lectura anotada 26/0, FC 101/0, importación C/D 75/0, cristalografía 371/371 y formatos 71/71. Informe `success: true`, fuentes originales intactas; manifiesto histórico 480 SHA-256 coincide. Destinos fuente y evidencia preexistente rechazados con exit 2. RHO conserva hash original; otros tres JSON difieren (incluyen redondeo y variación numérica), sin promoción ni relajación de tolerancias.
+- **Instrucciones y límites:** [regeneración reproducible](../development/PYTHON_REFERENCES.md). No se ejecuta SIESTA ni se acredita reproducibilidad binaria entre plataformas; no se cambian generadores, lectores, vistas, router, bandas ni tolerancias. Pendiente: calificación local/CI de esta entrega y revisión del PR Python antes de integrar.
 
 ## G. Discontinuidades del camino k
 
