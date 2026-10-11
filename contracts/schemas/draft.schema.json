@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/draft.schema.json",
+  "title": "Draft",
+  "description": "Borrador de proyecto (ADR-002 §2, ADR-016 §1). Agregado con revisión propia; cada revisión es un registro nuevo e inmutable. Nunca ejecuta nada por sí mismo.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.draft"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "title": "payload",
+      "required": [
+        "draft_id",
+        "revision",
+        "title",
+        "origin",
+        "purpose",
+        "provenance_state",
+        "scientific_assessment",
+        "structure",
+        "intent_id",
+        "updated_at"
+      ],
+      "properties": {
+        "draft_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "revision": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "origin": {
+          "type": "object",
+          "required": [
+            "kind",
+            "learning_dataset_id",
+            "exported_kind",
+            "source_artifact"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "LEARNING_PROMOTION",
+                "USER_IMPORT",
+                "USER_AUTHORED"
+              ]
+            },
+            "learning_dataset_id": {
+              "anyOf": [
+                {
+                  "$ref": "defs.schema.json#/$defs/id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "exported_kind": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "STRUCTURE",
+                    "TEMPLATE"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source_artifact": {
+              "anyOf": [
+                {
+                  "$ref": "artifact-ref.schema.json"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "kind": {
+                    "const": "LEARNING_PROMOTION"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "learning_dataset_id": {
+                    "$ref": "defs.schema.json#/$defs/id"
+                  },
+                  "exported_kind": {
+                    "enum": [
+                      "STRUCTURE",
+                      "TEMPLATE"
+                    ]
+                  },
+                  "source_artifact": {
+                    "type": "null"
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "kind": {
+                    "const": "USER_IMPORT"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "learning_dataset_id": {
+                    "type": "null"
+                  },
+                  "exported_kind": {
+                    "type": "null"
+                  },
+                  "source_artifact": {
+                    "$ref": "artifact-ref.schema.json"
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "kind": {
+                    "const": "USER_AUTHORED"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "learning_dataset_id": {
+                    "type": "null"
+                  },
+                  "exported_kind": {
+                    "type": "null"
+                  },
+                  "source_artifact": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "De dónde viene el contenido del borrador (ADR-002 §2). Una promoción desde Aprender copia; nunca enlaza ni modifica el dataset original."
+        },
+        "purpose": {
+          "enum": [
+            "EXPLORATORY",
+            "OPERATIONAL"
+          ]
+        },
+        "provenance_state": {
+          "enum": [
+            "PARTIAL",
+            "UNKNOWN"
+          ],
+          "description": "Lo deriva el servidor. Un borrador nunca es VERIFIED: no viene de una ejecución rastreada."
+        },
+        "scientific_assessment": {
+          "const": "NOT_EVALUATED",
+          "description": "Un borrador no tiene evaluación científica; la UI lo muestra así, nunca como PASS."
+        },
+        "structure": {
+          "type": "object",
+          "required": [
+            "structure_id",
+            "revision"
+          ],
+          "properties": {
+            "structure_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "revision": {
+              "$ref": "defs.schema.json#/$defs/revision"
+            }
+          },
+          "additionalProperties": false
+        },
+        "intent_id": {
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "updated_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

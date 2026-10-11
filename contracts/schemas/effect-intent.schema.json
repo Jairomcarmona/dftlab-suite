@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/effect-intent.schema.json",
+  "title": "EffectIntent",
+  "description": "Registro write-ahead de un efecto externo no idempotente (ADR-016 §4). Se confirma en la DB antes de iniciar el envío; su ausencia demuestra que el efecto no empezó. Un SubmissionReceipt SUBMISSION_UNKNOWN copia sus campos.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.effect-intent"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "title": "payload",
+      "required": [
+        "effect_intent_id",
+        "operation_id",
+        "action",
+        "run_id",
+        "attempt_id",
+        "attempt_token",
+        "package_ref",
+        "profile",
+        "scheduler",
+        "authority_generation",
+        "recorded_at"
+      ],
+      "properties": {
+        "effect_intent_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "operation_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "action": {
+          "enum": [
+            "SUBMIT_RUN",
+            "EXECUTE_RESUME_PLAN"
+          ]
+        },
+        "run_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "attempt_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "attempt_token": {
+          "$ref": "submission-receipt.schema.json#/$defs/payload/properties/attempt_token"
+        },
+        "package_ref": {
+          "$ref": "artifact-ref.schema.json"
+        },
+        "profile": {
+          "$ref": "submission-receipt.schema.json#/$defs/payload/properties/profile"
+        },
+        "scheduler": {
+          "$ref": "submission-receipt.schema.json#/$defs/payload/properties/scheduler"
+        },
+        "authority_generation": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "recorded_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

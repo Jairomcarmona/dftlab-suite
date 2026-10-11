@@ -1,0 +1,253 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/operation-resolution-receipt.schema.json",
+  "title": "OperationResolutionReceipt",
+  "description": "Evidencia para salir de OUTCOME_UNKNOWN cuando no hay SubmissionReceipt que reconciliar (ADR-016 §4): efecto local atómico, efecto externo idempotente o envío sin EffectIntent. Un envío con EffectIntent solo se resuelve con SubmissionReceipt RECONCILED_*.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.operation-resolution-receipt"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "title": "payload",
+      "required": [
+        "operation_id",
+        "action",
+        "effect_class",
+        "finding",
+        "resulting_state",
+        "product_refs",
+        "recovered_at",
+        "evidence"
+      ],
+      "properties": {
+        "operation_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "action": {
+          "enum": [
+            "VALIDATE_INPUT",
+            "CREATE_CAMPAIGN",
+            "CREATE_PLAN",
+            "PREPARE_PACKAGE",
+            "CREATE_RESUME_PLAN",
+            "CANCEL_RUN",
+            "RECONCILE_RUN",
+            "SUBMIT_RUN",
+            "EXECUTE_RESUME_PLAN"
+          ]
+        },
+        "effect_class": {
+          "enum": [
+            "LOCAL_ATOMIC",
+            "EXTERNAL_IDEMPOTENT",
+            "EXTERNAL_SUBMISSION"
+          ]
+        },
+        "finding": {
+          "enum": [
+            "LOCAL_EFFECT_ABSENT",
+            "LOCAL_EFFECT_COMMITTED",
+            "IDEMPOTENT_EFFECT_UNCONFIRMED",
+            "NO_EFFECT_INTENT"
+          ]
+        },
+        "resulting_state": {
+          "enum": [
+            "SUCCEEDED",
+            "FAILED"
+          ]
+        },
+        "product_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind",
+              "id"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "revision": {
+                "$ref": "defs.schema.json#/$defs/revision"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "recovered_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/evidence_ref"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "enum": [
+                  "VALIDATE_INPUT",
+                  "CREATE_CAMPAIGN",
+                  "CREATE_PLAN",
+                  "PREPARE_PACKAGE",
+                  "CREATE_RESUME_PLAN"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "effect_class": {
+                "const": "LOCAL_ATOMIC"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "enum": [
+                  "CANCEL_RUN",
+                  "RECONCILE_RUN"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "effect_class": {
+                "const": "EXTERNAL_IDEMPOTENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "enum": [
+                  "SUBMIT_RUN",
+                  "EXECUTE_RESUME_PLAN"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "effect_class": {
+                "const": "EXTERNAL_SUBMISSION"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effect_class": {
+                "const": "LOCAL_ATOMIC"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "finding": {
+                "enum": [
+                  "LOCAL_EFFECT_ABSENT",
+                  "LOCAL_EFFECT_COMMITTED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effect_class": {
+                "const": "EXTERNAL_IDEMPOTENT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "finding": {
+                "enum": [
+                  "IDEMPOTENT_EFFECT_UNCONFIRMED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effect_class": {
+                "const": "EXTERNAL_SUBMISSION"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "finding": {
+                "enum": [
+                  "NO_EFFECT_INTENT"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "finding": {
+                "const": "LOCAL_EFFECT_COMMITTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "resulting_state": {
+                "const": "SUCCEEDED"
+              },
+              "product_refs": {
+                "minItems": 1
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "resulting_state": {
+                "const": "FAILED"
+              },
+              "product_refs": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

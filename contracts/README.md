@@ -18,7 +18,7 @@ Dueño: Claude ([reparto V2.1](../docs/development/REPARTO_V21.md)). Codex propo
 | `errors/error-codes.json` | Códigos estables de Problem Details |
 | `scripts/` | `check-contracts.mjs` (estructural, sin dependencias, en `scripts/verify.mjs`) y `validate_fixtures.py` (validación completa con `jsonschema`) |
 
-Entidades de T-008: StructureRevision, SpeciesDefinition, PhysicalModel, NumericalPolicy, RunIntent, ArtifactRecord, ArtifactRef, NativeContractRef, ResultDataset, AssessmentRecord, LearningDataset, OperationRequest, OperationRecord, RunProjection, ResumePlan, ValidationReceipt, AnalysisResult, EventRecord y CapabilityDescriptor. Recibos de T-056/§25.3–25.4: AdmissionReceipt, ControllerAuthorityRecord, SubmissionReceipt, RuntimeProbeReceipt, FinalizationReceipt, RecoveryCheckpoint y CapabilityQualificationRecord. Cada archivo se llama `<nombre-en-kebab>.schema.json`.
+Entidades de T-008: StructureRevision, SpeciesDefinition, PhysicalModel, NumericalPolicy, RunIntent, ArtifactRecord, ArtifactRef, NativeContractRef, ResultDataset, AssessmentRecord, LearningDataset, OperationRequest, OperationRecord, RunProjection, ResumePlan, ValidationReceipt, AnalysisResult, EventRecord y CapabilityDescriptor. Recibos de T-056/§25.3–25.4: AdmissionReceipt, ControllerAuthorityRecord, SubmissionReceipt, RuntimeProbeReceipt, FinalizationReceipt, RecoveryCheckpoint y CapabilityQualificationRecord. Aclaraciones de la Ola 2 ([ADR-016](../docs/adr/ADR-016-borradores-comandos-recuperacion.md)): Draft con DraftCreateRequest y DraftRevisionRequest, EffectIntent y OperationResolutionReceipt. Cada archivo se llama `<nombre-en-kebab>.schema.json`.
 
 ## Reglas
 
@@ -34,11 +34,21 @@ Entidades de T-008: StructureRevision, SpeciesDefinition, PhysicalModel, Numeric
 
 **Autoridad del cliente.** El servidor deriva owner, estado, digest verificado y autoridad: `OperationRequest` los rechaza por schema. Una `ArtifactRef` no lleva rutas, URLs ni credenciales; `ArtifactRecord.locator_id` es opaco.
 
-**Mutaciones.** Toda mutación de `/api/v1` lleva un `OperationRequest` con `idempotency_key` (16–128) y `target.expected_revision`, y devuelve 202 con la `OperationRecord`. Misma clave y cuerpo: 200 con la misma operación. Misma clave con otro `request_hash` (SHA-256 de la forma JCS del cuerpo): 409 `IDEMPOTENCY_KEY_REUSED`. Revisión distinta: 412 `REVISION_CONFLICT`. Mientras una operación tenga efectos vivos su clave no caduca. Un envío con ack perdido deja la operación en `OUTCOME_UNKNOWN` y el recibo en `SUBMISSION_UNKNOWN`; nunca se reenvía a ciegas.
+**Mutaciones.** Toda acción con posible efecto de `/api/v1` lleva un `OperationRequest` con `idempotency_key` (16–128) y `target.expected_revision`, y devuelve 202 con la `OperationRecord`. Misma clave y cuerpo: 200 con la misma operación. Misma clave con otro `request_hash` (SHA-256 de la forma JCS del cuerpo): 409 `IDEMPOTENCY_KEY_REUSED`. Revisión distinta: 412 `REVISION_CONFLICT`. Mientras una operación tenga efectos vivos su clave no caduca. Un envío con ack perdido deja la operación en `OUTCOME_UNKNOWN` y el recibo en `SUBMISSION_UNKNOWN`; nunca se reenvía a ciegas. Las mutaciones locales sin efecto externo (proyectos, subidas y borradores) llevan su propio cuerpo con `idempotency_key`, responden 201/200 con el recurso y no pasan por el procesador.
+
+**Comandos.** `target.kind` y el payload están fijados por acción (`operation-request.schema.json#/$defs`). Pasar el schema no admite un efecto: sin adaptador calificado el servidor responde `ENGINE_UNAVAILABLE`. El payload de `VALIDATE_INPUT` (`validate_input_payload`) es normativo para clientes y el schema lo exigirá tras la migración de ADR-016.
+
+**Revisión.** `target.expected_revision` es la revisión del agregado destino; aceptar una operación la incrementa. `RunProjection.source_revision` es esa misma revisión del run; las observaciones avanzan `snapshot_cursor` sin cambiarla.
+
+**Recuperación.** Cada acción tiene una clase de efecto (`transitions/operation-transitions.json#effect_classes`). Un envío confirma un `EffectIntent` antes de llamar al scheduler, así que el `SubmissionReceipt SUBMISSION_UNKNOWN` siempre tiene datos; sin `EffectIntent`, o en efectos locales o idempotentes, `OUTCOME_UNKNOWN` se resuelve con `OperationResolutionReceipt` y el error `OPERATION_INTERRUPTED`.
 
 **Eventos.** `sequence` empieza en 1 y es monótona por `stream_id`; los consumidores deduplican por `event_id`. `GET /runs/{id}/events?after=<cursor>` en JSON o SSE; si el cursor caducó, 410 `CURSOR_EXPIRED` y el cliente reanuda desde `snapshot_cursor` de `GET /runs/{id}`. Los eventos de plataforma referencian el evento nativo (`native_event`); no lo sustituyen.
 
 **Estado de un run.** `RunProjection` tiene cuatro dimensiones (scheduler, ejecución, integridad, ciencia), cada una con fuente y `observed_at`; sin observación el valor es `UNKNOWN`. Terminar no es certificar: el fixture `run-projection/valid/completed-not-established` tiene ejecución `COMPLETED`, integridad `VERIFIED` y ciencia `NOT_ESTABLISHED`.
+
+## Borradores (T-014)
+
+`POST /projects/{project_id}/drafts` crea un borrador desde Aprender (`LEARNING_PROMOTION`), un artefacto subido (`USER_IMPORT`) o edición propia (`USER_AUTHORED`). El cliente manda contenido; el servidor asigna `draft_id`, `StructureRevision`, `PhysicalModel`, `NumericalPolicy` y `RunIntent`, deriva `provenance_state` (nunca `VERIFIED`) y fija `scientific_assessment: NOT_EVALUATED`. Una promoción desde Aprender nace `EXPLORATORY`. `POST /drafts/{draft_id}/revisions` con `expected_revision` crea identidades nuevas sin tocar las anteriores. Un borrador nunca crea runs ni cambia `Project.revision`. `GET /api/v1/session` devuelve el CSRF de la sesión tras recargar, sin guardarlo en el navegador.
 
 ## Capa Hubbard bajo QRAFT
 

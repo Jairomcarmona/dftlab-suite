@@ -1,0 +1,127 @@
+{
+  "idempotency_key": "draft-create-key-0001",
+  "title": "Si diamante desde Aprender",
+  "origin": {
+    "kind": "LEARNING_PROMOTION",
+    "learning_dataset_id": "ld-si",
+    "exported_kind": "STRUCTURE",
+    "source_artifact": null
+  },
+  "purpose": "EXPLORATORY",
+  "structure": {
+    "convention": "cell-vectors-as-rows",
+    "cell": {
+      "vectors": [
+        [
+          0,
+          2.715,
+          2.715
+        ],
+        [
+          2.715,
+          0,
+          2.715
+        ],
+        [
+          2.715,
+          2.715,
+          0
+        ]
+      ],
+      "unit": "angstrom"
+    },
+    "periodicity": [
+      true,
+      true,
+      true
+    ],
+    "coordinates": {
+      "kind": "fractional"
+    },
+    "sites": [
+      {
+        "atom_id": "a1",
+        "species_label": "Si",
+        "position": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "atom_id": "a2",
+        "species_label": "Si",
+        "position": [
+          0.25,
+          0.25,
+          0.25
+        ]
+      }
+    ],
+    "transformations": [],
+    "physical_intent": "BULK"
+  },
+  "intent": {
+    "operation": "siesta.single-point",
+    "protocol": {
+      "protocol_id": "dftlab.single-point",
+      "version": "0.1.0"
+    },
+    "physical_model": {
+      "xc": {
+        "functional": "PBE",
+        "family": "GGA"
+      },
+      "total_charge": {
+        "value": 0,
+        "unit": "e"
+      },
+      "spin": "NONE",
+      "relativistic": "SCALAR",
+      "hubbard": null,
+      "assumptions": []
+    },
+    "numerical_policy": {
+      "policy": {
+        "policy_id": "dftlab.scf-default",
+        "version": "0.1.0",
+        "digest": "823412d1eacb67956220e532959f0104603057c88704863ca38e7cd188fda812"
+      },
+      "basis": {
+        "size": "DZP",
+        "energy_shift": {
+          "value": 0.02,
+          "unit": "Ry"
+        }
+      },
+      "mesh_cutoff": {
+        "value": 300,
+        "unit": "Ry"
+      },
+      "kgrid": {
+        "kind": "MONKHORST_PACK",
+        "divisions": [
+          8,
+          8,
+          8
+        ],
+        "shift": [
+          0,
+          0,
+          0
+        ],
+        "k_includes_2pi": false
+      },
+      "smearing": null,
+      "solver": "diagon",
+      "tolerances": {
+        "dm_tolerance": {
+          "value": "1e-4",
+          "unit": "1"
+        }
+      },
+      "convergence_target": "total_energy",
+      "justification": "Ejemplo de política versionada; no es un umbral universal."
+    }
+  }
+}

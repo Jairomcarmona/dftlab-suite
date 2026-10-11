@@ -8,13 +8,14 @@
     {"from": "PENDING", "to": "CANCELLED", "trigger": "operation withdrawn before any effect", "guard": "no external effect started"},
     {"from": "RUNNING", "to": "SUCCEEDED", "trigger": "effect confirmed", "evidence": "receipt of the effect (e.g. SubmissionReceipt ACCEPTED)"},
     {"from": "RUNNING", "to": "FAILED", "trigger": "effect failed with evidence of no external change", "evidence": "Problem + evidence"},
-    {"from": "RUNNING", "to": "OUTCOME_UNKNOWN", "trigger": "acknowledgement lost or worker restart mid-effect", "evidence": "SubmissionReceipt SUBMISSION_UNKNOWN"},
-    {"from": "OUTCOME_UNKNOWN", "to": "SUCCEEDED", "trigger": "reconciliation finds the effect", "evidence": "SubmissionReceipt RECONCILED_FOUND"},
-    {"from": "OUTCOME_UNKNOWN", "to": "FAILED", "trigger": "reconciliation proves absence", "evidence": "SubmissionReceipt RECONCILED_ABSENT_WITH_EVIDENCE"}
+    {"from": "RUNNING", "to": "OUTCOME_UNKNOWN", "trigger": "acknowledgement lost or worker restart mid-effect", "evidence": "SubmissionReceipt SUBMISSION_UNKNOWN (construido desde el EffectIntent) o ninguna, si la recuperación la resuelve con OperationResolutionReceipt"},
+    {"from": "OUTCOME_UNKNOWN", "to": "SUCCEEDED", "trigger": "reconciliation finds the effect", "evidence": "SubmissionReceipt RECONCILED_FOUND, u OperationResolutionReceipt LOCAL_EFFECT_COMMITTED (solo LOCAL_ATOMIC)"},
+    {"from": "OUTCOME_UNKNOWN", "to": "FAILED", "trigger": "reconciliation proves absence", "evidence": "SubmissionReceipt RECONCILED_ABSENT_WITH_EVIDENCE, u OperationResolutionReceipt con LOCAL_EFFECT_ABSENT, IDEMPOTENT_EFFECT_UNCONFIRMED o NO_EFFECT_INTENT; error OPERATION_INTERRUPTED"}
   ],
   "forbidden": [
     {"from": "OUTCOME_UNKNOWN", "action": "blind resubmit", "rule": "Un timeout o una consulta vacía no autorizan reenviar."},
-    {"from": "*", "action": "state, owner or digest supplied by client", "rule": "Se derivan en el servidor."}
+    {"from": "*", "action": "state, owner or digest supplied by client", "rule": "Se derivan en el servidor."},
+    {"from": "OUTCOME_UNKNOWN", "action": "OperationResolutionReceipt para un envío con EffectIntent", "rule": "Si existe EffectIntent el efecto pudo empezar: solo la reconciliación con el scheduler lo resuelve."}
   ],
   "races": [
     {"case": "Misma clave/request simultáneos", "rule": "Una sola OperationRecord; misma clave con otro request_hash => 409 IDEMPOTENCY_KEY_REUSED."},
@@ -24,5 +25,11 @@
     {"case": "Callback de intento anterior", "rule": "Se conserva como evidencia; no actualiza RunProjection si attempt_id != current_attempt_id o authority_generation es menor."},
     {"case": "Operación exitosa, run desconocido", "rule": "OperationRecord SUCCEEDED y RunProjection con dimensiones UNKNOWN; la UI muestra ambos."},
     {"case": "Assessment nuevo con política distinta", "rule": "Nuevo AssessmentRecord con supersedes; el anterior queda intacto."}
-  ]
+  ],
+  "effect_classes": {
+    "description": "Clase de efecto por acción (ADR-016 §4). Decide qué evidencia saca una operación de OUTCOME_UNKNOWN. Cada acción pertenece a una sola clase.",
+    "LOCAL_ATOMIC": {"actions": ["VALIDATE_INPUT", "CREATE_CAMPAIGN", "CREATE_PLAN", "PREPARE_PACKAGE", "CREATE_RESUME_PLAN"], "rule": "El producto (recibo, campaña, plan, paquete, resume plan) y la transición a SUCCEEDED se confirman en una sola transacción. Tras una caída, la recuperación exclusiva comprueba por operation_id y resuelve con LOCAL_EFFECT_ABSENT (FAILED) o LOCAL_EFFECT_COMMITTED (SUCCEEDED)."},
+    "EXTERNAL_IDEMPOTENT": {"actions": ["CANCEL_RUN", "RECONCILE_RUN"], "rule": "Repetir el efecto es seguro (scancel, consulta del scheduler). La recuperación resuelve con IDEMPOTENT_EFFECT_UNCONFIRMED (FAILED, OPERATION_INTERRUPTED) y el cliente repite con clave nueva; el estado del run lo dice la proyección."},
+    "EXTERNAL_SUBMISSION": {"actions": ["SUBMIT_RUN", "EXECUTE_RESUME_PLAN"], "rule": "Antes de llamar al scheduler se confirma un EffectIntent. Sin EffectIntent: NO_EFFECT_INTENT (FAILED). Con EffectIntent: SubmissionReceipt SUBMISSION_UNKNOWN y solo RECONCILED_FOUND o RECONCILED_ABSENT_WITH_EVIDENCE lo resuelven; nunca se reenvía."}
+  }
 }

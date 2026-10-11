@@ -1,0 +1,14 @@
+{
+  "action": "CREATE_CAMPAIGN",
+  "project_id": "prj-demo",
+  "target": {
+    "kind": "PROJECT",
+    "id": "prj-demo",
+    "expected_revision": 2
+  },
+  "payload": {
+    "name": "Vacía",
+    "drafts": []
+  },
+  "idempotency_key": "campaign-key-000002"
+}

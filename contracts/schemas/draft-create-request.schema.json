@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/draft-create-request.schema.json",
+  "title": "DraftCreateRequest",
+  "description": "Cuerpo de POST /projects/{project_id}/drafts (ADR-016 §1). El servidor asigna todos los IDs y revisiones y deriva provenance_state.",
+  "type": "object",
+  "required": [
+    "idempotency_key",
+    "title",
+    "origin",
+    "purpose",
+    "structure",
+    "intent"
+  ],
+  "properties": {
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{16,128}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "origin": {
+      "type": "object",
+      "required": [
+        "kind",
+        "learning_dataset_id",
+        "exported_kind",
+        "source_artifact"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "LEARNING_PROMOTION",
+            "USER_IMPORT",
+            "USER_AUTHORED"
+          ]
+        },
+        "learning_dataset_id": {
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "exported_kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "STRUCTURE",
+                "TEMPLATE"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_artifact": {
+          "anyOf": [
+            {
+              "$ref": "artifact-ref.schema.json"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "LEARNING_PROMOTION"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "learning_dataset_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "exported_kind": {
+                "enum": [
+                  "STRUCTURE",
+                  "TEMPLATE"
+                ]
+              },
+              "source_artifact": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "USER_IMPORT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "learning_dataset_id": {
+                "type": "null"
+              },
+              "exported_kind": {
+                "type": "null"
+              },
+              "source_artifact": {
+                "$ref": "artifact-ref.schema.json"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "USER_AUTHORED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "learning_dataset_id": {
+                "type": "null"
+              },
+              "exported_kind": {
+                "type": "null"
+              },
+              "source_artifact": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "description": "De dónde viene el contenido del borrador (ADR-002 §2). Una promoción desde Aprender copia; nunca enlaza ni modifica el dataset original."
+    },
+    "purpose": {
+      "enum": [
+        "EXPLORATORY",
+        "OPERATIONAL"
+      ]
+    },
+    "structure": {
+      "type": "object",
+      "description": "Contenido de una StructureRevision sin identidad: structure_id, revision y parent_revision los asigna el servidor.",
+      "required": [
+        "convention",
+        "cell",
+        "periodicity",
+        "coordinates",
+        "sites",
+        "transformations"
+      ],
+      "properties": {
+        "convention": {
+          "$ref": "structure-revision.schema.json#/$defs/payload/properties/convention"
+        },
+        "cell": {
+          "$ref": "structure-revision.schema.json#/$defs/payload/properties/cell"
+        },
+        "periodicity": {
+          "$ref": "structure-revision.schema.json#/$defs/payload/properties/periodicity"
+        },
+        "coordinates": {
+          "$ref": "structure-revision.schema.json#/$defs/payload/properties/coordinates"
+        },
+        "sites": {
+          "$ref": "structure-revision.schema.json#/$defs/payload/properties/sites"
+        },
+        "transformations": {
+          "$ref": "structure-revision.schema.json#/$defs/payload/properties/transformations"
+        },
+        "physical_intent": {
+          "$ref": "structure-revision.schema.json#/$defs/payload/properties/physical_intent"
+        }
+      },
+      "additionalProperties": false
+    },
+    "intent": {
+      "anyOf": [
+        {
+          "type": "object",
+          "description": "Plantilla de RunIntent. El servidor materializa PhysicalModel y NumericalPolicy como registros nuevos y crea el RunIntent que los referencia.",
+          "required": [
+            "operation",
+            "protocol",
+            "physical_model",
+            "numerical_policy"
+          ],
+          "properties": {
+            "operation": {
+              "$ref": "run-intent.schema.json#/$defs/payload/properties/operation"
+            },
+            "protocol": {
+              "$ref": "run-intent.schema.json#/$defs/payload/properties/protocol"
+            },
+            "physical_model": {
+              "$ref": "physical-model.schema.json#/$defs/payload"
+            },
+            "numerical_policy": {
+              "$ref": "numerical-policy.schema.json#/$defs/payload"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "origin": {
+            "properties": {
+              "kind": {
+                "const": "LEARNING_PROMOTION"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "purpose": {
+            "const": "EXPLORATORY"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "origin": {
+            "properties": {
+              "exported_kind": {
+                "const": "STRUCTURE"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "intent": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "origin": {
+            "properties": {
+              "exported_kind": {
+                "const": "TEMPLATE"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "intent": {
+            "type": "object",
+            "description": "Plantilla de RunIntent. El servidor materializa PhysicalModel y NumericalPolicy como registros nuevos y crea el RunIntent que los referencia.",
+            "required": [
+              "operation",
+              "protocol",
+              "physical_model",
+              "numerical_policy"
+            ],
+            "properties": {
+              "operation": {
+                "$ref": "run-intent.schema.json#/$defs/payload/properties/operation"
+              },
+              "protocol": {
+                "$ref": "run-intent.schema.json#/$defs/payload/properties/protocol"
+              },
+              "physical_model": {
+                "$ref": "physical-model.schema.json#/$defs/payload"
+              },
+              "numerical_policy": {
+                "$ref": "numerical-policy.schema.json#/$defs/payload"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ]
+}

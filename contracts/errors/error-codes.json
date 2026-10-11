@@ -13,6 +13,7 @@
     "NOT_FOUND": {"status": 404, "meaning": "Recurso inexistente o no visible para el principal."},
     "ADMISSION_REJECTED": {"status": 409, "meaning": "Admisión denegada; el AdmissionReceipt lleva los motivos."},
     "CAPABILITY_NOT_ADMITTED": {"status": 409, "meaning": "La capability no está admitida para esa finalidad (ADR-012)."},
+    "OPERATION_INTERRUPTED": {"status": 409, "meaning": "El procesador se detuvo antes de confirmar un efecto que la recuperación demostró ausente o idempotente (OperationResolutionReceipt). Repetir con una clave nueva es seguro."},
     "ENGINE_UNAVAILABLE": {"status": 503, "meaning": "El motor o la capa requerida no está instalado o no responde; no implica fallo del run."},
     "CURSOR_EXPIRED": {"status": 410, "meaning": "El historial de eventos ya no cubre el cursor; consultar el snapshot y reanudar desde su cursor."},
     "PAYLOAD_TOO_LARGE": {"status": 413, "meaning": "Supera el límite declarado del endpoint."},

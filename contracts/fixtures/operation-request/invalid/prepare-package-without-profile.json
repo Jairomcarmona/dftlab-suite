@@ -1,0 +1,16 @@
+{
+  "action": "PREPARE_PACKAGE",
+  "project_id": "prj-demo",
+  "target": {
+    "kind": "PLAN",
+    "id": "pln-1",
+    "expected_revision": 2
+  },
+  "payload": {
+    "expected_plan_digest": {
+      "algorithm": "qraft.content-sha256-v1",
+      "value": "5f2059a48ccb06e6ce321cb8472b263967def87373f702bf6798eb1b8bc306de"
+    }
+  },
+  "idempotency_key": "package-key-0000002"
+}

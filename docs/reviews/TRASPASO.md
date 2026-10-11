@@ -125,6 +125,12 @@ Bloques A–H hechos. Queda de F el entorno Python fijado (`codex/entorno-python
 - **Abierto:** nombres definitivos de los vocabularios nativos de análisis e inversa (`hubbardflow.NumericalStatus`, `hubbardflow.InverseCertification`) y de los contratos del plan Hubbard, que fija la capa (ADR-015); lista completa de `qraft.TaskState` (12 valores) en el commit fijado; cuerpos de `export_fragment`/`prepare_node`; límites de tamaño por endpoint y RPO/RTO (tras medir).
 - **Para Codex (Olas 2 y 3):** X5 genera o escribe validadores JS y Python contra `contracts/schemas` y los hace pasar con `fixtures/manifest.json` (incluido `consumer`) y `fixtures/canonicalization/expected.json`, y conecta `validate_fixtures.py` o su equivalente a CI. X6 implementa `OperationRecord` con la tabla `transitions/operation-transitions.json` (compare-and-set sobre `revision`, outbox) y la API de `openapi/dftlab-api.v1.json`; X7 la sesión, CSRF y Origin según `securitySchemes` y ADR-008. Un cambio de contrato pasa por PR en `contracts/` revisado por Claude.
 
+## C3 Ola 2: aclaraciones de contrato (ADR-016)
+
+- **Rama:** `claude/contrato-drafts-c3-hshdrb`, desde `main` @ `4be2f01`. Solo `contracts/`, `docs/adr/`, el validador generado `app/dftlab/static/js/sdk/validators.generated.js` (regenerado con `npm run contracts:generate`, sin edición manual) y esta sección.
+- **Resuelve:** T-014 (borradores: schema, `createDraft`/`listDrafts`/`getDraft`/`reviseDraft`), payload y target por acción, `source_revision` = revisión del agregado Run, recuperación de `OUTCOME_UNKNOWN` con `EffectIntent` y `OperationResolutionReceipt` por clase de efecto, y `GET /api/v1/session` para el CSRF tras recargar. Detalle en [ADR-016](../adr/ADR-016-borradores-comandos-recuperacion.md).
+- **Para Codex:** implementar los endpoints de borrador y `getSession`, conectar `promote.js` a `createDraft` (T-014), escribir `EffectIntent` antes de cada envío y aceptar `OperationResolutionReceipt` en la guarda de `OUTCOME_UNKNOWN`. Pasar las pruebas genéricas de X6 a un payload válido de `VALIDATE_INPUT`; después un PR de contratos lo exige. Los comandos científicos siguen en `ENGINE_UNAVAILABLE` hasta calificar los adaptadores de la Ola 3.
+
 ## Entrega X1: inventario P0
 
 - **Rama / carpeta:** `codex/x1-inventario-p0`, `C:\Users\Jairo\Downloads\DFTQUANTUMLAB\dftlab-suite-x1-inventario-p0`. Nace de `origin/main` @ `f5b37eb`; incorpora C1/C2/ADR-015/C3 hasta `8ecd845` por commits de merge. No rebase ni reset/clean.

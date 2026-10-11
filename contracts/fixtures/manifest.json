@@ -574,6 +574,196 @@
       "schema": "hubbard-layer-message.schema.json",
       "expect": "valid",
       "rule": "check_resume sin efectos (U-H4)."
+    },
+    {
+      "path": "fixtures/draft/valid/promoted-from-learning.json",
+      "schema": "draft.schema.json",
+      "expect": "valid",
+      "rule": "Promoción explícita desde Aprender: exploratorio, procedencia parcial, sin evaluar y sin RunIntent. La UI muestra origen, finalidad, procedencia y NOT_EVALUATED, y no ofrece enviarlo como run.",
+      "consumer": {
+        "is_pass": false,
+        "is_certified": false
+      }
+    },
+    {
+      "path": "fixtures/draft/invalid/provenance-verified.json",
+      "schema": "draft.schema.json",
+      "expect": "invalid",
+      "rule": "Un borrador nunca tiene procedencia verificada."
+    },
+    {
+      "path": "fixtures/draft/invalid/assessment-pass.json",
+      "schema": "draft.schema.json",
+      "expect": "invalid",
+      "rule": "Un borrador no tiene evaluación científica: solo NOT_EVALUATED."
+    },
+    {
+      "path": "fixtures/draft/invalid/learning-without-dataset.json",
+      "schema": "draft.schema.json",
+      "expect": "invalid",
+      "rule": "Una promoción desde Aprender nombra su LearningDataset."
+    },
+    {
+      "path": "fixtures/draft-create-request/valid/promote-structure.json",
+      "schema": "draft-create-request.schema.json",
+      "expect": "valid",
+      "rule": "Exportar solo la estructura de un ejemplo: sin plantilla de intent."
+    },
+    {
+      "path": "fixtures/draft-create-request/valid/promote-template.json",
+      "schema": "draft-create-request.schema.json",
+      "expect": "valid",
+      "rule": "Exportar plantilla: el servidor crea PhysicalModel, NumericalPolicy y RunIntent nuevos."
+    },
+    {
+      "path": "fixtures/draft-create-request/valid/user-import.json",
+      "schema": "draft-create-request.schema.json",
+      "expect": "valid",
+      "rule": "Importación del usuario desde un artefacto subido, con finalidad operativa explícita."
+    },
+    {
+      "path": "fixtures/draft-create-request/invalid/learning-operational.json",
+      "schema": "draft-create-request.schema.json",
+      "expect": "invalid",
+      "rule": "Una promoción desde Aprender nace exploratoria; pasar a operativa es una revisión explícita."
+    },
+    {
+      "path": "fixtures/draft-create-request/invalid/client-sets-structure-id.json",
+      "schema": "draft-create-request.schema.json",
+      "expect": "invalid",
+      "rule": "El servidor asigna la identidad de la estructura."
+    },
+    {
+      "path": "fixtures/draft-create-request/invalid/educational-purpose.json",
+      "schema": "draft-create-request.schema.json",
+      "expect": "invalid",
+      "rule": "Un borrador no es educativo (ADR-002)."
+    },
+    {
+      "path": "fixtures/draft-create-request/invalid/structure-export-with-intent.json",
+      "schema": "draft-create-request.schema.json",
+      "expect": "invalid",
+      "rule": "exported_kind STRUCTURE no lleva plantilla de intent."
+    },
+    {
+      "path": "fixtures/draft-revision-request/valid/add-intent.json",
+      "schema": "draft-revision-request.schema.json",
+      "expect": "valid",
+      "rule": "Revisión explícita: finalidad operativa y plantilla nueva; el servidor crea identidades nuevas."
+    },
+    {
+      "path": "fixtures/draft-revision-request/invalid/empty-changes.json",
+      "schema": "draft-revision-request.schema.json",
+      "expect": "invalid",
+      "rule": "Una revisión cambia algo."
+    },
+    {
+      "path": "fixtures/draft-revision-request/invalid/without-expected-revision.json",
+      "schema": "draft-revision-request.schema.json",
+      "expect": "invalid",
+      "rule": "Toda revisión compara la revisión del borrador (412 si cambió)."
+    },
+    {
+      "path": "fixtures/effect-intent/valid/submit.json",
+      "schema": "effect-intent.schema.json",
+      "expect": "valid",
+      "rule": "Write-ahead confirmado antes de sbatch: lleva todo lo que necesita un SubmissionReceipt."
+    },
+    {
+      "path": "fixtures/effect-intent/invalid/without-package.json",
+      "schema": "effect-intent.schema.json",
+      "expect": "invalid",
+      "rule": "Sin paquete no se puede construir el recibo de incertidumbre."
+    },
+    {
+      "path": "fixtures/effect-intent/invalid/idempotent-action.json",
+      "schema": "effect-intent.schema.json",
+      "expect": "invalid",
+      "rule": "Solo los envíos no idempotentes llevan EffectIntent."
+    },
+    {
+      "path": "fixtures/operation-resolution-receipt/valid/local-absent.json",
+      "schema": "operation-resolution-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Plan local no confirmado tras la caída: FAILED con OPERATION_INTERRUPTED; repetir con clave nueva."
+    },
+    {
+      "path": "fixtures/operation-resolution-receipt/valid/submit-no-intent.json",
+      "schema": "operation-resolution-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Envío caído antes de confirmar el EffectIntent: no pudo llegar al scheduler."
+    },
+    {
+      "path": "fixtures/operation-resolution-receipt/valid/local-committed.json",
+      "schema": "operation-resolution-receipt.schema.json",
+      "expect": "valid",
+      "rule": "El producto local quedó confirmado: SUCCEEDED con su referencia."
+    },
+    {
+      "path": "fixtures/operation-resolution-receipt/invalid/submit-with-local-finding.json",
+      "schema": "operation-resolution-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Un envío solo sale de OUTCOME_UNKNOWN por esta vía si no hay EffectIntent."
+    },
+    {
+      "path": "fixtures/operation-resolution-receipt/invalid/class-mismatch.json",
+      "schema": "operation-resolution-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "La clase de efecto la fija la acción."
+    },
+    {
+      "path": "fixtures/operation-resolution-receipt/invalid/committed-without-products.json",
+      "schema": "operation-resolution-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "LOCAL_EFFECT_COMMITTED nombra el producto confirmado."
+    },
+    {
+      "path": "fixtures/operation-request/valid/create-campaign.json",
+      "schema": "operation-request.schema.json",
+      "expect": "valid",
+      "rule": "Campaña sobre revisiones concretas de borradores."
+    },
+    {
+      "path": "fixtures/operation-request/valid/create-plan.json",
+      "schema": "operation-request.schema.json",
+      "expect": "valid",
+      "rule": "Plan desde un borrador validado (ValidationReceipt)."
+    },
+    {
+      "path": "fixtures/operation-request/valid/prepare-package.json",
+      "schema": "operation-request.schema.json",
+      "expect": "valid",
+      "rule": "Paquete para un perfil, condicionado al digest nativo del lock."
+    },
+    {
+      "path": "fixtures/operation-request/valid/validate-input.json",
+      "schema": "operation-request.schema.json",
+      "expect": "valid",
+      "rule": "Preflight de una revisión de borrador (payload normativo de VALIDATE_INPUT)."
+    },
+    {
+      "path": "fixtures/operation-request/invalid/create-campaign-without-drafts.json",
+      "schema": "operation-request.schema.json",
+      "expect": "invalid",
+      "rule": "Una campaña nombra al menos un borrador."
+    },
+    {
+      "path": "fixtures/operation-request/invalid/prepare-package-without-profile.json",
+      "schema": "operation-request.schema.json",
+      "expect": "invalid",
+      "rule": "Un paquete se prepara para un perfil."
+    },
+    {
+      "path": "fixtures/operation-request/invalid/action-target-mismatch.json",
+      "schema": "operation-request.schema.json",
+      "expect": "invalid",
+      "rule": "CREATE_PLAN se dirige a una campaña, no al proyecto."
+    },
+    {
+      "path": "fixtures/operation-request/invalid/plan-without-validation.json",
+      "schema": "operation-request.schema.json",
+      "expect": "invalid",
+      "rule": "No hay plan sin preflight autoritativo (ADR-002 §2)."
     }
   ]
 }

@@ -1,0 +1,65 @@
+{
+  "idempotency_key": "draft-create-key-0001",
+  "title": "Si diamante desde Aprender",
+  "origin": {
+    "kind": "LEARNING_PROMOTION",
+    "learning_dataset_id": "ld-si",
+    "exported_kind": "STRUCTURE",
+    "source_artifact": null
+  },
+  "purpose": "EXPLORATORY",
+  "structure": {
+    "convention": "cell-vectors-as-rows",
+    "cell": {
+      "vectors": [
+        [
+          0,
+          2.715,
+          2.715
+        ],
+        [
+          2.715,
+          0,
+          2.715
+        ],
+        [
+          2.715,
+          2.715,
+          0
+        ]
+      ],
+      "unit": "angstrom"
+    },
+    "periodicity": [
+      true,
+      true,
+      true
+    ],
+    "coordinates": {
+      "kind": "fractional"
+    },
+    "sites": [
+      {
+        "atom_id": "a1",
+        "species_label": "Si",
+        "position": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "atom_id": "a2",
+        "species_label": "Si",
+        "position": [
+          0.25,
+          0.25,
+          0.25
+        ]
+      }
+    ],
+    "transformations": [],
+    "physical_intent": "BULK"
+  },
+  "intent": null
+}

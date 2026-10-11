@@ -1,0 +1,18 @@
+{
+  "action": "CREATE_PLAN",
+  "project_id": "prj-demo",
+  "target": {
+    "kind": "CAMPAIGN",
+    "id": "cmp-1",
+    "expected_revision": 2
+  },
+  "payload": {
+    "draft": {
+      "draft_id": "drf-1",
+      "revision": 2
+    },
+    "intent_id": "int-2",
+    "validation_receipt_id": "rec-validation-receipt"
+  },
+  "idempotency_key": "plan-key-0000000001"
+}

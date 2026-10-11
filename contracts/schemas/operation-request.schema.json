@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://dftlab.invalid/contracts/schemas/operation-request.schema.json",
   "title": "OperationRequest",
-  "description": "Cuerpo de toda mutación. El servidor deriva owner, estado y autoridad; no se aceptan del cliente (ADR-004 §4, ADR-007 §1).",
+  "description": "Cuerpo de toda mutación. El servidor deriva owner, estado y autoridad; no se aceptan del cliente (ADR-004 §4, ADR-007 §1). Payload y target.kind tipados por acción (ADR-016 §2); pasar el schema no admite un efecto.",
   "type": "object",
   "required": [
     "action",
@@ -174,6 +174,421 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "VALIDATE_INPUT"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "properties": {
+              "kind": {
+                "const": "PROJECT"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "CREATE_CAMPAIGN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "properties": {
+              "kind": {
+                "const": "PROJECT"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "CREATE_PLAN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "properties": {
+              "kind": {
+                "const": "CAMPAIGN"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "PREPARE_PACKAGE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "properties": {
+              "kind": {
+                "const": "PLAN"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "SUBMIT_RUN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "properties": {
+              "kind": {
+                "const": "PLAN"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "CANCEL_RUN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "properties": {
+              "kind": {
+                "const": "RUN"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "CREATE_RESUME_PLAN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "properties": {
+              "kind": {
+                "const": "RUN"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "EXECUTE_RESUME_PLAN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "properties": {
+              "kind": {
+                "const": "RESUME_PLAN"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "RECONCILE_RUN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "properties": {
+              "kind": {
+                "const": "RUN"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "CREATE_CAMPAIGN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/create_campaign_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "CREATE_PLAN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/create_plan_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "CREATE_RESUME_PLAN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/create_resume_plan_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "RECONCILE_RUN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/reconcile_run_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "PREPARE_PACKAGE"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "profile_ref"
+        ],
+        "properties": {
+          "profile_ref": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "payload": {
+            "$ref": "#/$defs/prepare_package_payload"
+          }
+        }
+      }
     }
-  ]
+  ],
+  "$defs": {
+    "validate_input_payload": {
+      "type": "object",
+      "description": "Preflight autoritativo de un borrador; produce un ValidationReceipt. Normativo para clientes; el servidor lo exige desde la migración de ADR-016 §2.",
+      "required": [
+        "draft"
+      ],
+      "properties": {
+        "draft": {
+          "type": "object",
+          "required": [
+            "draft_id",
+            "revision"
+          ],
+          "properties": {
+            "draft_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "revision": {
+              "$ref": "defs.schema.json#/$defs/revision"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "create_campaign_payload": {
+      "type": "object",
+      "required": [
+        "name",
+        "drafts"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "drafts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "draft_id",
+              "revision"
+            ],
+            "properties": {
+              "draft_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "revision": {
+                "$ref": "defs.schema.json#/$defs/revision"
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 256
+        }
+      },
+      "additionalProperties": false
+    },
+    "create_plan_payload": {
+      "type": "object",
+      "description": "Resuelve y bloquea un plan con QRAFT (capa Hubbard incluida cuando el modelo la pide) para el RunIntent de una revisión de borrador ya validada.",
+      "required": [
+        "draft",
+        "intent_id",
+        "validation_receipt_id"
+      ],
+      "properties": {
+        "draft": {
+          "type": "object",
+          "required": [
+            "draft_id",
+            "revision"
+          ],
+          "properties": {
+            "draft_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "revision": {
+              "$ref": "defs.schema.json#/$defs/revision"
+            }
+          },
+          "additionalProperties": false
+        },
+        "intent_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "validation_receipt_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      },
+      "additionalProperties": false
+    },
+    "prepare_package_payload": {
+      "type": "object",
+      "description": "Construye el paquete del plan bloqueado para un perfil. expected_plan_digest es el digest nativo del lock; si no coincide, 412 PRECONDITION_FAILED.",
+      "required": [
+        "expected_plan_digest"
+      ],
+      "properties": {
+        "expected_plan_digest": {
+          "$ref": "defs.schema.json#/$defs/native_digest"
+        }
+      },
+      "additionalProperties": false
+    },
+    "create_resume_plan_payload": {
+      "type": "object",
+      "required": [
+        "from_attempt_id",
+        "reason"
+      ],
+      "properties": {
+        "from_attempt_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "additionalProperties": false
+    },
+    "reconcile_run_payload": {
+      "type": "object",
+      "description": "operation_id null = intento actual del run; si no, la operación OUTCOME_UNKNOWN que se quiere resolver.",
+      "required": [
+        "operation_id"
+      ],
+      "properties": {
+        "operation_id": {
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }
