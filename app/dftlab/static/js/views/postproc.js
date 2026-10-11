@@ -1,7 +1,8 @@
 // Postproceso: drop SIESTA output files, get plots, tables and exports. Nothing is executed; files are only read.
 import { $, $$, css, alpha, esc, fmt, download, downloadText, seg, toast } from '../core/ui.js';
 import { chart, exportBar } from '../core/chart.js';
-import { parseMany, bandEdges, analyzeGap, computeDOS, groupPDOS, sumPDOS, integratePDOS, opticalSpectrum, toPlain } from '../siesta/index.js';
+import { bandEdges, analyzeGap, computeDOS, groupPDOS, sumPDOS, integratePDOS, opticalSpectrum, toPlain, packBands, packDOS, packStructure, packContents, planarAverage, gridIntegral } from '../siesta/index.js';
+import { createFileSet } from '../siesta/runset.js';
 import { writeStructure } from '../crystal/formats.js';
 import { cartToFrac, formula, analyze, isMoyoReady, initMoyo, cellParameters, volume } from '../crystal/symmetry.js';
 import { atomicNumber, symbolOf } from '../crystal/elements.js';
@@ -10,7 +11,7 @@ import { cellScene } from '../core/scene.js';
 import EX from '../data/examples.json';
 
 const KIND_NAME = { out:'salida principal', fdf:'entrada fdf', bands:'bandas', eig:'autovalores', kp:'puntos k', 'pdos-kp':'puntos k PDOS', pdos:'PDOS', 'pdos-text':'PDOS (texto)', dos:'DOS', epsimg:'ε₂ óptica', 'epsimg-contrib':'ε₂ por transición',
-  'ion-xml':'base (.ion.xml)', ion:'base (.ion)', psf:'pseudo psf', psml:'pseudo psml', mde:'MD energías', ani:'trayectoria', fa:'fuerzas', xv:'geometría XV', struct:'geometría STRUCT', 'dftlab-pack':'paquete DFT Lab', live:'hook Lua (live.jsonl)', unknown:'no reconocido' };
+  'ion-xml':'base (.ion.xml)', ion:'base (.ion)', psf:'pseudo psf', psml:'pseudo psml', mde:'MD energías', ani:'trayectoria', fa:'fuerzas', xv:'geometría XV', struct:'geometría STRUCT', 'dftlab-pack':'paquete DFT Lab', grid:'malla 3D (binaria)', fc:'constantes de fuerza', live:'hook Lua (live.jsonl)', unknown:'no reconocido' };
 
 const H = html => ({ html }); // marca HTML de plantilla de confianza; el resto de valores de la tabla se escapa
 let V3 = null;
@@ -20,14 +21,14 @@ async function gunzipB64(b64){
   const bin=Uint8Array.from(atob(b64), c=>c.charCodeAt(0));
   const ds=new DecompressionStream('gzip'); const txt=await new Response(new Blob([bin]).stream().pipeThrough(ds)).text(); return JSON.parse(txt);
 }
-async function sha256(text){ try{ const h=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)); return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join(''); }catch(e){ return ''; } }
+async function sha256(content){ try{ const h=await crypto.subtle.digest('SHA-256', typeof content==='string'?new TextEncoder().encode(content):content); return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join(''); }catch(e){ return ''; } }
 
 export function mount(root, view){
-  const F = []; // {name, size, text, kind, data, error, hash}
+  const FS = createFileSet(), F = FS.files; // {name, size, content (texto o bytes de malla), kind, data, error, link, hash}
   root.innerHTML=`
   <div class="pghead"><div>
     <div class="kicker">Postproceso</div><h1>Tus cálculos de SIESTA</h1>
-    <p class="lede">Arrastra aquí los archivos de una corrida hecha en tu laptop o en el cluster: el <code>.out</code>, <code>.bands</code>, <code>.PDOS</code>, <code>.EIG</code>/<code>.KP</code>, <code>.EPSIMG</code>, <code>.XV</code>, <code>.MDE</code>, <code>.ion.xml</code>, pseudos o el <code>live.jsonl</code> del hook Lua. Todo se lee en tu navegador; nada se sube a ningún servidor. Cada gráfica se exporta a SVG, PNG o CSV y la geometría a CIF, XYZ, POSCAR o fdf.</p>
+    <p class="lede">Arrastra aquí los archivos de una corrida hecha en tu laptop o en el cluster: el <code>.out</code>, <code>.bands</code>, <code>.PDOS</code>, <code>.EIG</code>/<code>.KP</code>, <code>.EPSIMG</code>, <code>.XV</code>, <code>.MDE</code>, <code>.ion.xml</code>, pseudos, mallas <code>.RHO</code>/<code>.VH</code>, paquetes <code>.dftlab.json</code> o el <code>live.jsonl</code> del hook Lua. Todo se lee en tu navegador; nada se sube a ningún servidor. Cada gráfica se exporta a SVG, PNG o CSV y la geometría a CIF, XYZ, POSCAR o fdf.</p>
   </div></div>
   <section class="panel"><div class="pb">
     <label class="drop" id="drop"><input type="file" id="fileIn" multiple hidden>
@@ -36,7 +37,7 @@ export function mount(root, view){
     <div class="tblwrap" style="margin-top:10px"><table class="tbl" id="fileTab"></table></div>
   </div></section>
   <div class="charts" id="ppOut" style="margin-top:12px"></div>
-  <footer class="prov">Lectores de DFT Lab para SIESTA 4.1–5.x (carpeta siesta/), probados con 341 comprobaciones contra sisl y numpy sobre corridas reales de Si, Fe con espín, Fe con espín-órbita, relajación y dinámica molecular. Los archivos binarios (.TSHS, .HSX, .WFSX, .RHO) se convierten antes con <code>scripts/dftlab_pack.py</code>.</footer>`;
+  <footer class="prov">Lectores de DFT Lab para SIESTA 4.1–5.x (carpeta siesta/), probados con 341 comprobaciones contra sisl y numpy sobre corridas reales de Si, Fe con espín, Fe con espín-órbita, relajación y dinámica molecular. Las mallas binarias (.RHO, .DRHO, .VH, .VT…) se leen directamente; .TSHS, .HSX y .WFSX se convierten antes con <code>scripts/dftlab_pack.py</code>.</footer>`;
 
   const drop=$('#drop',root), inp=$('#fileIn',root);
   drop.addEventListener('dragover',e=>{ e.preventDefault(); drop.classList.add('over'); });
@@ -44,33 +45,44 @@ export function mount(root, view){
   drop.addEventListener('drop',e=>{ e.preventDefault(); drop.classList.remove('over'); addFiles([...e.dataTransfer.files]); });
   inp.addEventListener('change',()=>{ addFiles([...inp.files]); inp.value=''; });
   $('#exFe',root).onclick=async()=>loadExample('fe'); $('#exRelax',root).onclick=async()=>loadExample('relax');
-  $('#clearAll',root).onclick=()=>{ F.length=0; refresh(); };
+  $('#clearAll',root).onclick=()=>{ FS.clear(); refresh(); };
 
-  async function loadExample(k){ const d=await gunzipB64(EX[k]); await addTexts(Object.entries(d).map(([name,text])=>({name,text}))); }
+  async function loadExample(k){ const d=await gunzipB64(EX[k]); await addItems(Object.entries(d).map(([name,text])=>({name, content:text}))); }
   async function addFiles(files){
     const big=files.filter(f=>f.size>80e6); if(big.length) toast('Se omitieron archivos de más de 80 MB: '+big.map(f=>f.name).join(', '));
-    const items=await Promise.all(files.filter(f=>f.size<=80e6).map(async f=>({name:f.name, text:await f.text()})));
-    await addTexts(items);
+    // bytes originales: el conjunto de archivos decide texto (lectores textuales) o bytes (mallas binarias)
+    const items=await Promise.all(files.filter(f=>f.size<=80e6).map(async f=>({name:f.name, content:await f.arrayBuffer()})));
+    await addItems(items);
   }
-  async function addTexts(items){
-    for (const it of items){ const i=F.findIndex(f=>f.name===it.name); if(i>=0) F.splice(i,1); }
-    const lua=items.filter(it=>/\.jsonl$/i.test(it.name)), rest=items.filter(it=>!/\.jsonl$/i.test(it.name));
-    // pass already-loaded .KP files so .EIG gets its weights
-    const kps=F.filter(f=>f.kind==='kp').map(f=>({name:f.name, content:f.text}));
-    const parsed=parseMany([...rest.map(it=>({name:it.name, content:it.text})), ...kps]).slice(0, rest.length);
-    for (let i=0;i<rest.length;i++) F.push({ name:rest[i].name, size:rest[i].text.length, text:rest[i].text, ...parsed[i], hash:await sha256(rest[i].text) });
-    for (const it of lua){ let data=null, error=null; try{ data=it.text.split(/\n/).filter(l=>l.trim()).map(l=>JSON.parse(l)); }catch(e){ error='JSON inválido en '+it.name; }
-      F.push({ name:it.name, size:it.text.length, text:it.text, kind:'live', data, error, hash:await sha256(it.text) }); }
+  async function addItems(items){
+    for (const it of items){ it.size=typeof it.content==='string'?new TextEncoder().encode(it.content).length:it.content.byteLength; it.hash=await sha256(it.content); }
+    await FS.add(items);   // relee y vuelve a enlazar .EIG/.KP sea cual sea el orden de carga
     if (!view.alive) return;   // la lectura terminó después de abandonar la vista: no crear visores ni paneles
     refresh();
   }
-  function label(f){ return f.name.replace(/\.(out|fdf|bands|EIG|KP|PDOS\.xml|PDOS|DOS|EPSIMG|XV|STRUCT_OUT|MDE|ANI|FA|ion\.xml|ion|jsonl|log|dftlab\.json)$/i,''); }
-  function fileTable(){
-    $('#fileTab',root).innerHTML=F.length?`<thead><tr><th>Archivo</th><th>tipo</th><th>tamaño</th><th>estado</th><th></th></tr></thead><tbody>${F.map((f,i)=>`<tr><td>${esc(f.name)}</td><td>${KIND_NAME[f.kind]||f.kind}</td><td>${(f.size/1024).toFixed(1)} KB</td><td style="color:${f.error||!f.data?css('--bad'):css('--ok')}">${f.error?esc(f.error):f.data?'leído':'sin lector'}</td><td><button class="tiny" data-rm="${i}">quitar</button></td></tr>`).join('')}</tbody>`:'';
-    $$('[data-rm]',root).forEach(b=>b.onclick=()=>{ F.splice(+b.dataset.rm,1); refresh(); });
+  function label(f){ return f.name.replace(/\.(out|fdf|bands|EIG|KP|PDOS\.xml|PDOS|DOS|EPSIMG|XV|STRUCT_OUT|MDE|ANI|FA|ion\.xml|ion|jsonl|log|dftlab\.json|RHO|DRHO|RHOXC|BADER|TOTAL_CHARGE|VH|VT|VNA|VXC|LDOS|IORHO)$/i,''); }
+  // Qué se ve de cada archivo en esta pantalla: distingue «leído» de «visualizado».
+  function shown(f, geoSrc){
+    const pd=get('pdos').length>0;
+    switch(f.kind){
+      case 'out': return f.name===geoSrc?'resumen, gráficas y geometría':'resumen y gráficas';
+      case 'bands': case 'pdos': case 'epsimg': case 'mde': case 'live': case 'ion-xml': case 'ion': case 'psf': case 'psml': case 'grid': return 'visualizado';
+      case 'eig': return (pd?'leído; la DOS se muestra desde la PDOS':'DOS visualizada')+' · pesos y k: '+(f.link?.kp?f.link.kp:'uniformes (sin .KP)');
+      case 'kp': return f.link?.usedBy?.length?'pesos y k para '+f.link.usedBy.join(', '):'sin .EIG con la misma etiqueta';
+      case 'fdf': return get('out').some(g=>label(g)===label(f))?'usado en el resumen':'leído; sin gráfica en esta pantalla';
+      case 'xv': case 'struct': return f.name===geoSrc?'geometría visualizada':'leído; se muestra la geometría de '+geoSrc;
+      case 'dftlab-pack': { const c=packContents(f.data), on=[c.bands&&'bandas',c.dos&&'DOS',c.structure&&(f.name===geoSrc?'estructura':null),c.gap&&'gap'].filter(Boolean);
+        return (on.length?'visualizado: '+on.join(', '):'nada visualizable')+(c.extras.length?' · no se visualiza en esta pantalla: '+c.extras.map(x=>x.label).join('; '):''); }
+      default: return 'leído; sin gráfica en esta pantalla';
+    }
+  }
+  function fileTable(geoSrc){
+    const st=f=>f.error?{c:'--bad',t:f.error}:!f.data?{c:'--bad',t:'sin lector'}:{c:f.link?.note?'--warn':'--ok',t:shown(f,geoSrc)+(f.link?.note?' · '+f.link.note:'')};
+    $('#fileTab',root).innerHTML=F.length?`<thead><tr><th>Archivo</th><th>tipo</th><th>tamaño</th><th>estado</th><th></th></tr></thead><tbody>${F.map((f,i)=>{ const s2=st(f); return `<tr><td>${esc(f.name)}</td><td>${esc(KIND_NAME[f.kind]||f.kind)}</td><td>${(f.size/1024).toFixed(1)} KB</td><td style="color:${css(s2.c)};white-space:normal;min-width:24ch" data-status="${esc(f.name)}">${esc(s2.t)}</td><td><button class="tiny" data-rm="${i}">quitar</button></td></tr>`; }).join('')}</tbody>`:'';
+    $$('[data-rm]',root).forEach(b=>b.onclick=()=>{ FS.removeAt(+b.dataset.rm); refresh(); });
     ['#clearAll','#repMd','#repJson'].forEach(s=>$(s,root).hidden=!F.length);
   }
-  const get=kind=>F.filter(f=>f.kind===kind&&f.data);
+  const get=FS.get;
   const panel=(id,title,tools='',wide=true)=>`<section class="panel${wide?' wide':''}" id="${id}"><div class="ph"><h2>${title}</h2><div class="btnrow">${tools}</div></div><div class="pb"></div></section>`;
   const body=id=>$('#'+id+' .pb',root);
   const addExp=()=>$$('#ppOut canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow'); if(!ph.querySelector('.export')) ph.append(exportBar(cv,cv.dataset.export)); });
@@ -137,11 +149,11 @@ export function mount(root, view){
     chart($('#cv_'+id,root),{xlim:[S.bands.emin,S.bands.emax],ylim:spin?[-ymax,ymax]:[0,ymax],xlabel:'E − E_F (eV)',ylabel:'estados/eV',series,legend:true,vlines:[{x:0,dash:[4,3],label:'E_F'}],hlines:spin?[{y:0}]:[],
       read:x=>{ if(x==null) return 'Electrones hasta E_F: '+ints.map(i=>`<span>${esc(i.label)} <b>${fmt(i.q,3)}</b></span>`).join(''); return series.slice(0,8).map(s=>{ const pt=s.d.reduce((b,q)=>Math.abs(q[0]-x)<Math.abs(b[0]-x)?q:b,s.d[0]); return `<span><span class="sw" style="background:${s.color}"></span>${esc(s.label)} <b>${fmt(pt[1],2)}</b></span>`; }).join(''); },readEl:$('#rd_'+id,root)});
   }
-  function drawEigDos(id,e){
+  function drawEigDos(id,e,link){
     const d=computeDOS(e,{sigma:0.1,de:0.01}); const ef=e.fermi; const E=Array.from(d.energy);
     chart($('#cv_'+id,root),{xlim:[S.bands.emin,S.bands.emax],ylim:[0,Math.max(...d.total)*1.05],xlabel:'E − E_F (eV)',ylabel:'estados/eV/celda',legend:true,vlines:[{x:0,dash:[4,3],label:'E_F'}],
       series:d.dos.length>1?d.dos.map((c,s)=>({d:E.map((x,i)=>[x-ef,c[i]]),color:[css('--up'),css('--dn')][s],width:1.7,label:['espín ↑','espín ↓'][s]})):[{d:E.map((x,i)=>[x-ef,d.total[i]]),color:css('--accent'),width:1.8,label:'DOS (σ = 0.1 eV)',fill:0,fillAlpha:0.08}],nohover:true});
-    const g=analyzeGap(e); $('#rd_'+id,root).innerHTML=`<span>${g.type==='metal'?'metal':`gap <b>${fmt(g.gap,3)} eV</b> ${g.type==='direct'?'directo':'indirecto'}`}</span><span>${e.nk} puntos k, ${e.nBands} bandas</span><span>electrones bajo E_F <b>${fmt(d.electronsBelowFermi,3)}</b></span>`;
+    const g=analyzeGap(e); $('#rd_'+id,root).innerHTML=`<span>${g.type==='metal'?'metal':`gap <b>${fmt(g.gap,3)} eV</b> ${g.type==='direct'?'directo':'indirecto'}`}</span><span>${e.nk} puntos k, ${e.nBands} bandas</span><span>electrones bajo E_F <b>${fmt(d.electronsBelowFermi,3)}</b></span><span>pesos <b>${esc(link?.weights||'uniformes (1/nk)')}</b></span>`;
   }
   function drawOpt(id,eps){
     const sp=opticalSpectrum(eps), q=S.opt, E=Array.from(sp.energy);
@@ -150,6 +162,19 @@ export function mount(root, view){
     const ys=series.flatMap(s=>s.d.filter(p=>p[0]>0.3).map(p=>p[1])); const lo=Math.min(0,...ys), hi=Math.max(...ys)*1.05;
     chart($('#cv_'+id,root),{xlim:[0,Math.min(E[E.length-1],25)],ylim:[lo,hi],xlabel:'ħω (eV)',ylabel:Q[0][1],series,legend:true,hlines:[{y:0}],nohover:false,
       read:x=>x==null?`f-sum: ${eps.fsumRule?.map(v=>fmt(v,3)).join(', ')||'—'}`:series.map(s=>{ const p=s.d.reduce((b,q)=>Math.abs(q[0]-x)<Math.abs(b[0]-x)?q:b,s.d[0]); return `<span>${s.label} <b>${fmt(p[1],3)}</b></span>`; }).join('')+`<span>ħω <b>${fmt(x,2)} eV</b></span>`,readEl:$('#rd_'+id,root)});
+  }
+  function drawPackDos(id,D){
+    const E=Array.from(D.energy,e=>e-D.fermi), pal=[css('--orb-s'),css('--orb-p'),css('--orb-d'),css('--orb-f')];
+    let series;
+    if(D.nChannels===2) series=D.total.map((c,s)=>({d:E.map((x,i)=>[x,s?-c[i]:c[i]]),color:[css('--up'),css('--dn')][s],width:1.7,label:['espín ↑','espín ↓ (negativo)'][s]}));
+    else series=[{d:E.map((x,i)=>[x,D.total[0][i]]),color:css('--accent'),width:1.8,label:'total',fill:0,fillAlpha:0.08},...(D.byL?D.byL.names.map((n,g)=>({d:E.map((x,i)=>[x,D.byL.data[0][g][i]]),color:pal[g%4],width:1.4,label:n})):[])];
+    const ys=series.flatMap(s=>s.d.map(p=>p[1])), hi=Math.max(...ys)*1.05, lo=Math.min(0,...ys)*1.05;
+    chart($('#cv_'+id,root),{xlim:[S.bands.emin,S.bands.emax],ylim:[lo,hi||1],xlabel:'E − E_F (eV)',ylabel:'estados/eV/celda',series,legend:true,vlines:[{x:0,dash:[4,3],label:'E_F'}],hlines:D.nChannels===2?[{y:0}]:[],nohover:true});
+    $('#rd_'+id,root).textContent=`DOS del paquete: σ = ${D.sigma} eV, malla MP ${(D.mp||[]).join('×')} (${D.nk} puntos k); electrones bajo E_F ${D.electronsBelowFermi}.`;
+  }
+  function drawGrid(id,g,axis){
+    const avg=planarAverage(g,axis,0,1), ys=avg.map(p=>p[1]), lo=Math.min(...ys), hi=Math.max(...ys), pad=(hi-lo)*0.08||Math.abs(hi)*0.1||1;
+    chart($('#cv_'+id,root),{xlim:[0,Math.hypot(...g.cell[axis])],ylim:[lo-pad,hi+pad],xlabel:`posición a lo largo de ${'abc'[axis]} (Å)`,ylabel:`promedio planar (${g.units})`,series:[{d:avg,color:css('--accent'),width:2,label:'promedio planar'}],legend:false,nohover:true});
   }
   function drawMde(id,m){
     const c=m.columns, n=c.step.length; const keys=[['temperature','T (K)',css('--warn')],['eKS','E_KS (eV)',css('--accent')],['eTot','E_tot (eV)',css('--orb-d')]].filter(k=>c[k[0]]);
@@ -179,20 +204,23 @@ export function mount(root, view){
   // geometry from the best available source
   function geometry(){
     const xv=get('xv')[0], st=get('struct')[0], out=get('out')[0];
-    let cell=null, src='';
-    if (xv){ const d=xv.data; cell={lattice:d.cell, positions:cartToFrac(d.cell,d.positions), numbers:Array.from(d.Z)}; src=xv.name; }
-    else if (st){ const d=st.data; cell={lattice:d.cell, positions:d.fractional, numbers:Array.from(d.Z)}; src=st.name; }
+    let cell=null, src='', file='';
+    if (xv){ const d=xv.data; cell={lattice:d.cell, positions:cartToFrac(d.cell,d.positions), numbers:Array.from(d.Z)}; src=file=xv.name; }
+    else if (st){ const d=st.data; cell={lattice:d.cell, positions:d.fractional, numbers:Array.from(d.Z)}; src=file=st.name; }
     else if (out && out.data.cell && (out.data.finalCoordinates||out.data.initialGeometry)){ const o=out.data, g=o.finalCoordinates||o.initialGeometry;
       const pos=g.positions||g.coords; const sp=(o.species||[]); const Z=(g.species||[]).map(s=>{ const S2=sp.find(q=>q.index===s||q.label===s); return S2?S2.Z:atomicNumber(String(s)); });
-      if(pos&&Z.length===pos.length&&Z.every(z=>z>0)){ cell={lattice:o.cell, positions:cartToFrac(o.cell,pos), numbers:Z}; src=out.name+' (coordenadas finales)'; } }
-    return cell?{cell,src}:null;
+      if(pos&&Z.length===pos.length&&Z.every(z=>z>0)){ cell={lattice:o.cell, positions:cartToFrac(o.cell,pos), numbers:Z}; src=out.name+' (coordenadas finales)'; file=out.name; } }
+    if (!cell){ const pk=get('dftlab-pack').find(f=>packStructure(f.data)); if(pk){ cell=packStructure(pk.data); src=file=pk.name; } }
+    return cell?{cell,src,file}:null;
   }
 
   const S={bands:{emin:-8,emax:6}, pdosMode:'species+l', pdosSpin:true, opt:'eps', mde:'temperature'};
   function refresh(){
-    fileTable(); destroy();
+    destroy();
+    const geo=geometry(); fileTable(geo?.file);
     const out=$('#ppOut',root); let h='';
-    const outs=get('out'), bands=get('bands'), pd=get('pdos'), eig=get('eig'), eps=get('epsimg'), mde=get('mde'), live=get('live'), ions=[...get('ion-xml'),...get('ion')], pss=[...get('psf'),...get('psml')], geo=geometry();
+    const outs=get('out'), bands=get('bands'), pd=get('pdos'), eig=get('eig'), eps=get('epsimg'), mde=get('mde'), live=get('live'), ions=[...get('ion-xml'),...get('ion')], pss=[...get('psf'),...get('psml')], grids=get('grid');
+    const packs=get('dftlab-pack').map(f=>({f, B:packBands(f.data), D:packDOS(f.data), C:packContents(f.data)}));
     outs.forEach((f,i)=>{ h+=panel('sum'+i,`Resumen · ${esc(f.data.systemLabel||label(f))}`);
       if(f.data.scf?.length) h+=panel('scf'+i,'Convergencia SCF','',false).replace('<div class="pb"></div>',`<div class="pb"><canvas data-export="${esc(label(f))}_scf" id="cv_scf${i}" style="height:250px"></canvas><div class="readout" id="rd_scf${i}"></div></div>`);
       if((f.data.trajectory||[]).length>1) h+=panel('tr'+i,'Trayectoria de la geometría','',false).replace('<div class="pb"></div>',`<div class="pb"><canvas data-export="${esc(label(f))}_trayectoria" id="cv_tr${i}" style="height:220px"></canvas><canvas data-export="${esc(label(f))}_fuerza" id="cv2_tr${i}" style="height:180px;margin-top:8px"></canvas><div class="readout" id="rd_tr${i}"></div></div>`);
@@ -207,6 +235,13 @@ export function mount(root, view){
     live.forEach((f,i)=>{ h+=panel('lv'+i,`Hook Lua · ${esc(f.name)}`,'',true).replace('<div class="pb"></div>',`<div class="pb"><canvas data-export="${esc(label(f))}_lua" id="cv_lv${i}" style="height:260px"></canvas><div class="readout" id="rd_lv${i}"></div></div>`); });
     ions.forEach((f,i)=>{ h+=panel('io'+i,`Base · ${esc(f.name)}`,'',false).replace('<div class="pb"></div>',`<div class="pb"><canvas data-export="${esc(label(f))}_orbitales" id="cv_io${i}" style="height:250px"></canvas></div>`); });
     pss.forEach((f,i)=>{ h+=panel('ps'+i,`Pseudopotencial · ${esc(f.name)}`,'',false).replace('<div class="pb"></div>',`<div class="pb"><canvas data-export="${esc(label(f))}_pseudo" id="cv_ps${i}" style="height:250px"></canvas></div>`); });
+    packs.forEach(({f,B,D,C},i)=>{
+      if(B) h+=panel('pb'+i,`Bandas · ${esc(f.name)}`,!bands.length&&i===0?energyTools:'').replace('<div class="pb"></div>',`<div class="pb"><canvas data-export="${esc(label(f))}_bandas" id="cv_pb${i}" style="height:340px"></canvas><div class="readout" id="rd_pb${i}"></div></div>`);
+      if(D) h+=panel('pk'+i,`DOS · ${esc(f.name)}`,'',false).replace('<div class="pb"></div>',`<div class="pb"><canvas data-export="${esc(label(f))}_dos" id="cv_pk${i}" style="height:260px"></canvas><div class="readout" id="rd_pk${i}"></div></div>`);
+      const gp=f.data.gap, src=f.data.source||{};
+      h+=panel('pi'+i,`Paquete · ${esc(f.name)}`,'',false).replace('<div class="pb"></div>',`<div class="pb"><dl class="kv"><dt>origen</dt><dd>${esc([src.systemLabel,src.hamiltonian].filter(Boolean).join(' · ')||'—')}</dd><dt>generador</dt><dd>${esc(f.data.generator||'—')}</dd><dt>espín</dt><dd>${esc(f.data.spin?.kind||'—')}</dd><dt>E_F</dt><dd>${fmt(f.data.fermi,4)} eV</dd><dt>gap</dt><dd>${gp?(gp.metallic?'metal':`${fmt(gp.gap,3)} eV, ${gp.type==='direct'?'directo':'indirecto'}`)+(gp.source?' ('+esc(gp.source)+')':''):'—'}</dd></dl>${C.extras.length?`<p class="note" data-pack-missing>Esta pantalla todavía no visualiza: ${esc(C.extras.map(x=>x.label).join('; '))}. Los datos están en el archivo y en «exportar datos».</p>`:''}${!B||!D?`<p class="note">El paquete no trae ${[!B&&'bandas',!D&&'DOS'].filter(Boolean).join(' ni ')} utilizables.</p>`:''}</div>`);
+    });
+    grids.forEach((f,i)=>{ const g=f.data; h+=panel('gr'+i,`Malla · ${esc(f.name)}`,`<div class="seg" id="grAx${i}"><button data-v="0">a</button><button data-v="1">b</button><button data-v="2">c</button></div>`,false).replace('<div class="pb"></div>',`<div class="pb"><dl class="kv"><dt>malla</dt><dd>${g.mesh.join(' × ')}${g.nspin>1?` · ${g.nspin} espines (se muestra el primero)`:''}</dd><dt>celda a, b, c</dt><dd>${g.cell.map(v=>fmt(Math.hypot(...v),3)).join(', ')} Å</dd><dt>volumen</dt><dd>${fmt(g.volume,2)} Å³</dd><dt>unidades</dt><dd>${esc(g.units)}</dd>${g.units==='e/Bohr³'?`<dt>∫ sobre la celda</dt><dd>${fmt(gridIntegral(g),4)} e</dd>`:''}</dl><canvas data-export="${esc(label(f))}_planar" id="cv_gr${i}" style="height:220px"></canvas><p class="note">Promedio planar en las unidades del archivo. Para cortes 2D y perfiles usa <a href="#${g.units==='Ry'?'potencial':'densidad'}">${g.units==='Ry'?'Potencial y función trabajo':'Densidad y cargas'}</a>.</p></div>`); });
     if (geo) h+=panel('geo','Geometría',`<button class="tiny" data-fmt="cif">CIF</button><button class="tiny" data-fmt="xyz">XYZ</button><button class="tiny" data-fmt="extxyz">extXYZ</button><button class="tiny" data-fmt="poscar">POSCAR</button><button class="tiny" data-fmt="fdf">fdf</button><button class="tiny" id="geoPng">imagen</button>`).replace('<div class="pb"></div>',`<div class="pb"><div class="split2"><dl class="kv" id="geoKv"></dl><div class="three" id="geo3" style="height:340px;position:relative"></div></div></div>`);
     out.innerHTML=h||(F.length?'<p class="note">Ninguno de los archivos tiene un lector gráfico todavía.</p>':'');
 
@@ -214,12 +249,14 @@ export function mount(root, view){
     const ef=outs[0]?.data?.fermi;
     bands.forEach((f,i)=>drawBands('bd'+i,f.data,f.data.fermi??ef));
     pd.forEach((f,i)=>{ seg($('#pdMode'+i,root),S.pdosMode,v=>{ S.pdosMode=v; drawPdos('pd'+i,f.data); }); const sb=$('#pdSpin'+i,root); if(sb){ sb.setAttribute('aria-pressed',S.pdosSpin); sb.onclick=()=>{ S.pdosSpin=!S.pdosSpin; sb.setAttribute('aria-pressed',S.pdosSpin); drawPdos('pd'+i,f.data); }; } drawPdos('pd'+i,f.data); });
-    if(!pd.length) eig.forEach((f,i)=>drawEigDos('eg'+i,f.data));
+    if(!pd.length) eig.forEach((f,i)=>drawEigDos('eg'+i,f.data,f.link));
     eps.forEach((f,i)=>{ seg($('#opSel'+i,root),S.opt,v=>{ S.opt=v; drawOpt('op'+i,f.data); }); drawOpt('op'+i,f.data); });
     mde.forEach((f,i)=>{ seg($('#mdSel'+i,root),S.mde,v=>{ S.mde=v; drawMde('md'+i,f.data); }); drawMde('md'+i,f.data); });
     live.forEach((f,i)=>drawLive('lv'+i,f.data)); ions.forEach((f,i)=>drawIon('io'+i,f.data)); pss.forEach((f,i)=>drawPseudo('ps'+i,f.data));
+    packs.forEach(({B,D},i)=>{ if(B) drawBands('pb'+i,B,B.fermi); if(D) drawPackDos('pk'+i,D); });
+    grids.forEach((f,i)=>{ seg($('#grAx'+i,root),'2',v=>drawGrid('gr'+i,f.data,+v)); drawGrid('gr'+i,f.data,2); });
     const eMin=$('#eMin',root), eMax=$('#eMax',root);
-    if(eMin){ const upd=()=>{ S.bands.emin=+eMin.value; S.bands.emax=+eMax.value; bands.forEach((f,i)=>drawBands('bd'+i,f.data,f.data.fermi??ef)); pd.forEach((f,i)=>drawPdos('pd'+i,f.data)); }; eMin.onchange=upd; eMax.onchange=upd; }
+    if(eMin){ const upd=()=>{ S.bands.emin=+eMin.value; S.bands.emax=+eMax.value; bands.forEach((f,i)=>drawBands('bd'+i,f.data,f.data.fermi??ef)); pd.forEach((f,i)=>drawPdos('pd'+i,f.data)); packs.forEach(({B,D},i)=>{ if(B) drawBands('pb'+i,B,B.fermi); if(D) drawPackDos('pk'+i,D); }); }; eMin.onchange=upd; eMax.onchange=upd; }
     if (geo) showGeo(geo);
     addExp();
   }
@@ -247,11 +284,17 @@ export function mount(root, view){
       if(o.finalEnergy) t+='\n| término | eV |\n|---|---|\n'+Object.entries(o.finalEnergy).filter(([k,v])=>isFinite(v)).map(([k,v])=>`| ${k} | ${v} |`).join('\n')+'\n';
       if(o.warnings?.length) t+='\nAvisos de SIESTA:\n\n'+o.warnings.slice(0,20).map(w=>'- '+w.text).join('\n')+'\n'; }
     for (const f of get('bands')){ const e=bandEdges(f.data); t+=`\n## Bandas (${f.name})\n\n- ${f.data.nBands} bandas, ${f.data.nSpin} canal(es), ${f.data.nk} puntos k\n- ${e.metallic?'metal':`gap ${e.gap?.toFixed(4)} eV, ${e.direct?'directo':'indirecto'}`}\n`; }
+    for (const f of get('eig')){ t+=`\n## Autovalores (${f.name})\n\n- ${f.data.nk} puntos k, ${f.data.nBands} bandas; pesos: ${f.link?.weights||'uniformes (1/nk)'}; coordenadas k: ${f.link?.kpoints||'no disponibles'}\n`+(f.link?.note?`- Aviso: ${f.link.note}\n`:''); }
+    for (const f of get('dftlab-pack')){ const c=packContents(f.data); t+=`\n## Paquete (${f.name})\n\n- ${f.data.generator||'?'}; E_F ${f.data.fermi} eV; gap ${f.data.gap?.gap ?? '?'} eV (${f.data.gap?.type ?? '?'})\n`+(c.extras.length?`- No visualizado en Postproceso: ${c.extras.map(x=>x.label).join('; ')}\n`:''); }
+    for (const f of get('grid')){ t+=`\n## Malla (${f.name})\n\n- ${f.data.mesh.join(' x ')}, ${f.data.nspin} espín(es), unidades ${f.data.units}\n`; }
     for (const f of get('pdos')){ t+=`\n## PDOS (${f.name})\n\n`+groupPDOS(f.data,['species','l'],'total').map(g=>`- ${g.label}: ${integratePDOS(f.data,g.data,f.data.fermi).toFixed(3)} electrones hasta E_F`).join('\n')+'\n'; }
     t+='\nLos números de este informe se leyeron de los archivos listados; DFT Lab no ejecutó SIESTA.\n';
     downloadText(t,'informe_dftlab.md','text/markdown');
   };
-  $('#repJson',root).onclick=()=>{ const o=F.filter(f=>f.data&&f.kind!=='live').map(f=>({name:f.name, kind:f.kind, sha256:f.hash, data:toPlain(f.data)})); downloadText(JSON.stringify({dftlab:'postproceso', created:new Date().toISOString(), files:o}),'dftlab_postproceso.json','application/json'); };
+  // mallas y paquetes: metadatos y procedencia (sus arreglos completos están en el archivo original, identificado por SHA-256)
+  const exportData=f=>f.kind==='grid'?{mesh:f.data.mesh, nspin:f.data.nspin, cell:f.data.cell, units:f.data.units, volume:f.data.volume}
+    :f.kind==='dftlab-pack'?{source:f.data.source, generator:f.data.generator, spin:f.data.spin, fermi:f.data.fermi, gap:f.data.gap, contents:packContents(f.data)}:toPlain(f.data);
+  $('#repJson',root).onclick=()=>{ const o=F.filter(f=>f.data&&f.kind!=='live').map(f=>({name:f.name, kind:f.kind, sha256:f.hash, ...(f.link?{link:f.link}:{}), data:exportData(f)})); downloadText(JSON.stringify({dftlab:'postproceso', created:new Date().toISOString(), files:o}),'dftlab_postproceso.json','application/json'); };
   view.onTheme(()=>refresh());
   fileTable();
 }
