@@ -1,0 +1,19 @@
+{
+  "contract": "qraft.controller-inner-ledger@1.0",
+  "seq": 1,
+  "event": "LAUNCH_INTENT",
+  "at": "2026-10-11T19:00:00Z",
+  "task_id": "hf1-lru",
+  "attempt_id": "attempt-0001",
+  "key": {
+    "checkpoint_identity": "adaptive:5f0c",
+    "node_id": "reference"
+  },
+  "trace_id": "hf1-lru/attempt-0001/1",
+  "hosts": [
+    "node-a"
+  ],
+  "ranks": 4,
+  "cpus_per_rank": 1,
+  "argv_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

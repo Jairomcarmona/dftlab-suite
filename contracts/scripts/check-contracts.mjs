@@ -164,6 +164,67 @@ for (const [vocab, v] of Object.entries(proj?.vocabularies ?? {})) {
   }
 }
 
+// 6. Controller ledger rules (ADR-017 Adenda 1 §A.1): reference evaluator over the conformance vectors.
+// Lines are evaluated in attempt order; the first broken rule is the verdict.
+export function evaluateControllerLedger(reservation, attempts) {
+  const settled = new Map();
+  const finishedKeysByAttempt = new Map();
+  const keyOf = (line) => `${line.key.checkpoint_identity}\u0000${line.key.node_id}`;
+  let identity = null;
+  for (const attempt of attempts) {
+    const open = new Map();
+    const closed = new Map();
+    const finishedKeys = new Set();
+    let launched = false;
+    let expectedSeq = 1;
+    for (const line of attempt.lines) {
+      if (line.seq !== expectedSeq++ || line.task_id !== reservation.task_id || line.attempt_id !== attempt.attempt_id) return 'LEDGER_MALFORMED';
+      identity ??= line.key.checkpoint_identity;
+      if (line.key.checkpoint_identity !== identity) return 'LEDGER_IDENTITY_CHANGED';
+      const key = keyOf(line);
+      if (line.event === 'LAUNCH_INTENT') {
+        if (line.trace_id !== `${line.task_id}/${line.attempt_id}/${line.seq}`) return 'LEDGER_MALFORMED';
+        if (Date.parse(line.at) > Date.parse(reservation.stop_launching_at)) return 'INTENT_AFTER_DEADLINE';
+        if (!line.hosts.every((h) => reservation.hosts.includes(h))) return 'HOSTS_OUTSIDE_RESERVATION';
+        if (settled.has(key)) return 'DUPLICATE_SETTLED_LAUNCH';
+        if ([...open.values()].some((l) => l.key === key)) return 'CONCURRENT_KEY_LAUNCH';
+        if (open.size + 1 > reservation.max_concurrent) return 'CONCURRENCY_EXCEEDED';
+        const cpus = [...open.values()].reduce((s, l) => s + l.cpus, 0) + line.ranks * line.cpus_per_rank;
+        if (cpus > reservation.runtime_cpus) return 'CPU_EXCEEDED';
+        open.set(line.trace_id, { key, cpus });
+        launched = true;
+      } else if (line.event === 'LAUNCH_STARTED') {
+        if (open.get(line.trace_id)?.key !== key) return 'UNKNOWN_TRACE';
+      } else if (line.event === 'LAUNCH_FINISHED' || line.event === 'LAUNCH_ABANDONED') {
+        if (open.get(line.trace_id)?.key !== key) return 'UNKNOWN_TRACE';
+        open.delete(line.trace_id);
+        closed.set(line.trace_id, { key, finished: line.event === 'LAUNCH_FINISHED' });
+        if (line.event === 'LAUNCH_FINISHED') finishedKeys.add(key);
+      } else if (line.event === 'NODE_SETTLED') {
+        const launch = closed.get(line.trace_id);
+        if (!launch?.finished) return 'SETTLED_WITHOUT_FINISHED_LAUNCH';
+        if (launch.key !== key) return 'SETTLED_KEY_MISMATCH';
+        if (settled.has(key)) return 'DUPLICATE_SETTLEMENT';
+        settled.set(key, attempt.attempt_id);
+      } else if (line.event === 'SETTLEMENT_RECOVERED') {
+        if (launched) return 'RECOVERY_AFTER_LAUNCH';
+        if (settled.has(key)) return 'DUPLICATE_SETTLEMENT';
+        if (!finishedKeysByAttempt.get(line.source_attempt_id)?.has(key)) return 'RECOVERED_WITHOUT_LAUNCH';
+        settled.set(key, line.source_attempt_id);
+      } else return 'LEDGER_MALFORMED';
+    }
+    if (attempt.end === 'NORMAL' && open.size) return 'UNCLOSED_INTENT';
+    finishedKeysByAttempt.set(attempt.attempt_id, finishedKeys);
+  }
+  return 'ACCEPT';
+}
+const ledgerVectors = doc('fixtures/controller-ledger-rules/cases.json');
+if (!ledgerVectors?.cases?.length) fail('controller-ledger-rules: missing conformance vectors');
+for (const c of ledgerVectors?.cases ?? []) {
+  const got = evaluateControllerLedger(ledgerVectors.reservation, c.attempts);
+  if (got !== c.expect) fail(`controller-ledger-rules ${c.name}: expected ${c.expect}, evaluator gives ${got}`);
+}
+
 for (const f of failures) console.error(`FAIL ${f}`);
 console.log(`contracts: ${schemaFiles.length} schemas, ${manifest.length} fixtures, ${opIds.size} API operations; ${failures.length} failures.`);
 if (failures.length) process.exit(1);

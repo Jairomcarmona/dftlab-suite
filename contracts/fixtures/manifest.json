@@ -782,6 +782,72 @@
       "schema": "operation-request.schema.json",
       "expect": "invalid",
       "rule": "No hay plan sin preflight autoritativo (ADR-002 §2)."
+    },
+    {
+      "path": "fixtures/qraft-controller-ledger-entry/valid/launch-intent.json",
+      "schema": "qraft-controller-ledger-entry.schema.json",
+      "expect": "valid",
+      "rule": "LAUNCH_INTENT con trace_id por intento y clave estable (checkpoint_identity, node_id)."
+    },
+    {
+      "path": "fixtures/qraft-controller-ledger-entry/valid/node-settled.json",
+      "schema": "qraft-controller-ledger-entry.schema.json",
+      "expect": "valid",
+      "rule": "NODE_SETTLED copia el NodeState nativo y su evidence_digest."
+    },
+    {
+      "path": "fixtures/qraft-controller-ledger-entry/valid/settlement-recovered.json",
+      "schema": "qraft-controller-ledger-entry.schema.json",
+      "expect": "valid",
+      "rule": "Asentamiento recuperado del checkpoint, ligado al intento de origen."
+    },
+    {
+      "path": "fixtures/qraft-controller-ledger-entry/invalid/recovered-with-trace.json",
+      "schema": "qraft-controller-ledger-entry.schema.json",
+      "expect": "invalid",
+      "rule": "Un asentamiento recuperado no pertenece a un lanzamiento de este intento."
+    },
+    {
+      "path": "fixtures/qraft-controller-ledger-entry/invalid/intent-without-hosts.json",
+      "schema": "qraft-controller-ledger-entry.schema.json",
+      "expect": "invalid",
+      "rule": "Un LAUNCH_INTENT declara sus hosts."
+    },
+    {
+      "path": "fixtures/qraft-controller-ledger-entry/invalid/settled-without-native-state.json",
+      "schema": "qraft-controller-ledger-entry.schema.json",
+      "expect": "invalid",
+      "rule": "Asentar exige el estado nativo."
+    },
+    {
+      "path": "fixtures/qraft-controller-reservation/valid/slurm-second-attempt.json",
+      "schema": "qraft-controller-reservation.schema.json",
+      "expect": "valid",
+      "rule": "Segundo intento en SLURM: 4 CPU del runtime, 8 observadas en el host, supervisor subreaper y cierre anterior probado."
+    },
+    {
+      "path": "fixtures/qraft-controller-reservation/invalid/two-nodes.json",
+      "schema": "qraft-controller-reservation.schema.json",
+      "expect": "invalid",
+      "rule": "v1 reserva un solo host, el del runtime (Adenda 1 §A.2)."
+    },
+    {
+      "path": "fixtures/qraft-controller-reservation/invalid/without-containment.json",
+      "schema": "qraft-controller-reservation.schema.json",
+      "expect": "invalid",
+      "rule": "Sin contención positiva no hay lanzamiento (Adenda 1 §A.2)."
+    },
+    {
+      "path": "fixtures/qraft-controller-reservation/invalid/closure-by-group-check.json",
+      "schema": "qraft-controller-reservation.schema.json",
+      "expect": "invalid",
+      "rule": "Un grupo de procesos ausente no prueba el cierre (Adenda 1 §A.2)."
+    },
+    {
+      "path": "fixtures/qraft-controller-reservation/invalid/relative-launcher.json",
+      "schema": "qraft-controller-reservation.schema.json",
+      "expect": "invalid",
+      "rule": "El lanzador interno es una ruta absoluta, sin PATH."
     }
   ]
 }
