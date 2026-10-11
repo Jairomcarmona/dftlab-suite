@@ -43,3 +43,18 @@ Un átomo con Z negativo en `ChemicalSpeciesLabel` (`2 -1 H_ghost`) se acepta: S
 **DL-08, `.contrib.EPSIMG`.** No había resultados previos: ni los `*.tar.gz` de corridas ni los fixtures del repo contienen un `.contrib.EPSIMG`, y los tests solo cubren el parser. Si diamante, `OpticalCalculation`, `polycrystal`. El archivo trae un bloque por polarización (`ipol` 1, 2, 3) y cada uno aporta 1/3 de ε2: **hay que sumar las tres**, no una. Suma de las tres contra `.EPSIMG`: error máximo / pico = 2.3e-5 (DZP, k 8) y 1.3e-5 (SZP, k 6, ensanche 0.2 eV; tolerancia 1e-3 declarada antes de esta segunda corrida). Hasta 0.6 % relativo en bordes muy débiles del espectro.
 
 Nota para el parser del repo: `parseContribEPSIMG` debe agrupar por `ipol` y, en polycrystal, sumar las tres para recuperar ε2.
+
+## Segunda ronda de validación (DL-03, 05, 07, 13, 14, 15)
+
+Los scripts de análisis están en `docs/development/evidencia/`. Cada criterio se declaró antes de correr, salvo donde se indica «no declarado antes». Detalle numérico en el campo `evidencia` de cada duda en `backlog_gates.json`.
+
+| Duda | Resultado |
+|---|---|
+| DL-13 | Manual y corridas: PBE, `DFTD3`, `DRSLL` y `VV` funcionan; `SCAN` aborta (`Unknown author`). Sin GW, BSE ni híbridos. |
+| DL-03 | MgO, `SaveBaderCharge`, 400 Ry: integral 20.0001 e, suma de cargas netas −0.0001, Mg +1.719. Partición propia en malla. |
+| DL-05 | GaAs, `BornCharge`: Z*(Ga) = 2.208 (exp 2.16), suma acústica 0.0045. ω_TO 293 cm⁻¹ (exp 269) y ε_ion 1.72 (≈2.0) no declarados antes. |
+| DL-07 | `kramersKronig` del repo sobre oscilador de Lorentz: error de ε₁ −0.42 % a 8 eV, −0.10 % a 12 eV, −0.02 % a 20 eV. |
+| DL-14 | H2 contra NIST-JANAF: S dentro de 0.4 J/mol/K, H(T)−H(0) dentro de 0.14 kJ/mol. La frecuencia armónica sale 6.9 % baja (criterio de ±5 % **no cumplido**). |
+| DL-15 | GaAs/AlAs (001), potencial promedio: VBO = 0.574 eV (rango declarado 0.35 a 0.65; exp ≈ 0.53). |
+
+No se pudo probar DL-06 (Pyodide): el proxy bloquea `cdn.jsdelivr.net`. DL-04 (ELF propio) no se intentó.

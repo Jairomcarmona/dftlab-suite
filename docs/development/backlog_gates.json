@@ -21,36 +21,36 @@
       "id": "DL-03",
       "afirmacion": "Se puede obtener una densidad que incluya la contribución del core para la partición de Bader (opción de SIESTA o suma propia con el core de .ion)",
       "verificacion": "Comprobar que la integral de la densidad usada reproduce el número esperado de electrones y que las cargas de Bader suman cero en un sistema neutro de referencia",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. MgO fcc a=4.21 A, PBE, DZP, MeshCutoff 400 Ry, SaveBaderCharge (manual: densidad de valencia + nucleos modelo gaussianos). Tolerancias declaradas antes: integral .BADER = 20 +-0.2 (obtenido 20.0001), suma de cargas netas = 0 +-0.05 (obtenido -0.0001), Mg neto en [+1.4,+1.9] (obtenido +1.719; literatura ~+1.7). Particion propia en malla (docs/development/evidencia/bader_ongrid.py); el codigo de Henkelman no se pudo descargar (403), lo que tambien indica que no hace falta para DL-11 si se usa algoritmo propio."
     },
     {
       "id": "DL-04",
       "afirmacion": "El ELF se puede calcular con implementación propia a partir de coeficientes de onda y orbitales atómicos",
       "verificacion": "Reproducir el ELF de un sistema simple con otro programa o con valores publicados, con tolerancia declarada antes de ejecutar",
       "estado": "ABIERTA",
-      "evidencia": ""
+      "evidencia": "Sin intento todavia (sigue ABIERTA). Referencia exacta disponible: para una sola orbital doblemente ocupada (H2) D=0 y ELF=1 en todo el espacio; requiere leer .WFSX y la base."
     },
     {
       "id": "DL-05",
       "afirmacion": "La constante dieléctrica estática necesaria para la corrección de defectos cargados es obtenible con SIESTA (ε∞ por óptica + parte iónica por cargas de Born)",
       "verificacion": "Demostrar un flujo de cargas de Born (p. ej. por polarización de fase de Berry) en un material de referencia y comparar con valor publicado; si no se puede, la corrección se declara no disponible",
-      "estado": "ABIERTA",
-      "evidencia": "Parcial (sigue ABIERTA): el manual 5.4.2 documenta BornCharge + PolarizationGrids (escribe SystemLabel.BC) por diferencias finitas con MD.TypeOfRun FC; la parte iónica de ε0 (LO-TO) la hace Vibra, 'not yet distributed with SIESTA'. Falta probarlo en un material de referencia."
+      "estado": "RESUELTA",
+      "evidencia": "Pasa para cargas de Born; ε0 parcial. GaAs primitivo, PBE, SZP, FC.Displacement 0.04 Bohr, BornCharge + PolarizationGrids (escribe .BC). Tolerancias declaradas antes: Z*(Ga) en [1.8,2.5] (obtenido 2.208; exp 2.16), |Z*(Ga)+Z*(As)|<=0.2 (obtenido 0.0045). Extra no declarado antes: con el .FC en Γ sale w_TO=293 cm-1 (exp 269, +9 %) y eps_ion=1.72 (exp ~2.0, -14 %); la regla de suma acustica del .FC se viola en 0.66 eV/A2 (~6 %). Conclusion: eps_ion y Z* son obtenibles; falta eps_inf por optica y la correccion FNV."
     },
     {
       "id": "DL-06",
       "afirmacion": "ASE funciona dentro de Pyodide en el build portátil con un tamaño y tiempo de carga aceptables",
       "verificacion": "Prueba real en navegador: importar ase, construir una supercelda y exportar .fdf; medir MB descargados y segundos",
       "estado": "ABIERTA",
-      "evidencia": ""
+      "evidencia": "Parcial (sigue ABIERTA): este entorno no puede descargar Pyodide (cdn.jsdelivr.net devuelve 403 por el proxy), asi que la prueba en navegador no se pudo hacer aqui."
     },
     {
       "id": "DL-07",
       "afirmacion": "El error de truncamiento de la transformada de Kramers-Kronig sobre ε₂ de SIESTA acota ε∞ y ε₁ con precisión declarada",
       "verificacion": "Probar con un oscilador de Lorentz analítico y con una energía máxima menor y mayor; reportar el error frente al valor exacto",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. Oscilador de Lorentz tipo Si (w0=4 eV, gamma=0.5 eV, eps1(0)=11.7) con la funcion kramersKronig del repo: error de eps1(0.5 eV) -0.42 % (Emax 8 eV), -0.10 % (12 eV), -0.02 % (20 eV): cae al subir Emax y es <5 % a 12 eV (criterio declarado antes). Sobre el eps2 real de Si (SIESTA, hasta 12 eV) eps1(0.5 eV) pasa de 13.415 (6 eV) a 13.975 (8), 14.190 (10), 14.253 (12): el cambio de 10 a 12 eV es 0.4 %. Regla de uso: avisar si eps2 en el corte supera ~5 % del pico o si el cambio al recortar 2 eV supera ~1 %."
     },
     {
       "id": "DL-08",
@@ -91,22 +91,22 @@
       "id": "DL-13",
       "afirmacion": "La versión fijada de SIESTA ofrece lo que se asume: D3, vdW-DF, SOC y la ausencia de híbridos y GW",
       "verificacion": "Leer el manual y el changelog de la versión de engine-versions.lock.json y listar cada capacidad con su sección",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. Manual 5.4.2: XC.Functional LDA|GGA|VDW (DRSLL, LMKLL, KBM, C09, BH, VV), D3 en seccion 6.26, spin-orbit en 6.8, libXC opcional; sin GW, BSE ni hibridos (solo 'hybrid parallelism' MPI+OpenMP). Corridas H2 en el binario empaquetado: PBE, DFTD3 true (D3 dispersion = -0.001634 Ry), DRSLL y VV corren; XC.authors SCAN aborta con 'Unknown author SCAN'. Cabecera del binario: NetCDF, Lua, DFT-D3. Nota: views/beyond.js escribe 'VV10'; el manual nombra la opcion 'VV'."
     },
     {
       "id": "DL-14",
       "afirmacion": "Las tablas termodinámicas del gas y los modos vibracionales moleculares dan μ(T,p) consistente con el cálculo",
       "verificacion": "Reproducir μ de H2 u O2 con una fuente citada a dos temperaturas, con tolerancia declarada antes de ejecutar",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa con salvedad. H2, PBE, TZP, 300 Ry, relajado (r=0.7722 A; exp 0.7414) y .FC (k=499 N/m). Con esas constantes y mecanica estadistica de gas ideal (rotor rigido ortho/para, oscilador armonico) contra NIST-JANAF: S(298.15 K) = 131.04 vs 130.68 (+0.36), S(1000 K) = 166.39 vs 166.22 (+0.17), tolerancia declarada antes +-1.0 J/mol/K; H(T)-H(0) = 8.460 vs 8.468 y 29.011 vs 29.148 kJ/mol (diferencias 0.008 y 0.137; tolerancia +-0.3). Las formulas validadas con constantes experimentales dan 130.39 y 165.66. SALVEDAD: la frecuencia armonica de SIESTA es 4100 cm-1 vs 4401 exp (-6.9 %), fuera de la tolerancia declarada de +-5 %; el efecto en ZPE es ~0.019 eV. Los flujos deben reportar la sensibilidad de ZPE a la base."
     },
     {
       "id": "DL-15",
       "afirmacion": "El alineamiento de bandas por potencial electrostático promedio reproduce un offset de referencia con los datos de SIESTA",
       "verificacion": "Calcular un offset de una heterounión de referencia y comparar con valor publicado; tolerancia declarada antes",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. Superred (GaAs)3/(AlAs)3 (001) de 24 atomos, PBE, SZP, 150 Ry, a=5.653 A, mas dos cristales (8x8x8). Potencial electrostatico promedio (.VH) con promedio macroscopico de ventana a/2 aplicada dos veces. VBO = 0.574 eV, dentro del rango declarado antes [0.35,0.65] eV y con el signo esperado (GaAs mas alto); experimento ~0.53 eV. Limites: una sola base y espesor, sin tension ni relajacion. Script: docs/development/evidencia/offset_banda_gaas_alas.py."
     }
   ],
   "ideas": [
