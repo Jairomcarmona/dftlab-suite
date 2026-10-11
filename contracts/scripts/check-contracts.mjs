@@ -234,6 +234,7 @@ export function evaluateControllerResume(dag, c) {
   const cid = c.checkpoint.loads ? c.checkpoint.campaign_digest : null;
   const refuse = (reason, blocking = []) => ({ decision: 'REFUSE', reason, checkpoint_identity: cid, blocking: sorted(blocking), continuation: null });
   if (cr === null) return refuse('RESUME_EVIDENCE_INVALID');
+  if (cr.native_status === 'IDENTITY_MISMATCH' && cr.changed.length === 0) return refuse('RESUME_EVIDENCE_INVALID');
   if (cr.native_status === 'IDENTITY_MISMATCH') return refuse('RESUME_INPUTS_CHANGED', cr.changed);
   if (cr.native_status !== 'NOT_ESTABLISHED' || cr.assessment !== 'NOT_ESTABLISHED' || cr.changed.length
     || cr.reusable_response_ids.length || cr.physical_equivalence !== 'NOT_ESTABLISHED') return refuse('RESUME_STATUS_UNRECOGNIZED');
