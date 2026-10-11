@@ -1,6 +1,6 @@
 # ADR-003: QRAFT dueño del runtime, HubbardFlow dueño de LR-U, plataforma dueña de operaciones e identidad
 
-Estado: **aceptado** el 2026-10-11 (T-007). Los puntos marcados «pendiente C2» esperan el inventario de API de los motores (T-009, `docs/compatibility/`).
+Estado: **aceptado** el 2026-10-11 (T-007). Actualizado el 2026-10-11 con el inventario C2 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md).
 Fecha: 2026-10-11. Fuente: [propuesta maestra](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) §2 (reglas 3 y 7), §5.1, §7, §8.1, §19.2.
 
 ## Contexto
@@ -21,15 +21,12 @@ Hay tres componentes con lógica de ejecución o ciencia: QRAFT (`Jairomcarmona/
 2. La plataforma envuelve contratos nativos por referencia (`NativeContractRef`) y no redefine sus enums, digests ni decisiones.
 3. HubbardFlow decide inventario, subespacios, perturbaciones, gates y análisis; QRAFT decide ejecución, recursos y vida de intentos en el ámbito asignado; el adaptador traduce y conserva evidencia, sin inventar ciencia.
 4. En la ruta SLURM inicial, `SchedulerGateway` envía, observa y cancela la allocation del controlador; QRAFT decide nodos y recursos dentro de ella.
-5. Los cambios de API necesarios se hacen **upstream** con fixture de consumidor y se fijan por commit/versión; no se copia código de los motores ni se importan nombres privados.
+5. Los cambios de API necesarios se hacen **upstream** con fixture de consumidor y se fijan por commit/versión; no se importan nombres privados. Los motores son de Manuel y su código puede reutilizarse sin restricción de licencia ([ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md)); se mantienen como paquetes separados por criterio técnico (baselines, pruebas y una sola definición de cada gate), no por licencia.
+6. **HubbardFlow es una capa obligatoria bajo QRAFT** (HF-1, [ADR-006](ADR-006-hubbard-hf1-hf2.md)): toda instalación operativa lo incluye fijado. La plataforma lo usa a través de `contracts/schemas/hubbard-layer-message.schema.json`.
 
-## Pendiente del inventario C2
+## Puntos del inventario C2 (resueltos)
 
-- Qué objeto de QRAFT es el punto público para componer, compilar, preparar y ejecutar (la propuesta cita `RunPreparer` y `CompiledWorkflowRuntime`; confirmar que son públicos en `4d996ea`).
-- Quién conserva cada lock nativo y dónde guarda la plataforma su proyección (T-009 lo exige explícitamente).
-- Qué export de HubbardFlow sirve hoy para `resolve_plan` y cuáles de las ocho operaciones del adaptador (§8.3) faltan upstream.
-
-Estos puntos no cambian la asignación de autoridad; solo fijan por qué interfaz se ejerce.
+El [inventario de compatibilidad](../compatibility/README.md) responde los puntos que este ADR dejó abiertos: punto público de la ruta QRAFT (falta, U-Q1), dueño de cada lock y proyección, y qué operaciones del adaptador Hubbard existen y cuáles faltan (U-H1…U-H3). No cambian la asignación de autoridad; fijan por qué interfaz se ejerce y qué cambios upstream hacen falta.
 
 ## Alternativas
 
@@ -43,6 +40,7 @@ Estos puntos no cambian la asignación de autoridad; solo fijan por qué interfa
 
 - La plataforma depende de la API pública de dos repositorios externos; cada versión forma una matriz de compatibilidad (ADR-012).
 - Una función que el motor no expone queda pendiente hasta el cambio upstream (bloque X3 de Codex).
+- Sin HubbardFlow instalado no hay instalación operativa completa; el build portátil de enseñanza no lo necesita.
 
 ## Contratos afectados
 
