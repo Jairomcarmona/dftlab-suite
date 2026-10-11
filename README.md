@@ -33,4 +33,12 @@ Los prototipos, cálculos de referencia y pseudopotenciales son material de migr
 - [ADR-013: migración gradual de la interfaz a React y TypeScript](docs/adr/ADR-013-react-typescript-ui.md), propuesta pendiente de implementar y validar.
 - [Reglas compartidas de desarrollo](docs/development/WORKING_RULES.md), utilizadas por `AGENTS.md` y `CLAUDE.md`.
 
-El flujo previsto utiliza ramas cortas y pull requests contra `main`. La CI se ejecuta en cada push y PR. Este bootstrap se creó directamente en `main`; a partir de él los cambios deben ser concretos, revisables y verificados. La protección efectiva de la rama depende de la configuración disponible en GitHub y debe comprobarse allí; este texto no implica que esté activada.
+El flujo previsto utiliza ramas cortas y pull requests contra `main`. La CI se ejecuta en cada push a `main` y cada PR. Este bootstrap se creó directamente en `main`; a partir de él los cambios deben ser concretos, revisables y verificados.
+
+**Limitación verificada el 2026-10-10:** GitHub rechazó activar la protección de `main` con HTTP 403, indicando que para este repositorio privado se requiere GitHub Pro o cambiar su visibilidad a pública. El repositorio se conserva privado y la rama todavía no está protegida. CI está configurada, pero GitHub no exige que pase para hacer push o merge. Se dejó la [configuración preparada](docs/development/github-main-protection.json) para activar los dos checks y PR obligatoria cuando esté disponible esa capacidad; cero aprobaciones evita bloquear al único colaborador. Con un equipo, deberá revisarse la política de aprobaciones.
+
+Comando para aplicar la configuración cuando la cuenta permita protección en este repositorio:
+
+```sh
+gh api --method PUT repos/Jairomcarmona/dftlab-suite/branches/main/protection --input docs/development/github-main-protection.json
+```
