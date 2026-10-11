@@ -1,0 +1,12 @@
+{
+  "name": "dftlab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DFT Lab: curso y postproceso de cálculos SIESTA en el navegador",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "serve": "python3 -m http.server -d dist 8000"
+  },
+  "devDependencies": { "esbuild": "0.25.10" }
+}

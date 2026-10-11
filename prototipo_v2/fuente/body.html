@@ -1,0 +1,135 @@
+<div class="wrap">
+<header class="top">
+  <div class="brand"><b>DFT Lab</b><span>Si · diamante</span></div>
+  <div class="chips" aria-label="Procedencia del cálculo">
+    <span class="chip">SIESTA <em>5.4.2</em></span>
+    <span class="chip">XC <em>LDA-CA</em></span>
+    <span class="chip">base <em>DZP</em></span>
+    <span class="chip">MeshCutoff <em>200 Ry</em></span>
+    <span class="chip">k SCF <em>8×8×8</em></span>
+    <span class="chip">Fd-3m <em>(227)</em></span>
+    <span class="chip">E<sub>g</sub> <em id="chipGap">—</em></span>
+  </div>
+  <nav class="seg tabs" role="group" aria-label="Sección">
+    <button data-pg="pgBands" aria-pressed="true">Bandas y óptica</button><button data-pg="pgPseudo" aria-pressed="false">Pseudopotenciales</button><button data-pg="pgXC" aria-pressed="false">XC</button>
+  </nav>
+  <div class="seg" role="group" aria-label="Modo" id="modeSeg">
+    <button id="mPost" aria-pressed="true">Postproceso</button>
+    <button id="mLearn" aria-pressed="false">Aprender</button>
+  </div>
+</header>
+
+<main class="grid page" id="pgBands">
+  <section class="panel" id="viz">
+    <div class="ph"><h2>Espacio real y recíproco</h2>
+      <div class="seg" role="group" aria-label="Vista 3D"><button id="vBZ" aria-pressed="true">Zona de Brillouin</button><button id="vSt" aria-pressed="false">Estructura</button><button id="vWf" aria-pressed="false">ψ<sub>n<b>k</b></sub></button></div></div>
+    <div class="pb"><div id="three"></div>
+      <div class="wfctl" id="wfCtl" hidden>
+        <div class="seg" role="group" aria-label="Representación"><button id="wRe" aria-pressed="true">Re ψ (±)</button><button id="wAbs" aria-pressed="false">|ψ|² con fase</button></div>
+        <label class="sl">isovalor <input type="range" id="wIso" min="0.08" max="0.8" step="0.01" value="0.3"><output id="wIsoV">0.30</output></label>
+      </div>
+      <div class="readout" id="vizRead"></div></div>
+  </section>
+
+  <section class="panel" id="bandsP">
+    <div class="ph"><h2>Bandas · camino seekpath</h2>
+      <div class="btnrow" role="group" aria-label="Carácter orbital">
+        <button class="tiny" data-proj="mix" aria-pressed="true">s/p/d</button>
+        <button class="tiny" data-proj="0" aria-pressed="false">s</button>
+        <button class="tiny" data-proj="1" aria-pressed="false">p</button>
+        <button class="tiny" data-proj="2" aria-pressed="false">d</button>
+      </div></div>
+    <div class="pb"><canvas class="c-bands" id="cBands" aria-label="Estructura de bandas"></canvas><div class="readout" id="bandRead">Pasa el cursor por las bandas. <b>Clic</b> en una banda para ver su función de onda en 3D.</div></div>
+  </section>
+
+  <section class="panel" id="dosP">
+    <div class="ph"><h2>DOS · PDOS</h2><span class="sub">20³ k · σ 0.12 eV</span></div>
+    <div class="pb"><canvas class="c-dos" id="cDos" aria-label="Densidad de estados"></canvas>
+      <div class="legend"><span><i class="sw" style="background:var(--faint)"></i>total</span><span><i class="sw" style="background:var(--orb-s)"></i>s</span><span><i class="sw" style="background:var(--orb-p)"></i>p</span><span><i class="sw" style="background:var(--orb-d)"></i>d</span></div></div>
+  </section>
+
+  <section class="panel" id="epsP">
+    <div class="ph"><h2>Función dieléctrica ε(ω)</h2>
+      <div class="legend"><span><i class="sw" style="background:var(--accent)"></i>ε₂ SIESTA</span><span><i class="sw" style="background:var(--e1)"></i>ε₁ (Kramers–Kronig)</span>
+      <button class="tiny" id="tSisl" aria-pressed="false">ε₂ reconstruido (sisl)</button></div></div>
+    <div class="pb"><canvas class="c-eps" id="cEps" aria-label="Función dieléctrica"></canvas><div class="readout" id="epsRead">Pasa el cursor por el espectro; clic para fijar ω.</div></div>
+  </section>
+
+  <section class="panel" id="decP">
+    <div class="ph"><h2>¿Qué forma este pico?</h2><span class="sub">transiciones v → c en 14³ k</span></div>
+    <div class="dec-body" id="decBody"></div>
+  </section>
+
+  <aside class="panel" id="side">
+    <div class="ph"><h2 id="sideTitle">Procedencia y controles</h2></div>
+    <div class="side-body" id="sidePost">
+      <dl class="kv" id="prov"></dl>
+      <div><h3>Controles de calidad</h3></div>
+      <div id="checks" style="display:flex;flex-direction:column;gap:6px"></div>
+      <div><h3>Convergencia SCF</h3></div>
+      <canvas id="cScf" style="height:120px" aria-label="Convergencia del SCF"></canvas>
+      <p class="note" id="scfNote"></p>
+    </div>
+    <div class="side-body" id="sideLearn" hidden></div>
+  </aside>
+</main>
+<section class="page" id="pgPseudo" hidden>
+  <div class="pghead panel">
+    <div>
+      <h1>Pseudopotenciales</h1>
+      <p class="lede">Los electrones del core casi no participan en el enlace, pero obligan a usar funciones con muchos nodos cerca del núcleo. El pseudopotencial los quita y deja un problema suave que reproduce exactamente al átomo real fuera de un radio de corte r<sub>c</sub>. Todo lo que ves aquí sale de pseudos generados con ONCVPSP (versión con salida PSML del proyecto SIESTA) y se puede usar tal cual en SIESTA.</p>
+    </div>
+    <div class="pgctl">
+      <span class="ctl-lbl">Pseudopotencial</span>
+      <div class="seg" role="group" aria-label="Pseudopotencial" id="psSel">
+        <button data-ps="si_lda" aria-pressed="true">Si · LDA</button><button data-ps="si_pbe" aria-pressed="false">Si · PBE</button><button data-ps="c_lda" aria-pressed="false">C · LDA</button><button data-ps="c_pbe" aria-pressed="false">C · PBE</button><button data-ps="si_ghost" aria-pressed="false" class="warnbtn">Si con fantasma</button>
+      </div>
+      <div class="chips" id="psChips"></div>
+    </div>
+  </div>
+  <div class="pgrid">
+    <article class="panel theory" id="psTheory"></article>
+    <div class="charts">
+      <section class="panel"><div class="ph"><h2>1 · Niveles del átomo real</h2><span class="sub">all-electron, Ha</span></div><div class="pb"><canvas id="psLev" style="height:290px"></canvas><p class="note" id="psLevNote"></p></div></section>
+      <section class="panel"><div class="ph"><h2>2 · Función de onda real vs pseudo</h2><div class="btnrow" id="psL"></div></div><div class="pb"><canvas id="psWf" style="height:290px"></canvas><div class="readout" id="psWfRead"></div></div></section>
+      <section class="panel"><div class="ph"><h2>3 · Potencial iónico por canal</h2><span class="sub">V<sub>l</sub>(r), Ha</span></div><div class="pb"><canvas id="psV" style="height:290px"></canvas><div class="readout" id="psVRead"></div></div></section>
+      <section class="panel"><div class="ph"><h2>4 · Cargas y corrección de core</h2><span class="sub">4πr²ρ(r)</span></div><div class="pb"><canvas id="psRho" style="height:290px"></canvas><div class="readout" id="psRhoRead"></div></div></section>
+      <section class="panel"><div class="ph"><h2>5 · Transferibilidad: derivada logarítmica</h2><div class="btnrow" id="psLdL"></div></div><div class="pb"><canvas id="psLd" style="height:290px"></canvas><div class="readout" id="psLdRead"></div></div></section>
+      <section class="panel"><div class="ph"><h2>6 · Dureza: error contra el cutoff</h2><span class="sub">mHa / electrón</span></div><div class="pb"><canvas id="psConv" style="height:290px"></canvas><div class="readout" id="psConvRead"></div></div></section>
+      <section class="panel wide"><div class="ph"><h2>7 · Prueba de transferibilidad: otras configuraciones</h2><span class="sub">ε all-electron vs pseudo, Ha</span></div><div class="pb" id="psTests"></div></section>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="pgXC" hidden>
+  <div class="pghead panel">
+    <div>
+      <h1>Intercambio y correlación</h1>
+      <p class="lede">Kohn–Sham es exacto salvo por un término: E<sub>xc</sub>[ρ]. Toda la diferencia entre funcionales está ahí. Esta pantalla muestra qué aproxima cada uno, dónde se nota en un cristal real y qué cambia en los resultados, con cálculos de SIESTA hechos con pseudos consistentes para cada funcional.</p>
+    </div>
+  </div>
+  <div class="pgrid">
+    <article class="panel theory" id="xcTheory"></article>
+    <div class="charts">
+      <section class="panel wide"><div class="ph"><h2>La escalera de Jacob</h2><span class="sub">Perdew, 2001</span></div><div class="pb" id="xcLadder"></div></section>
+      <section class="panel"><div class="ph"><h2>Calculadora · gas homogéneo (LDA)</h2><span class="sub">PW92</span></div>
+        <div class="pb"><div class="calc"><label class="sl">r<sub>s</sub> <input type="range" id="rsIn" min="0.5" max="8" step="0.01" value="2.0"><output id="rsOut">2.00</output></label>
+          <div class="btnrow" id="rsPre"></div></div>
+          <canvas id="xcEps" style="height:250px"></canvas><dl class="kv calcout" id="rsTab"></dl></div></section>
+      <section class="panel"><div class="ph"><h2>Calculadora · factor de realce F<sub>x</sub>(s)</h2><span class="sub">GGA</span></div>
+        <div class="pb"><div class="calc"><label class="sl">s <input type="range" id="sIn" min="0" max="3" step="0.01" value="0.6"><output id="sOut">0.60</output></label></div>
+          <canvas id="xcFx" style="height:250px"></canvas><dl class="kv calcout" id="sTab"></dl></div></section>
+      <section class="panel wide"><div class="ph"><h2>Dónde se separa la GGA de la LDA en el Si real</h2>
+        <div class="seg" role="group" aria-label="Mapa" id="mapSel"><button data-m="rho" aria-pressed="false">ρ</button><button data-m="rs" aria-pressed="false">r<sub>s</sub></button><button data-m="s" aria-pressed="true">s</button><button data-m="fx" aria-pressed="false">F<sub>x</sub><sup>PBE</sup> − 1</button></div></div>
+        <div class="pb mapwrap"><div class="mapbox"><canvas id="xcMap" style="height:330px"></canvas><canvas id="xcBar" style="height:22px"></canvas></div>
+          <div class="mapside"><div class="readout" id="mapRead">Pasa el cursor por el plano (110).</div><p class="note" id="mapNote"></p></div></div></section>
+      <section class="panel"><div class="ph"><h2>Experimento · Si con LDA y PBE</h2><span class="sub">SIESTA, E(a) y Birch–Murnaghan</span></div><div class="pb"><canvas id="xcEos" style="height:280px"></canvas><div id="eosTab"></div></div></section>
+      <section class="panel"><div class="ph"><h2>Experimento · capas de grafito</h2><button class="tiny" id="grRaw" aria-pressed="false">mostrar sin counterpoise</button></div><div class="pb"><canvas id="xcGr" style="height:280px"></canvas><div class="readout" id="grRead"></div><p class="note" id="grNote"></p></div></section>
+      <section class="panel wide"><div class="ph"><h2>Más allá: el gap con distintos funcionales</h2><span class="sub">valores típicos de la literatura, eV</span></div><div class="pb" id="gapTab"></div></section>
+    </div>
+  </div>
+</section>
+
+
+<footer>Prototipo con un cálculo real. SIESTA 5.4.2 corrió el SCF, las bandas, la PDOS y ε₂ (malla 16³, policristal) en 36 s en 4 núcleos. Las bandas gordas, la PDOS por momento angular y la descomposición de ε₂ se calcularon con sisl a partir de H(k) y S(k) del archivo si.TSHS. El camino k es el estándar de seekpath, el mismo que se escribió en el bloque BandLines del fdf. El pseudopotencial es el de los tests de SIESTA (LDA); en la app se usarían los tuyos.</footer>
+</div>

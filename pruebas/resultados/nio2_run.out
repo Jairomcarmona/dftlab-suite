@@ -1,0 +1,5 @@
+{"el": "Ni", "basis": "gth-szv-molopt-sr", "nk": 2, "nao": 28, "mesh": [55, 55, 55], "t_nm": 506.4, "conv_nm": true}
+{"U": 6.0, "conv": true, "ncyc": 11, "t": 292.8, "gap_mesh": 1.99, "moments_mulliken": [1.298, -1.298, 0.0, 0.0], "E": -370.2903026232012}
+{"U": 4.0, "conv": true, "ncyc": 7, "t": 210.0, "gap_mesh": 1.8, "moments_mulliken": [1.247, -1.247, 0.0, 0.0], "E": -370.3250048061582}
+{"U": 2.0, "conv": true, "ncyc": 8, "t": 227.1, "gap_mesh": 1.495, "moments_mulliken": [1.177, -1.177, 0.0, 0.0], "E": -370.3619198774345}
+{"U": 0.0, "conv": true, "ncyc": 7, "t": 208.5, "gap_mesh": 1.043, "moments_mulliken": [1.083, -1.083, 0.0, 0.0], "E": -370.4015366593847}

@@ -1,0 +1,661 @@
+Executable      : /opt/siesta/bin/siesta
+Version         : 5.4.2
+Architecture    : x86_64
+Compiler version: GNU-14.3.0
+Compiler flags  : -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -fno-merge-constants -isystem <prefix>/include -I<prefix>/_build_env/include -fdebug-prefix-map=<prefix>/work=/usr/local/src/conda/siesta-5.4.2 -fdebug-prefix-map=<prefix>=/usr/local/src/conda-prefix -I<prefix>/lib -fallow-argument-mismatch -O3
+Parallelisations: none
+NetCDF support
+NetCDF-4 support
+Lua support
+DFT-D3 support
+
+Runtime information:
+* Directory : /opt/run/mg/r_mg_lin050
+* Running in serial mode.
+>> Start of run:   9-OCT-2026  15:50:34
+
+                           *********************** 
+                           *  WELCOME TO SIESTA  * 
+                           *********************** 
+
+ NOTE: Siesta V5 introduces some new defaults for basis-set generation
+ NOTE: which might lead to slightly different numerical results.
+ NOTE: Please see the manual for full details and compatibility measures.
+
+
+reinit: Reading from standard input
+reinit: Dumping input in INPUT_TMP.88426
+************************** Dump of input data file ****************************
+SystemLabel mg_lin050
+XC.functional LDA
+XC.authors CA
+NumberOfSpecies 1
+NumberOfAtoms 16
+%block ChemicalSpeciesLabel
+ 1 12 Mg
+%endblock ChemicalSpeciesLabel
+PAO.BasisSize DZP
+LatticeConstant 1.0 Ang
+%block LatticeVectors
+4.520000 0.000000 0.000000
+0.000000 4.520000 0.000000
+0.000000 0.000000 18.080000
+%endblock LatticeVectors
+AtomicCoordinatesFormat Ang
+%block AtomicCoordinatesAndAtomicSpecies
+0.000000 0.000000 0.000000 1
+0.000000 2.260000 2.260000 1
+2.260000 0.000000 2.260000 1
+2.260000 2.260000 0.000000 1
+0.000000 0.000000 4.520000 1
+0.000000 2.260000 6.780000 1
+2.260000 0.000000 6.780000 1
+2.260000 2.260000 4.520000 1
+0.000000 0.000000 9.040000 1
+0.000000 2.260000 11.300000 1
+2.260000 0.000000 11.300000 1
+2.260000 2.260000 9.040000 1
+0.000000 0.000000 13.560000 1
+0.000000 2.260000 15.820000 1
+2.260000 0.000000 15.820000 1
+2.260000 2.260000 13.560000 1
+%endblock AtomicCoordinatesAndAtomicSpecies
+MeshCutoff 150 Ry
+%block kgrid_Monkhorst_Pack
+ 6 0 0 0.5
+ 0 6 0 0.5
+ 0 0 2 0.5
+%endblock kgrid_Monkhorst_Pack
+ElectronicTemperature 300 K
+DM.Tolerance 1.e-5
+MaxSCFIterations 150
+DM.UseSaveDM false
+SCF.Mixer.Method linear
+SCF.Mixer.Weight 0.5
+************************** End of input data file *****************************
+
+reinit: -----------------------------------------------------------------------
+reinit: System Name: 
+reinit: -----------------------------------------------------------------------
+reinit: System Label: mg_lin050
+reinit: -----------------------------------------------------------------------
+
+initatom: Reading input for the pseudopotentials and atomic orbitals ----------
+Species number:   1 Atomic number:   12 Label: Mg
+
+Ground state valence configuration (from tables):   3s02  3p00  3d00  4f00
+
+---- Processing specs for species: Mg
+Reading pseudopotential information in formatted form from:
+  Mg.psf
+
+---- Pseudopotential check for Mg
+
+Pseudized shells:
+3s( 2.00) rc: 2.59
+3p( 0.00) rc: 2.59
+3d( 0.00) rc: 2.59
+4f( 0.00) rc: 2.59
+Valence configuration for ps generation: (assumed as above)
+For Mg, standard SIESTA heuristics set lmxkb to 2
+ (one more than the basis l, including polarization orbitals).
+Use PS.lmax or PS.KBprojectors blocks to override.
+
+<basis_specs>
+===============================================================================
+Mg                   Z=  12    Mass=  24.305        Charge= 0.17977+309
+Lmxo=1 Lmxkb= 2    BasisType=split      Semic=F
+L=0  Nsemic=0  Cnfigmx=3
+          i=1  nzeta=2  polorb=1  (3s)  (to be polarized perturbatively)
+            splnorm:   0.15000    
+               vcte:    40.000    
+               rinn:  -0.90000    
+               qcoe:    0.0000    
+               qyuk:    0.0000    
+               qwid:   0.10000E-01
+                rcs:    0.0000      0.0000    
+            lambdas:    1.0000      1.0000    
+L=1  Nsemic=0  Cnfigmx=3
+          i=1  nzeta=0  polorb=0  (3p)  (perturbative polarization orbital) (from 3s)
+-------------------------------------------------------------------------------
+L=0  Nkbl=1  erefs: 0.17977+309
+L=1  Nkbl=1  erefs: 0.17977+309
+L=2  Nkbl=1  erefs: 0.17977+309
+===============================================================================
+</basis_specs>
+
+Using PAO.SplitTailNorm
+atom: Called for Mg                    (Z =  12)
+Maximum radius (at nrval) set to   50.00000 8518
+
+read_vps: Pseudopotential generation method:
+read_vps: ATM3      Troullier-Martins                       
+Valence charge in pseudo generation:    2.00000
+
+xc_check: Exchange-correlation functional:
+xc_check: Ceperley-Alder
+V l=0 = -2*Zval/r beyond r=  3.6077
+V l=1 = -2*Zval/r beyond r=  3.6077
+V l=2 = -2*Zval/r beyond r=  3.6077
+All V_l potentials equal beyond r=  2.5701
+This should be close to max(r_c) in ps generation
+All pots = -2*Zval/r beyond r=  3.6077
+Using large-core scheme (fit) for Vlocal
+
+atom: Estimated core radius    3.60767
+
+atom: Including non-local core corrections could be a good idea
+Fit of Vlocal with continuous 2nd derivative
+Fitting vlocal at       2.5779
+Choosing vlocal chloc cutoff:  5969  3.897234
+qtot up to nchloc:    2.00021610
+atom: Maximum radius for chlocal:    3.89723
+atom: Maximum radius for r*vlocal+2*Zval:    3.89723
+
+KBgen: Kleinman-Bylander projectors: 
+GHOST: No ghost state for L =  0
+   l= 0   rc=  2.570104   el= -0.351328   Ekb=  2.606147   kbcos=  0.289699
+GHOST: No ghost state for L =  1
+   l= 1   rc=  2.590828   el= -0.101748   Ekb=  0.968721   kbcos=  0.261645
+GHOST: No ghost state for L =  2
+   l= 2   rc=  2.622226   el=  0.013082   Ekb= -1.143769   kbcos= -0.037628
+
+KBgen: Total number of Kleinman-Bylander projectors:   9
+atom: -------------------------------------------------------------------------
+
+atom: SANKEY-TYPE ORBITALS:
+atom: Selected multiple-zeta basis: split     
+
+SPLIT: Orbitals with angular momentum L= 0
+
+SPLIT: Basis orbitals for state 3s
+
+SPLIT: PAO cut-off radius determined from an
+SPLIT: energy shift=  0.010000 Ry
+Split based on tail norm
+
+   izeta = 1
+                 lambda =    1.000000
+                     rc =    7.238756
+                 energy =   -0.339633
+                kinetic =    0.272466
+    potential(screened) =   -0.612099
+       potential(ionic) =   -1.372639
+
+   izeta = 2
+                 rmatch =    5.354643
+              splitnorm =    0.150000
+                 energy =   -0.202961
+                kinetic =    0.563677
+    potential(screened) =   -0.766639
+       potential(ionic) =   -1.574239
+
+POLgen: Perturbative polarization orbital with L=  1
+
+POLgen: Polarization orbital for state 3s
+Split based on tail norm
+
+   izeta = 1
+                     rc =    7.238756
+                 energy =   -0.035392
+                kinetic =    0.558667
+    potential(screened) =   -0.594059
+       potential(ionic) =   -1.330517
+atom: Total number of Sankey-type orbitals:  5
+
+atm_pop: Valence configuration (for local Pseudopot. screening):
+ 3s( 2.00)                                                            
+ 3p( 0.00)                                                            
+Vna: chval, zval:    2.00000   2.00000
+
+Vna:  Cut-off radius for the neutral-atom potential:   7.238756
+
+atom: _________________________________________________________________________
+
+prinput: Basis input 
+
+PAO.BasisType split     
+
+%block ChemicalSpeciesLabel
+    1   12 Mg                      # Species index, atomic number, species label
+%endblock ChemicalSpeciesLabel
+
+%block PAO.Basis                 # Define Basis set
+# WARNING: This information might be incomplete!
+Mg                    1                    # Species label, number of l-shells
+ n=3   0   2 P   1                   # n, l, Nzeta, Polarization, NzetaPol
+   7.239      5.355   
+   1.000      1.000   
+%endblock PAO.Basis
+
+prinput: ----------------------------------------------------------------------
+
+Dumping basis to NetCDF file Mg.ion.nc
+coor:   Atomic-coordinates input format  =     Cartesian coordinates
+coor:                                          (in Angstroms)
+
+siesta: Atomic coordinates (Bohr) and species
+siesta:      0.00000   0.00000   0.00000  1        1
+siesta:      0.00000   4.27078   4.27078  1        2
+siesta:      4.27078   0.00000   4.27078  1        3
+siesta:      4.27078   4.27078   0.00000  1        4
+siesta:      0.00000   0.00000   8.54156  1        5
+siesta:      0.00000   4.27078  12.81234  1        6
+siesta:      4.27078   0.00000  12.81234  1        7
+siesta:      4.27078   4.27078   8.54156  1        8
+siesta:      0.00000   0.00000  17.08312  1        9
+siesta:      0.00000   4.27078  21.35391  1       10
+siesta:      4.27078   0.00000  21.35391  1       11
+siesta:      4.27078   4.27078  17.08312  1       12
+siesta:      0.00000   0.00000  25.62469  1       13
+siesta:      0.00000   4.27078  29.89547  1       14
+siesta:      4.27078   0.00000  29.89547  1       15
+siesta:      4.27078   4.27078  25.62469  1       16
+
+siesta: System type = bulk      
+
+initatomlists: Number of atoms, orbitals, and projectors:     16    80   144
+
+siesta: ******************** Simulation parameters ****************************
+siesta:
+siesta: The following are some of the parameters of the simulation.
+siesta: A complete list of the parameters used, including default values,
+siesta: can be found in file out.fdf
+siesta:
+redata: Spin configuration                          = none
+redata: Number of spin components                   = 1
+redata: Time-Reversal Symmetry                      = T
+redata: Spin spiral                                 = F
+redata: Long output                                 =   F
+redata: Number of Atomic Species                    =        1
+redata: Charge density info will appear in .RHO file
+redata: Write Mulliken charges (when)               = none
+redata: Write Mulliken Pop.                         = NO
+redata: Write Hirshfeld charges (when)              = none
+redata: Write Voronoi charges (when)                = none
+redata: Write spin charge (when)                    = none
+redata: Matel table size (NRTAB)                    =     1024
+redata: Mesh Cutoff                                 =   150.0000 Ry
+redata: Net charge of the system                    =     0.0000 |e|
+redata: Min. number of SCF Iter                     =        0
+redata: Max. number of SCF Iter                     =      150
+redata: SCF convergence failure will abort job
+redata: SCF mix quantity                            = Hamiltonian
+redata: Mix DM or H after convergence               =   F
+redata: Recompute H after scf cycle                 =   F
+redata: Mix DM in first SCF step                    =   T
+redata: Write Pulay info on disk                    =   F
+redata: New DM Occupancy tolerance                  = 0.000000000001
+redata: No kicks to SCF
+redata: DM Mixing Weight for Kicks                  =     0.5000
+redata: Require Harris convergence for SCF          =   F
+redata: Harris energy tolerance for SCF             =     0.000100 eV
+redata: Require DM convergence for SCF              =   T
+redata: DM tolerance for SCF                        =     0.000010
+redata: Require EDM convergence for SCF             =   F
+redata: EDM tolerance for SCF                       =     0.001000 eV
+redata: Require H convergence for SCF               =   T
+redata: Hamiltonian tolerance for SCF               =     0.001000 eV
+redata: Require (free) Energy convergence for SCF   =   F
+redata: (free) Energy tolerance for SCF             =     0.000100 eV
+redata: Using DFT-D3 dispersion                     =   F
+redata: Using Saved Data (generic)                  =   F
+redata: Use continuation files for DM               =   F
+redata: Neglect nonoverlap interactions             =   F
+redata: Method of Calculation                       = Diagonalization
+redata: Electronic Temperature                      =   300.0000 K
+redata: Fix the spin of the system                  =   F
+redata: Max. number of TDED Iter                    =        1
+redata: Number of TDED substeps                     =        3
+redata: Dynamics option                             = Single-point calculation
+mix.SCF: Linear mixing                           = linear
+mix.SCF:    Mixing weight                        =     0.500000
+redata: Save all siesta data in one NC              =   F
+redata: ***********************************************************************
+
+%block SCF.Mixers
+  linear
+%endblock SCF.Mixers
+
+%block SCF.Mixer.linear
+  # Mixing method
+  method linear
+
+  # Mixing options
+  weight 0.5000
+  history 2
+%endblock SCF.Mixer.linear
+
+DM_history_depth set to one: no extrapolation allowed by default for geometry relaxation
+Size of DM history Fstack: 1
+Total number of electrons:    32.000000
+Total ionic charge:    32.000000
+ Kpoints in:           36 . Kpoints trimmed:           36
+
+siesta: k-grid: Number of k-points = 36
+siesta: k-points from Monkhorst-Pack grid
+siesta: k-cutoff (effective) =    13.560 Ang
+siesta: k-point supercell and displacements
+siesta: k-grid:     6     0     0      0.500
+siesta: k-grid:     0     6     0      0.500
+siesta: k-grid:     0     0     2      0.500
+
+diag: Algorithm                                     = D&C
+diag: Used triangular part                          = Lower
+diag: Absolute tolerance                            =  0.100E-15
+diag: Orthogonalization factor                      =  0.100E-05
+diag: Memory factor                                 =  1.0000
+
+superc: Internal auxiliary supercell:     5 x     5 x     3  =      75
+superc: Number of atoms, orbitals, and projectors:   1200   6000  10800
+
+
+ts: **************************************************************
+ts: Save H and S matrices                           =    F
+ts: Save TSHS files in MD/FC simulation             =    F
+ts: Save DM and EDM matrices                        =    F
+ts: Only save the overlap matrix S                  =    F
+ts: **************************************************************
+
+************************ Begin: TS CHECKS AND WARNINGS ************************
+************************ End: TS CHECKS AND WARNINGS **************************
+
+
+                     ====================================
+                        Single-point calculation
+                     ====================================
+
+superc: Internal auxiliary supercell:     5 x     5 x     3  =      75
+superc: Number of atoms, orbitals, and projectors:   1200   6000  10800
+
+outcell: Unit cell vectors (Ang):
+        4.520000    0.000000    0.000000
+        0.000000    4.520000    0.000000
+        0.000000    0.000000   18.080000
+
+outcell: Cell vector modules (Ang)   :    4.520000    4.520000   18.080000
+outcell: Cell angles (23,13,12) (deg):     90.0000     90.0000     90.0000
+outcell: Cell volume (Ang**3)        :    369.3816
+<dSpData1D:S at geom step 0
+  <sparsity:sparsity for geom step 0
+    nrows_g=80 nrows=80 sparsity=5.1175 nnzs=32752, refcount: 7>
+  <dData1D:(new from dSpData1D) n=32752, refcount: 1>
+refcount: 1>
+new_DM -- step:     1
+Initializing Density Matrix...
+DM filled with atomic data:
+<dSpData2D:DM initialized from atoms
+  <sparsity:sparsity for geom step 0
+    nrows_g=80 nrows=80 sparsity=5.1175 nnzs=32752, refcount: 8>
+  <dData2D:DM n=32752 m=1, refcount: 1>
+refcount: 1>
+No. of atoms with KB's overlaping orbs in proc 0. Max # of overlaps:     112      89
+
+InitMesh: MESH = 36 x 36 x 144 = 186624
+InitMesh: Mesh cutoff (required, used) =   150.000   175.319 Ry
+New grid distribution [1]: sub = 2
+
+stepf: Fermi-Dirac step function
+
+siesta: Program's energy decomposition (eV):
+siesta: Ebs     =      -205.997282
+siesta: Eions   =       909.455966
+siesta: Ena     =       448.115858
+siesta: Ekin    =       147.444376
+siesta: Enl     =        90.379394
+siesta: Eso     =         0.000000
+siesta: Edftu   =         0.000000
+siesta: DEna    =        20.032152
+siesta: DUscf   =         0.414389
+siesta: DUext   =         0.000000
+siesta: Ex      =      -151.217393
+siesta: Ec      =       -34.505759
+siesta: Exc     =      -185.723152
+siesta: EbV     =         0.000000
+siesta: eta*DQ  =         0.000000
+siesta: Emadel  =         0.000000
+siesta: Emeta   =         0.000000
+siesta: Emolmec =         0.000000
+siesta: Ekinion =         0.000000
+siesta: Eharris =      -364.279025
+siesta: Etot    =      -388.792948
+siesta: FreeEng =      -388.805375
+
+        iscf     Eharris(eV)        E_KS(eV)     FreeEng(eV)     dDmax    Ef(eV) dHmax(eV)
+   scf:    1     -364.279025     -388.792948     -388.805375  0.931163 -3.682709  0.007793
+timer: Routine,Calls,Time,% = IterSCF        1       1.377  44.55
+   scf:    2     -388.793428     -388.793188     -388.805616  0.003768 -3.684165  0.003972
+   scf:    3     -388.793309     -388.793248     -388.805678  0.001935 -3.684888  0.002024
+   scf:    4     -388.793278     -388.793263     -388.805694  0.000990 -3.685246  0.001031
+   scf:    5     -388.793270     -388.793267     -388.805698  0.000506 -3.685423  0.000525
+   scf:    6     -388.793268     -388.793268     -388.805699  0.000258 -3.685510  0.000268
+   scf:    7     -388.793268     -388.793268     -388.805699  0.000132 -3.685553  0.000139
+   scf:    8     -388.793268     -388.793268     -388.805699  0.000068 -3.685575  0.000103
+   scf:    9     -388.793268     -388.793268     -388.805699  0.000043 -3.685585  0.000464
+   scf:   10     -388.793262     -388.793266     -388.805697  0.000128 -3.685590  0.005477
+   scf:   11     -388.792284     -388.792952     -388.805383  0.001421 -3.685592  0.069571
+   scf:   12     -388.633599     -388.742009     -388.754426  0.018013 -3.685381  0.887458
+   scf:   13     -363.061235     -380.532801     -380.545278  0.227390 -3.668954 11.344041
+   scf:   14     3015.078646      700.752864      700.725085  5.156718 -4.135839132.029596
+   scf:   15    13559.185538     3182.840289     3182.826626 14.025340-39.990185304.018004
+   scf:   16    15129.184091     3089.703682     3089.695224 14.027697-48.272775300.511258
+   scf:   17    12370.814835     2308.492487     2308.488384 11.945921-40.892053252.235948
+   scf:   18    12850.884886     2615.498726     2615.496866 11.809710-37.363749271.355171
+   scf:   19    14706.927180     3165.186410     3165.181384 10.984732-44.113433281.515948
+   scf:   20    15174.934508     3297.744904     3297.744446 15.778390-44.850104309.641928
+   scf:   21    15475.455760     3322.545107     3322.532601 34.770904-44.818740319.406461
+   scf:   22    15515.514476     3361.489436     3361.489394 34.775031-45.804093286.737921
+   scf:   23    15355.809168     3343.296393     3343.286405 31.633036-45.942843317.655838
+   scf:   24    15531.230864     3335.157803     3335.147514 31.595625-44.401134317.315435
+   scf:   25    15494.106381     3351.939347     3351.930553 23.720356-45.263491291.486371
+   scf:   26    15253.721278     3309.646650     3309.646629 33.745905-45.179608318.267449
+   scf:   27    15481.503156     3334.646761     3334.646761 33.714243-44.783013315.542729
+   scf:   28    15513.696259     3351.066726     3351.064943 16.368890-45.853577296.015010
+   scf:   29    15183.738760     3278.919387     3278.914230 33.767036-44.974069317.966217
+   scf:   30    15416.839522     3333.092901     3333.091993 33.732233-45.527640313.483560
+   scf:   31    15529.647427     3358.879956     3358.876629 14.400541-46.073681299.172912
+   scf:   32    15171.632203     3252.412813     3252.409888 33.315115-44.835028317.696433
+   scf:   33    15444.480618     3340.142011     3340.133914 33.278650-44.703870307.126633
+   scf:   34    15528.680224     3356.725022     3356.723291 14.715036-45.776178306.228442
+   scf:   35    15309.715898     3267.854186     3267.854151 36.999104-44.242373317.785959
+   scf:   36    15526.569313     3355.329264     3355.329144 36.966492-45.502228292.024804
+   scf:   37    15345.148190     3329.602222     3329.602222 16.592026-46.314089313.091919
+   scf:   38    15495.972161     3321.719515     3321.707214 34.105012-44.398898318.698147
+   scf:   39    15501.967042     3355.607348     3355.607344 34.130964-45.728844287.262223
+   scf:   40    15341.200095     3341.984147     3341.973725 31.645678-45.699369317.510929
+   scf:   41    15536.430414     3337.339714     3337.330770 31.607357-44.495405317.465711
+   scf:   42    15496.225468     3352.403553     3352.394903 23.561057-45.206116291.584778
+   scf:   43    15252.497431     3309.188771     3309.188761 33.766830-45.176306318.282565
+   scf:   44    15480.169075     3334.601093     3334.601093 33.735554-44.786876315.509891
+   scf:   45    15514.157981     3351.207507     3351.205683 16.316680-45.856626296.067233
+   scf:   46    15183.333449     3278.602576     3278.597214 33.768745-44.974132317.962456
+   scf:   47    15416.380155     3333.062047     3333.060622 33.733969-45.521340313.437551
+   scf:   48    15529.603184     3358.917812     3358.914536 14.391116-46.068477299.224741
+   scf:   49    15171.762452     3252.183427     3252.180067 33.321669-44.830570317.698093
+   scf:   50    15444.232731     3339.953020     3339.944749 33.285138-44.662961307.005835
+   scf:   51    15528.588426     3356.974636     3356.973361 14.735313-45.791183306.302878
+   scf:   52    15311.936400     3268.403324     3268.403284 37.035852-44.245455317.808988
+   scf:   53    15526.524373     3355.458353     3355.458233 37.003492-45.509916291.948582
+   scf:   54    15345.135754     3329.785961     3329.785960 16.624950-46.318887313.133103
+   scf:   55    15496.867298     3321.898211     3321.886180 34.048277-44.398482318.692480
+   scf:   56    15501.547808     3355.482407     3355.482403 34.074513-45.721236287.292467
+   scf:   57    15340.772937     3341.967598     3341.957144 31.659777-45.692241317.520819
+   scf:   58    15536.543099     3337.410198     3337.401316 31.621487-44.498895317.467236
+   scf:   59    15496.285591     3352.395067     3352.386385 23.545028-45.203666291.596849
+   scf:   60    15252.304607     3309.139431     3309.139420 33.767731-45.175920318.282197
+   scf:   61    15480.080237     3334.608228     3334.608227 33.736466-44.788650315.508702
+   scf:   62    15514.196975     3351.220521     3351.218692 16.312191-45.856847296.071759
+   scf:   63    15183.298638     3278.570552     3278.565168 33.768797-44.974393317.962298
+   scf:   64    15416.345883     3333.061534     3333.060047 33.734024-45.520592313.432764
+   scf:   65    15529.598128     3358.921191     3358.917921 14.389878-46.067944299.230102
+   scf:   66    15171.775292     3252.160254     3252.156844 33.322495-44.830096317.698305
+   scf:   67    15444.216570     3339.934265     3339.925967 33.285956-44.658819306.993159
+   scf:   68    15528.571331     3356.999193     3356.997959 14.737395-45.792729306.310535
+   scf:   69    15312.168565     3268.461557     3268.461516 37.039882-44.245833317.811534
+   scf:   70    15526.520203     3355.471777     3355.471657 37.007548-45.510698291.940659
+   scf:   71    15345.134734     3329.805008     3329.805008 16.628413-46.319384313.137388
+   scf:   72    15496.957469     3321.916291     3321.904290 34.042410-44.398426318.691889
+   scf:   73    15501.505343     3355.469682     3355.469678 34.068674-45.720454287.295571
+   scf:   74    15340.728941     3341.965747     3341.955290 31.661216-45.691504317.521818
+   scf:   75    15536.554013     3337.417277     3337.408401 31.622928-44.499253317.467386
+   scf:   76    15496.291823     3352.394171     3352.385485 23.543395-45.203419291.598096
+   scf:   77    15252.284588     3309.134285     3309.134275 33.767822-45.175887318.282157
+   scf:   78    15480.071015     3334.608973     3334.608973 33.736558-44.788842315.508580
+   scf:   79    15514.201025     3351.221874     3351.220045 16.311725-45.856870296.072229
+   scf:   80    15183.295030     3278.567224     3278.561838 33.768803-44.974420317.962281
+   scf:   81    15416.342522     3333.061524     3333.060031 33.734030-45.520514313.432265
+   scf:   82    15529.597582     3358.921533     3358.918263 14.389746-46.067887299.230662
+   scf:   83    15171.776629     3252.157826     3252.154410 33.322583-44.830046317.698328
+   scf:   84    15444.214971     3339.932305     3339.924005 33.286043-44.658385306.991827
+   scf:   85    15528.569461     3357.001756     3357.000526 14.737613-45.792891306.311338
+   scf:   86    15312.192940     3268.467680     3268.467639 37.040307-44.245873317.811803
+   scf:   87    15526.519773     3355.473186     3355.473066 37.007976-45.510780291.939828
+   scf:   88    15345.134629     3329.807006     3329.807006 16.628777-46.319438313.137837
+   scf:   89    15496.966897     3321.918182     3321.906184 34.041794-44.398420318.691827
+   scf:   90    15501.500900     3355.468350     3355.468346 34.068062-45.720372287.295896
+   scf:   91    15340.724329     3341.965552     3341.955094 31.661366-45.691426317.521923
+   scf:   92    15536.555150     3337.418017     3337.409142 31.623079-44.499291317.467402
+   scf:   93    15496.292477     3352.394077     3352.385391 23.543224-45.203393291.598227
+   scf:   94    15252.282488     3309.133745     3309.133735 33.767832-45.175884318.282152
+   scf:   95    15480.070048     3334.609052     3334.609052 33.736567-44.788846315.508567
+   scf:   96    15514.201450     3351.222016     3351.220187 16.311677-45.856872296.072278
+   scf:   97    15183.294652     3278.566875     3278.561489 33.768803-44.974423317.962280
+   scf:   98    15416.342171     3333.061523     3333.060030 33.734030-45.520506313.432213
+   scf:   99    15529.597524     3358.921569     3358.918299 14.389733-46.067881299.230721
+   scf:  100    15171.776769     3252.157571     3252.154155 33.322592-44.830041317.698330
+   scf:  101    15444.214804     3339.932100     3339.923799 33.286053-44.658340306.991687
+   scf:  102    15528.569264     3357.002025     3357.000796 14.737636-45.792908306.311422
+   scf:  103    15312.195500     3268.468324     3268.468282 37.040352-44.245878317.811832
+   scf:  104    15526.519728     3355.473334     3355.473214 37.008021-45.510788291.939741
+   scf:  105    15345.134618     3329.807216     3329.807215 16.628815-46.319442313.137885
+   scf:  106    15496.967887     3321.918381     3321.906383 34.041730-44.398419318.691820
+   scf:  107    15501.500434     3355.468210     3355.468206 34.067997-45.720363287.295930
+   scf:  108    15340.723845     3341.965531     3341.955073 31.661382-45.691418317.521934
+   scf:  109    15536.555269     3337.418094     3337.409220 31.623095-44.499295317.467404
+   scf:  110    15496.292546     3352.394067     3352.385381 23.543206-45.203390291.598240
+   scf:  111    15252.282267     3309.133689     3309.133679 33.767833-45.175883318.282152
+   scf:  112    15480.069946     3334.609060     3334.609060 33.736568-44.788847315.508565
+   scf:  113    15514.201495     3351.222031     3351.220202 16.311671-45.856872296.072283
+   scf:  114    15183.294612     3278.566838     3278.561452 33.768803-44.974423317.962279
+   scf:  115    15416.342135     3333.061523     3333.060030 33.734030-45.520505313.432207
+   scf:  116    15529.597518     3358.921573     3358.918303 14.389731-46.067880299.230727
+   scf:  117    15171.776784     3252.157544     3252.154128 33.322593-44.830040317.698331
+   scf:  118    15444.214787     3339.932078     3339.923778 33.286053-44.658335306.991673
+   scf:  119    15528.569243     3357.002053     3357.000824 14.737638-45.792910306.311431
+   scf:  120    15312.195769     3268.468391     3268.468350 37.040357-44.245878317.811835
+   scf:  121    15526.519723     3355.473349     3355.473230 37.008026-45.510789291.939732
+   scf:  122    15345.134617     3329.807238     3329.807237 16.628819-46.319441313.137890
+   scf:  123    15496.967991     3321.918402     3321.906404 34.041723-44.398419318.691819
+   scf:  124    15501.500385     3355.468195     3355.468192 34.067991-45.720362287.295934
+   scf:  125    15340.723794     3341.965529     3341.955071 31.661384-45.691417317.521935
+   scf:  126    15536.555282     3337.418103     3337.409228 31.623097-44.499295317.467404
+   scf:  127    15496.292553     3352.394066     3352.385380 23.543205-45.203390291.598242
+   scf:  128    15252.282244     3309.133683     3309.133673 33.767833-45.175883318.282152
+   scf:  129    15480.069935     3334.609061     3334.609061 33.736569-44.788847315.508565
+   scf:  130    15514.201500     3351.222033     3351.220204 16.311671-45.856872296.072284
+   scf:  131    15183.294608     3278.566834     3278.561448 33.768803-44.974423317.962279
+   scf:  132    15416.342131     3333.061523     3333.060030 33.734030-45.520505313.432206
+   scf:  133    15529.597517     3358.921573     3358.918303 14.389731-46.067880299.230728
+   scf:  134    15171.776785     3252.157541     3252.154125 33.322593-44.830040317.698331
+   scf:  135    15444.214785     3339.932076     3339.923775 33.286054-44.658334306.991671
+   scf:  136    15528.569241     3357.002056     3357.000827 14.737639-45.792910306.311432
+   scf:  137    15312.195797     3268.468398     3268.468357 37.040357-44.245878317.811835
+   scf:  138    15526.519723     3355.473351     3355.473231 37.008026-45.510789291.939731
+   scf:  139    15345.134617     3329.807240     3329.807240 16.628820-46.319441313.137890
+   scf:  140    15496.968002     3321.918404     3321.906406 34.041722-44.398419318.691819
+   scf:  141    15501.500379     3355.468193     3355.468190 34.067990-45.720362287.295934
+   scf:  142    15340.723789     3341.965529     3341.955071 31.661384-45.691417317.521935
+   scf:  143    15536.555283     3337.418103     3337.409229 31.623097-44.499295317.467404
+   scf:  144    15496.292554     3352.394066     3352.385380 23.543204-45.203390291.598242
+   scf:  145    15252.282241     3309.133682     3309.133672 33.767833-45.175883318.282152
+   scf:  146    15480.069934     3334.609061     3334.609061 33.736569-44.788847315.508565
+   scf:  147    15514.201500     3351.222033     3351.220204 16.311671-45.856872296.072284
+   scf:  148    15183.294607     3278.566834     3278.561448 33.768803-44.974423317.962279
+   scf:  149    15416.342130     3333.061523     3333.060030 33.734030-45.520505313.432206
+   scf:  150    15529.597517     3358.921573     3358.918303 14.389731-46.067880299.230728
+SCF_NOT_CONV: SCF did not converge in maximum number of steps (required).
+SCF_NOT_CONV: SCF did not converge in maximum number of steps (required).
+Geom step, scf iteration, dDmax, dHmax:    0   150     14.389731    21.993053
+Geom step, scf iteration, dDmax, dHmax:    0   150     14.389731    21.993053
+
+timer: Elapsed wall time (sec) =      93.843
+timer: CPU execution times (sec):
+
+Routine            Calls   Time/call    Tot.time        %
+siesta                 1     233.259     233.259   100.00
+Setup                  1       0.242       0.242     0.10
+bands                  1       0.000       0.000     0.00
+KSV_init               1       0.000       0.000     0.00
+IterGeom               1     233.017     233.017    99.90
+geom_init              1       1.472       1.472     0.63
+state_init             1       0.323       0.323     0.14
+hsparse                1       0.045       0.045     0.02
+overlap                1       0.004       0.004     0.00
+Setup_H0               1       0.805       0.805     0.35
+naefs                  1       0.000       0.000     0.00
+dnaefs                 1       0.000       0.000     0.00
+two-body               1       0.000       0.000     0.00
+MolMec                 1       0.000       0.000     0.00
+kinefsm                1       0.005       0.005     0.00
+nlefsm                 1       0.028       0.028     0.01
+DHSCF_Init             1       0.772       0.772     0.33
+DHSCF1                 1       0.016       0.016     0.01
+InitMesh               1       0.016       0.016     0.01
+INITMESH               1       0.000       0.000     0.00
+DHSCF2                 1       0.756       0.756     0.32
+REMESH                 1       0.047       0.047     0.02
+REORD                304       0.000       0.114     0.05
+PHION                  1       0.606       0.606     0.26
+COMM_BSC             605       0.000       0.147     0.06
+POISON               152       0.007       1.127     0.48
+fft                  304       0.002       0.758     0.33
+setup_H              151       0.792     119.666    51.30
+DHSCF                151       0.791     119.405    51.19
+DHSCF3               151       0.791     119.405    51.19
+rhoofd               151       0.595      89.918    38.55
+XC                   151       0.024       3.617     1.55
+GXC-CellXC           151       0.023       3.531     1.51
+gridxc@cellXC        151       0.023       3.530     1.51
+vmat                 151       0.157      23.652    10.14
+IterSCF              150       1.544     231.541    99.26
+compute_dm           150       0.747     111.997    48.01
+diagon               150       0.746     111.970    48.00
+c-eigval            5400       0.006      32.408    13.89
+c-buildHS           5400       0.002      12.707     5.45
+cdiag              10800       0.006      60.094    25.76
+cdiag1             10800       0.001       6.172     2.65
+cdiag2             10800       0.001       9.798     4.20
+cdiag3             10800       0.004      42.781    18.34
+c-eigvec            5400       0.010      53.614    22.98
+cdiag4              5400       0.000       0.597     0.26
+c-buildD            5400       0.005      25.584    10.97
+MIXER                150       0.000       0.011     0.00
+  
+ABNORMAL_TERMINATION
+Stopping Program from Node:    0
+ABNORMAL_TERMINATION
+Stopping Program from Node:    0
+
+Program received signal SIGABRT: Process abort signal.
+
+Backtrace for this error:
+#0  0x7fec3844532f in ???
+	at ./signal/../sysdeps/unix/sysv/linux/x86_64/libc_sigaction.c:0
+#1  0x7fec3849ec0c in __pthread_kill_implementation
+	at ./nptl/pthread_kill.c:44
+#2  0x7fec3849ec0c in __pthread_kill_internal
+	at ./nptl/pthread_kill.c:78
+#3  0x7fec3849ec0c in __GI___pthread_kill
+	at ./nptl/pthread_kill.c:89
+#4  0x7fec3844527d in __GI_raise
+	at ../sysdeps/posix/raise.c:26
+#5  0x7fec384288fe in __GI_abort
+	at ./stdlib/abort.c:79
+#6  0x561f97ccd621 in ???
+#7  0x561f97cc4185 in ???
+#8  0x7fec3842a1c9 in __libc_start_call_main
+	at ../sysdeps/nptl/libc_start_call_main.h:58
+#9  0x7fec3842a28a in __libc_start_main_impl
+	at ../csu/libc-start.c:360
+#10  0x561f97cc4242 in ???
+#11  0xffffffffffffffff in ???

@@ -1,0 +1,6 @@
+/* Sección 2 · Pseudopotenciales: tabla periódica de la biblioteca */
+.ptab{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:3px;max-width:720px;margin-bottom:12px}
+.ptab button{font:600 11.5px var(--f-data);padding:5px 0;border:1px solid var(--line);border-radius:3px;background:var(--panel-2);color:var(--ink);cursor:pointer;min-width:0}
+.ptab button[aria-pressed="true"]{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+@media (max-width:520px){.ptab{gap:1px}.ptab button{font-size:9.5px;padding:4px 0}}
+#psValTbl th{text-transform:none;letter-spacing:0}

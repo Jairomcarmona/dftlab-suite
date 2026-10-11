@@ -1,0 +1,72 @@
+SystemName bcc Fe ferromagnetic
+SystemLabel fe
+NumberOfSpecies 1
+NumberOfAtoms 1
+%block ChemicalSpeciesLabel
+ 1 26 Fe
+%endblock ChemicalSpeciesLabel
+PAO.BasisSize DZP
+PAO.EnergyShift 0.02 Ry
+XC.functional GGA
+XC.authors PBE
+LatticeConstant 2.87 Ang
+%block LatticeVectors
+ -0.5  0.5  0.5
+  0.5 -0.5  0.5
+  0.5  0.5 -0.5
+%endblock LatticeVectors
+AtomicCoordinatesFormat Fractional
+%block AtomicCoordinatesAndAtomicSpecies
+ 0.0 0.0 0.0 1
+%endblock AtomicCoordinatesAndAtomicSpecies
+MeshCutoff 250 Ry
+%block kgrid_Monkhorst_Pack
+ 10 0 0 0.0
+ 0 10 0 0.0
+ 0 0 10 0.0
+%endblock kgrid_Monkhorst_Pack
+Spin polarized
+%block DM.InitSpin
+ 1 +
+%endblock DM.InitSpin
+OccupationFunction FD
+ElectronicTemperature 0.05 eV
+SCF.Mixer.Method Pulay
+SCF.Mixer.Weight 0.1
+SCF.Mixer.History 6
+SCF.DM.Tolerance 1.e-4
+MaxSCFIterations 200
+SaveHS true
+WriteMullikenPop 1
+WriteHirshfeldPop true
+WriteVoronoiPop true
+WriteForces true
+BandLinesScale ReciprocalLatticeVectors
+%block BandLines
+ 1  0.0  0.0  0.0  \Gamma
+ 25 0.5 -0.5  0.5  H
+ 18 0.0  0.0  0.5  N
+ 18 0.0  0.0  0.0  \Gamma
+ 22 0.25 0.25 0.25 P
+ 13 0.5 -0.5  0.5  H
+%endblock BandLines
+%block ProjectedDensityOfStates
+ -16.0 8.0 0.1 600 eV
+%endblock ProjectedDensityOfStates
+%block PDOS.kgrid_Monkhorst_Pack
+ 14 0 0 0.0
+ 0 14 0 0.0
+ 0 0 14 0.0
+%endblock PDOS.kgrid_Monkhorst_Pack
+OpticalCalculation true
+Optical.Energy.Minimum 0 Ry
+Optical.Energy.Maximum 1.0 Ry
+Optical.Broaden 0.15 eV
+Optical.PolarizationType polarized
+%block Optical.Vector
+ 1.0 0.0 0.0
+%endblock Optical.Vector
+%block Optical.Mesh
+ 8 8 8
+%endblock Optical.Mesh
+TS.HS.Save true

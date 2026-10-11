@@ -1,0 +1,30 @@
+SystemName Si
+NumberOfAtoms 2
+NumberOfSpecies 1
+PAO.BasisSize DZP
+PAO.EnergyShift 100 meV
+MeshCutoff 300 Ry
+%block kgrid_Monkhorst_Pack
+ 8 0 0 0.5
+ 0 8 0 0.5
+ 0 0 8 0.5
+%endblock kgrid_Monkhorst_Pack
+%block LatticeVectors
+ 0.0 0.5 0.5
+ 0.5 0.0 0.5
+ 0.5 0.5 0.0
+%endblock LatticeVectors
+AtomicCoordinatesFormat ScaledCartesian
+%block AtomicCoordinatesAndAtomicSpecies
+ 0.00 0.00 0.00 1
+ 0.25 0.25 0.25 1
+%endblock AtomicCoordinatesAndAtomicSpecies
+DM.Tolerance 1e-5
+SCF.Mixer.Method Pulay
+SCF.Mixer.Weight 0.3
+BandLinesScale ReciprocalLatticeVectors
+%block BandLines
+ 1 0.0 0.0 0.0 \Gamma
+ 20 0.5 0.0 0.5 X
+ 15 0.5 0.5 0.5 L
+%endblock BandLines

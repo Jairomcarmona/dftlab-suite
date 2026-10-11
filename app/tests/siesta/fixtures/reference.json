@@ -1,0 +1,790 @@
+{
+ "si": {
+  "out": {
+   "total": -215.654091,
+   "fermi": -4.473207,
+   "freeEng": -215.654091,
+   "nScfRows": 12,
+   "scfConvergedCount": 1,
+   "notConverged": false,
+   "version": "5.4.2",
+   "meshCutoff": [
+    200.0,
+    252.992
+   ],
+   "nk": 256,
+   "nSpecies": 1,
+   "eKS": [
+    -215.6541
+   ],
+   "maxForceConstrained": [
+    0.002252
+   ],
+   "lastSpinMoment": null,
+   "mullikenFirstCharge": -0.000105,
+   "nTimerRoutines": 61,
+   "nElectrons": 8.0,
+   "completed": true
+  },
+  "bands": {
+   "format": "BandLines",
+   "fermi": -4.473207446873441,
+   "nk": 182,
+   "nSpin": 1,
+   "nBands": 26,
+   "nLabels": 8,
+   "labelX_bohr": [
+    0.0,
+    0.612211,
+    0.82866,
+    1.203562,
+    1.85291,
+    2.3831,
+    2.815999,
+    3.122104
+   ],
+   "e_first": -16.601,
+   "e_last": 33.8532,
+   "vbm": -4.7336,
+   "cbm": -4.2563,
+   "metallic": false,
+   "pathLength_bohr": 3.122104
+  },
+  "eig": {
+   "fermi": -4.47320745,
+   "nBandsHeader": 26,
+   "nSpinHeader": 1,
+   "nk": 256,
+   "nChannels": 1,
+   "electronsStep": 8.0,
+   "metallic": false,
+   "vbm": -4.8228049,
+   "cbm": -4.10419221,
+   "gap": 0.7186126900000005,
+   "weightSum": 1.0
+  },
+  "pdos": {
+   "nspin": 1,
+   "nOrbitals": 26,
+   "fermi": -4.47320744687,
+   "nE": 600,
+   "emin": -20.0,
+   "emax": 10.0,
+   "electronsBelowFermi": 8.000000569971682,
+   "byL": {
+    "0": 2.3281147297019116,
+    "1": 4.849841964722624,
+    "2": 0.8220438755471471
+   },
+   "species": [
+    "Si"
+   ]
+  },
+  "pack": {
+   "fermi": -4.473207,
+   "gapType": "indirect",
+   "gap": 0.476265,
+   "nk": 203,
+   "nSpin": 1,
+   "nBands": 26,
+   "gamma": [
+    [
+     -16.600969314575195,
+     -4.733897686004639,
+     -4.733635902404785,
+     -4.733635902404785,
+     -2.2123641967773438,
+     -2.211808681488037,
+     -2.211808681488037,
+     -1.194687008857727,
+     2.9825358390808105,
+     2.9825358390808105,
+     7.011376857757568,
+     7.011806964874268,
+     7.011806964874268,
+     9.576412200927734,
+     20.12688636779785,
+     20.248624801635742,
+     20.248624801635742,
+     20.82093048095703,
+     20.82093048095703,
+     20.820985794067383,
+     24.16004180908203,
+     24.16037940979004,
+     24.16037940979004,
+     39.85869216918945,
+     39.858734130859375,
+     39.858734130859375
+    ]
+   ],
+   "gammaSiesta": [
+    [
+     -16.601,
+     -4.7339,
+     -4.7336,
+     -4.7336,
+     -2.2124,
+     -2.2118,
+     -2.2118,
+     -1.1947,
+     2.9825,
+     2.9825,
+     7.011399999999999,
+     7.0118,
+     7.0118,
+     9.5764,
+     20.1269,
+     20.2486,
+     20.2486,
+     20.8209,
+     20.8209,
+     20.821,
+     24.16,
+     24.1604,
+     24.1604,
+     39.8587,
+     39.8587,
+     39.8587
+    ]
+   ],
+   "electronsBelowFermi": 8.00003,
+   "nElectrons": 7.999999999999999
+  },
+  "dos": {
+   "nspin": 1,
+   "nE": 600,
+   "electronsBelowFermi": 7.9999941452790475
+  },
+  "pdos_old": {
+   "nspin": 1,
+   "nOrbitals": 26,
+   "fermi": -4.47320745,
+   "nE": 600,
+   "emin": -20.0,
+   "emax": 10.0,
+   "electronsBelowFermi": 8.000000567400598,
+   "byL": {
+    "0": 2.3281147293020563,
+    "1": 4.8498419621888464,
+    "2": 0.8220438759096963
+   },
+   "species": [
+    "Si"
+   ]
+  },
+  "bandpoints": {
+   "format": "BandPoints",
+   "fermi": -4.473217817134564,
+   "nk": 5,
+   "nSpin": 1,
+   "nBands": 26,
+   "nLabels": 0,
+   "labelX_bohr": [],
+   "e_first": -16.601,
+   "e_last": 48.5881,
+   "vbm": -4.7337,
+   "cbm": -4.1294,
+   "metallic": false,
+   "pathLength_bohr": null
+  },
+  "out_stdin": {
+   "total": -215.654091,
+   "fermi": -4.473218,
+   "freeEng": -215.654091,
+   "nScfRows": 1,
+   "scfConvergedCount": 1,
+   "notConverged": false,
+   "version": "5.4.2",
+   "meshCutoff": [
+    200.0,
+    252.992
+   ],
+   "nk": 256,
+   "nSpecies": 1,
+   "eKS": [
+    -215.6541
+   ],
+   "maxForceConstrained": [
+    0.002252
+   ],
+   "lastSpinMoment": null,
+   "mullikenFirstCharge": null,
+   "nTimerRoutines": 60,
+   "nElectrons": 8.0,
+   "completed": true
+  },
+  "epsimg": {
+   "nE": 2041,
+   "nCols": 1,
+   "fsum": [
+    0.8535
+   ],
+   "eps2MaxE": 3.93,
+   "eps2Max": 51.72477152379835,
+   "eps1": {
+    "0.0": 13.337921469544167,
+    "1.0": 14.293838749502754,
+    "3.0": 27.403403557442587
+   }
+  },
+  "ion_xml": {
+   "nOrbNl": 5,
+   "cutoffs": [
+    5.41397973258,
+    3.86222707854,
+    6.83028784952,
+    4.95706843524,
+    6.83028784952
+   ],
+   "norms": [
+    1.0000000000691018,
+    1.0000000000751292,
+    1.0000000000491833,
+    1.0000000000419835,
+    0.9999999999969543
+   ],
+   "Z": 14,
+   "valence": 4.0,
+   "nProjectors": 4
+  }
+ },
+ "fe": {
+  "out": {
+   "total": -781.751303,
+   "fermi": -5.048537,
+   "freeEng": -781.760588,
+   "nScfRows": 21,
+   "scfConvergedCount": 1,
+   "notConverged": false,
+   "version": "5.4.2",
+   "meshCutoff": [
+    250.0,
+    268.428
+   ],
+   "nk": 560,
+   "nSpecies": 1,
+   "eKS": [
+    -781.7513
+   ],
+   "maxForceConstrained": [
+    0.0
+   ],
+   "lastSpinMoment": 2.18588,
+   "mullikenFirstCharge": -0.0,
+   "nTimerRoutines": 62,
+   "nElectrons": 8.0,
+   "completed": true
+  },
+  "bands": {
+   "format": "BandLines",
+   "fermi": -5.048537210981249,
+   "nk": 97,
+   "nSpin": 2,
+   "nBands": 15,
+   "nLabels": 6,
+   "labelX_bohr": [
+    0.0,
+    1.158508,
+    1.977697,
+    2.796886,
+    3.800184,
+    4.803481
+   ],
+   "e_first": -13.7762,
+   "e_last": 53.3042,
+   "vbm": -5.0488,
+   "cbm": -5.0485,
+   "metallic": true,
+   "pathLength_bohr": 4.803481
+  },
+  "eig": {
+   "fermi": -5.04853721,
+   "nBandsHeader": 15,
+   "nSpinHeader": 2,
+   "nk": 560,
+   "nChannels": 2,
+   "electronsStep": 8.047999999999998,
+   "metallic": true,
+   "vbm": -5.06055485,
+   "cbm": -5.01950066,
+   "gap": 0.0,
+   "weightSum": 1.0
+  },
+  "pdos": {
+   "nspin": 2,
+   "nOrbitals": 15,
+   "fermi": -5.04853721098,
+   "nE": 600,
+   "emin": -16.0,
+   "emax": 8.0,
+   "electronsBelowFermi": 8.020451567225766,
+   "byL": {
+    "0": 0.4233551266488193,
+    "1": 1.3015772889636605,
+    "2": 6.295519151613286
+   },
+   "species": [
+    "Fe"
+   ],
+   "up": 5.135365648129285,
+   "down": 2.8850859190964826
+  },
+  "pack": {
+   "fermi": -5.048537,
+   "gapType": "metal",
+   "gap": 0.0,
+   "nk": 201,
+   "nSpin": 2,
+   "nBands": 15,
+   "gamma": [
+    [
+     -13.776192665100098,
+     -7.31715202331543,
+     -7.3167290687561035,
+     -7.3167290687561035,
+     -6.181430339813232,
+     -6.181430339813232,
+     30.001571655273438,
+     30.001571655273438,
+     30.004608154296875,
+     32.07333755493164,
+     35.234806060791016,
+     35.234806060791016,
+     35.23550796508789,
+     36.674808502197266,
+     36.67481231689453
+    ],
+    [
+     -13.68422794342041,
+     -5.317585468292236,
+     -5.313954830169678,
+     -5.313954830169678,
+     -3.175872325897217,
+     -3.1758718490600586,
+     30.42936134338379,
+     30.42936134338379,
+     30.430538177490234,
+     34.39340591430664,
+     36.711708068847656,
+     36.711708068847656,
+     36.71351623535156,
+     37.47907638549805,
+     37.47908020019531
+    ]
+   ],
+   "gammaSiesta": [
+    [
+     -13.7762,
+     -7.3172,
+     -7.3167,
+     -7.3167,
+     -6.1814,
+     -6.1814,
+     30.0016,
+     30.0016,
+     30.0046,
+     32.0733,
+     35.2348,
+     35.2348,
+     35.2355,
+     36.6748,
+     36.6748
+    ],
+    [
+     -13.6842,
+     -5.3176,
+     -5.314,
+     -5.314,
+     -3.1759,
+     -3.1759,
+     30.429400000000005,
+     30.429400000000005,
+     30.4305,
+     34.3934,
+     36.7117,
+     36.7117,
+     36.7135,
+     37.4791,
+     37.4791
+    ]
+   ],
+   "electronsBelowFermi": 7.990102,
+   "nElectrons": 8.0
+  },
+  "dos": {
+   "nspin": 2,
+   "nE": 600,
+   "electronsBelowFermi": 8.02044911293318
+  },
+  "epsimg": {
+   "nE": 908,
+   "nCols": 2,
+   "fsum": [
+    0.1664,
+    0.3372
+   ],
+   "eps2MaxE": 0.435,
+   "eps2Max": 136.10488066772757,
+   "eps1": {
+    "1.005": 8.530755610655737,
+    "3.0": -2.660667755911494
+   }
+  }
+ },
+ "fesoc": {
+  "out": {
+   "total": -780.939086,
+   "fermi": -4.535751,
+   "freeEng": -780.944976,
+   "nScfRows": 19,
+   "scfConvergedCount": 1,
+   "notConverged": false,
+   "version": "5.4.2",
+   "meshCutoff": [
+    250.0,
+    268.428
+   ],
+   "nk": 216,
+   "nSpecies": 1,
+   "eKS": [
+    -780.9391
+   ],
+   "maxForceConstrained": [
+    0.0
+   ],
+   "lastSpinMoment": 2.23478,
+   "mullikenFirstCharge": -0.0,
+   "nTimerRoutines": 56,
+   "nElectrons": 8.0,
+   "completed": true
+  },
+  "bands": {
+   "format": "BandLines",
+   "fermi": -4.535750919172341,
+   "nk": 97,
+   "nSpin": 1,
+   "nBands": 18,
+   "nLabels": 6,
+   "labelX_bohr": [
+    0.0,
+    1.158508,
+    1.977697,
+    2.796886,
+    3.800184,
+    4.803481
+   ],
+   "e_first": -13.139199999999999,
+   "e_last": 45.1761,
+   "vbm": -4.536,
+   "cbm": -4.5297,
+   "metallic": true,
+   "pathLength_bohr": 4.803481
+  },
+  "eig": {
+   "fermi": -4.53575092,
+   "nBandsHeader": 18,
+   "nSpinHeader": 8,
+   "nk": 216,
+   "nChannels": 1,
+   "electronsStep": 8.018518518518515,
+   "metallic": true,
+   "vbm": -4.57974258,
+   "cbm": -4.4830831,
+   "gap": 0.0,
+   "weightSum": 1.0
+  },
+  "pdos": {
+   "nspin": 4,
+   "nOrbitals": 9,
+   "fermi": -4.53575091917,
+   "nE": 400,
+   "emin": -16.0,
+   "emax": 8.0,
+   "electronsBelowFermi": 7.815651346995651,
+   "byL": {
+    "0": 0.9801013037235943,
+    "1": 0.8709871712276155,
+    "2": 5.964562872044442
+   },
+   "species": [
+    "Fe"
+   ],
+   "up": 4.999328878548462,
+   "down": 2.816322468447189
+  },
+  "pack": {
+   "fermi": -4.535751,
+   "gapType": "metal",
+   "gap": 0.0,
+   "nk": 97,
+   "nSpin": 1,
+   "nBands": 18,
+   "gamma": [
+    [
+     -13.139249801635742,
+     -12.660909652709961,
+     -6.76591682434082,
+     -6.736234664916992,
+     -6.704552173614502,
+     -5.576855659484863,
+     -5.567506790161133,
+     -4.744105339050293,
+     -4.721280574798584,
+     -4.686339378356934,
+     -2.6082706451416016,
+     -2.6064412593841553,
+     35.39341354370117,
+     35.52214813232422,
+     35.67655944824219,
+     36.93450927734375,
+     37.12960433959961,
+     37.28297805786133
+    ]
+   ],
+   "gammaSiesta": [
+    [
+     -13.139199999999999,
+     -12.660899999999998,
+     -6.7659,
+     -6.7362,
+     -6.7046,
+     -5.5769,
+     -5.5675,
+     -4.7441,
+     -4.7213,
+     -4.6863,
+     -2.6083,
+     -2.6064,
+     35.3934,
+     35.5221,
+     35.6766,
+     36.9345,
+     37.1296,
+     37.283
+    ]
+   ],
+   "electronsBelowFermi": 7.880794,
+   "nElectrons": 8.0
+  },
+  "dos": {
+   "nspin": 4,
+   "nE": 400,
+   "electronsBelowFermi": 7.815665170101391
+  },
+  "ion": {
+   "nOrb": 3,
+   "nKB": 7,
+   "lj": true
+  }
+ },
+ "relax": {
+  "out": {
+   "total": -859.756933,
+   "fermi": -4.699088,
+   "freeEng": -859.756933,
+   "nScfRows": 37,
+   "scfConvergedCount": 6,
+   "notConverged": false,
+   "version": "5.4.2",
+   "meshCutoff": [
+    120.0,
+    121.481
+   ],
+   "nk": 18,
+   "nSpecies": 1,
+   "eKS": [
+    -859.4162,
+    -859.7088,
+    -859.6245,
+    -859.7468,
+    -859.5606,
+    -859.7569
+   ],
+   "maxForceConstrained": [
+    2.793184,
+    1.024438,
+    1.380476,
+    0.318999,
+    1.394242,
+    0.084565
+   ],
+   "lastSpinMoment": null,
+   "mullikenFirstCharge": 0.007541,
+   "nTimerRoutines": 58,
+   "nElectrons": 32.0,
+   "completed": true
+  },
+  "mde": {
+   "nSteps": 6,
+   "eKS_last": -859.75693,
+   "T_last": 0.0
+  },
+  "ani": {
+   "nFrames": 6,
+   "nAtoms": 8,
+   "lastFirstAtom": [
+    -0.012118,
+    0.013044,
+    0.014664
+   ]
+  },
+  "fa": {
+   "nAtoms": 8,
+   "maxNorm": 0.10726873048709247
+  }
+ },
+ "md": {
+  "out": {
+   "total": -854.928871,
+   "fermi": -3.892584,
+   "freeEng": -854.928871,
+   "nScfRows": 50,
+   "scfConvergedCount": 8,
+   "notConverged": false,
+   "version": "5.4.2",
+   "meshCutoff": [
+    120.0,
+    121.481
+   ],
+   "nk": 4,
+   "nSpecies": 1,
+   "eKS": [
+    -855.4716,
+    -855.4791,
+    -855.4881,
+    -855.498,
+    -855.5083,
+    -855.5185,
+    -855.528,
+    -855.5363
+   ],
+   "maxForceConstrained": [
+    3.439064,
+    3.449849,
+    3.424247,
+    3.361685,
+    3.26219,
+    3.126251,
+    2.955165,
+    2.749815
+   ],
+   "lastSpinMoment": null,
+   "mullikenFirstCharge": null,
+   "nTimerRoutines": 58,
+   "nElectrons": 32.0,
+   "completed": true
+  },
+  "mde": {
+   "nSteps": 8,
+   "eKS_last": -855.53634,
+   "T_last": 671.37
+  },
+  "ani": {
+   "nFrames": 8,
+   "nAtoms": 8,
+   "lastFirstAtom": [
+    0.036278,
+    -0.055652,
+    0.012498
+   ]
+  }
+ },
+ "misc": {
+  "mg": {
+   "total": null,
+   "fermi": null,
+   "freeEng": -388.805375,
+   "nScfRows": 150,
+   "scfConvergedCount": 0,
+   "notConverged": true,
+   "version": "5.4.2",
+   "meshCutoff": [
+    150.0,
+    175.319
+   ],
+   "nk": 36,
+   "nSpecies": 1,
+   "eKS": [],
+   "maxForceConstrained": [],
+   "lastSpinMoment": null,
+   "mullikenFirstCharge": null,
+   "nTimerRoutines": 48,
+   "nElectrons": 32.0,
+   "completed": false
+  },
+  "omm": {
+   "total": -6893.953462,
+   "fermi": 0.0,
+   "freeEng": -6893.953462,
+   "nScfRows": 78,
+   "scfConvergedCount": 1,
+   "notConverged": false,
+   "version": "5.4.2",
+   "meshCutoff": [
+    150.0,
+    189.744
+   ],
+   "nk": 1,
+   "nSpecies": 1,
+   "eKS": [
+    -6893.9535
+   ],
+   "maxForceConstrained": [
+    0.000226
+   ],
+   "lastSpinMoment": null,
+   "mullikenFirstCharge": null,
+   "nTimerRoutines": 54,
+   "nElectrons": 256.0,
+   "completed": true
+  },
+  "graphite": {
+   "total": -621.861153,
+   "fermi": -5.691585,
+   "freeEng": -621.862331,
+   "nScfRows": 11,
+   "scfConvergedCount": 1,
+   "notConverged": false,
+   "version": "5.4.2",
+   "meshCutoff": [
+    300.0,
+    309.848
+   ],
+   "nk": 320,
+   "nSpecies": 1,
+   "eKS": [
+    -621.8612
+   ],
+   "maxForceConstrained": [
+    0.000449
+   ],
+   "lastSpinMoment": null,
+   "mullikenFirstCharge": null,
+   "nTimerRoutines": 59,
+   "nElectrons": 16.0,
+   "completed": true
+  }
+ },
+ "pseudo": {
+  "Si.psf": {
+   "nr": 1074,
+   "nDown": 4,
+   "nUp": 0,
+   "zval": 4.0,
+   "valenceElectrons": 4.00010416752666,
+   "rLast": 119.81407816197508
+  },
+  "Si.soft.psml": {
+   "npts": 1075,
+   "valenceElectrons": 4.000104167392296,
+   "nSemilocal": 4,
+   "nProjectors": 0
+  },
+  "Si_lda_oncv.psml": {
+   "npts": 457,
+   "valenceElectrons": 4.0000958316635575,
+   "nSemilocal": 3,
+   "nProjectors": 6
+  }
+ }
+}

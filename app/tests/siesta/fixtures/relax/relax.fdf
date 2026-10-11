@@ -1,0 +1,41 @@
+SystemName Si8 relaxation test
+SystemLabel relax
+NumberOfSpecies 1
+NumberOfAtoms 8
+%block ChemicalSpeciesLabel
+ 1 14 Si
+%endblock ChemicalSpeciesLabel
+PAO.BasisSize SZP
+XC.functional LDA
+XC.authors CA
+LatticeConstant 5.43 Ang
+%block LatticeVectors
+ 1.0 0.0 0.0
+ 0.0 1.0 0.0
+ 0.0 0.0 1.0
+%endblock LatticeVectors
+AtomicCoordinatesFormat ScaledCartesian
+%block AtomicCoordinatesAndAtomicSpecies
+ 0.00 0.00 0.00 1
+ 0.03 0.50 0.50 1
+ 0.50 0.00 0.50 1
+ 0.50 0.50 0.00 1
+ 0.25 0.25 0.27 1
+ 0.75 0.75 0.25 1
+ 0.75 0.25 0.75 1
+ 0.25 0.75 0.75 1
+%endblock AtomicCoordinatesAndAtomicSpecies
+MeshCutoff 120 Ry
+%block kgrid_Monkhorst_Pack
+ 3 0 0 0.5
+ 0 3 0 0.5
+ 0 0 3 0.5
+%endblock kgrid_Monkhorst_Pack
+MD.TypeOfRun CG
+MD.NumCGsteps 5
+MD.MaxForceTol 0.01 eV/Ang
+WriteMDHistory true
+WriteMDXmol true
+WriteCoorStep true
+WriteForces true
+WriteMullikenPop 1

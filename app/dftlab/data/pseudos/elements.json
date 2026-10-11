@@ -1,0 +1,1035 @@
+{
+ "H": {
+  "valence": "1s1",
+  "semicore": [],
+  "rc": [
+   1.3
+  ],
+  "lmax": 0,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.17,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.509,
+   "pbe": 0.6
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.509,
+   "pbe": 0.6
+  },
+  "ecut_1mHa_Ha": 14.04,
+  "mesh_cutoff_Ry": 150,
+  "origin": "new input"
+ },
+ "Li": {
+  "valence": "1s2 2s1",
+  "semicore": [
+   "1s"
+  ],
+  "rc": [
+   2.0,
+   3.0
+  ],
+  "lmax": 1,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.0,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 2.92,
+   "pbe": 3.31
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.025,
+   "pbe": 0.156
+  },
+  "ecut_1mHa_Ha": 13.52,
+  "mesh_cutoff_Ry": 150,
+  "origin": "ONCVPSP shipped input, unchanged parameters"
+ },
+ "B": {
+  "valence": "2s2 2p1",
+  "semicore": [],
+  "rc": [
+   1.5,
+   1.5
+  ],
+  "lmax": 1,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.3,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.784,
+   "pbe": 0.522
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.784,
+   "pbe": 0.522
+  },
+  "ecut_1mHa_Ha": 22.3,
+  "mesh_cutoff_Ry": 200,
+  "origin": "new input"
+ },
+ "C": {
+  "valence": "2s2 2p2",
+  "semicore": [],
+  "rc": [
+   1.28,
+   1.28
+  ],
+  "lmax": 1,
+  "nlcc": false,
+  "core": [
+   0,
+   0.1
+  ],
+  "loc": [
+   4,
+   5,
+   1.14,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.935,
+   "pbe": 1.02
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.935,
+   "pbe": 1.02
+  },
+  "ecut_1mHa_Ha": 32.94,
+  "mesh_cutoff_Ry": 300,
+  "origin": "adapted C input (/opt/run/oncv/c_lda.dat), rc scaled x0.95, ncon 5"
+ },
+ "N": {
+  "valence": "2s2 2p3",
+  "semicore": [],
+  "rc": [
+   1.36,
+   1.36
+  ],
+  "lmax": 1,
+  "nlcc": false,
+  "core": [
+   0,
+   0.1
+  ],
+  "loc": [
+   4,
+   5,
+   1.2,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.965,
+   "pbe": 0.851
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.965,
+   "pbe": 0.851
+  },
+  "ecut_1mHa_Ha": 36.75,
+  "mesh_cutoff_Ry": 300,
+  "origin": "ONCVPSP shipped input, re-tuned (N f0.8 n5 q1.0)"
+ },
+ "O": {
+  "valence": "2s2 2p4",
+  "semicore": [],
+  "rc": [
+   1.35,
+   1.25
+  ],
+  "lmax": 1,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.12,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.42,
+   "pbe": 1.29
+  },
+  "maxerr_valence_mHa": {
+   "lda": 1.42,
+   "pbe": 1.29
+  },
+  "ecut_1mHa_Ha": 37.57,
+  "mesh_cutoff_Ry": 350,
+  "origin": "ONCVPSP shipped input, re-tuned (O s1.35 p1.25 n58 qp9.0)"
+ },
+ "F": {
+  "valence": "2s2 2p5",
+  "semicore": [],
+  "rc": [
+   1.19,
+   1.19
+  ],
+  "lmax": 1,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.02,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.46,
+   "pbe": 1.33
+  },
+  "maxerr_valence_mHa": {
+   "lda": 1.46,
+   "pbe": 1.33
+  },
+  "ecut_1mHa_Ha": 46.4,
+  "mesh_cutoff_Ry": 400,
+  "origin": "new input"
+ },
+ "Na": {
+  "valence": "2s2 2p6 3s1",
+  "semicore": [
+   "2s",
+   "2p"
+  ],
+  "rc": [
+   1.45,
+   1.55,
+   1.8
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.4,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.731,
+   "pbe": 0.731
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.001,
+   "pbe": 0.005
+  },
+  "ecut_1mHa_Ha": 27.03,
+  "mesh_cutoff_Ry": 250,
+  "origin": "new input"
+ },
+ "Mg": {
+  "valence": "2s2 2p6 3s2",
+  "semicore": [
+   "2s",
+   "2p"
+  ],
+  "rc": [
+   1.4,
+   1.5,
+   1.8
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.3,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.24,
+   "pbe": 1.22
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.037,
+   "pbe": 0.072
+  },
+  "ecut_1mHa_Ha": 31.87,
+  "mesh_cutoff_Ry": 300,
+  "origin": "new input"
+ },
+ "Al": {
+  "valence": "3s2 3p1",
+  "semicore": [],
+  "rc": [
+   2.3,
+   2.4,
+   2.5
+  ],
+  "lmax": 2,
+  "nlcc": true,
+  "core": [
+   1,
+   0.25
+  ],
+  "loc": [
+   4,
+   5,
+   1.8,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.163,
+   "pbe": 0.643
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.163,
+   "pbe": 0.643
+  },
+  "ecut_1mHa_Ha": 10.95,
+  "mesh_cutoff_Ry": 150,
+  "origin": "new input"
+ },
+ "Si": {
+  "valence": "3s2 3p2",
+  "semicore": [],
+  "rc": [
+   2.7,
+   2.7,
+   2.7
+  ],
+  "lmax": 2,
+  "nlcc": true,
+  "core": [
+   1,
+   0.25
+  ],
+  "loc": [
+   4,
+   5,
+   2.7,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.3,
+   "pbe": 0.235
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.3,
+   "pbe": 0.235
+  },
+  "ecut_1mHa_Ha": 11.26,
+  "mesh_cutoff_Ry": 150,
+  "origin": "ONCVPSP shipped input, unchanged parameters"
+ },
+ "P": {
+  "valence": "3s2 3p3",
+  "semicore": [],
+  "rc": [
+   2.0,
+   2.0,
+   2.2
+  ],
+  "lmax": 2,
+  "nlcc": true,
+  "core": [
+   1,
+   0.25
+  ],
+  "loc": [
+   4,
+   5,
+   1.9,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.194,
+   "pbe": 0.221
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.194,
+   "pbe": 0.221
+  },
+  "ecut_1mHa_Ha": 16.07,
+  "mesh_cutoff_Ry": 150,
+  "origin": "new input"
+ },
+ "S": {
+  "valence": "3s2 3p4",
+  "semicore": [],
+  "rc": [
+   1.9,
+   1.9,
+   2.1
+  ],
+  "lmax": 2,
+  "nlcc": true,
+  "core": [
+   1,
+   0.25
+  ],
+  "loc": [
+   4,
+   5,
+   1.8,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.187,
+   "pbe": 0.204
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.187,
+   "pbe": 0.204
+  },
+  "ecut_1mHa_Ha": 18.44,
+  "mesh_cutoff_Ry": 150,
+  "origin": "new input"
+ },
+ "Cl": {
+  "valence": "3s2 3p5",
+  "semicore": [],
+  "rc": [
+   2.43,
+   2.43,
+   2.7
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.3
+  ],
+  "loc": [
+   4,
+   5,
+   2.25,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.863,
+   "pbe": 0.7
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.863,
+   "pbe": 0.7
+  },
+  "ecut_1mHa_Ha": 18.44,
+  "mesh_cutoff_Ry": 150,
+  "origin": "ONCVPSP shipped input, re-tuned (Cl f0.9 n5 q1.15)"
+ },
+ "K": {
+  "valence": "3s2 3p6 4s1",
+  "semicore": [
+   "3s",
+   "3p"
+  ],
+  "rc": [
+   2.0,
+   2.1,
+   2.3
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   2.0,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.161,
+   "pbe": 0.112
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.001,
+   "pbe": 0.001
+  },
+  "ecut_1mHa_Ha": 20.72,
+  "mesh_cutoff_Ry": 200,
+  "origin": "ONCVPSP shipped input, unchanged parameters"
+ },
+ "Ca": {
+  "valence": "3s2 3p6 3d0.01 4s1.99",
+  "semicore": [
+   "3s",
+   "3p"
+  ],
+  "rc": [
+   1.9,
+   2.2,
+   2.0
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   1,
+   1.9,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.859,
+   "pbe": 0.887
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.22,
+   "pbe": 0.176
+  },
+  "ecut_1mHa_Ha": 25.07,
+  "mesh_cutoff_Ry": 250,
+  "origin": "ONCVPSP shipped input, re-tuned (Ca 3d0.01 rd2.0 qd8.0)"
+ },
+ "Ti": {
+  "valence": "3s2 3p6 3d2 4s2",
+  "semicore": [
+   "3s",
+   "3p"
+  ],
+  "rc": [
+   2.2,
+   2.4,
+   2.4
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   2.2,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.22,
+   "pbe": 1.14
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.835,
+   "pbe": 0.831
+  },
+  "ecut_1mHa_Ha": 25.22,
+  "mesh_cutoff_Ry": 250,
+  "origin": "ONCVPSP shipped input, re-tuned (Ti f1.0 n5 q1.15)"
+ },
+ "Fe": {
+  "valence": "3s2 3p6 3d6 4s2",
+  "semicore": [
+   "3s",
+   "3p"
+  ],
+  "rc": [
+   1.71,
+   1.89,
+   1.89
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.71,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.999,
+   "pbe": 0.949
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.999,
+   "pbe": 0.949
+  },
+  "ecut_1mHa_Ha": 36.48,
+  "mesh_cutoff_Ry": 300,
+  "origin": "new input"
+ },
+ "Ni": {
+  "valence": "3s2 3p6 3d8 4s2",
+  "semicore": [
+   "3s",
+   "3p"
+  ],
+  "rc": [
+   1.52,
+   1.68,
+   1.68
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.52,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.873,
+   "pbe": 0.837
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.873,
+   "pbe": 0.837
+  },
+  "ecut_1mHa_Ha": 45.73,
+  "mesh_cutoff_Ry": 400,
+  "origin": "new input"
+ },
+ "Cu": {
+  "valence": "3s2 3p6 3d10 4s1",
+  "semicore": [
+   "3s",
+   "3p"
+  ],
+  "rc": [
+   1.7,
+   1.8,
+   1.6
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.6,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 2.87,
+   "pbe": 2.82
+  },
+  "maxerr_valence_mHa": {
+   "lda": 2.87,
+   "pbe": 2.82
+  },
+  "ecut_1mHa_Ha": 42.84,
+  "mesh_cutoff_Ry": 350,
+  "origin": "ONCVPSP shipped input, re-tuned (Cu rs1.7 rp1.8 rd1.6 qd10)"
+ },
+ "Zn": {
+  "valence": "3s2 3p6 3d10 4s2",
+  "semicore": [
+   "3s",
+   "3p"
+  ],
+  "rc": [
+   1.52,
+   1.68,
+   1.68
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.52,
+   0.5
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.917,
+   "pbe": 0.979
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.917,
+   "pbe": 0.979
+  },
+  "ecut_1mHa_Ha": 47.0,
+  "mesh_cutoff_Ry": 400,
+  "origin": "new input"
+ },
+ "Ga": {
+  "valence": "3d10 4s2 4p1",
+  "semicore": [
+   "3d"
+  ],
+  "rc": [
+   2.5,
+   2.6,
+   2.0
+  ],
+  "lmax": 2,
+  "nlcc": true,
+  "core": [
+   1,
+   0.5
+  ],
+  "loc": [
+   4,
+   5,
+   2.0,
+   2.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.23,
+   "pbe": 1.26
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.233,
+   "pbe": 0.856
+  },
+  "ecut_1mHa_Ha": 31.82,
+  "mesh_cutoff_Ry": 300,
+  "origin": "new input"
+ },
+ "Ge": {
+  "valence": "3d10 4s2 4p2",
+  "semicore": [
+   "3d"
+  ],
+  "rc": [
+   2.6,
+   2.6,
+   2.0
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   2.0,
+   2.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.78,
+   "pbe": 1.67
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.301,
+   "pbe": 0.486
+  },
+  "ecut_1mHa_Ha": 30.59,
+  "mesh_cutoff_Ry": 250,
+  "origin": "ONCVPSP shipped input, re-tuned (Ge n5 r52.0 dv2.0)"
+ },
+ "As": {
+  "valence": "4s2 4p3",
+  "semicore": [],
+  "rc": [
+   2.4,
+   2.5,
+   2.8
+  ],
+  "lmax": 2,
+  "nlcc": true,
+  "core": [
+   3,
+   4.5,
+   1.4
+  ],
+  "loc": [
+   4,
+   5,
+   2.0,
+   0.5
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.718,
+   "pbe": 0.924
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.718,
+   "pbe": 0.924
+  },
+  "ecut_1mHa_Ha": 12.35,
+  "mesh_cutoff_Ry": 150,
+  "origin": "new input"
+ },
+ "Se": {
+  "valence": "4s2 4p4",
+  "semicore": [],
+  "rc": [
+   2.61,
+   2.7,
+   2.79
+  ],
+  "lmax": 2,
+  "nlcc": true,
+  "core": [
+   3,
+   4.5134,
+   1.3753
+  ],
+  "loc": [
+   4,
+   3,
+   2.52,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 0.635,
+   "pbe": 0.822
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.635,
+   "pbe": 0.822
+  },
+  "ecut_1mHa_Ha": 9.89,
+  "mesh_cutoff_Ry": 150,
+  "origin": "ONCVPSP shipped input, re-tuned (Se f0.9 n5 q1.15)"
+ },
+ "Sr": {
+  "valence": "4s2 4p6 5s2",
+  "semicore": [
+   "4s",
+   "4p"
+  ],
+  "rc": [
+   2.2,
+   2.4,
+   2.2
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   3,
+   2.2,
+   1.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.22,
+   "pbe": 1.2
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.062,
+   "pbe": 0.097
+  },
+  "ecut_1mHa_Ha": 12.73,
+  "mesh_cutoff_Ry": 150,
+  "origin": "ONCVPSP shipped input, unchanged parameters"
+ },
+ "Zr": {
+  "valence": "4s2 4p6 4d2 5s2",
+  "semicore": [
+   "4s",
+   "4p"
+  ],
+  "rc": [
+   2.2,
+   2.2,
+   2.0
+  ],
+  "lmax": 2,
+  "nlcc": true,
+  "core": [
+   4,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   2.0,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.41,
+   "pbe": 1.5
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.09,
+   "pbe": 0.11
+  },
+  "ecut_1mHa_Ha": 17.2,
+  "mesh_cutoff_Ry": 150,
+  "origin": "ONCVPSP shipped input, unchanged parameters"
+ },
+ "Mo": {
+  "valence": "4s2 4p6 4d5 5s1",
+  "semicore": [
+   "4s",
+   "4p"
+  ],
+  "rc": [
+   1.99,
+   2.09,
+   1.9
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.9,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.23,
+   "pbe": 1.18
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.023,
+   "pbe": 0.107
+  },
+  "ecut_1mHa_Ha": 19.89,
+  "mesh_cutoff_Ry": 200,
+  "origin": "new input"
+ },
+ "Ag": {
+  "valence": "4s2 4p6 4d10 5s1",
+  "semicore": [
+   "4s",
+   "4p"
+  ],
+  "rc": [
+   1.7,
+   1.87,
+   1.7
+  ],
+  "lmax": 2,
+  "nlcc": false,
+  "core": [
+   0,
+   0.0
+  ],
+  "loc": [
+   4,
+   5,
+   1.7,
+   0.5
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 1.36,
+   "pbe": 1.22
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.099,
+   "pbe": 0.023
+  },
+  "ecut_1mHa_Ha": 27.92,
+  "mesh_cutoff_Ry": 250,
+  "origin": "new input"
+ },
+ "Au": {
+  "valence": "5s2 5p6 5d10 6s1",
+  "semicore": [
+   "5s",
+   "5p"
+  ],
+  "rc": [
+   1.76,
+   2.0,
+   1.92,
+   2.4
+  ],
+  "lmax": 3,
+  "nlcc": true,
+  "core": [
+   2,
+   0.3
+  ],
+  "loc": [
+   4,
+   3,
+   1.76,
+   0.0
+  ],
+  "ghosts": 0,
+  "maxerr_mHa": {
+   "lda": 2.18,
+   "pbe": 2.33
+  },
+  "maxerr_valence_mHa": {
+   "lda": 0.206,
+   "pbe": 0.251
+  },
+  "ecut_1mHa_Ha": 21.88,
+  "mesh_cutoff_Ry": 200,
+  "origin": "ONCVPSP shipped input, re-tuned (Au f0.8 n4 q1.15)"
+ }
+}

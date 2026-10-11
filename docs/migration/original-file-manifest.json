@@ -1,0 +1,2419 @@
+{
+  "schema_version": "1.0.0",
+  "snapshot_date": "2026-10-10",
+  "source_label": "DFT_App_completo working files before repository migration",
+  "source_app_git": "initialized, no commits",
+  "intended_git_tag": "baseline-v1",
+  "excluded_directories": [
+    ".git",
+    ".pytest_cache",
+    ".venv",
+    "__pycache__",
+    "node_modules",
+    "venv",
+    "app/dist"
+  ],
+  "excluded_cache_files": [],
+  "files": [
+    {
+      "path": "ANALISIS_TECNICO.md",
+      "size_bytes": 22994,
+      "sha256": "62597b3a7554b61d4f4c3a408bb6a3014f083c523669c9c075e1573b720c8420"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/elements.json",
+      "size_bytes": 13127,
+      "sha256": "59122f99e875f6ca76d7801836f2983efba4d9216bcc527ab298d850bf6ea2dc"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Ag.dat",
+      "size_bytes": 1607,
+      "sha256": "2a8eb3bea6b44dbbbb02b44d8ca2a49ebd85942efd2e7e0561b7a49f73a7e630"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Al.dat",
+      "size_bytes": 1414,
+      "sha256": "b39e8d2d189344b2d05ca2d6f96ed57a1e5a123f7b60b2172b2a1965fa895462"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/As.dat",
+      "size_bytes": 1478,
+      "sha256": "f735e93561dac63cb26b68b0d0f5e3245ada4cf358dbb1cafc1c84b6ae21289b"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Au.dat",
+      "size_bytes": 1745,
+      "sha256": "f3e40ef626821c43f55d0d723cbced6da1c5038d05a064830a5a2e737ec042eb"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/B.dat",
+      "size_bytes": 1313,
+      "sha256": "56e48aee78639f341e7b2c026a2f5abb930e3d57eb3330a0e2d082e14137085a"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/C.dat",
+      "size_bytes": 1313,
+      "sha256": "167a9b66f6ff06871f55ea5184f10ee5e142fafff57c0ed0fd37ceb6ef9c34b5"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Ca.dat",
+      "size_bytes": 1527,
+      "sha256": "eb9f2bfcd7ccdd96eb71fd219a4c530b6aaa2daaf951399053d46f4fdcf8b884"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Cl.dat",
+      "size_bytes": 1413,
+      "sha256": "ebcaa7ccd1aa34a031e1fd7ef567f63a5a70136494cec0a8316a6e7eeb4295c0"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Cu.dat",
+      "size_bytes": 1550,
+      "sha256": "9a2d81ea554bc959ec8b845efca831b8103a081fb3c323fbfba01f0f1f3b17b8"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/F.dat",
+      "size_bytes": 1315,
+      "sha256": "770c0fe75cbc2bcaefd807520a1db5ee46b54b5e6a64f206c19736d017392a04"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Fe.dat",
+      "size_bytes": 1566,
+      "sha256": "988021fc28120c117acd9facbbabb8096df4eea2c6d1137b7a984daa1444b602"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Ga.dat",
+      "size_bytes": 1531,
+      "sha256": "d7f13b2fc596a277feb0eb4de67467653ecf956019338f260ea20acce95df81d"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Ge.dat",
+      "size_bytes": 1533,
+      "sha256": "9adbeaa6d7d4d3b8287628bc19dbcb57f47b209fbc6602dff58fefca1835f0ec"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/H.dat",
+      "size_bytes": 1132,
+      "sha256": "1f99f7fe243cb99621787e6da825f10e39c22f4a2fb2851af69c88325d1e3944"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/K.dat",
+      "size_bytes": 1468,
+      "sha256": "7951c44373c74b15f10c25ae8ee5475a8f87f238b20386416e13e9e49a92d4b6"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Li.dat",
+      "size_bytes": 1277,
+      "sha256": "36b78910fc1c32a001fe588dc5ec5abf58a76b89e89ba12c9549ed4aabc1d02d"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Mg.dat",
+      "size_bytes": 1470,
+      "sha256": "553a785c31baa3a6bed3b6ea764873b42388ece294b260f2026daf566c68bd7e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Mo.dat",
+      "size_bytes": 1604,
+      "sha256": "1b86b9fff8d0d551faf4c08036864b18705e831a74191650cae6b00c01fe4121"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/N.dat",
+      "size_bytes": 1315,
+      "sha256": "cb13f3c86ce07d6cd6d7de467fb5b54093d97ecd5cce34597def5609294aa925"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Na.dat",
+      "size_bytes": 1432,
+      "sha256": "2b6aee0735b7cc42613ba5aa5cfb1d873700c4a2ade66fd9046d45e4958ef59a"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Ni.dat",
+      "size_bytes": 1567,
+      "sha256": "2f4f8bb983fda6dbe32deaeb629bcb9364f94146f4d6999d75b7a36d5100d98d"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/O.dat",
+      "size_bytes": 1313,
+      "sha256": "97e484178cea7eadbb70608afb9ac39847d88efe5c236675c79eaca640b1512d"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/P.dat",
+      "size_bytes": 1412,
+      "sha256": "d058aef30d38dba00038dea1ce58f3beef55c313388e5b18ce6b48dd77deefde"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/S.dat",
+      "size_bytes": 1412,
+      "sha256": "3ba41675e48bfb8ebda094217d1d2e077c9812b50f236125f152e8d1006bcd04"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Se.dat",
+      "size_bytes": 1484,
+      "sha256": "1d419c1fb4203cac483fe7a4588dd0682b5492226b1bffa2f06b1d9a11d47a2e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Si.dat",
+      "size_bytes": 1414,
+      "sha256": "05c7f490db6fafc8f8b6fe156f2b8ea1303b39ecce37759e1f9f9f29f035cabc"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Sr.dat",
+      "size_bytes": 1566,
+      "sha256": "2a5078b8d4e8ba741362d4a2ae7dff9bd576006ae8de3d50b19e75d7cfd394d4"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Ti.dat",
+      "size_bytes": 1565,
+      "sha256": "cc70a51ed2cdc8ff4fd7d35bf1c5de1d051cb14b21b5db1d5c00a838f74600a4"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Zn.dat",
+      "size_bytes": 1590,
+      "sha256": "e13204b4267b97204248ee9a051a1bb7ba06e32d8e75f3a6759b122a15f0420e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/lda/Zr.dat",
+      "size_bytes": 1623,
+      "sha256": "35bb31cc5e2ae347209b3b0509f1594b19d0f49f8adb2351105ad079a3805ef3"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Ag.dat",
+      "size_bytes": 1579,
+      "sha256": "f0dcc071005927c7ae79f56fb5c10d784146d4e4858528c6ff0590f008ab60eb"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Al.dat",
+      "size_bytes": 1386,
+      "sha256": "fa3bff473a55708d3f95ed141acedaee72ff45e58ddfd1c8850a39bafcea277c"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/As.dat",
+      "size_bytes": 1450,
+      "sha256": "7f99e1582c8a30fcbb9f2b640a54a8a14c50b5914275ea4a17e720b63bf4ead4"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Au.dat",
+      "size_bytes": 1717,
+      "sha256": "fbcdd98f56e7a029b8a7f8629678657a5ac707b9dbbe56a53a0647c01273a611"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/B.dat",
+      "size_bytes": 1285,
+      "sha256": "fa694f00bb22d9a4e3b0bb069c4f7a3ccb822728c922b60e435eca2ae7cec40e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/C.dat",
+      "size_bytes": 1285,
+      "sha256": "aa05998dc7e8f6bdd3e1f5a66e5ae6283cf65c0462e2b8b7413364a4c351fd5a"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Ca.dat",
+      "size_bytes": 1499,
+      "sha256": "596fbea1f9e5168c41ebbf58886fccb08a834df7f65b5ad3f5856d4a249f907b"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Cl.dat",
+      "size_bytes": 1385,
+      "sha256": "65b47dfd2da3ffdce224162d8a6f66d6ea8fd1b6421d5e6c3e715a01c9fab29a"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Cu.dat",
+      "size_bytes": 1522,
+      "sha256": "da79d5e1911823b6c822907862fd5faf33952da1b32ac0daf169e7e95ff7de2a"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/F.dat",
+      "size_bytes": 1287,
+      "sha256": "9643fc5bcbb24a4afb96faf6ea0f5dfc959620a7185f2c53f4e86756bad06bc7"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Fe.dat",
+      "size_bytes": 1538,
+      "sha256": "10e6ab8055d64a0d6eab4fa3d5fdcdd2ec90f8eca70bda6cc8827eb1e0dcb9c2"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Ga.dat",
+      "size_bytes": 1503,
+      "sha256": "d193181e12c3f0be47cf40ff7e06dcef46e1e9ddec0b3f09e83437bc92758e50"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Ge.dat",
+      "size_bytes": 1505,
+      "sha256": "0768c84c2344841007a4665006642649cd6aac184dd4da2875060d9a302d72ab"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/H.dat",
+      "size_bytes": 1104,
+      "sha256": "e4c5be1165684886a8597d0fb9393e2d0f127dad3d97790604e93c7484736662"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/K.dat",
+      "size_bytes": 1440,
+      "sha256": "095be20c19ba7f3402b46003af535905ead18c289cab87dcdd88452da271532e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Li.dat",
+      "size_bytes": 1249,
+      "sha256": "fcb249c23193657b03bea0580a35f4e680b1b00ca739c76e1864ce25dbc83bce"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Mg.dat",
+      "size_bytes": 1442,
+      "sha256": "b930c057e1f08cfd813b41e0735b5196249cc3cdfd2dec3b014b81915172ae32"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Mo.dat",
+      "size_bytes": 1576,
+      "sha256": "47992606e29504ee83ecf697e3b060e8fd33bb11c548fd5eecc44e8a077355ec"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/N.dat",
+      "size_bytes": 1287,
+      "sha256": "9ec71a0daf6a0c23ba49d1d3b28a400add54d9595800ca2a5925ff70e1959399"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Na.dat",
+      "size_bytes": 1404,
+      "sha256": "36e5e512b2c6bd58c07173a87ea3324dab9a78e20cec7f2722426a66abef3575"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Ni.dat",
+      "size_bytes": 1539,
+      "sha256": "f2e5d87abf8c6ae25a044c7c7bf6ceb3f4de3eda1a208347f5cb8e6596a3fbc5"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/O.dat",
+      "size_bytes": 1285,
+      "sha256": "a2c58829f99cd03c657e1e3f1dec015db24a9a42de31803e704df3de2674f839"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/P.dat",
+      "size_bytes": 1384,
+      "sha256": "1c541d54e278058ecb2d3631b86dc9897a0160cdedffb31323f74c06e017c599"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/S.dat",
+      "size_bytes": 1384,
+      "sha256": "002948c3d39558e92c2424eec4e1701863b345d7d4df29449c170b105cd72d2a"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Se.dat",
+      "size_bytes": 1456,
+      "sha256": "195cf66b7da80dd496cc9fc5bbd9ffeb239866406ffc05ec49bf0bc8e3bb9d73"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Si.dat",
+      "size_bytes": 1386,
+      "sha256": "40f1c183f5a7b78be699742bcb9102a4ade310f80f8fffbc88bf01e56331e471"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Sr.dat",
+      "size_bytes": 1538,
+      "sha256": "e406185e837bbc21ac4462dd87eafee94ff7375a60889d79f32ef9f4e9e7ed41"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Ti.dat",
+      "size_bytes": 1537,
+      "sha256": "e0cbaa0988519f7d136fbbe12a0ebddcc74f1c23f3c2613975171f9ba6e40f34"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Zn.dat",
+      "size_bytes": 1562,
+      "sha256": "35d7675d227ac00ffba1be10af1dcc0584dbaac0db72e79c697da9fb54bb67b9"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/inputs/pbe/Zr.dat",
+      "size_bytes": 1595,
+      "sha256": "9428d0f7cb516a8f2d81a0cf855979f43712770641e35cb13e94c36a56dc2d22"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Ag.psml",
+      "size_bytes": 78989,
+      "sha256": "730221139d36f32cff2db0aae028d3ef35c6af2adebdb8cb632c2b7da8a39a04"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Al.psml",
+      "size_bytes": 87790,
+      "sha256": "2c5aa7256fd9e68fba69797a4f4d5c5a25bd3cc5aaca65d70deaa283038e2bfc"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/As.psml",
+      "size_bytes": 84546,
+      "sha256": "c12d9ed8c004afd3734772e61edb57fa1baa79e39fb250c04812fa824fc61199"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Au.psml",
+      "size_bytes": 101974,
+      "sha256": "6162bf76c04ba739e644f44181b9f52fa0f524825ffac76ed4bff402e3310b00"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/B.psml",
+      "size_bytes": 58790,
+      "sha256": "7feb9d966803c7a8322f5f3bbf71d21e5cfd50d573d42c2cdfde89da78b0f330"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/C.psml",
+      "size_bytes": 58791,
+      "sha256": "3b4faf6da3fbc4c566e05a590c29de25003c286d57ea6da479dc3fe846a026a0"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Ca.psml",
+      "size_bytes": 78901,
+      "sha256": "d09e6f27690ed2fcd4343dcb54e2c3616dfd9e087d83cfbec85387eba862f501"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Cl.psml",
+      "size_bytes": 86779,
+      "sha256": "5f94c322d8336eaf897f08de3e38b1c78c9449952849e7341fc17fd7beb25731"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Cu.psml",
+      "size_bytes": 81927,
+      "sha256": "310529cc74842dc55ffcf3614f4eeea434835d11177888a5b3db9025f2ac2790"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/F.psml",
+      "size_bytes": 58792,
+      "sha256": "005f4e47d2897504a664d24447641eaed325920da5a4e739e06004df21dd50c2"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Fe.psml",
+      "size_bytes": 81946,
+      "sha256": "45fbb83fecffd6499d04dcdc7ffd87fe888e1b03d8ef2b075132243a648caaf5"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Ga.psml",
+      "size_bytes": 88212,
+      "sha256": "296ad3643ade17957bd8dc47eaa83012190af2d9045f49f71067681e8b79aa93"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Ge.psml",
+      "size_bytes": 74983,
+      "sha256": "87402c309dfe61c27f2ebab8a9cc77f0914da225f46ad3d3db92be3b9b77b651"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/H.psml",
+      "size_bytes": 45401,
+      "sha256": "52e21053a3d3ab11ccde8ae4644f9da561f17879c4fc190040df5149eb9e61fb"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/K.psml",
+      "size_bytes": 82052,
+      "sha256": "92d6383172d0a1c08c6b14db709b3a9d476f142e69761c385b610f4c02b8a979"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Li.psml",
+      "size_bytes": 63586,
+      "sha256": "3693d78e44c02f336c787b4179157531482bf98572f53656f34fbf7fef5e0fd9"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Mg.psml",
+      "size_bytes": 81820,
+      "sha256": "10d855439a7d195ffa687c89a31be80fd7d5194e8fb3a25f1e6ea38ea43334c2"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Mo.psml",
+      "size_bytes": 78944,
+      "sha256": "778e99774b696edb2fbab96b8f5d310859df4dafd14316df59fb00215371bce5"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/N.psml",
+      "size_bytes": 58792,
+      "sha256": "6637067dacafa74a15a2fddda338712e0715f6b3cbd9580408af52f0227a6c0e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Na.psml",
+      "size_bytes": 81774,
+      "sha256": "7207d6adb5903a55259f5e986d8d2741c328083aaa6e0ec673bcfc77144b1dba"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Ni.psml",
+      "size_bytes": 81947,
+      "sha256": "2e64d913287dc8484ef59ab521f1bab484d6e27c62f818fb7e665ef99a41e6c4"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/O.psml",
+      "size_bytes": 58792,
+      "sha256": "5487e6a85515070ad07132f6921a51aacc031d5e2619dfaa80d215635f1b2016"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/P.psml",
+      "size_bytes": 87787,
+      "sha256": "4a91e73725898a9642844a1538ebfa71551cc67171dd166c5fd77a56dacc4ed3"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/S.psml",
+      "size_bytes": 87795,
+      "sha256": "886897c45789c160290f3cef23f6fcef027cd3d52e3c733a54899e8ec15622bd"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Se.psml",
+      "size_bytes": 84549,
+      "sha256": "691c165c07eea7f3b318ceb7972a7a253c018add18666116c5d00a44de38d0bf"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Si.psml",
+      "size_bytes": 84453,
+      "sha256": "606999961819f11e80864b102f014a6790336d137d3ae8fdd261ab8bbdd3ab94"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Sr.psml",
+      "size_bytes": 78866,
+      "sha256": "e9ace4bcb6c3958478a9f4845d5fd7dfeed8ebd63ea34983b136be93a1892f57"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Ti.psml",
+      "size_bytes": 78905,
+      "sha256": "9a22d9255944af43cab0fb4ce70e7aee95973d9d95b07ce24bf5349b5463a3a3"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Zn.psml",
+      "size_bytes": 81972,
+      "sha256": "d66291a5d22b87ba7107707dbf68ddfcb81a934a35adeabeca108e179299c1d9"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/lda/Zr.psml",
+      "size_bytes": 84766,
+      "sha256": "697475fc8fdc9be879b5f9f47d2ef852811489478f974e9d937e4bb1c77907ab"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Ag.out",
+      "size_bytes": 496762,
+      "sha256": "a3e98a6a41bf13a6e66e7f38335ab24b449671b0bb9a6c25fd988152fe79f699"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Al.out",
+      "size_bytes": 576079,
+      "sha256": "266a14064d5baac93131a3f0afe07863f660d8bf4643efd1c2e97303ecf4b304"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/As.out",
+      "size_bytes": 521998,
+      "sha256": "b6a000cae84adccd1a17b77c77dea2f48a1a091dd01da21690bb5d04831710d8"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Au.out",
+      "size_bytes": 676717,
+      "sha256": "b808699a344c616b3ab644767656446e897eb26211212674dd71a8336872c732"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/B.out",
+      "size_bytes": 325724,
+      "sha256": "7fab3262fe96a089528678432e7d586ac867c14bcff1296e869370e38c2bc4b6"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/C.out",
+      "size_bytes": 334904,
+      "sha256": "a282bd2b4480625592e6c4cfd6594188aa91398546be93440e13976c8642d7ac"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Ca.out",
+      "size_bytes": 486819,
+      "sha256": "b5dfdcc08910c02eaae2f60be4e1565fbf66152696d8f84433960711439536f2"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Cl.out",
+      "size_bytes": 576378,
+      "sha256": "fd0c60b326f1df429a514475cef3352c0a0c111b9830c02a72bb1e399a1d95c4"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Cu.out",
+      "size_bytes": 547234,
+      "sha256": "5282dbc62e2ef3ecc69c2b7e11eb3566d6790df4399015f3a0e755b388851cce"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/F.out",
+      "size_bytes": 325829,
+      "sha256": "6f17bf3a72cfd0912391207811a3bd13f14faf5b5756b1d4714f97e7a0ac4f20"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Fe.out",
+      "size_bytes": 547347,
+      "sha256": "407f55377009520d2df075ad2f0625a1c207d3755bbf1a615161dae50e28e982"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Ga.out",
+      "size_bytes": 586001,
+      "sha256": "74604355a0d58c8685e167e6e6e744b5e42b989c6f46d4a2c8ebef1df2d78ddf"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Ge.out",
+      "size_bytes": 438943,
+      "sha256": "48ccb07282d933ca1f1e0355b04110114009f6b9382e71f58d6f461bd84fb917"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/H.out",
+      "size_bytes": 289279,
+      "sha256": "1ceb2f6fda813efc4c00ac5d61cc945c7a19a1d290578b9ef4231f1a0d23ef05"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/K.out",
+      "size_bytes": 529093,
+      "sha256": "6c8b67ab529d890434f399e9e49c598d5246c13843e3877dd5d78ef54432b4f7"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Li.out",
+      "size_bytes": 416413,
+      "sha256": "e234a4f805a6e644e617829e08dfa579bd59d0efd5876ed30613d32af6129f1e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Mg.out",
+      "size_bytes": 519513,
+      "sha256": "9afee85199d08171e3c8547485bf5e180cc660298f9c1b5251762b9210c05898"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Mo.out",
+      "size_bytes": 496724,
+      "sha256": "16a0dc3f5b91bbd6508720525d6ba2120aeb60b8713fae0ac9ae0035afe27f0e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/N.out",
+      "size_bytes": 334904,
+      "sha256": "4f4b2b74b666464340f6b93ebd4e2563136b2f5009513e955a5b93c1e514a536"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Na.out",
+      "size_bytes": 519285,
+      "sha256": "4f824c25f2339ad668b165a01bef1a8b305caa4e8afbd0ced92f653b4ec195ac"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Ni.out",
+      "size_bytes": 547347,
+      "sha256": "552a0da80a7d578884e4cc0ec925011aa244355b638e50eb65e233093d141c42"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/O.out",
+      "size_bytes": 325884,
+      "sha256": "fc386830fc76e08245767586e4fb29700cd0099336017e05a429af42d6807ddc"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/P.out",
+      "size_bytes": 576057,
+      "sha256": "ab7fcb2cc13ec7e893c49e11b4c99066450249f15f21e1072a5088a645e8e926"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/S.out",
+      "size_bytes": 576057,
+      "sha256": "802ec306a5b4c70b50b5db65c67d189eadfc36caac1420b6394f9a0e1421d171"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Se.out",
+      "size_bytes": 521998,
+      "sha256": "0983fa02f0b2447353bc17ac09c60c84ab3c4413ca89f9d7dd76c3e453279484"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Si.out",
+      "size_bytes": 521389,
+      "sha256": "3e1b6adc37caf16ed2b46bcd606394d0e556c3d343ffceda4907a97a97cc1cc3"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Sr.out",
+      "size_bytes": 478376,
+      "sha256": "21164666dc6434c0c626f0e07fc9b0d82cfede9bf43447e6a58a71d29bc6390a"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Ti.out",
+      "size_bytes": 487259,
+      "sha256": "6d2cd3840a3d03e7825cc3ba7cf0e51dd8ac9333df11b01a87d853a5fbc8a8ad"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Zn.out",
+      "size_bytes": 547442,
+      "sha256": "387b7fe9e7645386b85e2474d6b84f1bc7224e8a60bc192a5da38d825e2830d6"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/lda/Zr.out",
+      "size_bytes": 565612,
+      "sha256": "1c82922885fb312ee264b354818cfcb9e011863dfbca9a590affe5087cafafbb"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Ag.out",
+      "size_bytes": 496762,
+      "sha256": "9e8858e5ba86354e4b3dbca7b8911b71dedf51df93bad4635c9123ca29fc719c"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Al.out",
+      "size_bytes": 576079,
+      "sha256": "0ea645e0bbba5673a30cb42bd23a6289c1c836b59675b8721753cbd75464328c"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/As.out",
+      "size_bytes": 521998,
+      "sha256": "3689c2564db72c244de186fd60ee17ea66cdd678e10ac811e28836023ae63a3b"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Au.out",
+      "size_bytes": 676717,
+      "sha256": "2cb3c0ecf7c80e7a983a888e7f3148c49961d4ee4300d63a129bf1264feb814a"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/B.out",
+      "size_bytes": 325724,
+      "sha256": "7a543d68036c2c8e433d0aee5045ce54b4e87144edf0aee98e2fd7eaff2cf212"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/C.out",
+      "size_bytes": 334904,
+      "sha256": "48583244c40f934363052b8f69a1a9cd320bed803da840f86575230a096ea0ff"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Ca.out",
+      "size_bytes": 486819,
+      "sha256": "199072c7001da2f0a0b2cf1d1347839f9346aced0cd8b4253e4629646d948999"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Cl.out",
+      "size_bytes": 576378,
+      "sha256": "f8cd2ceba4baeb288a83d483d3722f16a63ee66fa5cf1ffdd5f712958d9e2b63"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Cu.out",
+      "size_bytes": 547234,
+      "sha256": "8567dae2b2fbcc74d5f88a734827a52ec9c8d0644d61e56f1cc2d99e423e2efd"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/F.out",
+      "size_bytes": 325829,
+      "sha256": "0f158a11bdbf4872d754955275f4e27dbb15e5306129d98e2d9d389a7db6bb85"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Fe.out",
+      "size_bytes": 547347,
+      "sha256": "b1b93d1c620e5ca91206562b468a3bdbd8e861c1662e6da9b0b8c4a66f936011"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Ga.out",
+      "size_bytes": 586001,
+      "sha256": "6de02a0952d920ca9ee0ebb7b875d920376d12b83cd2a0a9a553631946143bb3"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Ge.out",
+      "size_bytes": 438943,
+      "sha256": "df0cd1815a8c59c1fb352379b007a388b29868eb94e4dbb7bd8297e6c18921dc"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/H.out",
+      "size_bytes": 289279,
+      "sha256": "501e7c85cb0211a9f575ed33689db8794075d15618a8f2206ba28d4b8d73bf43"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/K.out",
+      "size_bytes": 529093,
+      "sha256": "cc82ba976bdd224edcb7cdfbe13ba137af66c3c36b47dd5138a4a3e65aeaef91"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Li.out",
+      "size_bytes": 416413,
+      "sha256": "1fa5f6f13b49ceec97111d751721e1c57bc630d477e5c19f33318a24a2326480"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Mg.out",
+      "size_bytes": 519513,
+      "sha256": "83ca312d45581113efb2839b68197520a00b8a743a4ead6a0d102427f236c8a3"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Mo.out",
+      "size_bytes": 496724,
+      "sha256": "cc1ef87a3ef80f8a701ace3b507d5b4912447b2045e6022c021428b38d177a1f"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/N.out",
+      "size_bytes": 334904,
+      "sha256": "b2b64f795904249f9c389913c1f4d439a056a10f0fc2a2df3d69b02a57900b1f"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Na.out",
+      "size_bytes": 519285,
+      "sha256": "6830955baf2e8fc91c6d48848e8655ee03a69da270adf0c43595cf4de3f79488"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Ni.out",
+      "size_bytes": 547347,
+      "sha256": "69d95b4bd2865d97e9d6d4d274b5b758a8f14a51a127d2a7426e04a5d608d820"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/O.out",
+      "size_bytes": 325884,
+      "sha256": "b38670732e0a324ce2f86b7b1400a0524cfcec4fc8e76299215caf269d595d69"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/P.out",
+      "size_bytes": 576057,
+      "sha256": "07d37d58ca93004b399d92adab3cdb372900bbeaa28b7ce9c194ba34d995a73f"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/S.out",
+      "size_bytes": 576057,
+      "sha256": "30aff741fc57089c001aa97941efe2dd6bf7f2da94507a62fead70059ab1e111"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Se.out",
+      "size_bytes": 521998,
+      "sha256": "642af52947a3f8d9dfdd09ad81f3f8d78c9e9bde50f3ed47a2466e180437d25c"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Si.out",
+      "size_bytes": 521389,
+      "sha256": "eb8a8aa7633138e1e0254c01911724012d45495a493981aec6dd33b8f3284789"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Sr.out",
+      "size_bytes": 478376,
+      "sha256": "21310a06453bbd8ca618cdb3d5292f3ea1dbfd4ee0cd5fdd20a2d96dd702cf8e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Ti.out",
+      "size_bytes": 487259,
+      "sha256": "cff29a0f1a04d33a8a64fef6c57bbbfdc64f5b4484002260760aec0adc3720c1"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Zn.out",
+      "size_bytes": 547442,
+      "sha256": "38a1f318978eea8f1c0bba57ec62a18f1e389bb6cb5e889cd4b50a8867c25ffa"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/outputs/pbe/Zr.out",
+      "size_bytes": 565612,
+      "sha256": "2d1f41ac452e189a5e039351440d78e280dabb83c2f966c0bf25ac50ad7d78a8"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Ag.psml",
+      "size_bytes": 78983,
+      "sha256": "aca9d2376390eae6209689a705f16caea9cf7e7870ac8e5572c3d9b162221cd1"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Al.psml",
+      "size_bytes": 87792,
+      "sha256": "c53846eada7888fa209e026b29243fa796b5609792cc4aefdf2400d5682eb283"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/As.psml",
+      "size_bytes": 84532,
+      "sha256": "58d6885f2f843a3cad8b6e649bcdb409427868038cae736f53a27ebb09b06b82"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Au.psml",
+      "size_bytes": 101968,
+      "sha256": "5ed0478d88681fe5122d94ba6e15f47bc98e7960f62cfd8cf4086fab15537603"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/B.psml",
+      "size_bytes": 58784,
+      "sha256": "53a3c6ec45cad3fb9faae035cb596496e22065d1ef7ad7426b00f3eb91565178"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/C.psml",
+      "size_bytes": 58785,
+      "sha256": "8bfd2be793d3fe3f395aee8066797fa13dbb832ad0e1f618db9d97e1273d744a"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Ca.psml",
+      "size_bytes": 78895,
+      "sha256": "c687bb1db917b5eb93ea7ecbf8678bce69e3a0fd8aae011a38769d0f1ddca12f"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Cl.psml",
+      "size_bytes": 86771,
+      "sha256": "614a6a74d3088a4fa57420e51fe9cde4c6498f7334d38100fb808f3d428373b9"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Cu.psml",
+      "size_bytes": 81921,
+      "sha256": "ec84b06b143e467455ef19e008be5162f287bbe6c5471c380cd98a7d504152e0"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/F.psml",
+      "size_bytes": 58786,
+      "sha256": "a9bf63b0ede2375e3eb86ca287cbd910df793beb6fc167ec79e2fa3605ba916e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Fe.psml",
+      "size_bytes": 81940,
+      "sha256": "7a0f301850c851f760c41f23e995959f2f7dd0bb9e4cd619e9d150dc223c9d7c"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Ga.psml",
+      "size_bytes": 88214,
+      "sha256": "bac65d39f16db92295777046a97e5140e87b15cb7b93415cff746a1c252736e8"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Ge.psml",
+      "size_bytes": 74977,
+      "sha256": "4951204a5e739a40c7dc568a590f33707fa372c5300518824b9f5768a6990976"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/H.psml",
+      "size_bytes": 45395,
+      "sha256": "58bb9a504be6947538c09b4157ad5192f07b0b77f00637d0f554287251f38570"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/K.psml",
+      "size_bytes": 82046,
+      "sha256": "fbeb43b10a3c6a821f947f6162c26818f0048bfbcbf649c92f6cc53d12f41d0f"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Li.psml",
+      "size_bytes": 63572,
+      "sha256": "ef925950361132731341925839dd865e6f2c42c5eb3e88a56194be97f53dee26"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Mg.psml",
+      "size_bytes": 81806,
+      "sha256": "43990ec1aa8c25deef08fb9cfd5affb89acef1b7be537518f855eaac3321011d"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Mo.psml",
+      "size_bytes": 78938,
+      "sha256": "0961870a514834570b0311ef5cc751ef388678f0be0677b3cbbae6be574613a8"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/N.psml",
+      "size_bytes": 58786,
+      "sha256": "7aac5507984dd52d23f8d56c3bf1f53a153170f8b368d1cc0f3e2af67fb868b4"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Na.psml",
+      "size_bytes": 81768,
+      "sha256": "46f7c5a6daf34c9a140303c315ccaa90d1595f0e59253f27d10bc0b74bf3d655"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Ni.psml",
+      "size_bytes": 81941,
+      "sha256": "35fc90851317e65d669031a3cb814406dea50dc1f036752d1998a2da9dfeee60"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/O.psml",
+      "size_bytes": 58786,
+      "sha256": "e8337fef9b79d42d8e06e5de6082d99b63031d786cd458fe47bde34f9a8ad579"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/P.psml",
+      "size_bytes": 87789,
+      "sha256": "377b4783cae43d8b5982695613d9898d3ff216206ff03973686ca5f1b9f64b8f"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/S.psml",
+      "size_bytes": 87789,
+      "sha256": "d1193eb9010a0403be92b4d6f0af377ea2035eac0173777c6ba5958e59f2616e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Se.psml",
+      "size_bytes": 84552,
+      "sha256": "0ea417f21664c3b61f72c178fab3f79e1de27ead2f148718caead06d1b13bb28"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Si.psml",
+      "size_bytes": 84455,
+      "sha256": "db2fcab4765484b4c6c257304f587bf5529304e6c6cf062ed45a98181b14bece"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Sr.psml",
+      "size_bytes": 78872,
+      "sha256": "f2d45a3e54aa59b138d96f2e6380d464a9954720b0efb06e7b053b17d6d2f2e4"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Ti.psml",
+      "size_bytes": 78899,
+      "sha256": "32ef769104ccb5a1ee88c4ceaa830d9fb62fc2b6c9f6fb834b10435d3a345962"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Zn.psml",
+      "size_bytes": 81966,
+      "sha256": "1510187e7feb05759ed69632eb7afe254f0c7235a16e9ae970c592ec0ed2b6f0"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/pbe/Zr.psml",
+      "size_bytes": 84760,
+      "sha256": "a7ef925d1f79cfa09534be38665c97a81b10bb39abb630334ad3e46d24b19727"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/README.md",
+      "size_bytes": 13948,
+      "sha256": "714d713257cb0c75999c17178b046351fa915815375f1baef8a4a1d4b9739143"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Al_lda.json",
+      "size_bytes": 600,
+      "sha256": "8220d4733f345c29c815d25ea4e6e498797967b5074db8855585edc454dd9651"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Al_pbe.json",
+      "size_bytes": 597,
+      "sha256": "34c7b653c34d34bfde4187e6e71fef473d23b1b238c42e38253f9564cc1b9fc7"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/C_lda.json",
+      "size_bytes": 610,
+      "sha256": "901c6ea2518524a349b00957767e4e36847d135d3fb6bdd1e0f6ce126a22c68e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/C_pbe.json",
+      "size_bytes": 611,
+      "sha256": "5aa833e7c3991f4829f977bf5c663a7afa1d808265a8a47ddecb5f417623eec7"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Cu_lda.json",
+      "size_bytes": 619,
+      "sha256": "c89d95ddd56111fa226d18361f4c4a0affb8498538dc572fb3c97622e8ee640f"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Cu_pbe.json",
+      "size_bytes": 619,
+      "sha256": "8760b83190d0711251c7f0bd0f421cf1ffb5a715cba1431bea08bcd781cd18d5"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Fe_lda.json",
+      "size_bytes": 668,
+      "sha256": "a8225ee89b6636c648256eea977b873c98e48403038ac35620d120a636ee6e79"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Fe_pbe.json",
+      "size_bytes": 894,
+      "sha256": "97c696a5202a2aa3720c45c8497a29c1d9bb3abd0deeaca22385ffdc41dea5da"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/GaAs_lda.json",
+      "size_bytes": 617,
+      "sha256": "e37a79a89a3a29feebd5584e979b11da0f4d8ce00e3b2f1052aadc44a2104736"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/GaAs_pbe.json",
+      "size_bytes": 619,
+      "sha256": "5261783e4d70071609dd4678c57e203d9c4f347e46c0332a01eff01981ec614f"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/MgO_lda.json",
+      "size_bytes": 619,
+      "sha256": "391400a1cc9c4e0e8400a1abfa2126c340fa2b933cdd40d8cf8c8604ee842042"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/MgO_pbe.json",
+      "size_bytes": 618,
+      "sha256": "22e4cfe9b80293916bf32be7c41d6e3a2ad88060cfbac8b098620fce2679fe9b"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/NaCl_lda.json",
+      "size_bytes": 617,
+      "sha256": "c77b3dcd4f91ba721c1876d2eaf6a7c42e7c32a488cd2adcef2ddd35243ed709"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/NaCl_pbe.json",
+      "size_bytes": 617,
+      "sha256": "a1d931aa1127ff16be15c620fba5b0ecd0945584216f64c845051f7890c3a32f"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Ni_lda.json",
+      "size_bytes": 667,
+      "sha256": "1a4f241db86449df9e2eac9d93e6be10ae40520d829663d8650fa19dede60feb"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Ni_pbe.json",
+      "size_bytes": 671,
+      "sha256": "e32ec465147ffe39f34cd4c31381fff0116dae1b3d9392ccec7b81c2ddffe616"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Si_lda.json",
+      "size_bytes": 611,
+      "sha256": "b6b7385542908718ac4ea36bb29aa7de63925e6a403af02aed71076c9ed075c8"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/Si_pbe.json",
+      "size_bytes": 610,
+      "sha256": "6a105c96455cb488c0c78be28c5fb89687e800b4e210ff4af750602687fe3489"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/ZnO_lda.json",
+      "size_bytes": 621,
+      "sha256": "f1f9edea3b308b3099ed2352e04b43209f0b6e87293e9c05fcd570d01080e946"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/eos/ZnO_pbe.json",
+      "size_bytes": 620,
+      "sha256": "7a5796b556b8a3b48cad077d30f168805a2298425fa6cebe147533d1f6a1e80e"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/results.json",
+      "size_bytes": 14982,
+      "sha256": "55a9b7d7df90b860cf33cd4b9793abdee01f27742698a8a2a2dbf5d49a79497d"
+    },
+    {
+      "path": "app/dftlab/data/pseudos/validation/run_eos.py",
+      "size_bytes": 6386,
+      "sha256": "86f5bb196ce4b0045563ee38d3b3c5a80855890b620eed17f0af6d941adc2cff"
+    },
+    {
+      "path": "app/dftlab/static/css/app.css",
+      "size_bytes": 12035,
+      "sha256": "ea39996307e927bd7a1d3d99b4689596d6c3aa5952b79b34f6905d163ee419b0"
+    },
+    {
+      "path": "app/dftlab/static/css/views/beyond.css",
+      "size_bytes": 971,
+      "sha256": "e897b8d0dbf00656ba89b5920d88dcd363f90fff512191b2879b479af9cf9cb3"
+    },
+    {
+      "path": "app/dftlab/static/css/views/lectura.css",
+      "size_bytes": 4820,
+      "sha256": "078281f35348f848f85cddc824aef321aaa97201745672018daecd9bc6869720"
+    },
+    {
+      "path": "app/dftlab/static/css/views/pseudos.css",
+      "size_bytes": 599,
+      "sha256": "106faf7e436e21b327c1f8eaf7356330b76db08096c0f6b6cdb3bef9ac75953b"
+    },
+    {
+      "path": "app/dftlab/static/index.html",
+      "size_bytes": 958,
+      "sha256": "33922a862c0673455a4ed26b028bef4bf620f24c93578f6b6c7b4bdcf4751e90"
+    },
+    {
+      "path": "app/dftlab/static/js/core/chart.js",
+      "size_bytes": 11545,
+      "sha256": "25bd64a1430e10741844629a449e4e8851aa862f97462a01a2525d82703b626f"
+    },
+    {
+      "path": "app/dftlab/static/js/core/scene.js",
+      "size_bytes": 1284,
+      "sha256": "66e235b7a41a19d41f1951133cecea71d13a270da297db7985a9260baf1b87d3"
+    },
+    {
+      "path": "app/dftlab/static/js/core/svgctx.js",
+      "size_bytes": 5884,
+      "sha256": "0fe3ecceaed52a4c23a316fab89331c8793b534319fe20511ebd699551cab9fd"
+    },
+    {
+      "path": "app/dftlab/static/js/core/three-view.js",
+      "size_bytes": 10220,
+      "sha256": "c37063b126d76ede43578e2b27a994ff1b763d21a3afb705a8019820ec0a3588"
+    },
+    {
+      "path": "app/dftlab/static/js/core/ui.js",
+      "size_bytes": 3832,
+      "sha256": "895e9c0a21825ee0d55d03ffba4e48ee132953e7064f0dcf83570574ccbd0aa1"
+    },
+    {
+      "path": "app/dftlab/static/js/crystal/bz.js",
+      "size_bytes": 9119,
+      "sha256": "d040717a94c0f1cde1a6432a97b132b9481096f2a1d5636c83de8447b9571bd6"
+    },
+    {
+      "path": "app/dftlab/static/js/crystal/elements.js",
+      "size_bytes": 9132,
+      "sha256": "cc2c2fa9ed184c3c8501f0977f1e55f94ffaed71dcd6a6e6bed849f4dd67c2ad"
+    },
+    {
+      "path": "app/dftlab/static/js/crystal/formats.js",
+      "size_bytes": 42918,
+      "sha256": "93e9b3337ad7e82be7ac50372d59c53fe56301c8ebd85fe23f33af61d457439c"
+    },
+    {
+      "path": "app/dftlab/static/js/crystal/kpath.js",
+      "size_bytes": 45597,
+      "sha256": "6b42f2c935af25e0c7472eb3464d7bf53abc2ba3344f818a41f35be02e4654f7"
+    },
+    {
+      "path": "app/dftlab/static/js/crystal/README.md",
+      "size_bytes": 19526,
+      "sha256": "0c83ebc82ed42d85f275c5644403a97759f0834702ab87a3779c9f1d89b723b7"
+    },
+    {
+      "path": "app/dftlab/static/js/crystal/symmetry.js",
+      "size_bytes": 29374,
+      "sha256": "bdeafab89c0f881703ebe4ef0ff4b6eb42a0d0bff4a3020cc47d2b5413615952"
+    },
+    {
+      "path": "app/dftlab/static/js/data/beyond_dft.json",
+      "size_bytes": 5259,
+      "sha256": "66ed9fc135cec3278fb806d073a9850e258937f7d929ac107499addd81d2d098"
+    },
+    {
+      "path": "app/dftlab/static/js/data/conv.json",
+      "size_bytes": 129558,
+      "sha256": "2fb928784e01678dbc2014158d950947e1b44dde126d356ced96071f62b724a8"
+    },
+    {
+      "path": "app/dftlab/static/js/data/espin.json",
+      "size_bytes": 383368,
+      "sha256": "1cc48dd60f44774fcfd548ae057aabe1cac8b94457c9e5f7aac8a69cdcf0d50b"
+    },
+    {
+      "path": "app/dftlab/static/js/data/examples.json",
+      "size_bytes": 347223,
+      "sha256": "33659eae2aca7628ff0d4066a9beaa19589194a6d796de5beb24bb301d8af2c0"
+    },
+    {
+      "path": "app/dftlab/static/js/data/fuerzas.json",
+      "size_bytes": 34757,
+      "sha256": "8f0683f76aeb3ef3202e138699f90f83a996b0ece92951042af371778bc29f71"
+    },
+    {
+      "path": "app/dftlab/static/js/data/nio.json",
+      "size_bytes": 235387,
+      "sha256": "836210d741667eb77a27fdb39c10b31aacf71c6730c96522bb417ede79af7650"
+    },
+    {
+      "path": "app/dftlab/static/js/data/out_fe.json",
+      "size_bytes": 33501,
+      "sha256": "85489bd7347a8f88b6362add6f711299380e4d910a9e5273fd8618c71055b253"
+    },
+    {
+      "path": "app/dftlab/static/js/data/potencial.json",
+      "size_bytes": 61589,
+      "sha256": "97ab5815ae75ad735f831ba315e4d83e8ab78863c0a9a62fa587566b9482d84a"
+    },
+    {
+      "path": "app/dftlab/static/js/data/pseudo_lib.json",
+      "size_bytes": 3873406,
+      "sha256": "e6c154357ca715063dc7115c8aac2d090cdae6629307e4b840977f7fb6254f62"
+    },
+    {
+      "path": "app/dftlab/static/js/data/pseudo_xc.json",
+      "size_bytes": 385734,
+      "sha256": "d9c71f61fb1de4ec07f0646c05b202ba80cb6cef9346efb6034de0d00a6f60c9"
+    },
+    {
+      "path": "app/dftlab/static/js/data/rho.json",
+      "size_bytes": 314605,
+      "sha256": "cc69021c657a83d00abe4c31fd7ae726724e32e899ac190a563e5ecc232ce986"
+    },
+    {
+      "path": "app/dftlab/static/js/data/scf_runs.json",
+      "size_bytes": 63380,
+      "sha256": "24e4f941a275eddad150682be512faddf05f065cc1f97bb69dfcf2b58bbd24d4"
+    },
+    {
+      "path": "app/dftlab/static/js/data/si_fonones.json",
+      "size_bytes": 20424,
+      "sha256": "6df0b278c67f2d33a3668d53fd21c8fc2618d49bd83958234069bf8c422bc7fb"
+    },
+    {
+      "path": "app/dftlab/static/js/data/si_lda.json",
+      "size_bytes": 489387,
+      "sha256": "5623e9958f817101846591f266a1cd8d9d24c2ba9b7244c12700af9406b24373"
+    },
+    {
+      "path": "app/dftlab/static/js/data/si_wf.json",
+      "size_bytes": 4297717,
+      "sha256": "fe9dba6f60fc384ed0bf9c3009265cc80894aa69f2b63b246064836f0a4b3d95"
+    },
+    {
+      "path": "app/dftlab/static/js/data/solvers.json",
+      "size_bytes": 3370,
+      "sha256": "994f649aede2b26c69a8446facc30e230d12ac740cccacbfedef3efc09fcf5ed"
+    },
+    {
+      "path": "app/dftlab/static/js/main.js",
+      "size_bytes": 2129,
+      "sha256": "beaae15f194ce53324da9911b31bfc219013436ce16ba5a8e1d510f11e9d6c90"
+    },
+    {
+      "path": "app/dftlab/static/js/physics/atom.js",
+      "size_bytes": 9683,
+      "sha256": "89b5a1d773656d5c4448d5f60b19799b17f6f6118448ac37203591519da826c3"
+    },
+    {
+      "path": "app/dftlab/static/js/physics/phonon.js",
+      "size_bytes": 10555,
+      "sha256": "6e7b0ed57e6f3a41f0cc194ca9cc1a52b6ad8360150e66f6abef03f7b090b60e"
+    },
+    {
+      "path": "app/dftlab/static/js/remote/index.js",
+      "size_bytes": 1440,
+      "sha256": "2d027e4fa9ff86620c8d402329173421cc6cbb09cb0575cabfcccdff722677c1"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/bands.js",
+      "size_bytes": 5765,
+      "sha256": "ada73ccccf75a5672247e47936c975651b11365c0d3ccd08fa69f2d7fdbc4b02"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/dos.js",
+      "size_bytes": 1661,
+      "sha256": "a32478b3187295baff32198ec6387f5233323070046fbb91701762765efbc899"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/eig.js",
+      "size_bytes": 7635,
+      "sha256": "8357be42d563b7d78ef83bf404b53aa115ea352982ff99e1b71256e37a98047c"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/epsimg.js",
+      "size_bytes": 7108,
+      "sha256": "2e8c6cf4831c35863df46c4cf42b8e64ab18a84efaba2ec77f29c040bbab0c38"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/fc.js",
+      "size_bytes": 3105,
+      "sha256": "d00a74a6a1088ef45b15703d0c7e62cdcab6d902242c0b1b04d0ffef3a98a4ef"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/index.js",
+      "size_bytes": 6177,
+      "sha256": "198283d3b81eecdcf06ddb3cd0850f83d48c87c10bf59468088026a5019b5bc8"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/ion.js",
+      "size_bytes": 6803,
+      "sha256": "eb092f6356d002f8dbd5976d744e0a36011330ab7ee26fc514b5e8728c98fa0f"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/mde.js",
+      "size_bytes": 5311,
+      "sha256": "1989fd027944d58254cae8b666db910b302f9e0cc31341b9097ae892f50ed351"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/out.js",
+      "size_bytes": 32451,
+      "sha256": "095136811352a64384812830ca76a5ff52e7be0e0c8a237727eef768ba1eebee"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/outnotes.js",
+      "size_bytes": 78688,
+      "sha256": "7f7d276599a08ac35995b7eb5d782700a3876de0bfe96099f22bc8c11975a622"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/pack.js",
+      "size_bytes": 3366,
+      "sha256": "54dbee730d1729fb9c066506509e25de9bb7fb03afdd5ef4b2f60b8074570358"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/pdos.js",
+      "size_bytes": 7329,
+      "sha256": "472ba055929a13d953e3be7b5a05933420bc4c5f6db73e90cf7ef4897476a05f"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/pseudo.js",
+      "size_bytes": 10033,
+      "sha256": "2c7b98a05e8686629f32c9ba478197cd9a0a5739dc326d642b7aeb985b0ec911"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/README.md",
+      "size_bytes": 15126,
+      "sha256": "153b7966ada058ee3ac700f03b6af29991ea47560656785ad7c53949352eec75"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/rho.js",
+      "size_bytes": 6407,
+      "sha256": "2564215a30efa3974fdeabcdd8c5557aa64b9735d38eee860d8105861afe49c1"
+    },
+    {
+      "path": "app/dftlab/static/js/siesta/util.js",
+      "size_bytes": 7966,
+      "sha256": "5cac21ca84721bfa34ba74bcb03cf0d711945928695ff8da71fed897092bf9c3"
+    },
+    {
+      "path": "app/dftlab/static/js/tools/fdfgen.js",
+      "size_bytes": 10123,
+      "sha256": "9211f3d912d100527048ce759822b3b8303db0c9a8e833fe87f0328094282e04"
+    },
+    {
+      "path": "app/dftlab/static/js/views/bands.js",
+      "size_bytes": 22847,
+      "sha256": "9b13c2b1a008fdb66a887bf6a6057e8c8c4293cb6e1d7576f73f9a70f8a5d50f"
+    },
+    {
+      "path": "app/dftlab/static/js/views/basis.js",
+      "size_bytes": 12899,
+      "sha256": "0409e67b4d89178adad15603455f2b04626edd81f0514531ff4054ed5a954e21"
+    },
+    {
+      "path": "app/dftlab/static/js/views/beyond.js",
+      "size_bytes": 16613,
+      "sha256": "f1b68fa505b79b8a471ae5be1e7c525f0dec09b6451f49564d4261cba6c90737"
+    },
+    {
+      "path": "app/dftlab/static/js/views/calc.js",
+      "size_bytes": 26861,
+      "sha256": "d2b87061c45c3cf2b2342e84e28e8ab7197fa5a7bf83c95a4f7772f3d055a66c"
+    },
+    {
+      "path": "app/dftlab/static/js/views/density.js",
+      "size_bytes": 33882,
+      "sha256": "c4cee37ff5678391af0a04dc846e94e5e8cd7a162838084023ccd6f364448e65"
+    },
+    {
+      "path": "app/dftlab/static/js/views/dftu.js",
+      "size_bytes": 13125,
+      "sha256": "bcc937f8964bd5b28c8e270c221dfab3ebc584c883228bffa293f4442d215e69"
+    },
+    {
+      "path": "app/dftlab/static/js/views/estructura.js",
+      "size_bytes": 20348,
+      "sha256": "3485ede143ce4a421df253cb42e492d1d726d570d03d9cf370c0b47ba7528a12"
+    },
+    {
+      "path": "app/dftlab/static/js/views/forces.js",
+      "size_bytes": 51086,
+      "sha256": "15d501073424f00bf18aa1f8d00fc4c67467faad24fe176be40dfc24b004e8b7"
+    },
+    {
+      "path": "app/dftlab/static/js/views/home.js",
+      "size_bytes": 1256,
+      "sha256": "ae30cfa6da9ea6aa71bd6bc7d1a3a0aec2e2954c8cb3826e23c4586cddab862b"
+    },
+    {
+      "path": "app/dftlab/static/js/views/ks.js",
+      "size_bytes": 18513,
+      "sha256": "6bec28393ce53cac0b9d693523f6d3ccf8f7921c3de288fca9aac0d4529b0b1e"
+    },
+    {
+      "path": "app/dftlab/static/js/views/lectura.js",
+      "size_bytes": 15057,
+      "sha256": "b97b3eac8afb2997706fc4907d1c3d556cd5127fddb76782095d01359822c714"
+    },
+    {
+      "path": "app/dftlab/static/js/views/phonons.js",
+      "size_bytes": 33233,
+      "sha256": "5571e046c1beb048f24b93c415826c38bebc02a154df2f60cf43f4149c5d5f1a"
+    },
+    {
+      "path": "app/dftlab/static/js/views/postproc.js",
+      "size_bytes": 32452,
+      "sha256": "576453f5672f57ea92a11fa4cf7e8404490c89dab1f76443bf490c77c6537d64"
+    },
+    {
+      "path": "app/dftlab/static/js/views/potential.js",
+      "size_bytes": 32833,
+      "sha256": "17f22f4e0a42111c6403f0de5b389ee2d6d80adc2d84d95c01fe41cfbb5e94e8"
+    },
+    {
+      "path": "app/dftlab/static/js/views/pseudo.js",
+      "size_bytes": 28801,
+      "sha256": "26bb617a0115741771e207dd439d6e603938f8a592e26156a1766877ceb16588"
+    },
+    {
+      "path": "app/dftlab/static/js/views/registry.js",
+      "size_bytes": 4716,
+      "sha256": "fbee118e6b652fb50a06f464912780cd684fddbbff07540f6fb4ea38da5b5f19"
+    },
+    {
+      "path": "app/dftlab/static/js/views/scf.js",
+      "size_bytes": 20319,
+      "sha256": "424d8d9401a44442e6e8d29e0588d8b56ce17331183a101ca9552d9667d80645"
+    },
+    {
+      "path": "app/dftlab/static/js/views/solvers.js",
+      "size_bytes": 13867,
+      "sha256": "7f5e018f0f7674a01cd09f2838e213f5d35b374b24bb0791e0d1ddb0634e2443"
+    },
+    {
+      "path": "app/dftlab/static/js/views/spin.js",
+      "size_bytes": 23962,
+      "sha256": "77c309891d54740ba0819d7da4e343c59fbc97f15ea9d5009b388dd7d7242599"
+    },
+    {
+      "path": "app/dftlab/static/js/views/xc.js",
+      "size_bytes": 24704,
+      "sha256": "b3773eba755e36121c00a172ee0e99fa2d6f5010918d32aa4dec7357cdc64105"
+    },
+    {
+      "path": "app/dftlab/static/vendor/moyo/loader.js",
+      "size_bytes": 4511,
+      "sha256": "063b984cae00af45d2b6eed9abf81b3b818a8b6493e14b987d3b5191bea5f0e4"
+    },
+    {
+      "path": "app/dftlab/static/vendor/moyo/moyo_wasm.d.ts",
+      "size_bytes": 12159,
+      "sha256": "0567474ab470e83ea4177f79b13d5e8931618e99602a28a9e7c5cca998e14b63"
+    },
+    {
+      "path": "app/dftlab/static/vendor/moyo/moyo_wasm.js",
+      "size_bytes": 26030,
+      "sha256": "d407370cc1aaf35ff0f2519f448eee58ebfc08bd69d825b22a1088a2e9b8edfc"
+    },
+    {
+      "path": "app/dftlab/static/vendor/moyo/moyo_wasm_bg.wasm",
+      "size_bytes": 746126,
+      "sha256": "fd9c5fbc543391fadefa60bba773a55345dacfa9bea1d6a379ffb332cf2cacd3"
+    },
+    {
+      "path": "app/dftlab/static/vendor/moyo/moyo_wasm_inline.js",
+      "size_bytes": 994946,
+      "sha256": "929ae1209f1b8d4e0ca724b2e116c7d76c470c72082339a16349e25860152b4b"
+    },
+    {
+      "path": "app/dftlab/static/vendor/three/OrbitControls.js",
+      "size_bytes": 25874,
+      "sha256": "829cfb56e1f1f30954ef0501867b4972f932b241d3207a06e561d00e779fd496"
+    },
+    {
+      "path": "app/dftlab/static/vendor/three/three.module.js",
+      "size_bytes": 1140878,
+      "sha256": "af527c374b56b8688737a42d7fcea7cb8aaeb57a4e3c6da98b4dffd55bcc3514"
+    },
+    {
+      "path": "app/package-lock.json",
+      "size_bytes": 14538,
+      "sha256": "420cd1c048ffb5664f4c94cf355576396b3073aa526de7f257c712f30d45410a"
+    },
+    {
+      "path": "app/package.json",
+      "size_bytes": 326,
+      "sha256": "8842478406d5a96b2a90a9b90c21d0f03085d3e000ad115150f9029e3abd5d51"
+    },
+    {
+      "path": "app/scripts/build.mjs",
+      "size_bytes": 2226,
+      "sha256": "a413f1fadd2c43bb1ad32882a1b928d33222434f3b30e63dfc18e0abb7bef0a1"
+    },
+    {
+      "path": "app/scripts/dftlab_pack.py",
+      "size_bytes": 34899,
+      "sha256": "e15f36c40121de60e2d3e462b085305a649f9bf6550f40f41d618418d6bb9b4b"
+    },
+    {
+      "path": "app/scripts/README.md",
+      "size_bytes": 7605,
+      "sha256": "7c722a45a380b162c4910d2fb350f1118a4f290ef8fbba14ff464d3e9df7a245"
+    },
+    {
+      "path": "app/tests/crystal/browser_smoke.mjs",
+      "size_bytes": 3383,
+      "sha256": "1f2f7dc5f41442d6d5ab02c51b950f4485ffdc4d34c85610c523850d7a1d17a1"
+    },
+    {
+      "path": "app/tests/crystal/fixtures/gan_mp_style_p1.cif",
+      "size_bytes": 824,
+      "sha256": "d860bd24079e98b80b194a269bd0cff853c9ac6b564b65771cddd5f9bb6276e2"
+    },
+    {
+      "path": "app/tests/crystal/fixtures/monoclinic_p21c_cod.cif",
+      "size_bytes": 883,
+      "sha256": "2ce4b5d4a0af750a0c321220191bcc5835ad136cd74c87553223bd4b3aa1b656"
+    },
+    {
+      "path": "app/tests/crystal/fixtures/nacl_hm_only.cif",
+      "size_bytes": 716,
+      "sha256": "c6d663e1dcad07369705e4d8f1787c7afa6dda1cbfc26e4465460d4e48f16762"
+    },
+    {
+      "path": "app/tests/crystal/fixtures/quartz_icsd.cif",
+      "size_bytes": 917,
+      "sha256": "263e6938acf69ec16458e9cdc124c0e3e2a14ab3dcf57b6ccea4a5586b00e2d2"
+    },
+    {
+      "path": "app/tests/crystal/fixtures/rutile_cod.cif",
+      "size_bytes": 1038,
+      "sha256": "12bb693f80ae2be63e03cd786b3ac036422820383fb6eae78d22bb9643c99988"
+    },
+    {
+      "path": "app/tests/crystal/fixtures/zno_cif2_messy.cif",
+      "size_bytes": 1042,
+      "sha256": "8e2a291907a0122182b8d729dcac7ffa4a2009103ceb58212f4adb1f58a8b209"
+    },
+    {
+      "path": "app/tests/crystal/make_reference.py",
+      "size_bytes": 24015,
+      "sha256": "dad8d9b459f83463c3c8e6b454cef230462254ed3968231eef1b417b61321004"
+    },
+    {
+      "path": "app/tests/crystal/reference.json",
+      "size_bytes": 7823946,
+      "sha256": "42a4b5e530583ea7b9ac791326db8e922551f2f7b074fa351a1c8ebf392e778d"
+    },
+    {
+      "path": "app/tests/crystal/run_tests.mjs",
+      "size_bytes": 21611,
+      "sha256": "50ab37b6cde1f60d1ca743b198fc12d77fb83e968f7fe0addeb2e35e93321b3b"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fe/fe.bands",
+      "size_bytes": 38460,
+      "sha256": "9558e72bd95745bce16017ab1255c95547b9d6d1790ac41ddb97690d79268fd9"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fe/fe.dftlab.json",
+      "size_bytes": 362994,
+      "sha256": "415c901fb01cc165f0b3d0d07aa400aa58a6c2cde33b09d71067cdebb7de4725"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fe/fe.DOS",
+      "size_bytes": 36600,
+      "sha256": "090dbb397f1e7c8a4dbd335e3a82847ac2a38543b950f178036e5adced4f127e"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fe/fe.EIG",
+      "size_bytes": 320923,
+      "sha256": "87b89bc3c0b2116bed3a1e662dda76383f69448708c4333fb9914db1c94e6637"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fe/fe.EPSIMG",
+      "size_bytes": 71994,
+      "sha256": "ff8b9a477650fe1a74bd4d43e407df8e66186a30369fa933259f48ff15f9e4e2"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fe/fe.fdf",
+      "size_bytes": 1579,
+      "sha256": "e3031d0b034db966af8cadafdf9a151f5675a432bcad5f3770a3445fec7722d6"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fe/fe.KP",
+      "size_bytes": 39213,
+      "sha256": "80c2f2b55d149ce1255baed2c426aabfc393d928138f84d149a656c83e2f9313"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fe/fe.out",
+      "size_bytes": 32754,
+      "sha256": "cf81ca0211f8535379c3f1f1b19be39c0b24bd45df79e6769854fabecfeb8fd7"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fe/fe.PDOS.xml",
+      "size_bytes": 379234,
+      "sha256": "187d3c9b5ddb77dc91eb3b042cca7c8283c86bfba48a38ea8ce5395e74ba7aa8"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fesoc/Fe.ion",
+      "size_bytes": 348477,
+      "sha256": "e82f5928718378a97b7688d887232d8f4d806efea176a30eab308756fcd8ee44"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fesoc/fesoc.bands",
+      "size_bytes": 23425,
+      "sha256": "d9ae8b3055ccbab850d5c930d50e7a1eb7810379e2b469c39e459647b3e45df0"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fesoc/fesoc.dftlab.json",
+      "size_bytes": 175472,
+      "sha256": "b143b6549de71bb03889e271137175d38f7419d5ce202596631adc1978321d6f"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fesoc/fesoc.DOS",
+      "size_bytes": 40400,
+      "sha256": "10e0dba6c3daa5a12457c1e9d44946903fd3530b57e57722409b10b87db07cde"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fesoc/fesoc.EIG",
+      "size_bytes": 74779,
+      "sha256": "2cbdc4cce91f4a3d1d705880384dffec3121b6702f188f0fab97e3c4d9cdbcdf"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fesoc/fesoc.fdf",
+      "size_bytes": 1310,
+      "sha256": "a63379adcec6353c5822ed82e297ddf0e8157bc64b0ec63bf5c7898cd651956c"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fesoc/fesoc.KP",
+      "size_bytes": 15133,
+      "sha256": "f22afe09ffc972fc52b9eae4bbbf0b9bb3c433a0e18c20fbc66f686812a54b22"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fesoc/fesoc.out",
+      "size_bytes": 32131,
+      "sha256": "bcff268a8236b222ed8ac977b4cbd3ddac5d82b46708e941a4c9183dc8cf4bcc"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/fesoc/fesoc.PDOS.xml",
+      "size_bytes": 301309,
+      "sha256": "b47edeb74527aa51645255cb48036720baa93ad54a35d4f17396dc27297539a1"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/md/md.ANI",
+      "size_bytes": 2680,
+      "sha256": "f3d0c1f4e07cf8600ca2efb7ce2e8befa64b047fa0da11121d3c45c6be61b34a"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/md/md.fdf",
+      "size_bytes": 873,
+      "sha256": "ae970ce524ff707c53b6c252136245b2ad3e738154cfcf4fd860f677883a6e12"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/md/md.MDE",
+      "size_bytes": 621,
+      "sha256": "66bfa02083eb8aafa194eaf3ff2879a3b17b08b7048ec65f6af498972074fb77"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/md/md.out",
+      "size_bytes": 55446,
+      "sha256": "fbd053719c6b134bf441d333e8dec239da6843dc29d422414a699026109cf3e2"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/misc/graphite_vdw_psml.out",
+      "size_bytes": 24562,
+      "sha256": "c85877c9b5ec52e34f7954664c4936bc320f5db845ec2099e5baa873cb52f403"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/misc/mg_lin050_notconv.out",
+      "size_bytes": 34417,
+      "sha256": "507c5cf3c1f82e361dabcbaa2c12fe2fa0160de0d5d31ecf514e1e4b4320119b"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/misc/omm.out",
+      "size_bytes": 58448,
+      "sha256": "c75f51c58f054616fc422f6da88a80267473d942a9208d8bfc712956805179d9"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/pseudo/Si.psf",
+      "size_bytes": 152736,
+      "sha256": "0afddde32f30e43fa8d603822f3dd1ddf357e8ff33a1af21eb4982b6e63080d7"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/pseudo/Si.soft.psml",
+      "size_bytes": 220349,
+      "sha256": "ae8b9e2462e65a655a87da347e09186bf18311cf33f3d81eff86038baa046d6e"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/pseudo/Si_lda_oncv.psml",
+      "size_bytes": 84145,
+      "sha256": "84c9316efac1959ee8c04b8d5a06eec2e069fa19302cb66254f2e4dc455b2044"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/reference.json",
+      "size_bytes": 13942,
+      "sha256": "c55d2e09708250ac635f904eddc335daa088495c082525670c472cc339470a3a"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/relax/relax.ANI",
+      "size_bytes": 2010,
+      "sha256": "29d727b2dc991fad121b9211c682e1cae86b453f124188483ec25287834ae5ba"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/relax/relax.FA",
+      "size_bytes": 495,
+      "sha256": "b00d4cb2399ed53391edef45a75b2e500563d5370d4d3f52e79842992fcdf92d"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/relax/relax.fdf",
+      "size_bytes": 842,
+      "sha256": "5dc546770f1400f7cf15ce168db0fccbbc37a31104e18613542300b1d1fd86ba"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/relax/relax.MDE",
+      "size_bytes": 483,
+      "sha256": "e98a467e3aa818e313fbcb635e58e5656e1d56264161b6f35db946e63be735d1"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/relax/relax.out",
+      "size_bytes": 55375,
+      "sha256": "29cd9fb78f899d3175b9832a5adca55dac79428625864c735d50d998244a76e9"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/relax/relax.STRUCT_OUT",
+      "size_bytes": 699,
+      "sha256": "a685e6c159dca4d3d88b889518a318f52cbbfacc5dc075559bf7203904151c67"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/relax/relax.XV",
+      "size_bytes": 1326,
+      "sha256": "59cb8836ad3fe5e49d440c7c383117f49797af305ef4a4a61414bbdc2ae6b5c5"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.bands",
+      "size_bytes": 63181,
+      "sha256": "b64e678933dff5d233dcbd0a85801a4a9dfa38d967b4c47a671c4fbbae579a07"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.dftlab.json",
+      "size_bytes": 344247,
+      "sha256": "6aa15ef0d79035b19c51fa4a218e4b44063b8905cdcb6b7a6aae4e7bf1202e77"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.DOS",
+      "size_bytes": 24600,
+      "sha256": "76a3842399a240b27d32c02148020e05d1fa16bbe4b4e728fee66546453e8716"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.EIG",
+      "size_bytes": 128299,
+      "sha256": "0ce86950dccb01eb7e92bc5c39e0cb9041c8446be8691d81193e9aeb3b09fb19"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.EPSIMG",
+      "size_bytes": 108337,
+      "sha256": "d7d31d7d94f7c441914572932ab539c31ccaab46de08f91dc603c0e5fcf46a30"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.fdf",
+      "size_bytes": 1538,
+      "sha256": "447e9b991bca73adcc0aaed9477f778179bb65a5cd8565414b061f79fed877c6"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/Si.ion.xml",
+      "size_bytes": 275543,
+      "sha256": "34155211b527d8a5d9755becd282062d02fd1b6edd73979cbc649fa14a243665"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.KP",
+      "size_bytes": 17933,
+      "sha256": "cc7e023d5e318d7deee883e1fb7baa0c5c547c0d0573829e92a063330c045857"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.out",
+      "size_bytes": 98992,
+      "sha256": "d56f5a8cb6635a853cbb5bb4746cb17735df9a29271d44243b3718b5d49f78b6"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.PDOS",
+      "size_bytes": 300824,
+      "sha256": "ffb08ec7fc74f9b5ca970c1094c21665d2664103be1545fe299a68cdac9cfa3c"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si.PDOS.xml",
+      "size_bytes": 332412,
+      "sha256": "99754badf05b1ea2e57c32b3e5499ec97380d870d6f6103565c31519c4c57970"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/si_stdin.out",
+      "size_bytes": 27379,
+      "sha256": "4203fd5f3e50b02203927e47de320d2cdb46df2e21629a92f2f8471af31b80c1"
+    },
+    {
+      "path": "app/tests/siesta/fixtures/si/sibp.bands",
+      "size_bytes": 2237,
+      "sha256": "e6e4fd1f23a4855b67c83f49b29e5a26156954ab2cb2bd6c4bf4baa06ba009dd"
+    },
+    {
+      "path": "app/tests/siesta/fixtures_fc/reference.json",
+      "size_bytes": 1519,
+      "sha256": "dd3afade115ae4b039e78a207bbce354252a113b7734904710392d1f712ac11a"
+    },
+    {
+      "path": "app/tests/siesta/fixtures_fc/si_fc.FC",
+      "size_bytes": 10639,
+      "sha256": "544bbade7fa8927768305b808eb1cc561725220cdb9de0989781b1e1fc6e3380"
+    },
+    {
+      "path": "app/tests/siesta/fixtures_fc/si_fc.fdf",
+      "size_bytes": 1114,
+      "sha256": "2bb51b1244a5a7e5d4886e169d93f1e4744874cdbb72e09dace4168e2fe6a7aa"
+    },
+    {
+      "path": "app/tests/siesta/fixtures_grid/mgo.DRHO",
+      "size_bytes": 115304,
+      "sha256": "b0fad593e3e19fcb8d30cee21907e2bad52352404a0c73c93992c82dc5b6ee60"
+    },
+    {
+      "path": "app/tests/siesta/fixtures_grid/mgo.RHO",
+      "size_bytes": 115304,
+      "sha256": "be4e395e5113ff1bfd4ced405c48aba18d96b0d137a1ee201ed8e097e78d6d02"
+    },
+    {
+      "path": "app/tests/siesta/fixtures_grid/reference.json",
+      "size_bytes": 1797,
+      "sha256": "22cafabd1f79a1aa5655097dcc799936c79ce54c225180d3953c0114cb132ca2"
+    },
+    {
+      "path": "app/tests/siesta/make_fc_reference.py",
+      "size_bytes": 2631,
+      "sha256": "da3649004890d53bcb1f8cdc53862c542c12a0e94d242586a3ad4c3d08e9eae4"
+    },
+    {
+      "path": "app/tests/siesta/make_reference.py",
+      "size_bytes": 13969,
+      "sha256": "d68761e87a4e39f362ccd19d0091e5769d2b4a9babf95b8a07af619f48a73906"
+    },
+    {
+      "path": "app/tests/siesta/make_rho_reference.py",
+      "size_bytes": 1417,
+      "sha256": "61a19fa73c1d38361400a55c3c678c39f893e98bdbea7540629a06b5d58f46cc"
+    },
+    {
+      "path": "app/tests/siesta/run_fc_tests.mjs",
+      "size_bytes": 5604,
+      "sha256": "f061bac578930c92f615ea63d354ee28dce969ee1cdae8ecfb6d0c71b3444af5"
+    },
+    {
+      "path": "app/tests/siesta/run_outnotes_tests.mjs",
+      "size_bytes": 4700,
+      "sha256": "86e4c5e237cad146f8ed6f20c59122dd7e84bfb1afad71b50051a48fbc401430"
+    },
+    {
+      "path": "app/tests/siesta/run_rho_tests.mjs",
+      "size_bytes": 5119,
+      "sha256": "ee79b6fb8eaa66217634f6c5f03b847452d145f6903902119f195bba4cf30cc0"
+    },
+    {
+      "path": "app/tests/siesta/run_tests.mjs",
+      "size_bytes": 16832,
+      "sha256": "9e404d25cf38fee6ee194025e55663943598a35cb1aef229a07eba022348abee"
+    },
+    {
+      "path": "ARQUITECTURA.md",
+      "size_bytes": 27404,
+      "sha256": "3476cf8e34f677c289c4aff4686613579d4867487782c53f0d0d24923093c5dd"
+    },
+    {
+      "path": "AUDITORIA_ADVERSARIAL_ARQUITECTURA_PRODUCCION.md",
+      "size_bytes": 26469,
+      "sha256": "1fc5ecd941f436fbf77ee2ed3474308a82567b16151f7015be57862d99878b2a"
+    },
+    {
+      "path": "corridas/conv.tar.gz",
+      "size_bytes": 9703797,
+      "sha256": "443116bad65e6c3dcd7c2fb1adc19dc7d0724e1de621ebb2206be39a956d9bb3"
+    },
+    {
+      "path": "corridas/dens.tar.gz",
+      "size_bytes": 1497420,
+      "sha256": "80bd9e113dc5468d3e6f1dd794aa41c705495d7b9dcdca3ff9539c5b31a870a4"
+    },
+    {
+      "path": "corridas/espin.tar.gz",
+      "size_bytes": 18457628,
+      "sha256": "45fa259613e75e418bf86b27ff0ce3141f17ce348396f52f3a86c712817eab65"
+    },
+    {
+      "path": "corridas/espin_gen_json.mjs",
+      "size_bytes": 8420,
+      "sha256": "a34807338b32c842e3a838a323aec63e20b2d63a9b434d8c0a988288482007fd"
+    },
+    {
+      "path": "corridas/fonones.tar.gz",
+      "size_bytes": 4512025,
+      "sha256": "c891df0def638c0d444057da560c362bce5471850c1ca70d7300458a29affa3d"
+    },
+    {
+      "path": "corridas/fonones_gen_json.mjs",
+      "size_bytes": 3131,
+      "sha256": "d8d215500cdb1d941aa7034cd52c3ebd53f052c932c43a383a62f15c8c56d588"
+    },
+    {
+      "path": "corridas/fuerzas.tar.gz",
+      "size_bytes": 631249,
+      "sha256": "4aa01af602d5a482c3a18cb418f7db2621edef50dea5166b6fc72a05fe734f95"
+    },
+    {
+      "path": "corridas/fuerzas_gen_json.mjs",
+      "size_bytes": 6061,
+      "sha256": "98b86f18f16d1f15d961e6c750734f07d93a39a7528c05a8d1b991dcb85f5647"
+    },
+    {
+      "path": "corridas/gentest.tar.gz",
+      "size_bytes": 168354,
+      "sha256": "0b0e5de175f34e8fef06082e473bbb11818976d726bfe9bda032c6c1f5398ed5"
+    },
+    {
+      "path": "corridas/gr.tar.gz",
+      "size_bytes": 8061758,
+      "sha256": "488767b4eec6010bec4a64dffad3b563f1d4f102c8f415a33086aca52ddf4665"
+    },
+    {
+      "path": "corridas/io.tar.gz",
+      "size_bytes": 621899,
+      "sha256": "85559c76e95cdb25fb8777fa1b70f87e8f832ad8174ae78a102759f37f313c37"
+    },
+    {
+      "path": "corridas/LEEME.txt",
+      "size_bytes": 1995,
+      "sha256": "73a79de0d2fceaf745364a441c5b1abaf20c32e8e8e6680eac707ddf994afd27"
+    },
+    {
+      "path": "corridas/lua.tar.gz",
+      "size_bytes": 64669,
+      "sha256": "c99bf2eb4e08344351fb8bad4d5c981f72adeb70600feaac1c9c7866bf9b510e"
+    },
+    {
+      "path": "corridas/luatest.tar.gz",
+      "size_bytes": 65102,
+      "sha256": "1f1b1883aabd81c6420a73d50bac7ab6d4afc7de6d409165b5645bb4773bbe26"
+    },
+    {
+      "path": "corridas/mg.tar.gz",
+      "size_bytes": 255639,
+      "sha256": "d12cda2576d994b0ef0dbbf096a75166c3e798b2ec865450ab1376eb71a9f787"
+    },
+    {
+      "path": "corridas/nio.tar.gz",
+      "size_bytes": 4866503,
+      "sha256": "89552723b794f92cd5a18556c34bc624bc807ec2b4406fa86d4d2753e809e3b4"
+    },
+    {
+      "path": "corridas/oncv.tar.gz",
+      "size_bytes": 895176,
+      "sha256": "c5a41c1c30b0383d9b0c2e65649617bd7fdf38fa149192f94d71b97e12de789f"
+    },
+    {
+      "path": "corridas/out_gen_json.mjs",
+      "size_bytes": 960,
+      "sha256": "806af7aa3bf3f49943fb55d16f4ddb349398c3900e841f6541be6205349763bb"
+    },
+    {
+      "path": "corridas/pslib_val.tar.gz",
+      "size_bytes": 3329330,
+      "sha256": "bbc1c60dedbd665da0bd0d6c154a3b3dfd07089f7c339b4e29b2b13a6cad339d"
+    },
+    {
+      "path": "corridas/rho.tar.gz",
+      "size_bytes": 2935175,
+      "sha256": "23058bb91c153c455408cc2309eb6d6e447d361c2ccef46f6c4e12508d4010a0"
+    },
+    {
+      "path": "corridas/rho_gen_json.mjs",
+      "size_bytes": 8411,
+      "sha256": "7b031f5dc275caafa3c28c3345951613f4cec0651ffc1bdaccad38438dca1f98"
+    },
+    {
+      "path": "corridas/scf.tar.gz",
+      "size_bytes": 547492,
+      "sha256": "3e988147c6bc0ba4f15668dfb7e0a469bd043c7b8edb50f4934b635c5d472b3e"
+    },
+    {
+      "path": "corridas/scfpack.tar.gz",
+      "size_bytes": 1204,
+      "sha256": "4e3cac1154c74bf3bb8476eb64d1964abb79cd45d182ea8e25d1a4dfb2b0b457"
+    },
+    {
+      "path": "corridas/si.tar.gz",
+      "size_bytes": 124285,
+      "sha256": "ba36dde5442645c967eee77cfe0c23d30e0807649e3dd9bc70598c1bb9382d56"
+    },
+    {
+      "path": "corridas/si_scf.tar.gz",
+      "size_bytes": 118073,
+      "sha256": "8e3c3ab9001615b7d81ff694a643eb8706f91ea3c36ff74da729c217643a8bdf"
+    },
+    {
+      "path": "corridas/solv.tar.gz",
+      "size_bytes": 209578,
+      "sha256": "c8b8681e22dde0ecba99a3260f40339f731b8c4a2bd121f879163f74bd4bc660"
+    },
+    {
+      "path": "corridas/solv2.tar.gz",
+      "size_bytes": 1037237,
+      "sha256": "693897a2234013deb8b8bceb3090a027b0523cf908d26a94c513b852ddbf0014"
+    },
+    {
+      "path": "corridas/wf.tar.gz",
+      "size_bytes": 944213,
+      "sha256": "80493267f774be9f568428064b16ec22cbcad2f59239d205e9708148ccfc9dbf"
+    },
+    {
+      "path": "corridas/wf_gen_json.mjs",
+      "size_bytes": 6659,
+      "sha256": "4e8106f24b74115c64c14afd852383a1de04fd9e6774f221c723d9edaadac0dc"
+    },
+    {
+      "path": "corridas/xc.tar.gz",
+      "size_bytes": 1614933,
+      "sha256": "374b7564fa6be7501693b3fd2939435be38843494ca103cef33daf2aad95355d"
+    },
+    {
+      "path": "EVALUACION_ARQUITECTURA.md",
+      "size_bytes": 36708,
+      "sha256": "03924c643f83a94a1dadbd820ba13d3bc8148757b45b3786ff977f444cb57130"
+    },
+    {
+      "path": "INTEGRACION_DFTLAB_QRAFT_HUBBARDFLOW.md",
+      "size_bytes": 20951,
+      "sha256": "c6f0c7f8a32e1fd82d3564ab4af31e6732a8f43e3cc4ad8b979c32d45c9dcbc4"
+    },
+    {
+      "path": "MAPA_DE_CONTENIDOS.md",
+      "size_bytes": 16561,
+      "sha256": "b516df06b0c968763bc0095ad4913885e8b0f6d49c610249cdc6de92a3556133"
+    },
+    {
+      "path": "PLAN_DFT_App.md",
+      "size_bytes": 29217,
+      "sha256": "41d6b654959bf30fef6eecd6eac7fea52a3e218a8cfd1b1c50cbcb6cbbea64f9"
+    },
+    {
+      "path": "PLAN_IMPLEMENTACION_CLAUDE_CODE.md",
+      "size_bytes": 34576,
+      "sha256": "7c913b71ae7268a1cefb44b887def3e39dc3216730cc7a51012933ead0acc921"
+    },
+    {
+      "path": "PROPUESTA_MAESTRA_DFTLAB_V2.md",
+      "size_bytes": 112731,
+      "sha256": "dbbec8292bb7a1f3c74b27c667051defde249b3168d33f68d98d1a4928fc6189"
+    },
+    {
+      "path": "prototipo_si/dft_lab_si.html",
+      "size_bytes": 526589,
+      "sha256": "b8d2db7286055b073efd76b31a40d0cf53be34f9a2725627647dd8ba74fcbe6b"
+    },
+    {
+      "path": "prototipo_si/extract.py",
+      "size_bytes": 7621,
+      "sha256": "8dba8506dc9bc98c7e690b59c7f3b9d92c448336a128e33b7d467f740f343ed5"
+    },
+    {
+      "path": "prototipo_si/si.bands",
+      "size_bytes": 63181,
+      "sha256": "5f1c57ebce61006d0b429ec8311814b5b65ba39476ffdb93c9ce7a706ff7db49"
+    },
+    {
+      "path": "prototipo_si/si.EPSIMG",
+      "size_bytes": 108337,
+      "sha256": "d0275ba8a6e9fa2eddcb5657444b30059330a0ac4746d7a386b3d30b587b7807"
+    },
+    {
+      "path": "prototipo_si/si.fdf",
+      "size_bytes": 1495,
+      "sha256": "6824edcaf66881e0522eabf3ed0da89d3f8664a36ee90a09fc7d4b540f8de6a3"
+    },
+    {
+      "path": "prototipo_si/si.out",
+      "size_bytes": 27379,
+      "sha256": "4203fd5f3e50b02203927e47de320d2cdb46df2e21629a92f2f8471af31b80c1"
+    },
+    {
+      "path": "prototipo_si/si_proto.json",
+      "size_bytes": 489387,
+      "sha256": "5623e9958f817101846591f266a1cd8d9d24c2ba9b7244c12700af9406b24373"
+    },
+    {
+      "path": "prototipo_v2/calculos/eos.json",
+      "size_bytes": 1151,
+      "sha256": "fd9579dde1027f00f5d8dfe0c16be40f5d1fcc451e77b9bf34baa68d53c061ef"
+    },
+    {
+      "path": "prototipo_v2/calculos/run_eos.sh",
+      "size_bytes": 590,
+      "sha256": "08bf92315342d4f80ca743814405dae4399341f96f423cca255631772c38b23e"
+    },
+    {
+      "path": "prototipo_v2/calculos/run_gh.sh",
+      "size_bytes": 855,
+      "sha256": "cbfc32d2048c777e5033e443519be8d128427152add7c947eecd2068c5d902a2"
+    },
+    {
+      "path": "prototipo_v2/calculos/run_gr.sh",
+      "size_bytes": 1303,
+      "sha256": "f0329a550da83b906ea4df7e740ebde0cc09ee6de69fdecab3061e799e2bdb8c"
+    },
+    {
+      "path": "prototipo_v2/calculos/si_base.fdf",
+      "size_bytes": 644,
+      "sha256": "14eda30df51e994752801eb9a70918ea54a082aae968507028d1a79a3e68a0cc"
+    },
+    {
+      "path": "prototipo_v2/calculos/vv_ghost_diverge_6A.out",
+      "size_bytes": 30123,
+      "sha256": "855fd6f63adac986d57fea145e8f59888fe41fcc25a9052f6bddc90f8da312f5"
+    },
+    {
+      "path": "prototipo_v2/calculos/vv_ghost_oscila.out",
+      "size_bytes": 91001,
+      "sha256": "6f4bfe0e5359bf5c666d8e8366158201292b0fedbca453830cb9e369da19dc2f"
+    },
+    {
+      "path": "prototipo_v2/dft_lab_si.html",
+      "size_bytes": 5275986,
+      "sha256": "f2f0d1dd7a6f3f4195844f343b9d17c8f82d59562550a75dc686e2282c6c434e"
+    },
+    {
+      "path": "prototipo_v2/fuente/app.js",
+      "size_bytes": 35805,
+      "sha256": "057049023aa01d82cb57947f40fd5008b1adbb98762dcd5147cd0f2316b89dbb"
+    },
+    {
+      "path": "prototipo_v2/fuente/body.html",
+      "size_bytes": 11352,
+      "sha256": "948a36ff379e2843a9c8f0403f3c754f83805a1c627a64442f2ba38b7a45d343"
+    },
+    {
+      "path": "prototipo_v2/fuente/build.py",
+      "size_bytes": 1343,
+      "sha256": "e3b0f6f331304ce030eb786c28dd9a95e86b9462e0367b9049f69c0a6cfaa691"
+    },
+    {
+      "path": "prototipo_v2/fuente/gen_wf.py",
+      "size_bytes": 1442,
+      "sha256": "420cdfa5ae6fdae4b01d40e335b71f8c6bab0861e24569a472aec574b4946bb5"
+    },
+    {
+      "path": "prototipo_v2/fuente/head.html",
+      "size_bytes": 11022,
+      "sha256": "1bdb9802c54e5fe8a80c5329da081fa43e6bd8e229457c3d92d4c803cd34f90b"
+    },
+    {
+      "path": "prototipo_v2/fuente/mkpx.py",
+      "size_bytes": 2023,
+      "sha256": "c9139435b2a0b0919c296c5e631e22741345fed929acb2f7b051e8f01f00eb19"
+    },
+    {
+      "path": "prototipo_v2/fuente/px.js",
+      "size_bytes": 44574,
+      "sha256": "dfd3a83a6ef7905b46e6bfd78638dcda2b2e5ab50f00f1cfd82f13a8297f4d14"
+    },
+    {
+      "path": "prototipo_v2/fuente/wf_lib.py",
+      "size_bytes": 521,
+      "sha256": "67639ba786ec670dabaf03a50d7cd6098c77733c33d66bd031bd9f79923033c8"
+    },
+    {
+      "path": "prototipo_v2/fuente/xcmap.py",
+      "size_bytes": 1612,
+      "sha256": "03b098e4af88fce55302047ff5f22eaced782b84880d93ec0cc37daa55468c8f"
+    },
+    {
+      "path": "prototipo_v2/pseudos/c_lda.dat",
+      "size_bytes": 1014,
+      "sha256": "f7fe5135e6be9553a5fb863be6300e558ee0141e6743a49f35eecdbf12503db7"
+    },
+    {
+      "path": "prototipo_v2/pseudos/c_lda.out",
+      "size_bytes": 334724,
+      "sha256": "59e27b99ba493d874cfced236542d67d47b7a0185b1b764d840cb75a3724b7e1"
+    },
+    {
+      "path": "prototipo_v2/pseudos/c_lda.psml",
+      "size_bytes": 58492,
+      "sha256": "c029b7c567d2977042577d100aae034add8be1bfd55c1dde8467865eb1cae732"
+    },
+    {
+      "path": "prototipo_v2/pseudos/c_pbe.dat",
+      "size_bytes": 1014,
+      "sha256": "1a7e3233cd31cbbb5e59d9dbb42c4fe874e6e6f30a3ef9d50aefcedd50a0c410"
+    },
+    {
+      "path": "prototipo_v2/pseudos/c_pbe.out",
+      "size_bytes": 334724,
+      "sha256": "946f2d06f3362f9a1336084b5d852788773d117d0bc7f4d6381145b1e22e7dd2"
+    },
+    {
+      "path": "prototipo_v2/pseudos/c_pbe.psml",
+      "size_bytes": 58514,
+      "sha256": "b429e2b2fe4436523bd0618865d81478b231fe865d1885c532d1cd54009d19fa"
+    },
+    {
+      "path": "prototipo_v2/pseudos/parse_oncv.py",
+      "size_bytes": 3291,
+      "sha256": "a43bd41405522242a60e462832fd20e828a8c6be3f424dbc48acd750463e9b0a"
+    },
+    {
+      "path": "prototipo_v2/pseudos/si_ghost.dat",
+      "size_bytes": 1226,
+      "sha256": "362ad16b98bfa4126a7547bcc171b40cf4e21af6e6b70ae2fd9fe85fb89c649a"
+    },
+    {
+      "path": "prototipo_v2/pseudos/si_ghost.out",
+      "size_bytes": 511088,
+      "sha256": "5527a7fe9d1a9d4a70b31ee98abfd52f4866cf5c452b1ddba010114296bdf930"
+    },
+    {
+      "path": "prototipo_v2/pseudos/si_ghost.psml",
+      "size_bytes": 84253,
+      "sha256": "0d8e2a83cd0e211a67c0bb0e5e9046706672bdc55130a64fbe398c5c68715f07"
+    },
+    {
+      "path": "prototipo_v2/pseudos/si_lda.dat",
+      "size_bytes": 1106,
+      "sha256": "6fb2c090ccb96bd27b09ce3fecb4c9fb9247ae2bb2c4d695924f24dd27447aee"
+    },
+    {
+      "path": "prototipo_v2/pseudos/si_lda.out",
+      "size_bytes": 521389,
+      "sha256": "cfc74430a50399f301c3a31d3a99bf6d71860a36adbc76fea4ba560844c54087"
+    },
+    {
+      "path": "prototipo_v2/pseudos/si_lda.psml",
+      "size_bytes": 84145,
+      "sha256": "84c9316efac1959ee8c04b8d5a06eec2e069fa19302cb66254f2e4dc455b2044"
+    },
+    {
+      "path": "prototipo_v2/pseudos/si_pbe.dat",
+      "size_bytes": 1106,
+      "sha256": "04b6fb88735608a0ba08e7298a6ccccc13544e70ba8148a4d17ecacf9869bdaf"
+    },
+    {
+      "path": "prototipo_v2/pseudos/si_pbe.out",
+      "size_bytes": 521389,
+      "sha256": "1d319f8d66bd59dbd94f58994370e4919c5e9adbd6a766dad3637b77fe4812ea"
+    },
+    {
+      "path": "prototipo_v2/pseudos/si_pbe.psml",
+      "size_bytes": 84175,
+      "sha256": "33fd4b62d1f39e91395183bdf798cc7031790ace5755aa7163741c49b56a0a13"
+    },
+    {
+      "path": "pruebas/common.py",
+      "size_bytes": 1063,
+      "sha256": "487968756b781273ed13019c4d79c99269fd12c88629b8f1301c435419948de4"
+    },
+    {
+      "path": "pruebas/cut.py",
+      "size_bytes": 763,
+      "sha256": "32fff51aaee86ced58727f3a619166829c2c0018f90417bc20d9a1e55a97ddf7"
+    },
+    {
+      "path": "pruebas/eps.py",
+      "size_bytes": 2670,
+      "sha256": "8548c7e9090e9a2e4c4455c07afc750b256599d71a10f405d84f8ac185511cb5"
+    },
+    {
+      "path": "pruebas/interp_test2.py",
+      "size_bytes": 1073,
+      "sha256": "a4c04db1f701dbd6b58271373502f3c1933b6502d3717dcd2774501d5241b3b7"
+    },
+    {
+      "path": "pruebas/LEEME.md",
+      "size_bytes": 836,
+      "sha256": "d0e90701d066e84143575db47d6491e113f1f462ca6797879208b889acc7860a"
+    },
+    {
+      "path": "pruebas/lib.py",
+      "size_bytes": 2684,
+      "sha256": "2a88e925736429f5f6ad781fc8a55ead77f30ee53ebe4912d93fcab297dd3d65"
+    },
+    {
+      "path": "pruebas/lr.py",
+      "size_bytes": 3832,
+      "sha256": "e0ba4a64b861a490882a1b1e20d5acf8c55e4d8c17d556d092a7b47bc6c583cd"
+    },
+    {
+      "path": "pruebas/lr_sc.py",
+      "size_bytes": 3893,
+      "sha256": "1d600dd2951981dcaeb496ee5954aa770c241c4253c9561eed48de0f2e53781f"
+    },
+    {
+      "path": "pruebas/mg_test.py",
+      "size_bytes": 689,
+      "sha256": "5f1dc7932b72653ec660faf79646bf2c5775df686970269f2c8afc1b7a44b4d5"
+    },
+    {
+      "path": "pruebas/nio2.py",
+      "size_bytes": 2454,
+      "sha256": "6715a38c1256a38cdc26e9b4b8b36405efc56e91e265c60680c0c36ab39b8b0a"
+    },
+    {
+      "path": "pruebas/resultados/eps_si_6.dat",
+      "size_bytes": 151055,
+      "sha256": "3cc56cb97674d1fbcdd692488afe6f6b53b67c2b327330fc4ec97bb36b32a5b7"
+    },
+    {
+      "path": "pruebas/resultados/graphene_smear.out",
+      "size_bytes": 288,
+      "sha256": "c33efb33fe8d192eff7583b56b828ef5dc4534aaecab71415c01fb44c622b203"
+    },
+    {
+      "path": "pruebas/resultados/lr_run.out",
+      "size_bytes": 563,
+      "sha256": "23f148026767c56fd0ffa94c672e4b1489bb5bdc31874425775a5fef8cf89be9"
+    },
+    {
+      "path": "pruebas/resultados/nio2_run.out",
+      "size_bytes": 671,
+      "sha256": "55b6a7af6f97464e6d064e1e4d425e36d446f74eb1d6fc4842d327e2d869e307"
+    },
+    {
+      "path": "pruebas/resultados/results.jsonl",
+      "size_bytes": 2060,
+      "sha256": "16dcb38aa2a8ba19925b80960c8e9e8f5f60f540cd203135812a1ceb69788866"
+    },
+    {
+      "path": "pruebas/resultados/results_lr.jsonl",
+      "size_bytes": 198,
+      "sha256": "e2016992f3b0e3982e4ab88f100c5d48aaaf1f8dbcfce61d15acaab11875ba72"
+    },
+    {
+      "path": "pruebas/resultados/results_u.jsonl",
+      "size_bytes": 685,
+      "sha256": "7c5ca239b8638192f0dc4bc92e18f188c5fdcb633d3360aeb65821eb7910717c"
+    },
+    {
+      "path": "pruebas/resultados/runall.log",
+      "size_bytes": 2267,
+      "sha256": "abf714097681d3794efda9c33d7292110d43b6708d5696d3eefd3157894ff0dd"
+    },
+    {
+      "path": "pruebas/resultados/supercelda_NiO_no_converge.log",
+      "size_bytes": 86246,
+      "sha256": "9f0da63fad4e2284c0b60c49571cdae1f8a61a5642568f36f1ced5413ef9f883"
+    },
+    {
+      "path": "pruebas/si.py",
+      "size_bytes": 1084,
+      "sha256": "86045fcf9663bcfe2d23d53178524649171afc85a192e15a1c1e141161e3d9a4"
+    },
+    {
+      "path": "pruebas/siesta/broyden025.fdf",
+      "size_bytes": 786,
+      "sha256": "ae5f34b7b2d3829c4c38df07be14b7964e67acd428c40c71d5cc276c602722fa"
+    },
+    {
+      "path": "pruebas/siesta/hook.lua",
+      "size_bytes": 610,
+      "sha256": "fd1c8315588e44b26f13b74150809f4c48b62368231962ef0222851880a4c7e3"
+    },
+    {
+      "path": "pruebas/siesta/lin005.fdf",
+      "size_bytes": 761,
+      "sha256": "0d821d0a38feeff4620796fff19efe3cc19d6d80ac9b24c47664b2406ab22d36"
+    },
+    {
+      "path": "pruebas/siesta/lin025.fdf",
+      "size_bytes": 761,
+      "sha256": "4d6817ed06cf7a62689bdde69920940907f97979468d55bb13f307dee76bfefc"
+    },
+    {
+      "path": "pruebas/siesta/lin025_dm.fdf",
+      "size_bytes": 780,
+      "sha256": "45559adfb10e073cd8db5d714418884c841ac6ae19b500ad83cf115cab20ce5f"
+    },
+    {
+      "path": "pruebas/siesta/lin060.fdf",
+      "size_bytes": 760,
+      "sha256": "510b9c642f2abbecac13b42c6f116e01b8919ab464152e6db1487713018b7f4b"
+    },
+    {
+      "path": "pruebas/siesta/lin095.fdf",
+      "size_bytes": 761,
+      "sha256": "55d9fecb90185a1c10906e4df2abed901922f1a3839679c8df46e78bd58b195b"
+    },
+    {
+      "path": "pruebas/siesta/mg_broyden.fdf",
+      "size_bytes": 1176,
+      "sha256": "de798ae00143472a21506fe7f1e14a432b81bbc726172c91e032e2585da6b09b"
+    },
+    {
+      "path": "pruebas/siesta/mg_lin010.fdf",
+      "size_bytes": 1154,
+      "sha256": "a37e47604ba41c4f0a29e028d6acd999a03acc7f381cf521caf35970e2d582dd"
+    },
+    {
+      "path": "pruebas/siesta/mg_lin050.fdf",
+      "size_bytes": 1153,
+      "sha256": "a596572360504f9ad62de46ede85409a27d0f5121b9dc63e41d0f89f9624607c"
+    },
+    {
+      "path": "pruebas/siesta/mg_pulay.fdf",
+      "size_bytes": 1172,
+      "sha256": "7ab7657680545457adc2406f451abe1e7d8ace083d0914eee1b3916987a39623"
+    },
+    {
+      "path": "pruebas/siesta/pulay025.fdf",
+      "size_bytes": 782,
+      "sha256": "38b297b6eed45eb7ef39e48f6bc151e827f209db02d6e464d735e7ea56763d6f"
+    },
+    {
+      "path": "pruebas/siesta/pulay_dm.fdf",
+      "size_bytes": 798,
+      "sha256": "492d41dfced43c5e29c681dce3099cb7c6e5b63b62a61aec2a8d78f56c16ad30"
+    },
+    {
+      "path": "pruebas/sisl_test.py",
+      "size_bytes": 700,
+      "sha256": "1da39fae0f24cfe30fa05f7136b07d7a6600c8c3179fd1683f37601a692b34f3"
+    },
+    {
+      "path": "pruebas/sym/sp_pyscf.py",
+      "size_bytes": 996,
+      "sha256": "7210ea3551288d3b23520316d67f8463397df98c0fde70014036f989d5adc602"
+    },
+    {
+      "path": "pruebas/sym/symtest.py",
+      "size_bytes": 2788,
+      "sha256": "2edfec9c04d20e74b5825fd36e45b39b88760c2743064eef98cd527f96e0e71b"
+    },
+    {
+      "path": "pruebas/sym_test.py",
+      "size_bytes": 784,
+      "sha256": "ddc94461b526c578c1fce457d5fb260240b7442947bfe78f4fa10101f06e1c0b"
+    },
+    {
+      "path": "pruebas/wsinterp.py",
+      "size_bytes": 1675,
+      "sha256": "a651f3b05960df62cb82646a91f51c530fd9ebdb9bf2832ce1566192f80fbc01"
+    },
+    {
+      "path": "pseudo_xc/figs.py",
+      "size_bytes": 3937,
+      "sha256": "ea8118e3cbeb68219faabc40918e73c5b215fde23a846e33489044afba8e9caf"
+    },
+    {
+      "path": "pseudo_xc/pseudo_xc_real.png",
+      "size_bytes": 262602,
+      "sha256": "69f1874fa2f346a6d91ce097812bd90f6156b38fc81f3c21afdfcd7d33c246be"
+    }
+  ]
+}

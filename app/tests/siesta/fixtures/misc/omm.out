@@ -1,0 +1,1486 @@
+Executable      : /opt/siesta/bin/siesta
+Version         : 5.4.2
+Architecture    : x86_64
+Compiler version: GNU-14.3.0
+Compiler flags  : -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -fno-merge-constants -isystem <prefix>/include -I<prefix>/_build_env/include -fdebug-prefix-map=<prefix>/work=/usr/local/src/conda/siesta-5.4.2 -fdebug-prefix-map=<prefix>=/usr/local/src/conda-prefix -I<prefix>/lib -fallow-argument-mismatch -O3
+Parallelisations: none
+NetCDF support
+NetCDF-4 support
+Lua support
+DFT-D3 support
+
+Runtime information:
+* Directory : /opt/run/solv/r_omm
+* Running in serial mode.
+>> Start of run:   9-OCT-2026  15:55:43
+
+                           *********************** 
+                           *  WELCOME TO SIESTA  * 
+                           *********************** 
+
+ NOTE: Siesta V5 introduces some new defaults for basis-set generation
+ NOTE: which might lead to slightly different numerical results.
+ NOTE: Please see the manual for full details and compatibility measures.
+
+
+reinit: Reading from standard input
+reinit: Dumping input in INPUT_TMP.97455
+************************** Dump of input data file ****************************
+SystemLabel omm
+XC.functional LDA
+XC.authors CA
+NumberOfSpecies 1
+NumberOfAtoms 64
+%block ChemicalSpeciesLabel
+ 1 14 Si
+%endblock ChemicalSpeciesLabel
+PAO.BasisSize DZP
+LatticeConstant 1.0 Ang
+%block LatticeVectors
+10.862000 0.000000 0.000000
+0.000000 10.862000 0.000000
+0.000000 0.000000 10.862000
+%endblock LatticeVectors
+AtomicCoordinatesFormat Ang
+%block AtomicCoordinatesAndAtomicSpecies
+0.000000 0.000000 0.000000 1
+1.357750 1.357750 1.357750 1
+0.000000 2.715500 2.715500 1
+1.357750 4.073250 4.073250 1
+2.715500 0.000000 2.715500 1
+4.073250 1.357750 4.073250 1
+2.715500 2.715500 0.000000 1
+4.073250 4.073250 1.357750 1
+0.000000 0.000000 5.431000 1
+1.357750 1.357750 6.788750 1
+0.000000 2.715500 8.146500 1
+1.357750 4.073250 9.504250 1
+2.715500 0.000000 8.146500 1
+4.073250 1.357750 9.504250 1
+2.715500 2.715500 5.431000 1
+4.073250 4.073250 6.788750 1
+0.000000 5.431000 0.000000 1
+1.357750 6.788750 1.357750 1
+0.000000 8.146500 2.715500 1
+1.357750 9.504250 4.073250 1
+2.715500 5.431000 2.715500 1
+4.073250 6.788750 4.073250 1
+2.715500 8.146500 0.000000 1
+4.073250 9.504250 1.357750 1
+0.000000 5.431000 5.431000 1
+1.357750 6.788750 6.788750 1
+0.000000 8.146500 8.146500 1
+1.357750 9.504250 9.504250 1
+2.715500 5.431000 8.146500 1
+4.073250 6.788750 9.504250 1
+2.715500 8.146500 5.431000 1
+4.073250 9.504250 6.788750 1
+5.431000 0.000000 0.000000 1
+6.788750 1.357750 1.357750 1
+5.431000 2.715500 2.715500 1
+6.788750 4.073250 4.073250 1
+8.146500 0.000000 2.715500 1
+9.504250 1.357750 4.073250 1
+8.146500 2.715500 0.000000 1
+9.504250 4.073250 1.357750 1
+5.431000 0.000000 5.431000 1
+6.788750 1.357750 6.788750 1
+5.431000 2.715500 8.146500 1
+6.788750 4.073250 9.504250 1
+8.146500 0.000000 8.146500 1
+9.504250 1.357750 9.504250 1
+8.146500 2.715500 5.431000 1
+9.504250 4.073250 6.788750 1
+5.431000 5.431000 0.000000 1
+6.788750 6.788750 1.357750 1
+5.431000 8.146500 2.715500 1
+6.788750 9.504250 4.073250 1
+8.146500 5.431000 2.715500 1
+9.504250 6.788750 4.073250 1
+8.146500 8.146500 0.000000 1
+9.504250 9.504250 1.357750 1
+5.431000 5.431000 5.431000 1
+6.788750 6.788750 6.788750 1
+5.431000 8.146500 8.146500 1
+6.788750 9.504250 9.504250 1
+8.146500 5.431000 8.146500 1
+9.504250 6.788750 9.504250 1
+8.146500 8.146500 5.431000 1
+9.504250 9.504250 6.788750 1
+%endblock AtomicCoordinatesAndAtomicSpecies
+MeshCutoff 150 Ry
+DM.Tolerance 1.e-5
+MaxSCFIterations 300
+DM.UseSaveDM false
+SolutionMethod OMM
+ON.eta 0.0 eV
+OMM.Precon -1
+************************** End of input data file *****************************
+
+reinit: -----------------------------------------------------------------------
+reinit: System Name: 
+reinit: -----------------------------------------------------------------------
+reinit: System Label: omm
+reinit: -----------------------------------------------------------------------
+
+initatom: Reading input for the pseudopotentials and atomic orbitals ----------
+Species number:   1 Atomic number:   14 Label: Si
+
+Ground state valence configuration (from tables):   3s02  3p02  3d00  4f00
+
+---- Processing specs for species: Si
+Reading pseudopotential information in formatted form from:
+  Si.psf
+
+---- Pseudopotential check for Si
+
+Pseudized shells:
+3s( 2.00) rc: 1.89
+3p( 2.00) rc: 1.89
+3d( 0.00) rc: 1.89
+4f( 0.00) rc: 1.89
+Valence configuration for ps generation: (assumed as above)
+For Si, standard SIESTA heuristics set lmxkb to 3
+ (one more than the basis l, including polarization orbitals).
+Use PS.lmax or PS.KBprojectors blocks to override.
+
+<basis_specs>
+===============================================================================
+Si                   Z=  14    Mass=  28.090        Charge= 0.17977+309
+Lmxo=2 Lmxkb= 3    BasisType=split      Semic=F
+L=0  Nsemic=0  Cnfigmx=3
+          i=1  nzeta=2  polorb=0  (3s)
+            splnorm:   0.15000    
+               vcte:    40.000    
+               rinn:  -0.90000    
+               qcoe:    0.0000    
+               qyuk:    0.0000    
+               qwid:   0.10000E-01
+                rcs:    0.0000      0.0000    
+            lambdas:    1.0000      1.0000    
+L=1  Nsemic=0  Cnfigmx=3
+          i=1  nzeta=2  polorb=1  (3p)  (to be polarized perturbatively)
+            splnorm:   0.15000    
+               vcte:    40.000    
+               rinn:  -0.90000    
+               qcoe:    0.0000    
+               qyuk:    0.0000    
+               qwid:   0.10000E-01
+                rcs:    0.0000      0.0000    
+            lambdas:    1.0000      1.0000    
+L=2  Nsemic=0  Cnfigmx=3
+          i=1  nzeta=0  polorb=0  (3d)  (perturbative polarization orbital) (from 3p)
+-------------------------------------------------------------------------------
+L=0  Nkbl=1  erefs: 0.17977+309
+L=1  Nkbl=1  erefs: 0.17977+309
+L=2  Nkbl=1  erefs: 0.17977+309
+L=3  Nkbl=1  erefs: 0.17977+309
+===============================================================================
+</basis_specs>
+
+Using PAO.SplitTailNorm
+atom: Called for Si                    (Z =  14)
+Maximum radius (at nrval) set to   50.00000 8518
+
+read_vps: Pseudopotential generation method:
+read_vps: ATM3      Troullier-Martins                       
+Valence charge in pseudo generation:    4.00000
+
+xc_check: Exchange-correlation functional:
+xc_check: Ceperley-Alder
+V l=0 = -2*Zval/r beyond r=  2.5804
+V l=1 = -2*Zval/r beyond r=  2.5804
+V l=2 = -2*Zval/r beyond r=  2.5804
+V l=3 = -2*Zval/r beyond r=  2.5804
+All V_l potentials equal beyond r=  1.8729
+This should be close to max(r_c) in ps generation
+All pots = -2*Zval/r beyond r=  2.5804
+Using large-core scheme (fit) for Vlocal
+
+atom: Estimated core radius    2.58045
+
+atom: Including non-local core corrections could be a good idea
+Fit of Vlocal with continuous 2nd derivative
+Fitting vlocal at       1.8786
+Choosing vlocal chloc cutoff:  5647  2.821566
+qtot up to nchloc:    4.00020356
+atom: Maximum radius for chlocal:    2.82157
+atom: Maximum radius for r*vlocal+2*Zval:    2.82157
+
+KBgen: Kleinman-Bylander projectors: 
+GHOST: No ghost state for L =  0
+   l= 0   rc=  1.872931   el= -0.796617   Ekb=  5.353935   kbcos=  0.317881
+GHOST: No ghost state for L =  1
+   l= 1   rc=  1.886158   el= -0.307040   Ekb=  2.204864   kbcos=  0.299917
+GHOST: No ghost state for L =  2
+   l= 2   rc=  1.909049   el=  0.013097   Ekb= -2.473633   kbcos= -0.044292
+GHOST: No ghost state for L =  3
+   l= 3   rc=  1.951736   el=  0.019538   Ekb= -1.407727   kbcos= -0.001862
+
+KBgen: Total number of Kleinman-Bylander projectors:  16
+atom: -------------------------------------------------------------------------
+
+atom: SANKEY-TYPE ORBITALS:
+atom: Selected multiple-zeta basis: split     
+
+SPLIT: Orbitals with angular momentum L= 0
+
+SPLIT: Basis orbitals for state 3s
+
+SPLIT: PAO cut-off radius determined from an
+SPLIT: energy shift=  0.010000 Ry
+Split based on tail norm
+
+   izeta = 1
+                 lambda =    1.000000
+                     rc =    5.413980
+                 energy =   -0.785062
+                kinetic =    0.554059
+    potential(screened) =   -1.339121
+       potential(ionic) =   -3.805086
+
+   izeta = 2
+                 rmatch =    3.862227
+              splitnorm =    0.150000
+                 energy =   -0.543047
+                kinetic =    1.123553
+    potential(screened) =   -1.666600
+       potential(ionic) =   -4.284898
+
+SPLIT: Orbitals with angular momentum L= 1
+
+SPLIT: Basis orbitals for state 3p
+
+SPLIT: PAO cut-off radius determined from an
+SPLIT: energy shift=  0.010000 Ry
+Split based on tail norm
+
+   izeta = 1
+                 lambda =    1.000000
+                     rc =    6.830288
+                 energy =   -0.295476
+                kinetic =    0.850831
+    potential(screened) =   -1.146306
+       potential(ionic) =   -3.389842
+
+   izeta = 2
+                 rmatch =    4.957068
+              splitnorm =    0.150000
+                 energy =   -0.188593
+                kinetic =    1.288700
+    potential(screened) =   -1.477294
+       potential(ionic) =   -3.936947
+
+POLgen: Perturbative polarization orbital with L=  2
+
+POLgen: Polarization orbital for state 3p
+Split based on tail norm
+
+   izeta = 1
+                     rc =    6.830288
+                 energy =    0.328538
+                kinetic =    1.535909
+    potential(screened) =   -1.207371
+       potential(ionic) =   -3.334649
+atom: Total number of Sankey-type orbitals: 13
+
+atm_pop: Valence configuration (for local Pseudopot. screening):
+ 3s( 2.00)                                                            
+ 3p( 2.00)                                                            
+ 3d( 0.00)                                                            
+Vna: chval, zval:    4.00000   4.00000
+
+Vna:  Cut-off radius for the neutral-atom potential:   6.830288
+
+atom: _________________________________________________________________________
+
+prinput: Basis input 
+
+PAO.BasisType split     
+
+%block ChemicalSpeciesLabel
+    1   14 Si                      # Species index, atomic number, species label
+%endblock ChemicalSpeciesLabel
+
+%block PAO.Basis                 # Define Basis set
+# WARNING: This information might be incomplete!
+Si                    2                    # Species label, number of l-shells
+ n=3   0   2                         # n, l, Nzeta 
+   5.414      3.862   
+   1.000      1.000   
+ n=3   1   2 P   1                   # n, l, Nzeta, Polarization, NzetaPol
+   6.830      4.957   
+   1.000      1.000   
+%endblock PAO.Basis
+
+prinput: ----------------------------------------------------------------------
+
+Dumping basis to NetCDF file Si.ion.nc
+coor:   Atomic-coordinates input format  =     Cartesian coordinates
+coor:                                          (in Angstroms)
+
+siesta: Atomic coordinates (Bohr) and species
+siesta:      0.00000   0.00000   0.00000  1        1
+siesta:      2.56578   2.56578   2.56578  1        2
+siesta:      0.00000   5.13155   5.13155  1        3
+siesta:      2.56578   7.69733   7.69733  1        4
+siesta:      5.13155   0.00000   5.13155  1        5
+siesta:      7.69733   2.56578   7.69733  1        6
+siesta:      5.13155   5.13155   0.00000  1        7
+siesta:      7.69733   7.69733   2.56578  1        8
+siesta:      0.00000   0.00000  10.26310  1        9
+siesta:      2.56578   2.56578  12.82888  1       10
+siesta:      0.00000   5.13155  15.39465  1       11
+siesta:      2.56578   7.69733  17.96043  1       12
+siesta:      5.13155   0.00000  15.39465  1       13
+siesta:      7.69733   2.56578  17.96043  1       14
+siesta:      5.13155   5.13155  10.26310  1       15
+siesta:      7.69733   7.69733  12.82888  1       16
+siesta:      0.00000  10.26310   0.00000  1       17
+siesta:      2.56578  12.82888   2.56578  1       18
+siesta:      0.00000  15.39465   5.13155  1       19
+siesta:      2.56578  17.96043   7.69733  1       20
+siesta:      5.13155  10.26310   5.13155  1       21
+siesta:      7.69733  12.82888   7.69733  1       22
+siesta:      5.13155  15.39465   0.00000  1       23
+siesta:      7.69733  17.96043   2.56578  1       24
+siesta:      0.00000  10.26310  10.26310  1       25
+siesta:      2.56578  12.82888  12.82888  1       26
+siesta:      0.00000  15.39465  15.39465  1       27
+siesta:      2.56578  17.96043  17.96043  1       28
+siesta:      5.13155  10.26310  15.39465  1       29
+siesta:      7.69733  12.82888  17.96043  1       30
+siesta:      5.13155  15.39465  10.26310  1       31
+siesta:      7.69733  17.96043  12.82888  1       32
+siesta:     10.26310   0.00000   0.00000  1       33
+siesta:     12.82888   2.56578   2.56578  1       34
+siesta:     10.26310   5.13155   5.13155  1       35
+siesta:     12.82888   7.69733   7.69733  1       36
+siesta:     15.39465   0.00000   5.13155  1       37
+siesta:     17.96043   2.56578   7.69733  1       38
+siesta:     15.39465   5.13155   0.00000  1       39
+siesta:     17.96043   7.69733   2.56578  1       40
+siesta:     10.26310   0.00000  10.26310  1       41
+siesta:     12.82888   2.56578  12.82888  1       42
+siesta:     10.26310   5.13155  15.39465  1       43
+siesta:     12.82888   7.69733  17.96043  1       44
+siesta:     15.39465   0.00000  15.39465  1       45
+siesta:     17.96043   2.56578  17.96043  1       46
+siesta:     15.39465   5.13155  10.26310  1       47
+siesta:     17.96043   7.69733  12.82888  1       48
+siesta:     10.26310  10.26310   0.00000  1       49
+siesta:     12.82888  12.82888   2.56578  1       50
+siesta:     10.26310  15.39465   5.13155  1       51
+siesta:     12.82888  17.96043   7.69733  1       52
+siesta:     15.39465  10.26310   5.13155  1       53
+siesta:     17.96043  12.82888   7.69733  1       54
+siesta:     15.39465  15.39465   0.00000  1       55
+siesta:     17.96043  17.96043   2.56578  1       56
+siesta:     10.26310  10.26310  10.26310  1       57
+siesta:     12.82888  12.82888  12.82888  1       58
+siesta:     10.26310  15.39465  15.39465  1       59
+siesta:     12.82888  17.96043  17.96043  1       60
+siesta:     15.39465  10.26310  15.39465  1       61
+siesta:     17.96043  12.82888  17.96043  1       62
+siesta:     15.39465  15.39465  10.26310  1       63
+siesta:     17.96043  17.96043  12.82888  1       64
+
+siesta: System type = bulk      
+
+initatomlists: Number of atoms, orbitals, and projectors:     64   832  1024
+
+siesta: ******************** Simulation parameters ****************************
+siesta:
+siesta: The following are some of the parameters of the simulation.
+siesta: A complete list of the parameters used, including default values,
+siesta: can be found in file out.fdf
+siesta:
+redata: Spin configuration                          = none
+redata: Number of spin components                   = 1
+redata: Time-Reversal Symmetry                      = T
+redata: Spin spiral                                 = F
+redata: Long output                                 =   F
+redata: Number of Atomic Species                    =        1
+redata: Charge density info will appear in .RHO file
+redata: Write Mulliken charges (when)               = none
+redata: Write Mulliken Pop.                         = NO
+redata: Write Hirshfeld charges (when)              = none
+redata: Write Voronoi charges (when)                = none
+redata: Write spin charge (when)                    = none
+redata: Matel table size (NRTAB)                    =     1024
+redata: Mesh Cutoff                                 =   150.0000 Ry
+redata: Net charge of the system                    =     0.0000 |e|
+redata: Min. number of SCF Iter                     =        0
+redata: Max. number of SCF Iter                     =      300
+redata: SCF convergence failure will abort job
+redata: SCF mix quantity                            = Hamiltonian
+redata: Mix DM or H after convergence               =   F
+redata: Recompute H after scf cycle                 =   F
+redata: Mix DM in first SCF step                    =   T
+redata: Write Pulay info on disk                    =   F
+redata: New DM Occupancy tolerance                  = 0.000000000001
+redata: No kicks to SCF
+redata: DM Mixing Weight for Kicks                  =     0.5000
+redata: Require Harris convergence for SCF          =   F
+redata: Harris energy tolerance for SCF             =     0.000100 eV
+redata: Require DM convergence for SCF              =   T
+redata: DM tolerance for SCF                        =     0.000010
+redata: Require EDM convergence for SCF             =   F
+redata: EDM tolerance for SCF                       =     0.001000 eV
+redata: Require H convergence for SCF               =   T
+redata: Hamiltonian tolerance for SCF               =     0.001000 eV
+redata: Require (free) Energy convergence for SCF   =   F
+redata: (free) Energy tolerance for SCF             =     0.000100 eV
+redata: Using DFT-D3 dispersion                     =   F
+redata: Using Saved Data (generic)                  =   F
+redata: Use continuation files for DM               =   F
+redata: Neglect nonoverlap interactions             =   F
+redata: Method of Calculation                       = Orbital Minimization Method
+redata: Fix the spin of the system                  =   F
+redata: Max. number of TDED Iter                    =        1
+redata: Number of TDED substeps                     =        3
+redata: Dynamics option                             = Single-point calculation
+mix.SCF: Pulay mixing                            = Pulay
+mix.SCF:    Variant                              = stable
+mix.SCF:    History steps                        = 2
+mix.SCF:    Linear mixing weight                 =     0.250000
+mix.SCF:    Mixing weight                        =     0.250000
+mix.SCF:    SVD condition                        = 0.1000E-07
+redata: Save all siesta data in one NC              =   F
+redata: ***********************************************************************
+
+%block SCF.Mixers
+  Pulay
+%endblock SCF.Mixers
+
+%block SCF.Mixer.Pulay
+  # Mixing method
+  method pulay
+  variant stable
+
+  # Mixing options
+  weight 0.2500
+  weight.linear 0.2500
+  history 2
+%endblock SCF.Mixer.Pulay
+
+DM_history_depth set to one: no extrapolation allowed by default for geometry relaxation
+Size of DM history Fstack: 1
+Total number of electrons:   256.000000
+Total ionic charge:   256.000000
+
+siesta: k-grid: Number of k-points = 1
+siesta: k-point is Gamma-only
+
+
+ts: **************************************************************
+ts: Save H and S matrices                           =    F
+ts: Save TSHS files in MD/FC simulation             =    F
+ts: Save DM and EDM matrices                        =    F
+ts: Only save the overlap matrix S                  =    F
+ts: **************************************************************
+
+************************ Begin: TS CHECKS AND WARNINGS ************************
+************************ End: TS CHECKS AND WARNINGS **************************
+
+
+                     ====================================
+                        Single-point calculation
+                     ====================================
+
+outcell: Unit cell vectors (Ang):
+       10.862000    0.000000    0.000000
+        0.000000   10.862000    0.000000
+        0.000000    0.000000   10.862000
+
+outcell: Cell vector modules (Ang)   :   10.862000   10.862000   10.862000
+outcell: Cell angles (23,13,12) (deg):     90.0000     90.0000     90.0000
+outcell: Cell volume (Ang**3)        :   1281.5318
+Gamma-point calculation with multiply-connected orbital pairs
+Gamma-point calculation with multiply-connected orbital pairs
+Folding of H and S implicitly performed
+Folding of H and S implicitly performed
+<dSpData1D:S at geom step 0
+  <sparsity:sparsity for geom step 0
+    nrows_g=832 nrows=832 sparsity=.8766 nnzs=606784, refcount: 7>
+  <dData1D:(new from dSpData1D) n=606784, refcount: 1>
+refcount: 1>
+new_DM -- step:     1
+Initializing Density Matrix...
+DM filled with atomic data:
+<dSpData2D:DM initialized from atoms
+  <sparsity:sparsity for geom step 0
+    nrows_g=832 nrows=832 sparsity=.8766 nnzs=606784, refcount: 8>
+  <dData2D:DM n=606784 m=1, refcount: 1>
+refcount: 1>
+No. of atoms with KB's overlaping orbs in proc 0. Max # of overlaps:      64     269
+
+InitMesh: MESH = 90 x 90 x 90 = 729000
+InitMesh: Mesh cutoff (required, used) =   150.000   189.744 Ry
+New grid distribution [1]: sub = 2
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =    74              |
+| minim: 2*Tr[(2*I-S)*S] =   255.9999999      |
++---------------------------------------------+
+
+siesta: Program's energy decomposition (eV):
+siesta: Ebs     =     -2478.975618
+siesta: Eions   =     15741.964906
+siesta: Ena     =      6910.816434
+siesta: Ekin    =      2669.312962
+siesta: Enl     =      1260.810940
+siesta: Eso     =         0.000000
+siesta: Edftu   =         0.000000
+siesta: DEna    =        88.007589
+siesta: DUscf   =        13.363782
+siesta: DUext   =         0.000000
+siesta: Ex      =     -1767.582014
+siesta: Ec      =      -326.235940
+siesta: Exc     =     -2093.817954
+siesta: EbV     =         0.000000
+siesta: eta*DQ  =         0.000000
+siesta: Emadel  =         0.000000
+siesta: Emeta   =         0.000000
+siesta: Emolmec =         0.000000
+siesta: Ekinion =         0.000000
+siesta: Eharris =     -6854.371541
+siesta: Etot    =     -6893.471153
+siesta: FreeEng =     -6893.471153
+
+siesta: iscf =    1
+Eharris(eV) =      -6854.3715  E_KS(eV) =      -6893.4712  dDmax =   1.623775
+
+timer: Routine,Calls,Time,% = IterSCF        1       7.385  32.70
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     8              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =    2
+Eharris(eV) =      -6893.9747  E_KS(eV) =      -6893.7281  dDmax =   0.011154
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     9              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =    3
+Eharris(eV) =      -6894.1287  E_KS(eV) =      -6893.9533  dDmax =   0.024331
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     3              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =    4
+Eharris(eV) =      -6893.9534  E_KS(eV) =      -6893.9534  dDmax =   0.000404
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     4              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =    5
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000645
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =    6
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000318
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     2              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =    7
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000172
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =    8
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000076
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =    9
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000111
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   10
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000045
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   11
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000038
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   12
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000028
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   13
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000025
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   14
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000020
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   15
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000019
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   16
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000020
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   17
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000018
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   18
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000017
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   19
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000017
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   20
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000016
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   21
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000017
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   22
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000016
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   23
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000016
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   24
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000015
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   25
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000017
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   26
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000014
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   27
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000016
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   28
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000014
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   29
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000015
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   30
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000014
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   31
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000014
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   32
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000014
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   33
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000014
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   34
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000013
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   35
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000014
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   36
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000013
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   37
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000013
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   38
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000013
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   39
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000013
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   40
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000013
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   41
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000013
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   42
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000012
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   43
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000014
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   44
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000013
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   45
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000013
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   46
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000012
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   47
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000022
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   48
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000020
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   49
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000024
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   50
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000023
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   51
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000055
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   52
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000048
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   53
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000076
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   54
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000082
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     2              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   55
+Eharris(eV) =      -6893.9534  E_KS(eV) =      -6893.9534  dDmax =   0.000043
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   56
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000109
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     3              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   57
+Eharris(eV) =      -6893.9534  E_KS(eV) =      -6893.9534  dDmax =   0.000051
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   58
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000187
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   59
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000385
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   60
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000295
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   61
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000115
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   62
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000081
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   63
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000071
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   64
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000054
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     2              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   65
+Eharris(eV) =      -6893.9533  E_KS(eV) =      -6893.9534  dDmax =   0.000116
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     3              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   66
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000065
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   67
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000080
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   68
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000087
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   69
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000067
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     2              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   70
+Eharris(eV) =      -6893.9532  E_KS(eV) =      -6893.9534  dDmax =   0.000076
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     3              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   71
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000105
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   72
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000123
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   73
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000080
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   74
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000034
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   75
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000018
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   76
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000014
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   77
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000011
+
++---------------------------------------------+
+| OMM (Cholesky factorization)                |
++---------------------------------------------+
+| minim: icg             =     1              |
+| minim: 2*Tr[(2*I-S)*S] =   256.0000000      |
++---------------------------------------------+
+
+siesta: iscf =   78
+Eharris(eV) =      -6893.9535  E_KS(eV) =      -6893.9535  dDmax =   0.000009
+
+
+SCF Convergence by DM+H criterion
+max |DM_out - DM_in|         :     0.0000094701
+max |H_out - H_in|      (eV) :     0.0000546284
+SCF cycle converged after 78 iterations
+
+Using DM_out to compute the final energy and forces
+No. of atoms with KB's overlaping orbs in proc 0. Max # of overlaps:      64     269
+
+siesta: E_KS(eV) =            -6893.9535
+
+siesta: E_KS - E_eggbox =     -6893.9535
+
+siesta: Atomic forces (eV/Ang):
+----------------------------------------
+   Tot    0.000000    0.000000   -0.000000
+----------------------------------------
+   Max    0.000226
+   Res    0.000149    sqrt( Sum f_i^2 / 3N )
+----------------------------------------
+   Max    0.000226    constrained
+
+Stress tensor Voigt[x,y,z,yz,xz,xy] (kbar):        9.80        9.80        9.80        0.00        0.00       -0.00
+(Free)E + p*V (eV/cell)    -6901.7921
+Target enthalpy (eV/cell)    -6893.9535
+
+siesta: Program's energy decomposition (eV):
+siesta: Ebs     =     -2495.991209
+siesta: Eions   =     15741.964906
+siesta: Ena     =      6910.816434
+siesta: Ekin    =      2643.036961
+siesta: Enl     =      1252.559501
+siesta: Eso     =         0.000000
+siesta: Edftu   =         0.000000
+siesta: DEna    =       116.780417
+siesta: DUscf   =        11.408189
+siesta: DUext   =         0.000000
+siesta: Ex      =     -1760.838631
+siesta: Ec      =      -325.751427
+siesta: Exc     =     -2086.590058
+siesta: EbV     =         0.000000
+siesta: eta*DQ  =         0.000000
+siesta: Emadel  =         0.000000
+siesta: Emeta   =         0.000000
+siesta: Emolmec =         0.000000
+siesta: Ekinion =         0.000000
+siesta: Eharris =     -6893.953462
+siesta: Etot    =     -6893.953462
+siesta: FreeEng =     -6893.953462
+
+siesta: Final energy (eV):
+siesta:  Band Struct. =   -2495.991209
+siesta:       Kinetic =    2643.036961
+siesta:       Hartree =     481.632497
+siesta:         Edftu =       0.000000
+siesta:       Eso     =       0.000000
+siesta:    Ext. field =       0.000000
+siesta:         Exch. =   -1760.838631
+siesta:         Corr. =    -325.751427
+siesta:     Bulk bias =       0.000000
+siesta:   Exch.-corr. =   -2086.590058
+siesta:  Ion-electron =   -3381.539882
+siesta:       Ion-ion =   -4550.492980
+siesta:       Ekinion =       0.000000
+siesta: D3 dispersion =       0.000000
+siesta:         Total =   -6893.953462
+siesta:         Fermi =       0.000000
+
+siesta: Stress tensor (static) (eV/Ang**3):
+siesta:     0.006117   -0.000000    0.000000
+siesta:    -0.000000    0.006117    0.000000
+siesta:     0.000000    0.000000    0.006117
+
+siesta: Cell volume =       1281.531824 Ang**3
+
+siesta: Pressure (static):
+siesta:                Solid            Molecule  Units
+siesta:          -0.00006662         -0.00006654  Ry/Bohr**3
+siesta:          -0.00611660         -0.00610963  eV/Ang**3
+siesta:          -9.79988023         -9.78870317  kBar
+
+Basis Enthalpy Calculation:
+    Basis Pressure for species 1(Si) :      0.2000000 GPa
+
+    Orbital volume contribution        =          48.370520 eV
+    (Free)E + p_basis*V_orbitals       =       -6845.582942 eV
+    (Free)Eharris+ p_basis*V_orbitals  =       -6845.582942 eV
+WARNING: BASIS_ENTHALPY and BASIS_HARRIS_ENTHALPY files are deprecated. They will be removed in future releases.
+Please use system_label.BASIS_ENTHALPY in your scripts instead.
+
+cite: Please indicate the Siesta version in published work: 5.4.2
+cite: This calculation has made use of features in the following articles
+cite: which we encourage you to cite in published work.
+cite: (Please see "omm.bib" for a BibTeX file.)
+        Primary SIESTA paper
+          DOI: www.doi.org/10.1088/0953-8984/14/11/302
+
+
+timer: Elapsed wall time (sec) =     527.493
+timer: CPU execution times (sec):
+
+Routine            Calls   Time/call    Tot.time        %
+siesta                 1     555.334     555.334   100.00
+Setup                  1       0.450       0.450     0.08
+bands                  1       0.000       0.000     0.00
+KSV_init               1       0.000       0.000     0.00
+IterGeom               1     554.845     554.845    99.91
+geom_init              1      14.744      14.744     2.66
+state_init             1       0.807       0.807     0.15
+hsparse                1       0.195       0.195     0.04
+overlap                1       0.183       0.183     0.03
+Setup_H0               1       8.127       8.127     1.46
+naefs                  2       0.007       0.014     0.00
+dnaefs                 1       0.000       0.000     0.00
+two-body               1       0.000       0.000     0.00
+MolMec                 2       0.000       0.000     0.00
+kinefsm                2       0.427       0.854     0.15
+nlefsm                 2       1.061       2.122     0.38
+DHSCF_Init             1       7.424       7.424     1.34
+DHSCF1                 1       0.017       0.017     0.00
+InitMesh               1       0.017       0.017     0.00
+INITMESH               1       0.000       0.000     0.00
+DHSCF2                 1       7.406       7.406     1.33
+REMESH                 1       0.360       0.360     0.06
+REORD                168       0.002       0.273     0.05
+PHION                  1       6.541       6.541     1.18
+COMM_BSC             323       0.001       0.369     0.07
+POISON                81       0.036       2.949     0.53
+fft                  162       0.012       1.939     0.35
+setup_H               79       6.479     511.879    92.18
+DHSCF                 80       6.635     530.821    95.59
+DHSCF3                80       6.467     517.363    93.16
+rhoofd                80       3.802     304.156    54.77
+XC                    80       0.093       7.416     1.34
+GXC-CellXC            80       0.088       7.056     1.27
+gridxc@cellXC         80       0.088       7.055     1.27
+vmat                  80       2.517     201.326    36.25
+IterSCF               78       6.632     517.290    93.15
+compute_dm            78       0.123       9.575     1.72
+dmin                  79       0.112       8.879     1.60
+m_cg                  79       0.104       8.244     1.48
+m_calc_A             259       0.007       1.751     0.32
+m_calc_grad          181       0.002       0.273     0.05
+m_calc_coeff         181       0.000       0.050     0.01
+m_calc_densmat        79       0.007       0.585     0.11
+MIXER                 77       0.008       0.595     0.11
+PostSCF                1      22.806      22.806     4.11
+FINAL_HF               1      22.799      22.799     4.11
+DHSCF4                 1      13.457      13.457     2.42
+dfscf                  1      13.071      13.071     2.35
+overfsm                1       0.254       0.254     0.05
+writeHSX               1       0.010       0.010     0.00
+state_analysis         1       0.001       0.001     0.00
+siesta_move            1       0.000       0.000     0.00
+Analysis               1       0.004       0.004     0.00
+optical                1       0.000       0.000     0.00
+  
+
+>> End of run:   9-OCT-2026  16:04:30
+Job completed
+Job completed

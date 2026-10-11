@@ -1,0 +1,56 @@
+{
+ "_nota": "Tabla de literatura, sin cálculo propio. Valores copiados de las tablas citadas; ningún valor se ha reconstruido de memoria. Fuente F = Fuchs et al. 2007 (Tabla IV); L = Lucero, Henderson y Scuseria 2012 (Tabla 1, arXiv:1111.4515).",
+ "sources": {
+  "F": {"short":"Fuchs et al. 2007","full":"F. Fuchs, J. Furthmüller, F. Bechstedt, M. Shishkin y G. Kresse, Phys. Rev. B 76, 115109 (2007); arXiv:cond-mat/0604447, Tabla IV. Experimentales tomados de Shishkin y Kresse, PRB 75, 235102 (2007) según ese artículo.","verified":"leído en el arXiv en esta sesión"},
+  "L": {"short":"Lucero et al. 2012","full":"M. J. Lucero, T. M. Henderson y G. E. Scuseria, arXiv:1111.4515, Tabla 1 (referencia de revista no verificada aquí). Experimentales de baja temperatura del Semiconductor Handbook (Madelung 2004).","verified":"leído en el arXiv en esta sesión"}
+ },
+ "methods": [
+  {"id":"lsda","label":"LSDA","rung":"1","src":"L","cls":"dft"},
+  {"id":"pbesol","label":"PBEsol","rung":"2","src":"L","cls":"dft"},
+  {"id":"tpss","label":"TPSS","rung":"3","src":"L","cls":"dft"},
+  {"id":"hse","label":"HSE (Lucero)","rung":"4","src":"L","cls":"hyb"},
+  {"id":"hse03","label":"HSE03","rung":"4","src":"F","cls":"hyb"},
+  {"id":"g0w0","label":"G₀W₀","rung":"GW","src":"F","cls":"gw"},
+  {"id":"gw0","label":"GW₀","rung":"GW","src":"F","cls":"gw"},
+  {"id":"gw","label":"GW (QP)","rung":"GW","src":"F","cls":"gw"}
+ ],
+ "materials": [
+  {"id":"Ge","name":"Ge","gap":"indirecto","exp":0.74,"hse03":0.54,"g0w0":0.79,"gw0":0.82,"gw":0.83,"lsda":0.00,"pbesol":0.00,"tpss":0.00,"hse":0.54},
+  {"id":"Si","name":"Si","gap":"indirecto","exp":1.17,"hse03":1.04,"g0w0":1.32,"gw0":1.35,"gw":1.37,"lsda":0.51,"pbesol":0.53,"tpss":0.74,"hse":1.22},
+  {"id":"GaAs","name":"GaAs","gap":"directo","exp":1.52,"hse03":1.12,"g0w0":1.66,"gw0":1.71,"gw":1.75,"lsda":0.43,"pbesol":0.42,"tpss":0.52,"hse":1.18},
+  {"id":"SiC","name":"SiC","gap":"indirecto","exp":2.40,"hse03":2.03,"g0w0":2.60,"gw0":2.68,"gw":2.76},
+  {"id":"CdS","name":"CdS","gap":"directo","exp":2.42,"hse03":1.97,"g0w0":2.55,"gw0":2.65,"gw":2.80},
+  {"id":"AlP","name":"AlP","gap":"indirecto","exp":2.45,"hse03":2.09,"g0w0":2.69,"gw0":2.77,"gw":2.86},
+  {"id":"GaN","name":"GaN","gap":"directo","exp":3.20,"hse03":2.65,"g0w0":3.29,"gw0":3.38,"gw":3.53},
+  {"id":"ZnO","name":"ZnO","gap":"directo","exp":3.44,"hse03":2.11,"g0w0":2.86,"gw0":3.02,"gw":3.33},
+  {"id":"ZnS","name":"ZnS","gap":"directo","exp":3.91,"hse03":3.05,"g0w0":3.69,"gw0":3.79,"gw":3.95},
+  {"id":"C","name":"C (diamante)","gap":"indirecto","exp":5.48,"hse03":5.08,"g0w0":5.84,"gw0":5.92,"gw":6.03,"lsda":4.19,"pbesol":4.05,"tpss":4.19,"hse":5.42},
+  {"id":"BN","name":"BN","gap":"indirecto","exp":6.25,"expNote":"6.1–6.4 en la fuente; se grafica el punto medio","hse03":5.54,"g0w0":6.54,"gw0":6.66,"gw":6.85},
+  {"id":"MgO","name":"MgO","gap":"directo","exp":7.83,"hse03":6.22,"g0w0":7.94,"gw0":8.20,"gw":8.66,"lsda":4.90,"pbesol":4.50,"tpss":4.58,"hse":6.40},
+  {"id":"LiF","name":"LiF","gap":"directo","exp":14.20,"hse03":11.2,"g0w0":14.1,"gw0":14.5,"gw":15.2},
+  {"id":"Ar","name":"Ar","gap":"directo","exp":14.20,"hse03":10.1,"g0w0":13.7,"gw0":14.1,"gw":14.7},
+  {"id":"Ne","name":"Ne","gap":"directo","exp":21.70,"hse03":14.1,"g0w0":20.2,"gw0":20.7,"gw":21.4}
+ ],
+ "startingPoint": {
+  "_src":"F, Tablas II y III",
+  "cols":["LDA","PBE0","G₀W₀@LDA","G₀W₀@PBE0","exp."],
+  "rows":[["Si (indirecto)",0.51,1.85,1.08,1.65,1.17],["InN",-0.38,1.14,0.00,0.78,0.61],["ZnO",0.60,3.03,2.14,3.24,3.44]]
+ },
+ "refs": [
+  {"k":"Perdew y Schmidt 2001","t":"J. P. Perdew y K. Schmidt, «Jacob's ladder of density functional approximations for the exchange-correlation energy», AIP Conf. Proc. 577, 1 (2001)."},
+  {"k":"Perdew y Levy 1983","t":"J. P. Perdew y M. Levy, Phys. Rev. Lett. 51, 1884 (1983)."},
+  {"k":"Sham y Schlüter 1983","t":"L. J. Sham y M. Schlüter, Phys. Rev. Lett. 51, 1888 (1983)."},
+  {"k":"Hedin 1965","t":"L. Hedin, Phys. Rev. 139, A796 (1965)."},
+  {"k":"Hybertsen y Louie 1986","t":"M. S. Hybertsen y S. G. Louie, Phys. Rev. B 34, 5390 (1986)."},
+  {"k":"Onida et al. 2002","t":"G. Onida, L. Reining y A. Rubio, Rev. Mod. Phys. 74, 601 (2002)."},
+  {"k":"Shishkin y Kresse 2007","t":"M. Shishkin y G. Kresse, Phys. Rev. B 75, 235102 (2007)."},
+  {"k":"Fuchs et al. 2007","t":"F. Fuchs, J. Furthmüller, F. Bechstedt, M. Shishkin y G. Kresse, Phys. Rev. B 76, 115109 (2007)."},
+  {"k":"Heyd et al. 2003","t":"J. Heyd, G. E. Scuseria y M. Ernzerhof, J. Chem. Phys. 118, 8207 (2003)."},
+  {"k":"Heyd et al. 2005","t":"J. Heyd, J. E. Peralta, G. E. Scuseria y R. L. Martin, J. Chem. Phys. 123, 174101 (2005)."},
+  {"k":"Krukau et al. 2006","t":"A. V. Krukau, O. A. Vydrov, A. F. Izmaylov y G. E. Scuseria, J. Chem. Phys. 125, 224106 (2006)."},
+  {"k":"Adamo y Barone 1999","t":"C. Adamo y V. Barone, J. Chem. Phys. 110, 6158 (1999)."},
+  {"k":"Sun et al. 2015","t":"J. Sun, A. Ruzsinszky y J. P. Perdew, Phys. Rev. Lett. 115, 036402 (2015)."},
+  {"k":"Lucero et al. 2012","t":"M. J. Lucero, T. M. Henderson y G. E. Scuseria, arXiv:1111.4515 (2011); referencia de revista no verificada aquí."},
+  {"k":"Madelung 2004","t":"O. Madelung (ed.), Semiconductors: Data Handbook, 3.ª ed., Springer (2004)."}
+ ]
+}

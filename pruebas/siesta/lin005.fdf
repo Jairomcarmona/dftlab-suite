@@ -1,0 +1,32 @@
+SystemLabel lin005
+XC.functional LDA
+XC.authors CA
+NumberOfSpecies 1
+NumberOfAtoms 2
+%block ChemicalSpeciesLabel
+ 1 14 Si
+%endblock ChemicalSpeciesLabel
+PAO.BasisSize DZP
+LatticeConstant 1.0 Ang
+%block LatticeVectors
+0.00000000 2.71550000 2.71550000
+2.71550000 0.00000000 2.71550000
+2.71550000 2.71550000 0.00000000
+%endblock LatticeVectors
+AtomicCoordinatesFormat Fractional
+%block AtomicCoordinatesAndAtomicSpecies
+0.00000000 0.00000000 0.00000000 1
+1.25000000 0.25000000 0.25000000 1
+%endblock AtomicCoordinatesAndAtomicSpecies
+MeshCutoff 200 Ry
+%block kgrid_Monkhorst_Pack
+ 6 0 0 0.5
+ 0 6 0 0.5
+ 0 0 6 0.5
+%endblock kgrid_Monkhorst_Pack
+DM.Tolerance 1.e-5
+CDF.Save false
+MaxSCFIterations 200
+DM.UseSaveDM false
+SCF.Mixer.Method linear
+SCF.Mixer.Weight 0.05

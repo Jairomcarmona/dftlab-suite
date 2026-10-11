@@ -1,0 +1,60 @@
+SystemName Silicon diamond LDA
+SystemLabel si
+XC.functional LDA
+XC.authors CA
+NumberOfSpecies 1
+NumberOfAtoms 2
+%block ChemicalSpeciesLabel
+ 1 14 Si
+%endblock ChemicalSpeciesLabel
+PAO.BasisSize DZP
+LatticeConstant 1.0 Ang
+%block LatticeVectors
+0.00000000 2.71550000 2.71550000
+2.71550000 0.00000000 2.71550000
+2.71550000 2.71550000 0.00000000
+%endblock LatticeVectors
+AtomicCoordinatesFormat Fractional
+%block AtomicCoordinatesAndAtomicSpecies
+0.00000000 0.00000000 0.00000000 1
+1.25000000 0.25000000 0.25000000 1
+%endblock AtomicCoordinatesAndAtomicSpecies
+MeshCutoff 200 Ry
+%block kgrid_Monkhorst_Pack
+ 8 0 0 0.5
+ 0 8 0 0.5
+ 0 0 8 0.5
+%endblock kgrid_Monkhorst_Pack
+DM.Tolerance 1.e-5
+SaveHS true
+TS.HS.Save true
+BandLinesScale ReciprocalLatticeVectors
+%block BandLines
+   1 0.000000 0.000000 0.000000  \Gamma
+  30 0.500000 0.000000 0.500000  X
+  30 0.625000 0.250000 0.625000  U
+   1 0.375000 0.375000 0.750000  K
+  30 0.000000 0.000000 0.000000  \Gamma
+  30 0.500000 0.500000 0.500000  L
+  30 0.500000 0.250000 0.750000  W
+  30 0.500000 0.000000 0.500000  X
+%endblock BandLines
+%block ProjectedDensityOfStates
+ -20.0 10.0 0.10 600 eV
+%endblock ProjectedDensityOfStates
+%block PDOS.kgrid_Monkhorst_Pack
+ 16 0 0 0.5
+ 0 16 0 0.5
+ 0 0 16 0.5
+%endblock PDOS.kgrid_Monkhorst_Pack
+OpticalCalculation true
+Optical.Energy.Minimum 0 Ry
+Optical.Energy.Maximum 1.5 Ry
+Optical.Broaden 0.1 eV
+Optical.PolarizationType polycrystal
+%block Optical.Mesh
+ 10 10 10
+%endblock Optical.Mesh
+Optical.OffsetMesh true
+WriteMullikenPop 1
+WriteEigenvalues true

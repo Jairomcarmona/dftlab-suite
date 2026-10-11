@@ -1,0 +1,13 @@
+/* Aprender 15 · Más allá de DFT */
+.ladder{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.ladder .rung{display:grid;grid-template-columns:28px 150px 1fr;gap:2px 12px;align-items:baseline;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2)}
+.ladder .rung.here{border-color:var(--accent);background:var(--accent-soft)}
+.ladder .rung .n{grid-row:1/4;font:600 18px var(--f-data);color:var(--accent)}
+.ladder .rung .nm{font-weight:600}
+.ladder .rung .ing,.ladder .rung .ex{grid-column:2/4;font-size:13px;color:var(--muted)}
+.ladder .rung .nm{grid-column:2/4}
+.ladder .rung .ex b{color:var(--ink)}
+.heaven{font:600 11px var(--f-label);letter-spacing:.08em;text-transform:uppercase;color:var(--faint);text-align:center}
+#bSel button{display:inline-flex;align-items:center;gap:6px}
+#bSel .sw{display:inline-block;width:10px;height:10px;border-radius:50%}
+@media(max-width:600px){.ladder .rung{grid-template-columns:22px 1fr}}

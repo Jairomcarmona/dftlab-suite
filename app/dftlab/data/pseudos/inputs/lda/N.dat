@@ -1,0 +1,59 @@
+# DFT Lab pseudopotential library -- N, LDA (Ceperley-Alder / Perdew-Zunger, ONCVPSP iexc=3)
+# ONCVPSP 3.3.1 (scalar-relativistic, PSML output), 2 projectors per channel.
+# Test configurations: 1) neutral excitation, 2) +0.5 ion, 3) +1 ion (relative to the reference configuration).
+# ATOM AND REFERENCE CONFIGURATION
+# atsym, z, nc, nv, iexc   psfile
+    N  7.0  1  2  3  psp8
+#
+# n, l, f  (nc+nv lines)
+    1    0    2.00
+    2    0    2.00
+    2    1    3.00
+#
+# PSEUDOPOTENTIAL AND OPTIMIZATION
+# lmax
+    1
+#
+# l, rc, ep, ncon, nbas, qcut  (lmax+1 lines, l's must be in order)
+    0    1.36    0.00    5    9    10.00
+    1    1.36    0.00    5    9    10.00
+#
+# LOCAL POTENTIAL
+# lloc, lpopt, rc(5), dvloc0
+    4    5    1.20    0.00
+#
+# VANDERBILT-KLEINMAN-BYLANDER PROJECTORs
+# l, nproj, debl  (lmax+1 lines, l's in order)
+    0    2    1.50
+    1    2    1.50
+#
+# MODEL CORE CHARGE
+# icmod, fcfact, rcfact
+    0    0.1
+#
+# LOG DERIVATIVE ANALYSIS
+# epsh1, epsh2, depsh
+    -2.0  3.0  0.02
+#
+# OUTPUT GRID
+# rlmax, drl
+    4.0  0.01
+#
+# TEST CONFIGURATIONS
+# ncnf
+    3
+#
+#   nvcnf (repeated ncnf times)
+#   n, l, f  (nvcnf lines, repeated follwing nvcnf's ncnf times)
+    2
+    2    0    1.00
+    2    1    4.00
+#
+    2
+    2    0    2.00
+    2    1    2.50
+#
+    2
+    2    0    2.00
+    2    1    2.00
+#

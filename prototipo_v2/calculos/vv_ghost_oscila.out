@@ -1,0 +1,1322 @@
+Executable      : /opt/siesta/bin/siesta
+Version         : 5.4.2
+Architecture    : x86_64
+Compiler version: GNU-14.3.0
+Compiler flags  : -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -fno-merge-constants -isystem <prefix>/include -I<prefix>/_build_env/include -fdebug-prefix-map=<prefix>/work=/usr/local/src/conda/siesta-5.4.2 -fdebug-prefix-map=<prefix>=/usr/local/src/conda-prefix -I<prefix>/lib -fallow-argument-mismatch -O3
+Parallelisations: none
+NetCDF support
+NetCDF-4 support
+Lua support
+DFT-D3 support
+
+Runtime information:
+* Directory : /opt/run/gr/gh_vv_2.9
+* Running in serial mode.
+>> Start of run:   9-OCT-2026  17:31:57
+
+                           *********************** 
+                           *  WELCOME TO SIESTA  * 
+                           *********************** 
+
+ NOTE: Siesta V5 introduces some new defaults for basis-set generation
+ NOTE: which might lead to slightly different numerical results.
+ NOTE: Please see the manual for full details and compatibility measures.
+
+
+reinit: Reading from file g.fdf
+
+reinit: -----------------------------------------------------------------------
+reinit: System Name: 
+reinit: -----------------------------------------------------------------------
+reinit: System Label: g
+reinit: -----------------------------------------------------------------------
+
+initatom: Reading input for the pseudopotentials and atomic orbitals ----------
+Species number:   1 Atomic number:    6 Label: C_pbe
+Species number:   2 Atomic number:   -6 Label: C_pbe_g (floating PAOs)
+
+Ground state valence configuration (from tables):   2s02  2p02  3d00  4f00
+Ground state valence configuration (from tables):   2s02  2p02  3d00  4f00
+
+---- Processing specs for species: C_pbe
+Reading pseudopotential information in PSML from:
+  C_pbe.psml
+PSML file version: 1.1
+Using libxc ids:  101 130
+GGA--PBE XC_GGA_X_PBE--XC_GGA_C_PBE pb
+PSML uuid: 7e8c5980-c3ff-11f1-74ab-2a134dff750e
+
+---- Processing specs for species: C_pbe_g
+Reading pseudopotential information in PSML from:
+  C_pbe_g.psml
+PSML file version: 1.1
+Using libxc ids:  101 130
+GGA--PBE XC_GGA_X_PBE--XC_GGA_C_PBE pb
+PSML uuid: 7e8c5980-c3ff-11f1-74ab-2a134dff750e
+
+---- Pseudopotential check for C 
+
+Pseudized shells:
+2s( 2.00) rc: 1.36
+2p( 2.00) rc: 1.36
+Valence configuration for ps generation: 2s:2p: Total charge:   4.000000
+
+---- Pseudopotential check for C 
+
+Pseudized shells:
+2s( 2.00) rc: 1.36
+2p( 2.00) rc: 1.36
+Valence configuration for ps generation: 2s:2p: Total charge:   4.000000
+For C_pbe, standard SIESTA heuristics set lmxkb to 3
+ (one more than the basis l, including polarization orbitals).
+Use PS.lmax or PS.KBprojectors blocks to override.
+C_pbe pseudopotential only contains V_ls up to l=1 -- lmxkb reset.
+
+<basis_specs>
+===============================================================================
+C_pbe                Z=   6    Mass=  12.011        Charge= 0.17977+309
+Lmxo=2 Lmxkb= 1    BasisType=split      Semic=F
+L=0  Nsemic=0  Cnfigmx=2
+          i=1  nzeta=2  polorb=0  (2s)
+            splnorm:   0.15000    
+               vcte:    40.000    
+               rinn:  -0.90000    
+               qcoe:    0.0000    
+               qyuk:    0.0000    
+               qwid:   0.10000E-01
+                rcs:    0.0000      0.0000    
+            lambdas:    1.0000      1.0000    
+L=1  Nsemic=0  Cnfigmx=2
+          i=1  nzeta=2  polorb=1  (2p)  (to be polarized perturbatively)
+            splnorm:   0.15000    
+               vcte:    40.000    
+               rinn:  -0.90000    
+               qcoe:    0.0000    
+               qyuk:    0.0000    
+               qwid:   0.10000E-01
+                rcs:    0.0000      0.0000    
+            lambdas:    1.0000      1.0000    
+L=2  Nsemic=0  Cnfigmx=3
+          i=1  nzeta=0  polorb=0  (3d)  (perturbative polarization orbital) (from 2p)
+-------------------------------------------------------------------------------
+L=0  Nkbl=1  erefs: 0.17977+309
+L=1  Nkbl=1  erefs: 0.17977+309
+===============================================================================
+</basis_specs>
+
+Using PAO.SplitTailNorm
+atom: Called for C_pbe                 (Z =   6)
+NOTE: C_pbe pseudopotential has channels up to l= 1
+NOTE: PAOs with higher l will be generated with V_local
+Maximum radius (at nrval) set to   50.00000 8518
+
+read_vps: Pseudopotential generation method:
+read_vps: ONCVPSP-3.Hamann's oncvpsp                        
+Valence charge in pseudo generation:    4.00000
+
+xc_check: Exchange-correlation functional:
+xc_check: VDW Vydrov-vanVoorhis
+xc_check: WARNING: Pseudopotential generated with GGA PBE functional
+Got Vlocal (oncv-fit) from psml data
+Choosing vlocal chloc cutoff:  4.020256
+qtot up to nchloc:    3.99921015
+atom: Maximum radius for chlocal:    4.02026
+atom: Maximum radius for r*vlocal+2*Zval:    4.02026
+Reading KB projs from C_pbe psml data
+Using scalar-relativistic projectors in PSML file
+
+PSML: Kleinman-Bylander projectors: 
+   l= 0   rc=  1.373795   Ekb= 13.172015
+   l= 0   rc=  1.373795   Ekb=  0.987455
+   l= 1   rc=  1.373795   Ekb= -7.101480
+   l= 1   rc=  1.373795   Ekb= -1.625984
+
+PSML: Total number of  Kleinman-Bylander projectors:   8
+atom: -------------------------------------------------------------------------
+
+atom: SANKEY-TYPE ORBITALS:
+atom: Selected multiple-zeta basis: split     
+
+SPLIT: Orbitals with angular momentum L= 0
+
+SPLIT: Basis orbitals for state 2s
+
+SPLIT: PAO cut-off radius determined from an
+SPLIT: energy shift=  0.003675 Ry
+Split based on tail norm
+
+   izeta = 1
+                 lambda =    1.000000
+                     rc =    5.006988
+                 energy =   -1.011016
+                kinetic =    0.913987
+    potential(screened) =   -1.925004
+       potential(ionic) =   -5.487026
+
+   izeta = 2
+                 rmatch =    3.185776
+              splitnorm =    0.150000
+                 energy =   -0.779422
+                kinetic =    1.633643
+    potential(screened) =   -2.413065
+       potential(ionic) =   -6.267066
+
+SPLIT: Orbitals with angular momentum L= 1
+
+SPLIT: Basis orbitals for state 2p
+
+SPLIT: PAO cut-off radius determined from an
+SPLIT: energy shift=  0.003675 Ry
+Split based on tail norm
+
+   izeta = 1
+                 lambda =    1.000000
+                     rc =    6.216596
+                 energy =   -0.388988
+                kinetic =    2.417129
+    potential(screened) =   -2.806116
+       potential(ionic) =   -6.230472
+
+   izeta = 2
+                 rmatch =    3.956285
+              splitnorm =    0.150000
+                 energy =   -0.290628
+                kinetic =    3.405839
+    potential(screened) =   -3.696467
+       potential(ionic) =   -7.460741
+*Note: V_local used for l= 2
+
+** Using vlocal for PAOs with L= 2
+
+POLgen: Perturbative polarization orbital with L=  2
+
+POLgen: Polarization orbital for state 2p
+*Note: V_local used for lpol= 2
+
+** Using vlocal for PAOs with L= 2
+Split based on tail norm
+
+   izeta = 1
+                     rc =    6.216596
+                 energy =    1.039831
+                kinetic =    2.082922
+    potential(screened) =   -1.043091
+       potential(ionic) =   -3.789569
+atom: Total number of Sankey-type orbitals: 13
+
+atm_pop: Valence configuration (for local Pseudopot. screening):
+ 2s( 2.00)                                                            
+ 2p( 2.00)                                                            
+ 3d( 0.00)                                                            
+Vna: chval, zval:    4.00000   4.00000
+
+Vna:  Cut-off radius for the neutral-atom potential:   6.216596
+
+atom: _________________________________________________________________________
+
+<basis_specs>
+===============================================================================
+C_pbe_g              Z=  -6    Mass= 0.10000E+41    Charge= 0.17977+309
+Lmxo=2 Lmxkb=-1    BasisType=split      Semic=F
+L=0  Nsemic=0  Cnfigmx=2
+          i=1  nzeta=2  polorb=0  (2s)
+            splnorm:   0.15000    
+               vcte:    40.000    
+               rinn:  -0.90000    
+               qcoe:    0.0000    
+               qyuk:    0.0000    
+               qwid:   0.10000E-01
+                rcs:    0.0000      0.0000    
+            lambdas:    1.0000      1.0000    
+L=1  Nsemic=0  Cnfigmx=2
+          i=1  nzeta=2  polorb=1  (2p)  (to be polarized perturbatively)
+            splnorm:   0.15000    
+               vcte:    40.000    
+               rinn:  -0.90000    
+               qcoe:    0.0000    
+               qyuk:    0.0000    
+               qwid:   0.10000E-01
+                rcs:    0.0000      0.0000    
+            lambdas:    1.0000      1.0000    
+L=2  Nsemic=0  Cnfigmx=3
+          i=1  nzeta=0  polorb=0  (3d)  (perturbative polarization orbital) (from 2p)
+===============================================================================
+</basis_specs>
+
+Using PAO.SplitTailNorm
+atom: Called for C_pbe_g               (Z =  -6) ( Floating basis ) 
+NOTE: C_pbe_g pseudopotential has channels up to l= 1
+NOTE: PAOs with higher l will be generated with V_local
+Maximum radius (at nrval) set to   50.00000 8518
+
+read_vps: Pseudopotential generation method:
+read_vps: ONCVPSP-3.Hamann's oncvpsp                        
+Valence charge in pseudo generation:    4.00000
+
+xc_check: Exchange-correlation functional:
+xc_check: VDW Vydrov-vanVoorhis
+xc_check: WARNING: Pseudopotential generated with GGA PBE functional
+atom: -------------------------------------------------------------------------
+
+atom: SANKEY-TYPE ORBITALS:
+atom: Selected multiple-zeta basis: split     
+
+SPLIT: Orbitals with angular momentum L= 0
+
+SPLIT: Basis orbitals for state 2s
+
+SPLIT: PAO cut-off radius determined from an
+SPLIT: energy shift=  0.003675 Ry
+Split based on tail norm
+
+   izeta = 1
+                 lambda =    1.000000
+                     rc =    5.006988
+                 energy =   -1.011016
+                kinetic =    0.913987
+    potential(screened) =   -1.925004
+       potential(ionic) =   -5.487026
+
+   izeta = 2
+                 rmatch =    3.185776
+              splitnorm =    0.150000
+                 energy =   -0.779422
+                kinetic =    1.633643
+    potential(screened) =   -2.413065
+       potential(ionic) =   -6.267066
+
+SPLIT: Orbitals with angular momentum L= 1
+
+SPLIT: Basis orbitals for state 2p
+
+SPLIT: PAO cut-off radius determined from an
+SPLIT: energy shift=  0.003675 Ry
+Split based on tail norm
+
+   izeta = 1
+                 lambda =    1.000000
+                     rc =    6.216596
+                 energy =   -0.388988
+                kinetic =    2.417129
+    potential(screened) =   -2.806116
+       potential(ionic) =   -6.230472
+
+   izeta = 2
+                 rmatch =    3.956285
+              splitnorm =    0.150000
+                 energy =   -0.290628
+                kinetic =    3.405839
+    potential(screened) =   -3.696467
+       potential(ionic) =   -7.460741
+*Note: V_local used for l= 2
+
+** Using vlocal for PAOs with L= 2
+
+POLgen: Perturbative polarization orbital with L=  2
+
+POLgen: Polarization orbital for state 2p
+*Note: V_local used for lpol= 2
+
+** Using vlocal for PAOs with L= 2
+Split based on tail norm
+
+   izeta = 1
+                     rc =    6.216596
+                 energy =    1.039831
+                kinetic =    2.082922
+    potential(screened) =   -1.043091
+       potential(ionic) =   -3.789569
+atom: Total number of Sankey-type orbitals: 13
+
+atom: _________________________________________________________________________
+
+prinput: Basis input 
+
+PAO.BasisType split     
+
+%block ChemicalSpeciesLabel
+    1    6 C_pbe                   # Species index, atomic number, species label
+    2   -6 C_pbe_g                 # Species index, atomic number, species label
+%endblock ChemicalSpeciesLabel
+
+%block PAO.Basis                 # Define Basis set
+# WARNING: This information might be incomplete!
+C_pbe                 2                    # Species label, number of l-shells
+ n=2   0   2                         # n, l, Nzeta 
+   5.007      3.186   
+   1.000      1.000   
+ n=2   1   2 P   1                   # n, l, Nzeta, Polarization, NzetaPol
+   6.217      3.956   
+   1.000      1.000   
+C_pbe_g               2                    # Species label, number of l-shells
+ n=2   0   2                         # n, l, Nzeta 
+   5.007      3.186   
+   1.000      1.000   
+ n=2   1   2 P   1                   # n, l, Nzeta, Polarization, NzetaPol
+   6.217      3.956   
+   1.000      1.000   
+%endblock PAO.Basis
+
+prinput: ----------------------------------------------------------------------
+
+Dumping basis to NetCDF file C_pbe.ion.nc
+Dumping basis to NetCDF file C_pbe_g.ion.nc
+coor:   Atomic-coordinates input format  =     Fractional
+
+siesta: Atomic coordinates (Bohr) and species
+siesta:      0.00000   0.00000   0.00000  1        1
+siesta:      0.00000   0.00000   5.48021  2        2
+siesta:     -0.00000   2.68503   0.00000  1        3
+siesta:      2.32531   1.34252   5.48021  2        4
+
+siesta: System type = bulk      
+
+initatomlists: Number of atoms, orbitals, and projectors:      4    52    16
+
+siesta: ******************** Simulation parameters ****************************
+siesta:
+siesta: The following are some of the parameters of the simulation.
+siesta: A complete list of the parameters used, including default values,
+siesta: can be found in file out.fdf
+siesta:
+redata: Spin configuration                          = none
+redata: Number of spin components                   = 1
+redata: Time-Reversal Symmetry                      = T
+redata: Spin spiral                                 = F
+redata: Long output                                 =   F
+redata: Number of Atomic Species                    =        2
+redata: Charge density info will appear in .RHO file
+redata: Write Mulliken charges (when)               = none
+redata: Write Mulliken Pop.                         = NO
+redata: Write Hirshfeld charges (when)              = none
+redata: Write Voronoi charges (when)                = none
+redata: Write spin charge (when)                    = none
+redata: Matel table size (NRTAB)                    =     1024
+redata: Mesh Cutoff                                 =   300.0000 Ry
+redata: Net charge of the system                    =     0.0000 |e|
+redata: Min. number of SCF Iter                     =        0
+redata: Max. number of SCF Iter                     =     1000
+redata: SCF convergence failure will abort job
+redata: SCF mix quantity                            = Hamiltonian
+redata: Mix DM or H after convergence               =   F
+redata: Recompute H after scf cycle                 =   F
+redata: Mix DM in first SCF step                    =   T
+redata: Write Pulay info on disk                    =   F
+redata: New DM Occupancy tolerance                  = 0.000000000001
+redata: No kicks to SCF
+redata: DM Mixing Weight for Kicks                  =     0.5000
+redata: Require Harris convergence for SCF          =   F
+redata: Harris energy tolerance for SCF             =     0.000100 eV
+redata: Require DM convergence for SCF              =   T
+redata: DM tolerance for SCF                        =     0.000010
+redata: Require EDM convergence for SCF             =   F
+redata: EDM tolerance for SCF                       =     0.001000 eV
+redata: Require H convergence for SCF               =   T
+redata: Hamiltonian tolerance for SCF               =     0.001000 eV
+redata: Require (free) Energy convergence for SCF   =   F
+redata: (free) Energy tolerance for SCF             =     0.000100 eV
+redata: Using DFT-D3 dispersion                     =   F
+redata: Using Saved Data (generic)                  =   F
+redata: Use continuation files for DM               =   T
+redata: Neglect nonoverlap interactions             =   F
+redata: Method of Calculation                       = Diagonalization
+redata: Electronic Temperature                      =   290.1130 K
+redata: Fix the spin of the system                  =   F
+redata: Max. number of TDED Iter                    =        1
+redata: Number of TDED substeps                     =        3
+redata: Dynamics option                             = Single-point calculation
+mix.SCF: Pulay mixing                            = Pulay
+mix.SCF:    Variant                              = stable
+mix.SCF:    History steps                        = 2
+mix.SCF:    Linear mixing weight                 =     0.200000
+mix.SCF:    Mixing weight                        =     0.200000
+mix.SCF:    SVD condition                        = 0.1000E-07
+redata: Save all siesta data in one NC              =   F
+redata: ***********************************************************************
+
+%block SCF.Mixers
+  Pulay
+%endblock SCF.Mixers
+
+%block SCF.Mixer.Pulay
+  # Mixing method
+  method pulay
+  variant stable
+
+  # Mixing options
+  weight 0.2000
+  weight.linear 0.2000
+  history 2
+%endblock SCF.Mixer.Pulay
+
+DM_history_depth set to one: no extrapolation allowed by default for geometry relaxation
+Size of DM history Fstack: 1
+Total number of electrons:     8.000000
+Total ionic charge:     8.000000
+k-point displ. along   1 input, could be:     0.00    0.50
+k-point displ. along   2 input, could be:     0.00    0.50
+k-point displ. along   3 input, could be:     0.00    0.50
+ Kpoints in:          336 . Kpoints trimmed:          320
+
+siesta: k-grid: Number of k-points = 320
+siesta: k-points from Monkhorst-Pack grid
+siesta: k-cutoff (effective) =    11.600 Ang
+siesta: k-point supercell and displacements
+siesta: k-grid:    12     0     0      0.000
+siesta: k-grid:     0    12     0      0.000
+siesta: k-grid:     0     0     4      0.000
+
+diag: Algorithm                                     = D&C
+diag: Used triangular part                          = Lower
+diag: Absolute tolerance                            =  0.100E-15
+diag: Orthogonalization factor                      =  0.100E-05
+diag: Memory factor                                 =  1.0000
+
+superc: Internal auxiliary supercell:     7 x     7 x     3  =     147
+superc: Number of atoms, orbitals, and projectors:    588   7644   2352
+
+
+ts: **************************************************************
+ts: Save H and S matrices                           =    F
+ts: Save TSHS files in MD/FC simulation             =    F
+ts: Save DM and EDM matrices                        =    F
+ts: Only save the overlap matrix S                  =    F
+ts: **************************************************************
+
+************************ Begin: TS CHECKS AND WARNINGS ************************
+************************ End: TS CHECKS AND WARNINGS **************************
+
+
+                     ====================================
+                        Single-point calculation
+                     ====================================
+
+superc: Internal auxiliary supercell:     7 x     7 x     3  =     147
+superc: Number of atoms, orbitals, and projectors:    588   7644   2352
+
+outcell: Unit cell vectors (Ang):
+        2.461000    0.000000    0.000000
+       -1.230500    2.131289    0.000000
+        0.000000    0.000000    5.800000
+
+outcell: Cell vector modules (Ang)   :    2.461000    2.461000    5.800000
+outcell: Cell angles (23,13,12) (deg):     90.0000     90.0000    120.0000
+outcell: Cell volume (Ang**3)        :     30.4216
+<dSpData1D:S at geom step 0
+  <sparsity:sparsity for geom step 0
+    nrows_g=52 nrows=52 sparsity=31.1420 nnzs=84208, refcount: 7>
+  <dData1D:(new from dSpData1D) n=84208, refcount: 1>
+refcount: 1>
+new_DM -- step:     1
+Initializing Density Matrix...
+
+Attempting to read DM from file... Failed...
+DM filled with atomic data:
+<dSpData2D:DM initialized from atoms
+  <sparsity:sparsity for geom step 0
+    nrows_g=52 nrows=52 sparsity=31.1420 nnzs=84208, refcount: 8>
+  <dData2D:DM n=84208 m=1, refcount: 1>
+refcount: 1>
+No. of atoms with KB's overlaping orbs in proc 0. Max # of overlaps:      35     367
+
+InitMesh: MESH = 24 x 24 x 64 = 36864
+InitMesh: Mesh cutoff (required, used) =   300.000   336.516 Ry
+New grid distribution [1]: sub = 2
+
+stepf: Fermi-Dirac step function
+
+siesta: Program's energy decomposition (eV):
+siesta: Ebs     =      -105.584615
+siesta: Eions   =       606.540903
+siesta: Ena     =       188.721706
+siesta: Ekin    =       230.273735
+siesta: Enl     =       -10.979486
+siesta: Eso     =         0.000000
+siesta: Edftu   =         0.000000
+siesta: DEna    =       -16.490362
+siesta: DUscf   =         1.356518
+siesta: DUext   =         0.000000
+siesta: Ex      =       -88.556707
+siesta: Ec      =        -8.396588
+siesta: Exc     =       -96.953296
+siesta: EbV     =         0.000000
+siesta: eta*DQ  =         0.000000
+siesta: Emadel  =         0.000000
+siesta: Emeta   =         0.000000
+siesta: Emolmec =         0.000000
+siesta: Ekinion =         0.000000
+siesta: Eharris =      -307.248485
+siesta: Etot    =      -310.612087
+siesta: FreeEng =      -310.613048
+
+        iscf     Eharris(eV)        E_KS(eV)     FreeEng(eV)     dDmax    Ef(eV) dHmax(eV)
+   scf:    1     -307.248485     -310.612087     -310.613048  1.636266 -6.694085  3.663093
+timer: Routine,Calls,Time,% = IterSCF        1       6.002  61.92
+   scf:    2     -310.826016     -310.721527     -310.722486  0.072886 -6.198963  2.608080
+   scf:    3     -310.931205     -310.845805     -310.846760  0.168008 -4.979712  0.205142
+   scf:    4     -310.845786     -310.845811     -310.846766  0.002956 -5.030300  0.192318
+   scf:    5     -310.845716     -310.845766     -310.846721  0.001427 -5.070880  0.143994
+   scf:    6     -310.845797     -310.845781     -310.846737  0.002051 -5.096886  0.082123
+   scf:    7     -310.845866     -310.845825     -310.846780  0.002428 -5.106699  0.041313
+   scf:    8     -310.845876     -310.845852     -310.846807  0.001757 -5.106245  0.029802
+   scf:    9     -310.845868     -310.845860     -310.846815  0.000931 -5.102417  0.017998
+   scf:   10     -310.845864     -310.845862     -310.846817  0.000441 -5.098412  0.013173
+   scf:   11     -310.845862     -310.845862     -310.846817  0.000165 -5.095267  0.012182
+   scf:   12     -310.845862     -310.845862     -310.846817  0.000061 -5.093058  0.009128
+   scf:   13     -310.845862     -310.845862     -310.846817  0.000130 -5.091589  0.005356
+   scf:   14     -310.845862     -310.845862     -310.846817  0.000117 -5.091168  0.002826
+   scf:   15     -310.845862     -310.845862     -310.846817  0.000064 -5.091237  0.001729
+   scf:   16     -310.845862     -310.845862     -310.846817  0.000018 -5.091349  0.001461
+   scf:   17     -310.845862     -310.845862     -310.846817  0.000020 -5.091423  0.001586
+   scf:   18     -310.845862     -310.845862     -310.846817  0.000008 -5.091451  0.001354
+   scf:   19     -310.845862     -310.845862     -310.846817  0.000012 -5.091485  0.001484
+   scf:   20     -310.845862     -310.845862     -310.846817  0.000005 -5.091498  0.001283
+   scf:   21     -310.845862     -310.845862     -310.846817  0.000025 -5.091543  0.001883
+   scf:   22     -310.845862     -310.845862     -310.846817  0.000009 -5.091524  0.001483
+   scf:   23     -310.845862     -310.845862     -310.846817  0.000012 -5.091501  0.002098
+   scf:   24     -310.845862     -310.845862     -310.846817  0.000012 -5.091521  0.001450
+   scf:   25     -310.845862     -310.845862     -310.846817  0.000022 -5.091540  0.002398
+   scf:   26     -310.845862     -310.845862     -310.846817  0.000012 -5.091524  0.001558
+   scf:   27     -310.845862     -310.845862     -310.846817  0.000013 -5.091510  0.002313
+   scf:   28     -310.845862     -310.845862     -310.846817  0.000010 -5.091518  0.001489
+   scf:   29     -310.845862     -310.845862     -310.846817  0.000015 -5.091517  0.002433
+   scf:   30     -310.845862     -310.845862     -310.846817  0.000009 -5.091513  0.001561
+   scf:   31     -310.845862     -310.845862     -310.846817  0.000011 -5.091512  0.002419
+   scf:   32     -310.845862     -310.845862     -310.846817  0.000008 -5.091511  0.001529
+   scf:   33     -310.845862     -310.845862     -310.846817  0.000011 -5.091501  0.002470
+   scf:   34     -310.845862     -310.845862     -310.846817  0.000007 -5.091504  0.001565
+   scf:   35     -310.845862     -310.845862     -310.846817  0.000008 -5.091511  0.002482
+   scf:   36     -310.845862     -310.845862     -310.846817  0.000006 -5.091506  0.001555
+   scf:   37     -310.845862     -310.845862     -310.846817  0.000008 -5.091492  0.002500
+   scf:   38     -310.845862     -310.845862     -310.846817  0.000005 -5.091499  0.001573
+   scf:   39     -310.845862     -310.845862     -310.846817  0.000006 -5.091509  0.002522
+   scf:   40     -310.845862     -310.845862     -310.846817  0.000004 -5.091502  0.001573
+   scf:   41     -310.845862     -310.845862     -310.846817  0.000006 -5.091488  0.002524
+   scf:   42     -310.845862     -310.845862     -310.846817  0.000004 -5.091495  0.001581
+   scf:   43     -310.845862     -310.845862     -310.846817  0.000005 -5.091508  0.002549
+   scf:   44     -310.845862     -310.845862     -310.846817  0.000003 -5.091499  0.001585
+   scf:   45     -310.845862     -310.845862     -310.846817  0.000004 -5.091486  0.002544
+   scf:   46     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.001589
+   scf:   47     -310.845862     -310.845862     -310.846817  0.000004 -5.091506  0.002569
+   scf:   48     -310.845862     -310.845862     -310.846817  0.000003 -5.091498  0.001594
+   scf:   49     -310.845862     -310.845862     -310.846817  0.000003 -5.091485  0.002559
+   scf:   50     -310.845862     -310.845862     -310.846817  0.000002 -5.091493  0.001596
+   scf:   51     -310.845862     -310.845862     -310.846817  0.000003 -5.091504  0.002584
+   scf:   52     -310.845862     -310.845862     -310.846817  0.000002 -5.091497  0.001601
+   scf:   53     -310.845862     -310.845862     -310.846817  0.000003 -5.091486  0.002572
+   scf:   54     -310.845862     -310.845862     -310.846817  0.000002 -5.091493  0.001602
+   scf:   55     -310.845862     -310.845862     -310.846817  0.000002 -5.091502  0.002596
+   scf:   56     -310.845862     -310.845862     -310.846817  0.000002 -5.091496  0.001607
+   scf:   57     -310.845862     -310.845862     -310.846817  0.000002 -5.091487  0.002582
+   scf:   58     -310.845862     -310.845862     -310.846817  0.000001 -5.091493  0.001607
+   scf:   59     -310.845862     -310.845862     -310.846817  0.000002 -5.091501  0.002606
+   scf:   60     -310.845862     -310.845862     -310.846817  0.000001 -5.091495  0.001612
+   scf:   61     -310.845862     -310.845862     -310.846817  0.000002 -5.091488  0.002591
+   scf:   62     -310.845862     -310.845862     -310.846817  0.000001 -5.091493  0.001612
+   scf:   63     -310.845862     -310.845862     -310.846817  0.000002 -5.091500  0.002614
+   scf:   64     -310.845862     -310.845862     -310.846817  0.000001 -5.091495  0.001617
+   scf:   65     -310.845862     -310.845862     -310.846817  0.000002 -5.091489  0.002599
+   scf:   66     -310.845862     -310.845862     -310.846817  0.000001 -5.091493  0.001616
+   scf:   67     -310.845862     -310.845862     -310.846817  0.000002 -5.091498  0.002621
+   scf:   68     -310.845862     -310.845862     -310.846817  0.000002 -5.091495  0.001621
+   scf:   69     -310.845862     -310.845862     -310.846817  0.000002 -5.091490  0.002605
+   scf:   70     -310.845862     -310.845862     -310.846817  0.000001 -5.091493  0.001619
+   scf:   71     -310.845862     -310.845862     -310.846817  0.000002 -5.091498  0.002628
+   scf:   72     -310.845862     -310.845862     -310.846817  0.000002 -5.091495  0.001624
+   scf:   73     -310.845862     -310.845862     -310.846817  0.000002 -5.091490  0.002611
+   scf:   74     -310.845862     -310.845862     -310.846817  0.000002 -5.091493  0.001622
+   scf:   75     -310.845862     -310.845862     -310.846817  0.000002 -5.091497  0.002633
+   scf:   76     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001627
+   scf:   77     -310.845862     -310.845862     -310.846817  0.000002 -5.091491  0.002616
+   scf:   78     -310.845862     -310.845862     -310.846817  0.000002 -5.091493  0.001625
+   scf:   79     -310.845862     -310.845862     -310.846817  0.000002 -5.091496  0.002638
+   scf:   80     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001629
+   scf:   81     -310.845862     -310.845862     -310.846817  0.000002 -5.091492  0.002620
+   scf:   82     -310.845862     -310.845862     -310.846817  0.000002 -5.091493  0.001627
+   scf:   83     -310.845862     -310.845862     -310.846817  0.000002 -5.091496  0.002642
+   scf:   84     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001631
+   scf:   85     -310.845862     -310.845862     -310.846817  0.000002 -5.091492  0.002624
+   scf:   86     -310.845862     -310.845862     -310.846817  0.000002 -5.091493  0.001629
+   scf:   87     -310.845862     -310.845862     -310.846817  0.000002 -5.091495  0.002645
+   scf:   88     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001633
+   scf:   89     -310.845862     -310.845862     -310.846817  0.000002 -5.091492  0.002627
+   scf:   90     -310.845862     -310.845862     -310.846817  0.000002 -5.091493  0.001631
+   scf:   91     -310.845862     -310.845862     -310.846817  0.000003 -5.091495  0.002648
+   scf:   92     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001635
+   scf:   93     -310.845862     -310.845862     -310.846817  0.000002 -5.091493  0.002630
+   scf:   94     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001632
+   scf:   95     -310.845862     -310.845862     -310.846817  0.000003 -5.091495  0.002651
+   scf:   96     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001636
+   scf:   97     -310.845862     -310.845862     -310.846817  0.000003 -5.091493  0.002633
+   scf:   98     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001634
+   scf:   99     -310.845862     -310.845862     -310.846817  0.000003 -5.091495  0.002653
+   scf:  100     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001638
+   scf:  101     -310.845862     -310.845862     -310.846817  0.000003 -5.091493  0.002635
+   scf:  102     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001635
+   scf:  103     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002655
+   scf:  104     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  105     -310.845862     -310.845862     -310.846817  0.000003 -5.091493  0.002637
+   scf:  106     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001636
+   scf:  107     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002657
+   scf:  108     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  109     -310.845862     -310.845862     -310.846817  0.000003 -5.091493  0.002638
+   scf:  110     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001637
+   scf:  111     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002659
+   scf:  112     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  113     -310.845862     -310.845862     -310.846817  0.000003 -5.091493  0.002640
+   scf:  114     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001637
+   scf:  115     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002660
+   scf:  116     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001641
+   scf:  117     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002641
+   scf:  118     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001638
+   scf:  119     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002661
+   scf:  120     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001641
+   scf:  121     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002642
+   scf:  122     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001638
+   scf:  123     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002662
+   scf:  124     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001642
+   scf:  125     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002642
+   scf:  126     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  127     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002662
+   scf:  128     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001642
+   scf:  129     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002643
+   scf:  130     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  131     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002663
+   scf:  132     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001642
+   scf:  133     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002644
+   scf:  134     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  135     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  136     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001643
+   scf:  137     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002644
+   scf:  138     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  139     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  140     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001643
+   scf:  141     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002644
+   scf:  142     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  143     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  144     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001643
+   scf:  145     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002644
+   scf:  146     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  147     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  148     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001643
+   scf:  149     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002645
+   scf:  150     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  151     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  152     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001643
+   scf:  153     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002645
+   scf:  154     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  155     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  156     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001643
+   scf:  157     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002645
+   scf:  158     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  159     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  160     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001643
+   scf:  161     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002645
+   scf:  162     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  163     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  164     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001643
+   scf:  165     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002645
+   scf:  166     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  167     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  168     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001643
+   scf:  169     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002644
+   scf:  170     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  171     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  172     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001642
+   scf:  173     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002644
+   scf:  174     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  175     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  176     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001642
+   scf:  177     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002644
+   scf:  178     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  179     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002664
+   scf:  180     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001642
+   scf:  181     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002644
+   scf:  182     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  183     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002663
+   scf:  184     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001642
+   scf:  185     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002644
+   scf:  186     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  187     -310.845862     -310.845862     -310.846817  0.000003 -5.091494  0.002663
+   scf:  188     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001642
+   scf:  189     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002643
+   scf:  190     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  191     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002663
+   scf:  192     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001642
+   scf:  193     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002643
+   scf:  194     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001638
+   scf:  195     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002663
+   scf:  196     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001641
+   scf:  197     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002643
+   scf:  198     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001638
+   scf:  199     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002662
+   scf:  200     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001641
+   scf:  201     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002642
+   scf:  202     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001638
+   scf:  203     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002662
+   scf:  204     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001641
+   scf:  205     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002642
+   scf:  206     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001638
+   scf:  207     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002662
+   scf:  208     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001641
+   scf:  209     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002642
+   scf:  210     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001638
+   scf:  211     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002661
+   scf:  212     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001641
+   scf:  213     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002642
+   scf:  214     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001637
+   scf:  215     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002661
+   scf:  216     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001641
+   scf:  217     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002641
+   scf:  218     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001637
+   scf:  219     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002661
+   scf:  220     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  221     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002641
+   scf:  222     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001637
+   scf:  223     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002660
+   scf:  224     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  225     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002641
+   scf:  226     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001637
+   scf:  227     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002660
+   scf:  228     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  229     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002640
+   scf:  230     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001637
+   scf:  231     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002660
+   scf:  232     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  233     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002640
+   scf:  234     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001637
+   scf:  235     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002660
+   scf:  236     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001640
+   scf:  237     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002640
+   scf:  238     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001637
+   scf:  239     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002659
+   scf:  240     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  241     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002640
+   scf:  242     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001636
+   scf:  243     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002659
+   scf:  244     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  245     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002640
+   scf:  246     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001636
+   scf:  247     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002659
+   scf:  248     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  249     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  250     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  251     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  252     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  253     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  254     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  255     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  256     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  257     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  258     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  259     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  260     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  261     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  262     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  263     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  264     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.001639
+   scf:  265     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  266     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  267     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  268     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  269     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  270     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  271     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  272     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  273     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  274     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  275     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  276     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  277     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  278     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  279     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  280     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  281     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  282     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  283     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  284     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  285     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  286     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001635
+   scf:  287     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  288     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  289     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  290     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001635
+   scf:  291     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  292     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  293     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  294     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001635
+   scf:  295     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  296     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  297     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  298     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001635
+   scf:  299     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  300     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  301     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  302     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001635
+   scf:  303     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  304     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  305     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  306     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  307     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  308     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  309     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  310     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  311     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  312     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  313     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002638
+   scf:  314     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  315     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  316     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  317     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  318     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  319     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  320     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  321     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  322     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  323     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  324     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  325     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  326     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  327     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  328     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  329     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  330     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  331     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  332     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  333     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  334     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  335     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  336     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  337     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002639
+   scf:  338     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  339     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  340     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  341     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002640
+   scf:  342     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  343     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  344     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  345     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002640
+   scf:  346     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001636
+   scf:  347     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  348     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  349     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002640
+   scf:  350     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001637
+   scf:  351     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  352     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  353     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002640
+   scf:  354     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001637
+   scf:  355     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  356     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  357     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002641
+   scf:  358     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001637
+   scf:  359     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  360     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  361     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002641
+   scf:  362     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001637
+   scf:  363     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  364     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001640
+   scf:  365     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002641
+   scf:  366     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001637
+   scf:  367     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  368     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001640
+   scf:  369     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002642
+   scf:  370     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  371     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002659
+   scf:  372     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001640
+   scf:  373     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002642
+   scf:  374     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  375     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002659
+   scf:  376     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001640
+   scf:  377     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002642
+   scf:  378     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  379     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002659
+   scf:  380     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001640
+   scf:  381     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002643
+   scf:  382     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001638
+   scf:  383     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002659
+   scf:  384     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001641
+   scf:  385     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002643
+   scf:  386     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  387     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002660
+   scf:  388     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001641
+   scf:  389     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002644
+   scf:  390     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  391     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002660
+   scf:  392     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001641
+   scf:  393     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002644
+   scf:  394     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  395     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002660
+   scf:  396     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001641
+   scf:  397     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002645
+   scf:  398     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001639
+   scf:  399     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002661
+   scf:  400     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001642
+   scf:  401     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002645
+   scf:  402     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001640
+   scf:  403     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002661
+   scf:  404     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001642
+   scf:  405     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002646
+   scf:  406     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001640
+   scf:  407     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002662
+   scf:  408     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001642
+   scf:  409     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002646
+   scf:  410     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001640
+   scf:  411     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002662
+   scf:  412     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001642
+   scf:  413     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002647
+   scf:  414     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001641
+   scf:  415     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002662
+   scf:  416     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001643
+   scf:  417     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002647
+   scf:  418     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001641
+   scf:  419     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002663
+   scf:  420     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001643
+   scf:  421     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002648
+   scf:  422     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001641
+   scf:  423     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002663
+   scf:  424     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001643
+   scf:  425     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002648
+   scf:  426     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001641
+   scf:  427     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002664
+   scf:  428     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001644
+   scf:  429     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002649
+   scf:  430     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001642
+   scf:  431     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002664
+   scf:  432     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001644
+   scf:  433     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002649
+   scf:  434     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001642
+   scf:  435     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002665
+   scf:  436     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001644
+   scf:  437     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002650
+   scf:  438     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001643
+   scf:  439     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002665
+   scf:  440     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001645
+   scf:  441     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002651
+   scf:  442     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001643
+   scf:  443     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002666
+   scf:  444     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001645
+   scf:  445     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002651
+   scf:  446     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001643
+   scf:  447     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002666
+   scf:  448     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001645
+   scf:  449     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002652
+   scf:  450     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001644
+   scf:  451     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002667
+   scf:  452     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001646
+   scf:  453     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002652
+   scf:  454     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001644
+   scf:  455     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002667
+   scf:  456     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001646
+   scf:  457     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002653
+   scf:  458     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001644
+   scf:  459     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002668
+   scf:  460     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001646
+   scf:  461     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002654
+   scf:  462     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001645
+   scf:  463     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002668
+   scf:  464     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001647
+   scf:  465     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002654
+   scf:  466     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001645
+   scf:  467     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002669
+   scf:  468     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001647
+   scf:  469     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002655
+   scf:  470     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001646
+   scf:  471     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002669
+   scf:  472     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001647
+   scf:  473     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002656
+   scf:  474     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001646
+   scf:  475     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002670
+   scf:  476     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001648
+   scf:  477     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002656
+   scf:  478     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001646
+   scf:  479     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002670
+   scf:  480     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001648
+   scf:  481     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002657
+   scf:  482     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001647
+   scf:  483     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002671
+   scf:  484     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001649
+   scf:  485     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  486     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001647
+   scf:  487     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002671
+   scf:  488     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001649
+   scf:  489     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002658
+   scf:  490     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001648
+   scf:  491     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002672
+   scf:  492     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001649
+   scf:  493     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002659
+   scf:  494     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001648
+   scf:  495     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002673
+   scf:  496     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001650
+   scf:  497     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002660
+   scf:  498     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001648
+   scf:  499     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002673
+   scf:  500     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001650
+   scf:  501     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002661
+   scf:  502     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001649
+   scf:  503     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002674
+   scf:  504     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001650
+   scf:  505     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002661
+   scf:  506     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001649
+   scf:  507     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002674
+   scf:  508     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001651
+   scf:  509     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002662
+   scf:  510     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001650
+   scf:  511     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002675
+   scf:  512     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001651
+   scf:  513     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002663
+   scf:  514     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001650
+   scf:  515     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002676
+   scf:  516     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001652
+   scf:  517     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002664
+   scf:  518     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001651
+   scf:  519     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002676
+   scf:  520     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001652
+   scf:  521     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002664
+   scf:  522     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001651
+   scf:  523     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002677
+   scf:  524     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001653
+   scf:  525     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002665
+   scf:  526     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001651
+   scf:  527     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002677
+   scf:  528     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001653
+   scf:  529     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002666
+   scf:  530     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001652
+   scf:  531     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002678
+   scf:  532     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001653
+   scf:  533     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002666
+   scf:  534     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001652
+   scf:  535     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002679
+   scf:  536     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001654
+   scf:  537     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002667
+   scf:  538     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001653
+   scf:  539     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002679
+   scf:  540     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001654
+   scf:  541     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002668
+   scf:  542     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001653
+   scf:  543     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002680
+   scf:  544     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001655
+   scf:  545     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002669
+   scf:  546     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001654
+   scf:  547     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002680
+   scf:  548     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001655
+   scf:  549     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002669
+   scf:  550     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001654
+   scf:  551     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002681
+   scf:  552     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001655
+   scf:  553     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002670
+   scf:  554     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001655
+   scf:  555     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002682
+   scf:  556     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001656
+   scf:  557     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002671
+   scf:  558     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001655
+   scf:  559     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002682
+   scf:  560     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001656
+   scf:  561     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002672
+   scf:  562     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001655
+   scf:  563     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002683
+   scf:  564     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001657
+   scf:  565     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002672
+   scf:  566     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001656
+   scf:  567     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002684
+   scf:  568     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001657
+   scf:  569     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002673
+   scf:  570     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001656
+   scf:  571     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002684
+   scf:  572     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001657
+   scf:  573     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002674
+   scf:  574     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001657
+   scf:  575     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002685
+   scf:  576     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001658
+   scf:  577     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002675
+   scf:  578     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001657
+   scf:  579     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002685
+   scf:  580     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001658
+   scf:  581     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002675
+   scf:  582     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001658
+   scf:  583     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002686
+   scf:  584     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001659
+   scf:  585     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002676
+   scf:  586     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001658
+   scf:  587     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002687
+   scf:  588     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001659
+   scf:  589     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002677
+   scf:  590     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001658
+   scf:  591     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002687
+   scf:  592     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001659
+   scf:  593     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002677
+   scf:  594     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001659
+   scf:  595     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002688
+   scf:  596     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001660
+   scf:  597     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002678
+   scf:  598     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001659
+   scf:  599     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002688
+   scf:  600     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001660
+   scf:  601     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002679
+   scf:  602     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001660
+   scf:  603     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002689
+   scf:  604     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001661
+   scf:  605     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002680
+   scf:  606     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001660
+   scf:  607     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002689
+   scf:  608     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001661
+   scf:  609     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002680
+   scf:  610     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001660
+   scf:  611     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002690
+   scf:  612     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001661
+   scf:  613     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002681
+   scf:  614     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001661
+   scf:  615     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002691
+   scf:  616     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001662
+   scf:  617     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002682
+   scf:  618     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001661
+   scf:  619     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002691
+   scf:  620     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001662
+   scf:  621     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002682
+   scf:  622     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001662
+   scf:  623     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002692
+   scf:  624     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001663
+   scf:  625     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002683
+   scf:  626     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001662
+   scf:  627     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002692
+   scf:  628     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001663
+   scf:  629     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002684
+   scf:  630     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001662
+   scf:  631     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002693
+   scf:  632     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001663
+   scf:  633     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002684
+   scf:  634     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001663
+   scf:  635     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002693
+   scf:  636     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001664
+   scf:  637     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002685
+   scf:  638     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001663
+   scf:  639     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002694
+   scf:  640     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001664
+   scf:  641     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002686
+   scf:  642     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001664
+   scf:  643     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002695
+   scf:  644     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001664
+   scf:  645     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002686
+   scf:  646     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001664
+   scf:  647     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002695
+   scf:  648     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001665
+   scf:  649     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002687
+   scf:  650     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001664
+   scf:  651     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002696
+   scf:  652     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001665
+   scf:  653     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002688
+   scf:  654     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001665
+   scf:  655     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002696
+   scf:  656     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001665
+   scf:  657     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002688
+   scf:  658     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001665
+   scf:  659     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002697
+   scf:  660     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001666
+   scf:  661     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002689
+   scf:  662     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001665
+   scf:  663     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002697
+   scf:  664     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001666
+   scf:  665     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002690
+   scf:  666     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001666
+   scf:  667     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002698
+   scf:  668     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001666
+   scf:  669     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002690
+   scf:  670     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001666
+   scf:  671     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002698
+   scf:  672     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001667
+   scf:  673     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002691
+   scf:  674     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001666
+   scf:  675     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002699
+   scf:  676     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001667
+   scf:  677     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002691
+   scf:  678     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001667
+   scf:  679     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002699
+   scf:  680     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001667
+   scf:  681     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002692
+   scf:  682     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001667
+   scf:  683     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002699
+   scf:  684     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001668
+   scf:  685     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002692
+   scf:  686     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001667
+   scf:  687     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002700
+   scf:  688     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001668
+   scf:  689     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002693
+   scf:  690     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001668
+   scf:  691     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002700
+   scf:  692     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001668
+   scf:  693     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002694
+   scf:  694     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001668
+   scf:  695     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002701
+   scf:  696     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001669
+   scf:  697     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002694
+   scf:  698     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001668
+   scf:  699     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002701
+   scf:  700     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001669
+   scf:  701     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002695
+   scf:  702     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001669
+   scf:  703     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002702
+   scf:  704     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001669
+   scf:  705     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002695
+   scf:  706     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001669
+   scf:  707     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002702
+   scf:  708     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001669
+   scf:  709     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002696
+   scf:  710     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001669
+   scf:  711     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002702
+   scf:  712     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001670
+   scf:  713     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002696
+   scf:  714     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001669
+   scf:  715     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002703
+   scf:  716     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001670
+   scf:  717     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002697
+   scf:  718     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001670
+   scf:  719     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002703
+   scf:  720     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001670
+   scf:  721     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002697
+   scf:  722     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001670
+   scf:  723     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002704
+   scf:  724     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001671
+   scf:  725     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002698
+   scf:  726     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001670
+   scf:  727     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002704
+   scf:  728     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001671
+   scf:  729     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002698
+   scf:  730     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001670
+   scf:  731     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002704
+   scf:  732     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001671
+   scf:  733     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002699
+   scf:  734     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001671
+   scf:  735     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002705
+   scf:  736     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001671
+   scf:  737     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002699
+   scf:  738     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001671
+   scf:  739     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002705
+   scf:  740     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001671
+   scf:  741     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002699
+   scf:  742     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001671
+   scf:  743     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002705
+   scf:  744     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001672
+   scf:  745     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002700
+   scf:  746     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001671
+   scf:  747     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002706
+   scf:  748     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001672
+   scf:  749     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002700
+   scf:  750     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001672
+   scf:  751     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002706
+   scf:  752     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001672
+   scf:  753     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002701
+   scf:  754     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001672
+   scf:  755     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002706
+   scf:  756     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001672
+   scf:  757     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002701
+   scf:  758     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001672
+   scf:  759     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002706
+   scf:  760     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001673
+   scf:  761     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002701
+   scf:  762     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001672
+   scf:  763     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002707
+   scf:  764     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001673
+   scf:  765     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002702
+   scf:  766     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001672
+   scf:  767     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002707
+   scf:  768     -310.845862     -310.845862     -310.846817  0.000001 -5.091494  0.001673
+   scf:  769     -310.845862     -310.845862     -310.846817  0.000002 -5.091494  0.002702

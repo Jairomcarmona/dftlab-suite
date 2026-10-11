@@ -1,0 +1,15 @@
+DFT Lab - corridas de SIESTA 5.4.2 usadas en la app
+Cada .tar.gz contiene las entradas (.fdf, pseudos, scripts) y salidas de texto (.out, .EIG, .KP, .bands, tiempos).
+Extraer con:  tar xzf nombre.tar.gz
+conv      135 corridas de Si: base, EnergyShift, MeshCutoff, malla k (seccion 4)
+scf, mg, lua, luatest, si_scf, scfpack   mezcladores en Si y slab de Mg, hook de Lua (seccion 5)
+solv, solv2   diagonalizacion, OMM y orden N en Si de 8 a 1000 atomos (seccion 6)
+si, gr, io, xc, oncv   bandas/optica del Si, grafito, pseudos y funcionales (secciones 2, 3, 7)
+nio       NiO DFT+U: barrido de U y respuesta lineal en 4, 8 y 16 atomos (seccion 8)
+gentest   prueba del .fdf generado por la app
+pslib_val ecuaciones de estado de validacion de la biblioteca de pseudos
+rho       Densidad y cargas: Si, MgO, H2O con SaveRho/SaveDeltaRho y cargas Mulliken/Hirshfeld/Voronoi, series de base SZ-TZP (seccion 9). Regenerar JSON: node rho_gen_json.mjs <carpeta extraida> rho.json
+wf        Potencial electrostatico y funcion trabajo: laminas de Al(111)/(100)/(110) y Mg(0001), serie de espesor, vacio, base, malla, red y EnergyShift (seccion 10). Los .VH/.VT/.RHO (grandes) no se guardan; regenerar con gen.py + run*.sh y node wf_gen_json.mjs <carpeta> potencial.json
+espin     Espin y magnetismo (seccion 11): Fe bcc FM/NM (E(a), bandas, PDOS) y NiO FM (U = 0..13.8; las AFM estan en nio). Regenerar JSON: node espin_gen_json.mjs <carpeta fe> <carpeta fm_u*> nio.json espin.json (las carpetas fe_* y fm_u* estan juntas en espin/)
+fonones   Fonones (seccion 13): Si 2x2x2 con desplazamientos finitos (MD.TypeOfRun FC), E(a) y malla k desplazada. Regenerar JSON: node fonones_gen_json.mjs <carpeta extraida> si_fonones.json
+fuerzas   Fuerzas, estres y relajacion (seccion 14): H2O (barrido O-H, egg-box, DM.Tolerance, relajaciones CG/Broyden/FIRE), Si 64 atomos con vacancia (CG, 66 min), Si E(a) con estres y celda variable. Regenerar JSON: node fuerzas_gen_json.mjs <carpeta fuerzas extraida> fuerzas.json

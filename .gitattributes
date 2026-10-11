@@ -1,0 +1,4 @@
+# Preserve original bytes during migration, including scientific evidence.
+# New source files use LF through .editorconfig; normalization of legacy
+# files must be an explicit later change, never an implicit checkout effect.
+* -text

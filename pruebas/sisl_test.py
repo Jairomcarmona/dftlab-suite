@@ -1,0 +1,13 @@
+import sisl, numpy as np, time
+g = sisl.geom.graphene(1.42)
+H = sisl.Hamiltonian(g); H.construct([(0.1,1.5),(0.,-2.7)])
+H.write('test.TSHS')
+H2 = sisl.get_sile('test.TSHS').read_hamiltonian()
+bs = sisl.BandStructure(H2, [[0,0,0],[1/2,0,0],[2/3,1/3,0],[0,0,0]], 100, ['G','M','K','G'])
+t=time.time(); E = bs.apply.array.eigh(); print('bands',E.shape, time.time()-t)
+print('E at K', H2.eigh([2/3,1/3,0]))
+mp = sisl.MonkhorstPack(H2,[60,60,1])
+Egrid=np.linspace(-9,9,400)
+pdos = mp.apply.average.eigenstate(wrap=lambda es: es.PDOS(Egrid, distribution=sisl.get_distribution('gaussian',smearing=0.1)))
+print('PDOS shape', pdos.shape)
+es=H2.eigenstate([0.1,0,0]); print('velocity ok', es.velocity().shape)

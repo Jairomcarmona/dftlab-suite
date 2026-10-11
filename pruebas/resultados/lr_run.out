@@ -1,0 +1,7 @@
+ground state 951.6 s conv True
+d occupations [8.698  8.6976]
+alpha -0.1 dn_bare [ 0.02387 -0.00952] dn_scf [ 0.00517 -0.00032] conv True
+alpha -0.05 dn_bare [ 0.01196 -0.00474] dn_scf [ 0.00259 -0.00016] conv True
+alpha 0.05 dn_bare [-0.01194  0.00488] dn_scf [-0.00256  0.00023] conv True
+alpha 0.1 dn_bare [-0.02393  0.00973] dn_scf [-0.00516  0.00037] conv True
+{"el": "Ni", "basis": "gth-szv-molopt-sr", "nk": 2, "alphas": [-0.1, -0.05, 0.05, 0.1], "chi0": [-0.239, 0.0963], "chi": [-0.0516, 0.0035], "U_scalar_eV": 15.2, "U_matrix_eV": 14.48, "t_lr": 897.8}

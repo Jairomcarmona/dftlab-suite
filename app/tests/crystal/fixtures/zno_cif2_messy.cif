@@ -1,0 +1,43 @@
+# comment line
+data_messy_ZnO
+_audit_creation_method
+;
+  hand-written test file
+  with a semicolon text field; and 'quotes'
+;
+_chemical_formula_sum            'O2 Zn2'
+_space_group.name_H-M_alt        'P 63 m c'
+_space_group.IT_number           186
+_cell.length_a                   3.2500(2)
+_cell.length_b                   3.2500(2)
+_cell.length_c                   5.2070(4)
+_cell.angle_alpha                90.
+_cell.angle_beta                 90.
+_cell.angle_gamma                120.00
+_cell.volume                     ?
+loop_
+_space_group_symop.id
+_space_group_symop.operation_xyz
+1 'x, y, z'
+2 '-y, x-y, z'
+3 '-x+y, -x, z'
+4 '-x, -y, z+1/2'
+5 'y, -x+y, z+1/2'
+6 'x-y, x, z+1/2'
+7 '-y, -x, z'
+8 '-x+y, y, z'
+9 'x, x-y, z'
+10 'y, x, z+1/2'
+11 'x-y, -y, z+1/2'
+12 '-x, -x+y, z+1/2'
+loop_
+_atom_site.label
+_atom_site.type_symbol
+_atom_site.fract_x
+_atom_site.fract_y
+_atom_site.fract_z
+_atom_site.occupancy
+_atom_site.calc_flag
+Zn1 Zn2+ 0.333333 0.666667 0.0 1.0 d
+O1 O2- 0.333333 0.666667 0.3825(3) 1 d   # oxygen
+X1 ? 0.0 0.0 0.0 0 dum

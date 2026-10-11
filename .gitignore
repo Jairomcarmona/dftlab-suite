@@ -1,0 +1,36 @@
+# Dependencies, environments and caches.
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.npm/
+.cache/
+
+# Reproducible generated frontend artifacts.
+/app/dist/
+/dist/
+/coverage/
+/test-results/
+/playwright-report/
+
+# Private configuration and operational data. Scientific baseline outputs
+# under corridas/, pseudo_xc/ and fixtures are intentionally versioned.
+.env
+.env.*
+!.env.example
+.ssh/
+*.pem
+*.key
+/runtime/
+/scratch/
+/secrets/
+/.codex/
+
+# Nested repository metadata and OS files.
+**/.git/
+.DS_Store
+Thumbs.db

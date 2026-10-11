@@ -1,0 +1,2 @@
+{"name": "graphene", "basis": "gth-dzvp", "nk": [6, 6, 1], "nao": 26, "nelec": 8, "mesh": [25, 25, 113], "E": -11.37918909110995, "conv": true, "ncyc": 6, "tscf": 73.7, "tbands40": 15.0, "gap": 0.0, "direct_gap_path": 0.0, "kvbm": [0.333, 0.333, 0.0], "kcbm": [0.333, 0.333, 0.0]}
+G_DONE
