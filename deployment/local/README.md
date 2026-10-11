@@ -114,3 +114,22 @@ Para autoría desde una distribución instalada, usar `qraft.api.RunPreparer()` 
 Para repetir la instalación, usar los comandos del probe anteriores con un nuevo directorio de salida y el lock actual. Cuando contiene `public_api`, el probe comprueba también su versión y símbolos públicos con Python `-I`, fuera del checkout. Cualquier fallo de importación, API o CLI produce exit distinto de cero. Sigue usando CPython 3.12.10/uv 0.11.14 y el entorno separado de NumPy 1.26.4; no instalar estos motores en el entorno de referencias F.
 
 En Ola 1 los motores se instalan en un venv temporal físicamente fuera del repositorio, con dependencias exportadas del lock y exigencia de hashes. El entorno del worktree se usa solo para construir. El consumidor verifica que el módulo procede del venv y queda fuera de la raíz de fuente; se elimina `PYTHONPATH`. En los informes históricos de Ola 0, `installed_outside_checkout` comprobaba importación del wheel y ejecución desde una carpeta temporal, aunque el venv de dependencias podía estar dentro del worktree. Esos informes no se reinterpretan como prueba de la ubicación física que ahora se exige.
+
+
+## Calificación local de authoring/package (T-022b)
+
+El wheel/sdist de platform lleva engine-versions.lock.json byte por byte. PinnedEngines exige los dos motores: comprueba SHA-256/tamaño de wheels, versión instalada, fuentes/recursos, API/símbolos y que el módulo importado proceda de esa instalación. Esta comprobación no es un sandbox frente a un usuario que pueda modificar el intérprete o sus caches; el entorno instalado debe administrarse privadamente. No constituye calificación de ejecución ni de ciencia.
+
+El extra engines añade NumPy 1.26.4 y PyYAML 6.0.2 al lock de platform. Los motores no se resuelven por nombre/version de PyPI: se instalan por los wheels/hash de engine-versions.lock.json. La CI usa fixtures y no instala QRAFT/HubbardFlow.
+
+Para repetir la prueba local, primero generar/calificar el wheel de platform con qualify_platform.py. Preparar un wheelhouse que contenga los dos wheels del target con sus hashes registrados, y un perfil nativo SLURM explícito para el sitio, sin credenciales. Desde la raíz:
+
+```powershell
+uv run --project platform --frozen python deployment/local/qualify_engines.py --wheelhouse runtime/wheelhouse --platform-wheel runtime/platform-qualification/artifacts/dftlab_platform-0.1.0.dev0-py3-none-any.whl --profile runtime/qualification/profile.json --pseudo app/tests/siesta/fixtures/pseudo/Si_lda_oncv.psml --output runtime/native-authoring-new
+```
+
+La salida debe ser una carpeta nueva en runtime/ ignorado. El script instala platform y ambos motores en un consumidor temporal físicamente fuera del checkout, sin PYTHONPATH, con dependencias exportadas del lock y hashes; uv pip check comprueba compatibilidad. El driver usa Python -I y solo las fachadas públicas: compone dos tareas Si (single point y dependencia de DM), compila, prepara e inspecciona. Conserva por separado los digests nativos y hashes de archivos/ZIP. Exporta evidencia privada y elimina solo el consumidor temporal creado por el script; no modifica SIESTA/SLURM ni trabajos del usuario. Nunca llama al scheduler ni ejecuta SIESTA.
+
+El caso tiene parámetros explícitos de fixture, no defaults universales ni tolerancias de validación científica. REVIEW (UNKNOWN_LABEL/UNDECLARED_GOVERNED_VALUE) se conserva; el reporte dice NOT_ESTABLISHED y execution_performed=false. Esto verifica la distribución/API/authoring/package, no los gates T-022 runtime/T-023/T-059…062. No habilitar comandos HTTP ni anunciar una capability con este reporte.
+
+En la observación local WSL, sbatch --test-only aceptó partition=local/account=default/qos=normal. QRAFT exige siesta_executable sin slash al renderizar el script; el perfil observado usa siesta con PATH explícito a la instalación MPI existente. El worker debe verificar cuál ejecutable resuelve, su hash/version/build y MPI/threads antes de ejecutar, mediante RuntimeProbeReceipt. No trasladar este perfil a otro sitio como configuración válida por defecto.

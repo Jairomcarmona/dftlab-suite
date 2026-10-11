@@ -15,6 +15,12 @@ dependencies = [
     "uvicorn==0.54.0",
 ]
 
+[project.optional-dependencies]
+engines = [
+    "numpy==1.26.4",
+    "PyYAML==6.0.2",
+]
+
 [project.scripts]
 dftlab-platform = "dftlab_platform.launcher:main"
 dftlab-platform-api = "dftlab_platform.launcher:main"
