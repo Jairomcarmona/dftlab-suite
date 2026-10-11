@@ -49,7 +49,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | E | Metadatos y nombres de archivo se insertan en `innerHTML` | Media | **Reproducido** (incluido manejador `onerror` ejecutado) → corregido en la rama `claude/fix-e-safe-html` (PR del bloque E, apilado sobre A) | PR E |
 | F | Puerta de calidad reproducible | Media | **Parcialmente resuelto**: alcance frontend verificado en Windows/Linux en PR #5; regeneración Python pendiente | PR #5, `481ea00`, CI @ `5b67a2a` |
 | G | Bandas unen segmentos desconectados | Media | **Reproducido** (26 líneas cruzan U→K en el `.bands` de Si; 26/30 líneas verticales en U\|K/H\|P de los paquetes) → corregido en la rama `claude/bloque-g-camino-k-ud21bh` | PR G |
-| H | Recursos (ResizeObserver, escenas 3D) y cálculo pesado | Media | **Reproducido** (16 contextos WebGL vivos de 32 creados y aviso del navegador; 147 lienzos desconectados aún observados; buffers que crecen 358 → 682 en Bandas) → corregido en la rama `claude/bloque-h-recursos-16vtfq`; rendimiento **medido**, sin workers por ahora | PR H |
+| H | Recursos (ResizeObserver, escenas 3D) y cálculo pesado | Media | **Reproducido** (16 contextos WebGL vivos de 32 creados y aviso del navegador; 147 lienzos desconectados aún observados; buffers que crecen 358 → 682 en Bandas) → corregido en PR #9 (rama `claude/bloque-h-recursos-16vtfq`); rendimiento **medido**, sin workers por ahora | PR #9 |
 
 ## A. Calculadoras: `fftGood` sin dominio
 
