@@ -908,6 +908,30 @@
       "schema": "qraft-controller-resume-verdict.schema.json",
       "expect": "invalid",
       "rule": "RESUME_INPUTS_CHANGED exige IDENTITY_MISMATCH con cambios."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/valid/refuse-inconsistent-mismatch.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "valid",
+      "rule": "IDENTITY_MISMATCH sin changed se conserva literalmente y rechaza como evidencia inválida."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/evidence-invalid-with-neutral-result.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "Un resultado neutral ordinario no se reclasifica como evidencia inválida."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/evidence-invalid-with-changes.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "Un IDENTITY_MISMATCH con cambios no usa la excepción de evidencia inconsistente."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/inconsistent-mismatch-with-placeholder.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "No se fabrica blocking para reparar un changed vacío."
     }
   ]
 }

@@ -1664,6 +1664,156 @@
         "continuation": null,
         "scientific_effect": "NONE"
       }
+    },
+    {
+      "name": "identity-mismatch-sin-cambios",
+      "description": "IDENTITY_MISMATCH con changed vacío es evidencia inconsistente; regla 1, copia literal, rechazo75 sin lanzar.",
+      "check_resume": {
+        "native_status": "IDENTITY_MISMATCH",
+        "assessment": "FAIL",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "RESUME_EVIDENCE_INVALID",
+        "check_resume": {
+          "native_status": "IDENTITY_MISMATCH",
+          "assessment": "FAIL",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "identity-mismatch-vacio-antes-del-checkpoint",
+      "description": "IDENTITY_MISMATCH con changed vacío es evidencia inconsistente; regla 1, copia literal, rechazo75 sin lanzar. Tiene precedencia incluso si el checkpoint no carga y hay un recibo fallido.",
+      "check_resume": {
+        "native_status": "IDENTITY_MISMATCH",
+        "assessment": "FAIL",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": false,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "FAILED_SCIENCE",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": null,
+        "decision": "REFUSE",
+        "reason": "RESUME_EVIDENCE_INVALID",
+        "check_resume": {
+          "native_status": "IDENTITY_MISMATCH",
+          "assessment": "FAIL",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
     }
   ]
 }

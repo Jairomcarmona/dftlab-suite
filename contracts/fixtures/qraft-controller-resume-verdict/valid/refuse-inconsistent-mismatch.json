@@ -1,0 +1,19 @@
+{
+  "contract": "qraft.controller-resume-verdict@1.0",
+  "task_id": "hf1-lru",
+  "attempt_id": "attempt-0002",
+  "previous_attempt_id": "attempt-0001",
+  "checkpoint_identity": null,
+  "decision": "REFUSE",
+  "reason": "RESUME_EVIDENCE_INVALID",
+  "check_resume": {
+    "native_status": "IDENTITY_MISMATCH",
+    "assessment": "FAIL",
+    "changed": [],
+    "reusable_response_ids": [],
+    "physical_equivalence": "NOT_ESTABLISHED"
+  },
+  "blocking": [],
+  "continuation": null,
+  "scientific_effect": "NONE"
+}
