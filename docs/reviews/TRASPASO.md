@@ -28,7 +28,7 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 
 ## Pendiente
 
-- **X1:** inventario P0 y baseline verificados; pendiente CI del PR y autorización de Manuel para fusionar.
+- **X1:** PR #16 entregado con CI Windows/Linux y referencias Python verdes; pendiente autorización de Manuel y checks de la punta tras incorporar main.
 - **C/D:** hechos (ver «Bloques C y D»). **G:** hecho (ver «Bloque G»). **H:** hecho (ver «Bloque H»).
 - **F:** PR #5 fusionado @ `296bb15`, después de CI Windows/Linux en verde con C/D. Entorno Python validado localmente y en CI en `codex/entorno-python`, entrega mediante PR #8. Ver entregas F al final de esta nota.
 - La auditoría de E cubre las rutas de datos importados; no se revisaron las 19 vistas línea a línea.
@@ -123,6 +123,6 @@ Bloques A–H hechos. Queda de F el entorno Python fijado (`codex/entorno-python
 - **SHA de implementación:** `98c7d816c9023ee74ac4295b234287fae33454ce`. Los commits posteriores de entrega solo actualizan esta sección y la fila X1.
 - **Cambios:** solo `docs/inventory/`: matriz generada, catálogo revisado, snapshot SHA-256 y checker; baseline reproducible con logs/hashes y evidencia Windows. T-003…T-006 cubiertos con PR, commit de fusión y pruebas de A–H. Conservadas 19 vistas, 23 rutas SIESTA, 7 calculadoras, 6 familias de lectura/6 salidas estructurales y 16 datasets (10 678 665 B). Inventariados también 25 módulos científicos, sus exports/consumidores y 52 sitios de exportación.
 - **Pruebas / entorno:** Windows 11 Home 10.0.26200 x64, Node 24.18.0, npm 11.16.0, Playwright 1.56.1 / Chromium 1194. `record-baseline.mjs` reproduce manifiesto 480 archivos, `npm ci`, `npm test` completo (incluye C3 y siete suites de navegador, offline y recursos H) y checker: todo exit 0, fuentes intactas. Reporte en `docs/inventory/BASELINE_WINDOWS.json`, logs locales ignorados en `runtime/`. Checker también en WSL2 Ubuntu, Node 24.18.0: conteos y hashes iguales. Python no se invoca en esta puerta; F mantiene CPython 3.12.10/uv 0.11.14 y CI separada de referencias Linux.
-- **PR / CI:** se completan al abrir el PR y verificar sus checks Windows/Linux y referencias Python. No fusionar sin autorización de Manuel.
+- **PR / CI:** [PR #16](https://github.com/Jairomcarmona/dftlab-suite/pull/16), código calificado @ `90d5e8f`: [Baseline CI 38115721608](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38115721608) Windows 2022 (6m27s) y Ubuntu 24.04 (4m05s), ambos success; [Python references 38115721590](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38115721590) success. Después se incorporó `main` @ `7418057` (ajuste de ADR-003/006 de Claude) por merge, sin cambios propios de implementación. Este registro posterior conserva esos resultados; confirmar los checks de la punta actual antes de integrar. No fusionar sin autorización de Manuel.
 - **Pendientes X1:** varios oracles de calculadoras y procedencia exacta de datasets siguen abiertos; tres avisos Moyo heredados; medición/worker KS de H sigue en T-062. Inventario no significa certificación física ni ejecución HPC. Conectar el checker a una puerta CI futura sin invadir `ci.yml` en este bloque.
 - **Siguiente paso:** revisión de X1 y autorización tras CI verde; usar esta matriz como requisito de conservación en X4/T-033. C1/C2/C3, `app/`, tolerancias y `baseline-v1` intactos.
