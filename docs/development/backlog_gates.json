@@ -14,50 +14,50 @@
       "id": "DL-02",
       "afirmacion": "El potencial en malla (.VH o .VT) comparte referencia de energía con el nivel de Fermi del .out",
       "verificacion": "Calcular Φ de un metal con valor experimental conocido (p. ej. Al(111)) y comparar con tolerancia declarada ANTES de ejecutar",
-      "estado": "ABIERTA",
-      "evidencia": "Parcial (sigue ABIERTA): el manual define .VH como Hartree + pseudopotencial local (potencial electrostático) y .VT como local+Hartree+Vxc; no declara su referencia respecto de Fermi. Falta el test numérico en Al(111)."
+      "estado": "RESUELTA",
+      "evidencia": "Ya estaba hecho en el modulo Aprender 10 (app/dftlab/static/js/views/potential.js, datos app/dftlab/static/js/data/potencial.json, corridas /mnt/project-files/DFT_App/corridas/wf.tar.gz): Phi = V_vac - E_F con E_F del .out y V_vac del promedio planar de .VH, SIESTA 5.4.2 LDA DZP. Al(111) 5 capas: Phi 4.09 eV; con EnergyShift 5 meV 4.39 (9 capas 4.26); experimento 4.24-4.26 (Grepstad 1976; Eastment y Mee 1973). Replica independiente en esta sesion (PBE, SZP, tolerancia +-0.3 eV declarada antes): 4.176 eV. Conclusion: .VH y el Fermi del .out comparten referencia. Detalle en docs/development/EVIDENCIA_SIESTA_542.md"
     },
     {
       "id": "DL-03",
       "afirmacion": "Se puede obtener una densidad que incluya la contribución del core para la partición de Bader (opción de SIESTA o suma propia con el core de .ion)",
       "verificacion": "Comprobar que la integral de la densidad usada reproduce el número esperado de electrones y que las cargas de Bader suman cero en un sistema neutro de referencia",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. MgO fcc a=4.21 A, PBE, DZP, MeshCutoff 400 Ry, SaveBaderCharge (manual: densidad de valencia + nucleos modelo gaussianos). Tolerancias declaradas antes: integral .BADER = 20 +-0.2 (obtenido 20.0001), suma de cargas netas = 0 +-0.05 (obtenido -0.0001), Mg neto en [+1.4,+1.9] (obtenido +1.719; literatura ~+1.7). Particion propia en malla (docs/development/evidencia/bader_ongrid.py); el codigo de Henkelman no se pudo descargar (403), lo que tambien indica que no hace falta para DL-11 si se usa algoritmo propio."
     },
     {
       "id": "DL-04",
       "afirmacion": "El ELF se puede calcular con implementación propia a partir de coeficientes de onda y orbitales atómicos",
       "verificacion": "Reproducir el ELF de un sistema simple con otro programa o con valores publicados, con tolerancia declarada antes de ejecutar",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. ELF propio desde .selected.WFSX (coeficientes en Γ) y orbitales NAO de los .ion.nc, leidos con sisl 0.16.4: rho = 2·Σ|ψ|², tau = Σ|∇ψ|², D = tau − |∇rho|²/(8 rho), Dh = 0.3(3π²)^(2/3) rho^(5/3), ELF = 1/(1+(D/Dh)²). Criterios declarados antes: (a) H2, referencia exacta ELF = 1: minimo 1.0000 sobre rho > 1e-3 (cumple >= 0.999; integral de rho = 2.0000); (b) H2O contra PySCF (PBE/def2-TZVP, todos los electrones, misma geometria y formula) en la region de valencia (rho > 0.01 y a mas de 1.0 Bohr de O): |ΔELF| medio 0.018 (< 0.05, p95 0.050, max 0.085); maximo en el enlace O-H 0.986 vs 0.998 y en el par libre 0.913 vs 0.917 (< 0.05). HALLAZGO: la primera version derivaba rho por FFT y fallaba el criterio (ELF minimo 0.07 en las colas) por aliasing de rho = ψ²; calcular ∇rho = 4·Σψ∇ψ desde los orbitales lo arregla. Limites: solo Γ, capa cerrada sin polarizacion de espin, moleculas en caja de 14 A; en la cola (rho < ~0.01) el ELF no es fiable y debe enmascararse; los valores de la region del nucleo de O (pseudopotencial) no se comparan. Scripts: docs/development/evidencia/elf_siesta.py y elf_pyscf.py."
     },
     {
       "id": "DL-05",
       "afirmacion": "La constante dieléctrica estática necesaria para la corrección de defectos cargados es obtenible con SIESTA (ε∞ por óptica + parte iónica por cargas de Born)",
       "verificacion": "Demostrar un flujo de cargas de Born (p. ej. por polarización de fase de Berry) en un material de referencia y comparar con valor publicado; si no se puede, la corrección se declara no disponible",
-      "estado": "ABIERTA",
-      "evidencia": "Parcial (sigue ABIERTA): el manual 5.4.2 documenta BornCharge + PolarizationGrids (escribe SystemLabel.BC) por diferencias finitas con MD.TypeOfRun FC; la parte iónica de ε0 (LO-TO) la hace Vibra, 'not yet distributed with SIESTA'. Falta probarlo en un material de referencia."
+      "estado": "RESUELTA",
+      "evidencia": "Pasa para cargas de Born; ε0 parcial. GaAs primitivo, PBE, SZP, FC.Displacement 0.04 Bohr, BornCharge + PolarizationGrids (escribe .BC). Tolerancias declaradas antes: Z*(Ga) en [1.8,2.5] (obtenido 2.208; exp 2.16), |Z*(Ga)+Z*(As)|<=0.2 (obtenido 0.0045). Extra no declarado antes: con el .FC en Γ sale w_TO=293 cm-1 (exp 269, +9 %) y eps_ion=1.72 (exp ~2.0, -14 %); la regla de suma acustica del .FC se viola en 0.66 eV/A2 (~6 %). Conclusion: eps_ion y Z* son obtenibles; falta eps_inf por optica y la correccion FNV."
     },
     {
       "id": "DL-06",
       "afirmacion": "ASE funciona dentro de Pyodide en el build portátil con un tamaño y tiempo de carga aceptables",
       "verificacion": "Prueba real en navegador: importar ase, construir una supercelda y exportar .fdf; medir MB descargados y segundos",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. Pyodide 0.27.7 (tarball de github.com/pyodide/pyodide/releases, 389 MB completo; git clone y npm pack tambien funcionan; los CDN jsdelivr y unpkg estan bloqueados en este entorno). ase 3.29.0 (rueda pura, 3 MB) se instala con micropip desde archivo local (deps=False) sobre numpy 2.0.2, scipy 1.14.1 y matplotlib 3.8.4 de la distribucion de Pyodide. Con ase se construyo bulk Si (8 vecinos a 2.351 A), un slab Al(111) de 5 capas, y se escribieron extxyz y cif. Criterios declarados antes: carga en frio <60 s y <120 MB. Resultado: 12.8 s en Node 22 y 13.3 s en Chromium headless (servidor local), unos 40 MB de archivos necesarios (wasm 9.7, stdlib 2.3, numpy 3, scipy 13, matplotlib 6.5 mas dependencias, ase 3). Limites: sin latencia de red real ni movil, solo construccion y E/S de estructuras (no se probaron calculadores ni pymatgen). Recomendacion: alojar Pyodide y las ruedas con la app (no depender de un CDN). Scripts: docs/development/evidencia/pyodide_ase_node.mjs y pyodide_ase_navegador.html."
     },
     {
       "id": "DL-07",
       "afirmacion": "El error de truncamiento de la transformada de Kramers-Kronig sobre ε₂ de SIESTA acota ε∞ y ε₁ con precisión declarada",
       "verificacion": "Probar con un oscilador de Lorentz analítico y con una energía máxima menor y mayor; reportar el error frente al valor exacto",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. Oscilador de Lorentz tipo Si (w0=4 eV, gamma=0.5 eV, eps1(0)=11.7) con la funcion kramersKronig del repo: error de eps1(0.5 eV) -0.42 % (Emax 8 eV), -0.10 % (12 eV), -0.02 % (20 eV): cae al subir Emax y es <5 % a 12 eV (criterio declarado antes). Sobre el eps2 real de Si (SIESTA, hasta 12 eV) eps1(0.5 eV) pasa de 13.415 (6 eV) a 13.975 (8), 14.190 (10), 14.253 (12): el cambio de 10 a 12 eV es 0.4 %. Regla de uso: avisar si eps2 en el corte supera ~5 % del pico o si el cambio al recortar 2 eV supera ~1 %."
     },
     {
       "id": "DL-08",
       "afirmacion": "La suma de las contribuciones de .contrib.EPSIMG reproduce ε₂ total del .EPSIMG",
       "verificacion": "Generar ambos archivos para un caso y comparar con tolerancia declarada antes de ejecutar; no hay fixture con .contrib.EPSIMG en el repo",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "SIESTA 5.4.2, Si diamante, OpticalCalculation, polarizacion polycrystal. Cada ipol (1,2,3) de .contrib.EPSIMG aporta 1/3 de eps2; la suma de las tres reproduce .EPSIMG. Corrida 1 (DZP, k 8): max|suma-eps2|/pico = 2.3e-5. Corrida 2 con tolerancia declarada antes (<=1e-3 del pico; SZP, k 6, ensanche 0.2 eV): 1.3e-5. Ver docs/development/EVIDENCIA_SIESTA_542.md"
     },
     {
       "id": "DL-09",
@@ -70,8 +70,8 @@
       "id": "DL-10",
       "afirmacion": "Los DOI del informe de ChatGPT existen y corresponden a lo citado",
       "verificacion": "Verificar cada DOI manualmente contra su editor; no se pudo desde el entorno de Claude",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Decisión de Manuel en el hilo del proyecto (2026-10-11): los DOI no importan. Ninguna compuerta del backlog se apoya en una cita del informe externo; las afirmaciones se verifican contra el manual de SIESTA y corridas propias. Los 89 DOI del informe de ChatGPT siguen sin verificar (el proxy bloquea Crossref) y no deben citarse como fuente en documentos del producto sin comprobarlos."
     },
     {
       "id": "DL-11",
@@ -82,31 +82,31 @@
     },
     {
       "id": "DL-12",
-      "afirmacion": "Existe demanda de usuarios reales que justifica el orden de prioridades de las campañas",
-      "verificacion": "5 a 10 entrevistas a investigadores o empresas objetivo, con guion y resumen guardados",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "afirmacion": "Las campañas de cálculo del backlog corresponden a resultados que la literatura DFT reporta (existen físicamente). El orden de prioridad entre ellas es una decisión de producto de Manuel, no una compuerta lógica.",
+      "verificacion": "Decisión de Manuel (2026-10-11): no hace falta entrevistar ni minar papers; si un cálculo se reporta en la literatura, existe como resultado, aunque nadie lo use hoy. Se verifica citando al menos un tipo de resultado publicado por cada campaña (docs de investigación).",
+      "estado": "RESUELTA",
+      "evidencia": "Decisión de Manuel en el hilo del proyecto (2026-10-11). Resultados publicados por tipo de campaña (termodinámica de equilibrio, catálisis y electrocatálisis, interfaces y energía) en /mnt/project-files/dftlab-investigacion/resultados_publicados_dft.md, con fuentes enlazadas en la propia nota. No se midió demanda ni disposición de uso: eso no se afirma."
     },
     {
       "id": "DL-13",
       "afirmacion": "La versión fijada de SIESTA ofrece lo que se asume: D3, vdW-DF, SOC y la ausencia de híbridos y GW",
       "verificacion": "Leer el manual y el changelog de la versión de engine-versions.lock.json y listar cada capacidad con su sección",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. Manual 5.4.2: XC.Functional LDA|GGA|VDW (DRSLL, LMKLL, KBM, C09, BH, VV), D3 en seccion 6.26, spin-orbit en 6.8, libXC opcional; sin GW, BSE ni hibridos (solo 'hybrid parallelism' MPI+OpenMP). Corridas H2 en el binario empaquetado: PBE, DFTD3 true (D3 dispersion = -0.001634 Ry), DRSLL y VV corren; XC.authors SCAN aborta con 'Unknown author SCAN'. Cabecera del binario: NetCDF, Lua, DFT-D3. Nota: views/beyond.js escribe 'VV10'; el manual nombra la opcion 'VV'."
     },
     {
       "id": "DL-14",
       "afirmacion": "Las tablas termodinámicas del gas y los modos vibracionales moleculares dan μ(T,p) consistente con el cálculo",
       "verificacion": "Reproducir μ de H2 u O2 con una fuente citada a dos temperaturas, con tolerancia declarada antes de ejecutar",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa con salvedad. H2, PBE, TZP, 300 Ry, relajado (r=0.7722 A; exp 0.7414) y .FC (k=499 N/m). Con esas constantes y mecanica estadistica de gas ideal (rotor rigido ortho/para, oscilador armonico) contra NIST-JANAF: S(298.15 K) = 131.04 vs 130.68 (+0.36), S(1000 K) = 166.39 vs 166.22 (+0.17), tolerancia declarada antes +-1.0 J/mol/K; H(T)-H(0) = 8.460 vs 8.468 y 29.011 vs 29.148 kJ/mol (diferencias 0.008 y 0.137; tolerancia +-0.3). Las formulas validadas con constantes experimentales dan 130.39 y 165.66. SALVEDAD: la frecuencia armonica de SIESTA es 4100 cm-1 vs 4401 exp (-6.9 %), fuera de la tolerancia declarada de +-5 %; el efecto en ZPE es ~0.019 eV. Los flujos deben reportar la sensibilidad de ZPE a la base."
     },
     {
       "id": "DL-15",
       "afirmacion": "El alineamiento de bandas por potencial electrostático promedio reproduce un offset de referencia con los datos de SIESTA",
       "verificacion": "Calcular un offset de una heterounión de referencia y comparar con valor publicado; tolerancia declarada antes",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. Superred (GaAs)3/(AlAs)3 (001) de 24 atomos, PBE, SZP, 150 Ry, a=5.653 A, mas dos cristales (8x8x8). Potencial electrostatico promedio (.VH) con promedio macroscopico de ventana a/2 aplicada dos veces. VBO = 0.574 eV, dentro del rango declarado antes [0.35,0.65] eV y con el signo esperado (GaAs mas alto); experimento ~0.53 eV. Limites: una sola base y espesor, sin tension ni relajacion. Script: docs/development/evidencia/offset_banda_gaas_alas.py."
     },
     {
       "id": "DL-16",

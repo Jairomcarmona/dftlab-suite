@@ -1,0 +1,14 @@
+<!doctype html><meta charset=utf-8><title>run</title><script src="rel/pyodide/pyodide.js"></script>
+<script>
+(async()=>{ const t0=performance.now();
+ try{
+ const py=await loadPyodide({indexURL:'rel/pyodide/'});
+ await py.loadPackage(['numpy','scipy','micropip','matplotlib','packaging']);
+ const w=new Uint8Array(await (await fetch('whl/ase-3.29.0-py3-none-any.whl')).arrayBuffer());
+ py.FS.writeFile('/ase-3.29.0-py3-none-any.whl',w);
+ await py.runPythonAsync("import micropip\nawait micropip.install('emfs:/ase-3.29.0-py3-none-any.whl',deps=False)");
+ const r=await py.runPythonAsync("import io\nfrom ase.build import bulk,fcc111\nfrom ase.io import write\nsi=bulk('Si','diamond',a=5.43)\nslab=fcc111('Al',size=(1,1,5),vacuum=10.0,a=4.05)\nb=io.BytesIO(); write(b,si,format='cif')\nf'{len(si)} atomos Si, slab {len(slab)} atomos, cif {len(b.getvalue())} bytes'");
+ document.title='OK '+r+' en '+((performance.now()-t0)/1000).toFixed(1)+' s';
+ }catch(e){document.title='ERROR '+e;}
+})();
+</script>
