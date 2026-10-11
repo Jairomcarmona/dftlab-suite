@@ -32,6 +32,19 @@ class RegisteredNativeRun:
     authorize_allocation: object  # trusted callback, None or exception
 
 
+@dataclass(frozen=True)
+class RegisteredNativeExtensions:
+    """Operator-only code registration, bound to an original native lock.
+
+    Never reconstructed from an API request, discovery entry point or plugin
+    metadata. Registration does not qualify or announce a runtime capability.
+    """
+    workflow_digest: str
+    bindings: tuple[tuple[str, str], ...]
+    register: object  # QRAFT's public registry callback
+    verify: object  # installed plugin/source identity recheck, None or exception
+
+
 class NativeWorker:
     """A dedicated installed process, not a thread in the API process.
 
@@ -45,7 +58,7 @@ class NativeWorker:
         self.engines, self.repository, self.manager = engines, repository, manager
         self.lease_seconds, self.heartbeat_seconds = lease_seconds, heartbeat_seconds
 
-    def verify(self, owner, registered, environment):
+    def verify(self, owner, registered, environment, extensions=None):
         self.repository.project(owner, registered.project_id)
         root = Path(registered.root).absolute()
         if root.resolve() != root or not root.is_dir() or any(path.is_symlink() or (os.name == "nt" and path.is_junction()) for path in (root, *root.parents)):
@@ -63,6 +76,17 @@ class NativeWorker:
             raise Problem("PRECONDITION_FAILED")
         if (workflow.project_id, workflow.workflow_id) != (registered.project_id, registered.workflow_id) or workflow_envelope.content_sha256 != registered.workflow_digest or run_envelope.content_sha256 != registered.run_digest or run.workflow_lock_sha256 != registered.workflow_digest or run.execution_profile_sha256 != registered.profile_digest or run.execution_profile_id != registered.profile["profile_id"]:
             raise Problem("PRECONDITION_FAILED")
+        if extensions is not None:
+            if type(extensions) is not RegisteredNativeExtensions or extensions.workflow_digest != registered.workflow_digest or type(extensions.bindings) is not tuple or not 1 <= len(extensions.bindings) <= 64 or not callable(extensions.register) or not callable(extensions.verify):
+                raise Problem("PRECONDITION_FAILED")
+            bindings = {}
+            for binding in extensions.bindings:
+                if type(binding) is not tuple or len(binding) != 2 or any(type(value) is not str or not 1 <= len(value) <= 256 for value in binding) or binding[0] in bindings:
+                    raise Problem("PRECONDITION_FAILED")
+                bindings[binding[0]] = binding[1]
+            declared = {task.task_id: task.capability_id for task in workflow.tasks}
+            if any(declared.get(task) != capability for task, capability in bindings.items()) or extensions.verify() is not None:
+                raise Problem("PRECONDITION_FAILED")
         if "PYTHONPATH" in environment or str(environment.get("SLURM_JOB_ID", "")).isdigit() is False or Path(environment.get("SLURM_SUBMIT_DIR", "")).absolute().resolve() != root:
             raise Problem("PRECONDITION_FAILED")
         probe = self.repository.contracts.validate("runtime-probe-receipt", registered.probe)
@@ -75,11 +99,11 @@ class NativeWorker:
             raise Problem("PRECONDITION_FAILED")
         return root
 
-    def run(self, owner, registered, *, environment=None, publication):
+    def run(self, owner, registered, *, environment=None, publication, extensions=None):
         environment = dict(os.environ if environment is None else environment)
         # Preserve original caller data; trust boundaries do not accept aliases.
         registered = RegisteredNativeRun(**{**registered.__dict__, "profile": deepcopy(registered.profile), "probe": deepcopy(registered.probe)})
-        root = self.verify(owner, registered, environment)
+        root = self.verify(owner, registered, environment, extensions)
         api = self.engines.qraft
         shutdown = api.ShutdownRequest()
         with self.manager.controller(owner, registered.project_id, registered.run_id, registered.attempt_id, seconds=self.lease_seconds) as authority:
@@ -95,12 +119,16 @@ class NativeWorker:
             thread = Thread(target=heartbeat, name="dftlab-native-authority", daemon=False)
             thread.start()
             try:
+                plugin_arguments = {} if extensions is None else {"register_capabilities": extensions.register, "capability_bindings": dict(extensions.bindings)}
+                # Recheck under the original kernel guard, immediately before
+                # QRAFT creates its fresh registry and freezes original bindings.
+                self.verify(owner, registered, environment, extensions)
                 controller = api.CanonicalController.from_file(root/"campaign.yaml", root=root, environment=environment, shutdown=shutdown,
-                                                              authority_check=authority.authority_check, authority_generation=str(authority.record["payload"]["generation"]))
+                                                              authority_check=authority.authority_check, authority_generation=str(authority.record["payload"]["generation"]), **plugin_arguments)
                 status = controller.run(install_signal_handlers=True)
                 if failures or controller.result is None:
                     raise Problem("PRECONDITION_FAILED")
-                self.verify(owner, registered, environment)
+                self.verify(owner, registered, environment, extensions)
                 # The public native serializer preserves every result dimension.
                 original = self.engines.qraft_contracts().canonical_json(controller.result).encode("utf-8")
                 native_status = status.value
