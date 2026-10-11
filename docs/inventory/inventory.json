@@ -11,8 +11,8 @@
     "structureWriterFormats": 6,
     "datasets": 16,
     "datasetBytes": 10678665,
-    "ownJavascriptFiles": 55,
-    "ownJavascriptLines": 11548,
+    "ownJavascriptFiles": 57,
+    "ownJavascriptLines": 11611,
     "exportSourceCalls": 52,
     "scientificModules": 25
   },
@@ -2423,6 +2423,16 @@
       "sha256": "2d027e4fa9ff86620c8d402329173421cc6cbb09cb0575cabfcccdff722677c1"
     },
     {
+      "file": "app/dftlab/static/js/sdk/contracts.js",
+      "bytes": 4216,
+      "sha256": "d287ca2817e10773736b2716f5a7b1b878d6d361479e2383e208edbbd174273c"
+    },
+    {
+      "file": "app/dftlab/static/js/sdk/validators.generated.js",
+      "bytes": 754900,
+      "sha256": "e58c529abb5f3a8b56d97c497082dac3b1e634df263984d0945296cded591ef1"
+    },
+    {
       "file": "app/dftlab/static/js/siesta/bands.js",
       "bytes": 10821,
       "sha256": "97c74b33531a0343bac3f879b7b554a877b851dd54c2d958fe439018e6b31ddb"
@@ -2614,8 +2624,8 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 1583,
-      "sha256": "1d7927de03bfccc34a6476552d3459ae07de2e2c26fbdaf9d8e1bd76f2878c37"
+      "bytes": 1671,
+      "sha256": "6f6fe2f971273232b05f6b9385cd14bc2ba1f2adc2fd10c9f4f849cbdeed7b84"
     },
     {
       "file": "app/scripts/test-browser.mjs",
@@ -2624,13 +2634,13 @@
     },
     {
       "file": "app/package.json",
-      "bytes": 595,
-      "sha256": "f8bb71e207452d47f23681fe63f6adb9d17c17e3a82fe1a8159bacb19fa02863"
+      "bytes": 719,
+      "sha256": "c294a951574fafa75413cd2863c1741014257f82df0f499753521aceb07f2782"
     },
     {
       "file": "app/package-lock.json",
-      "bytes": 16103,
-      "sha256": "b2a63709e97d6adff0250d4947fdd9610a1d09fb55f01a09cafa3ca6fd03b17b"
+      "bytes": 18870,
+      "sha256": "b67040dccd80bab880b451577c8e9646b8fbb517d69359a24adadae094248515"
     },
     {
       "file": ".github/workflows/ci.yml",
