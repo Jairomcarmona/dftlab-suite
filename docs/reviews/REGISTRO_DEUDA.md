@@ -52,6 +52,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | H | Recursos (ResizeObserver, escenas 3D) y cálculo pesado | Media | **Reproducido** (16 contextos WebGL vivos de 32 creados y aviso del navegador; 147 lienzos desconectados aún observados; buffers que crecen 358 → 682 en Bandas) → corregido en PR #9 (rama `claude/bloque-h-recursos-16vtfq`); rendimiento **medido**, sin workers por ahora | PR #9 |
 | X1 | T-001/T-002: inventario P0 y baseline reproducible; T-003…006 contrastados con A–H | Ola 0 | Implementado; baseline/CI Windows+Linux y referencias Python verdes @ `13ce7b9`; auditoría WSL igual; implementación `e6720dc`; pendiente autorización | PR #16; `docs/inventory/` |
 | X2 | Base de platform/, borrador T-010 y comienzo T-057 | Ola 0 | Wheel/proceso vacío instalado Windows+Linux CI; motores instalados/probados Windows+WSL; cinco checks verdes @ `0c92734`; ciencia/HPC pendientes; autorizado, CI de integración pendiente | PR #17; workflow propio |
+| X4 | T-012/T-013: ViewScope y stores UI por área/proyecto | Ola 1 | Implementado @ `a2eb2ec`; pruebas focalizadas Node/navegador verdes; npm test final y CI pendientes; sin autoridad de campañas | Rama codex/x4-viewscope-stores; PR pendiente |
 
 ## A. Calculadoras: `fftGood` sin dominio
 
