@@ -27,6 +27,12 @@ export function createClient({baseUrl=new URL('./api/v1/',location.href),fetcher
   const envelope=async(name,value)=>{validate(name,value);await verifyEnvelope(name,value);return value;};
   return Object.freeze({
     get principalId(){return principal;},get canEdit(){return csrf!==null;},
+    async session(options){
+      csrf=null;principal=null;
+      const session=validateApi('getSession',200,await request('session',options));
+      principal=session.principal_id;csrf=session.csrf_token;
+      return {principalId:principal,expiresAt:session.expires_at};
+    },
     async login(token,{signal}={}){
       if(typeof token!=='string'||token.length<32||token.length>256)throw new Error('Invalid access code');
       csrf=null;principal=null;
@@ -46,6 +52,25 @@ export function createClient({baseUrl=new URL('./api/v1/',location.href),fetcher
     async projects(options){return validateApi('listProjects',200,await request('projects',options));},
     async createProject(name,key,options={}){const body=validateApi('createProject','request',{name,idempotency_key:key});return validateApi('createProject',201,await request('projects',{...options,method:'POST',body}));},
     async operation(id,options){return envelope('operation-record',await request('operations/'+encodeURIComponent(id),options));},
+    async drafts(projectId,options){
+      const values=validateApi('listDrafts',200,await request('projects/'+encodeURIComponent(projectId)+'/drafts',options));
+      for(const item of values)await envelope('draft',item);return values;
+    },
+    async draft(id,options){return bundle(await request('drafts/'+encodeURIComponent(id),options));},
+    async createDraft(projectId,body,options={}){
+      validateApi('createDraft','request',body);
+      return bundle(await request('projects/'+encodeURIComponent(projectId)+'/drafts',{...options,method:'POST',body}));
+    },
+    async reviseDraft(id,body,options={}){
+      validateApi('reviseDraft','request',body);
+      return bundle(await request('drafts/'+encodeURIComponent(id)+'/revisions',{...options,method:'POST',body}));
+    },
     async logout(options){try{return await request('session',{...options,method:'DELETE'});}finally{csrf=null;principal=null;}},
   });
+  async function bundle(value){
+    validateApi('getDraft',200,value);
+    await envelope('draft',value.draft);await envelope('structure-revision',value.structure);
+    if(value.intent)for(const [key,name] of [['run_intent','run-intent'],['physical_model','physical-model'],['numerical_policy','numerical-policy']])await envelope(name,value.intent[key]);
+    return value;
+  }
 }

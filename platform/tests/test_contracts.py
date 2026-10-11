@@ -40,6 +40,14 @@ class ContractTests(unittest.TestCase):
             with self.subTest(text=text), self.assertRaises((ValueError, UnicodeError)):
                 loads(text)
 
+    def test_cached_bundle_does_not_share_mutable_contract_documents(self):
+        first, second = Contracts(), Contracts()
+        first.openapi["paths"].clear()
+        first._schemas.clear()
+        self.assertTrue(second.openapi["paths"])
+        self.assertTrue(second._schemas)
+        self.assertTrue(resource_json("openapi/dftlab-api.v1.json")["paths"])
+
     def test_forged_verified_digest_is_rejected(self):
         value = resource_json("fixtures/envelope/valid/verified-digest.json")
         value = copy.deepcopy(value)

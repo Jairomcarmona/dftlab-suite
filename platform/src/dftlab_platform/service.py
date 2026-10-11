@@ -14,10 +14,13 @@ from .domain import Operations, Problem
 from .security import LocalSettings, Sessions, SecurityMiddleware, PrivateErrors, session_cookie, single_header
 
 
-def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessions: Sessions | None = None):
+def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessions: Sessions | None = None, drafts=None):
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
     sessions = sessions or Sessions()
     contracts = Contracts()
+    if drafts is None:
+        from .draft_storage import SQLiteDraftRepository
+        drafts = SQLiteDraftRepository(repository, artifacts)
     app.state.sessions = sessions
     app.state.settings = settings
     app.add_middleware(SecurityMiddleware, settings=settings)
@@ -83,6 +86,20 @@ def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessi
                 result.set_cookie("dftlab_session", cookie, max_age=sessions.session_seconds, httponly=True, samesite="strict", secure=False, path=settings.base_path+"/")
                 return result
             owner = principal(request)
+            if operation == "getSession":
+                return json_response(operation, 200, sessions.current(session_cookie(request.scope)))
+            if operation == "createDraft":
+                document = await body(request, operation)
+                bundle, created = await run_in_threadpool(drafts.create, owner, params["project_id"], document)
+                return json_response(operation, 201 if created else 200, bundle)
+            if operation == "listDrafts":
+                return json_response(operation, 200, await run_in_threadpool(drafts.list, owner, params["project_id"]))
+            if operation == "getDraft":
+                return json_response(operation, 200, await run_in_threadpool(drafts.get, owner, params["draft_id"]))
+            if operation == "reviseDraft":
+                document = await body(request, operation)
+                bundle, created = await run_in_threadpool(drafts.revise, owner, params["draft_id"], document)
+                return json_response(operation, 201 if created else 200, bundle)
             if operation == "deleteSession":
                 sessions.revoke(session_cookie(request.scope))
                 result = Response(status_code=204)

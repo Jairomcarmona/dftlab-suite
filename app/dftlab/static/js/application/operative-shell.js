@@ -1,4 +1,5 @@
 import {createClient} from '../sdk/client.js';
+import {draftPanel} from './draft-panel.js';
 
 // Only emitted in the served build. Handshake never submits an operation.
 export async function attach({stores}){
@@ -23,7 +24,16 @@ export async function attach({stores}){
     const empty=document.createElement('option');empty.value='';empty.textContent='Seleccionar proyecto';selector.append(empty);
     for(const project of projects){const item=document.createElement('option');item.value=project.project_id;item.textContent=project.name;selector.append(item);}
     selector.value=stores.projectId||'';
-    selector.onchange=()=>stores.selectProject(selector.value||null);
+    let panel=null;
+    async function selectDrafts(){
+      panel?.element.remove();panel=null;
+      const projectId=selector.value;stores.selectProject(projectId||null);
+      if(!projectId)return;
+      const created=draftPanel({client,projectId,status,isCurrent:()=>mine===generation&&selector.value===projectId&&panel===created});
+      panel=created;projectGroup.append(created.element);
+      try{await created.refresh();}catch(error){if(mine===generation)status.textContent=error.code||'No se pudieron leer los borradores.';}
+    }
+    selector.onchange=selectDrafts;
     projectGroup.append(selector);
     const logout=document.createElement('button');logout.textContent='Cerrar sesión';
     logout.onclick=async()=>{logout.disabled=true;try{await client.logout();status.textContent='Sesión cerrada.';}catch{status.textContent='No se pudo confirmar el cierre en el servicio. Reinicia el iniciador.';}finally{generation++;projectGroup?.remove();projectGroup=null;stores.selectProject(null);}};
@@ -41,7 +51,8 @@ export async function attach({stores}){
       };
     }
     slot.after(projectGroup);
-    status.textContent=client.canEdit?'Sesión autenticada. Proyectos y archivos pertenecen a tu identidad.':'Sesión de lectura. Para editar tras recargar, reinicia el iniciador y usa su nuevo archivo de acceso.';
+    status.textContent='Sesión autenticada. Proyectos y archivos pertenecen a tu identidad.';
+    await selectDrafts();
   }
   input.onchange=async()=>{
     const file=input.files?.[0];input.value='';if(!file)return;
@@ -54,5 +65,5 @@ export async function attach({stores}){
     }catch(error){status.textContent=error.code||'Archivo de acceso inválido o vencido. Reinicia el iniciador para obtener uno nuevo.';}
     finally{input.disabled=false;}
   };
-  try{await showProjects();}catch(error){if(error.code!=='NOT_AUTHENTICATED')status.textContent='No se pudo verificar la sesión del servicio.';}
+  try{await client.session();await showProjects();}catch(error){if(error.code!=='NOT_AUTHENTICATED')status.textContent='No se pudo verificar la sesión del servicio.';}
 }

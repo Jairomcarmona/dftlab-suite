@@ -209,5 +209,42 @@ class HTTPService(unittest.TestCase):
         self.assertEqual(sent, [{"type": "websocket.close", "code": 4403}])
 
 
+    def test_session_recovery_same_csrf_deadline_and_fetch_metadata(self):
+        first = self.request("GET", "/session", headers={"Sec-Fetch-Site": "same-origin"})
+        self.assertEqual(first[0], 200)
+        self.assertEqual(first[2]["csrf_token"], self.csrf)
+        self.assertEqual(first[2], self.request("GET", "/session")[2])
+        self.assertEqual(first[1]["cache-control"], "no-store")
+        for site in ("cross-site", "same-site", "none"):
+            self.assert_problem(self.request("GET", "/session", headers={"Sec-Fetch-Site": site}), 403, "ORIGIN_REJECTED")
+        self.assert_problem(self.request("GET", "/session", headers={"Origin": "null"}), 403, "ORIGIN_REJECTED")
+        self.assertEqual(self.request("POST", "/projects", {"name": "Reload", "idempotency_key": "reload-project-key"}, csrf=first[2]["csrf_token"])[0], 201)
+        self.assertEqual(self.request("DELETE", "/session")[0], 204)
+        self.assert_problem(self.request("GET", "/session"), 401, "NOT_AUTHENTICATED")
+
+    def test_draft_http_contract_retry_conflict_revision_owner(self):
+        project = self.project()
+        path = "/projects/"+project["project_id"]+"/drafts"
+        request = resource_json("fixtures/draft-create-request/valid/promote-structure.json")
+        first = self.request("POST", path, request)
+        self.assertEqual(first[0], 201, first[2])
+        draft = first[2]["draft"]
+        self.assertEqual(self.request("POST", path, request)[2], first[2])
+        self.assertEqual(self.request("POST", path, request)[0], 200)
+        changed = copy.deepcopy(request);changed["title"] = "Other"
+        self.assert_problem(self.request("POST", path, changed), 409, "IDEMPOTENCY_KEY_REUSED")
+        self.assertEqual(self.request("GET", path)[2], [draft])
+        draft_path = "/drafts/"+draft["payload"]["draft_id"]
+        self.assertEqual(self.request("GET", draft_path)[2], first[2])
+        self.assert_problem(self.request("GET", draft_path, cookie=self.other_cookie, csrf=self.other_csrf), 404, "NOT_FOUND")
+        self.assert_problem(self.request("POST", path, request, cookie=self.other_cookie, csrf=self.other_csrf), 404, "NOT_FOUND")
+        revision = {"idempotency_key": "service-revision-01", "expected_revision": 1, "changes": {"purpose": "OPERATIONAL"}}
+        self.assertEqual(self.request("POST", draft_path+"/revisions", revision)[0], 201)
+        self.assertEqual(self.request("POST", draft_path+"/revisions", revision)[0], 200)
+        revision["idempotency_key"] = "service-revision-02"
+        self.assert_problem(self.request("POST", draft_path+"/revisions", revision), 412, "PRECONDITION_FAILED")
+        self.assertEqual(self.request("GET", "/projects/"+project["project_id"])[2], project)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -163,3 +163,13 @@ Distribución `dftlab-platform` / paquete `dftlab_platform`, CPython 3.12.10 y u
 El directorio por usuario es `%LOCALAPPDATA%/DFTLabPlatform/launcher` en Windows o `$XDG_STATE_HOME/dftlab-platform/launcher` en Linux (por defecto `~/.local/state`). Las pruebas usan un directorio temporal explícito. No hay puertos, credenciales ni conexión SSH. Los permisos POSIX se crean restringidos; no se promete una política ACL ni aislamiento de usuarios operativos en este esqueleto.
 
 La instalación de entrega es desde wheel en un entorno limpio, fuera del checkout y sin `PYTHONPATH`, según [deployment/local/README.md](../deployment/local/README.md). La CI Windows/Linux prueba el **wheel instalado**, no `src/` importado por accidente. El sdist se incluye para reconstrucción; los motores se califican aparte, no forman parte de este wheel vacío. HubbardFlow será obligatorio bajo QRAFT en el runtime operativo (ADR-015); su integración no queda implementada aquí.
+
+## Borradores y recarga de sesión (X8b / ADR-016)
+
+`createDraft`, `listDrafts`, `getDraft` y `reviseDraft` usan los contratos originales de `/api/v1`. El puerto `DraftRepository` tiene un adaptador SQLite independiente; cada revisión conserva su contenido y bundle en una transacción. Repetir una clave owner/proyecto devuelve el bundle original antes de comprobar la revisión; una carga distinta da 409 y una revisión desactualizada da 412. Proyecto y borrador tienen revisiones independientes.
+
+El servicio crea las identidades de registros/agregados; conserva los identificadores de átomo que ya forman parte del contenido científico de StructureRevision. Aprender nace EXPLORATORY/PARTIAL/NOT_EVALUATED; cambiar finalidad requiere revisión explícita. Importar requiere una referencia de artefacto autorizada del mismo proyecto, con hash y tipo coincidentes; PARTIAL exige verificar también los bytes. Ningún borrador crea campañas, planes ni runs.
+
+`GET /session` devuelve el mismo CSRF y la fecha original de vencimiento usando la cookie HttpOnly; no renueva la sesión. Host exacto, Origin exacto si llega y Sec-Fetch-Site same-origin si llega. El SDK conserva el CSRF solo en memoria y lo recupera tras recarga. La UI permite promover una StructureRevision exportada desde Aprender y muestra las cuatro dimensiones sin presentar procedencia o evaluación como verificadas.
+
+La instalación se prueba desde wheel fuera del checkout. Los bytes originales de schemas se comprueban una vez por proceso; cada instancia de validador recibe documentos independientes, sin compartir diccionarios mutables ni desactivar validación de datos o integridad. Un timeout de calificación conserva el log parcial y sigue fallando con el límite original.

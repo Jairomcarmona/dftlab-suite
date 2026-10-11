@@ -1,6 +1,6 @@
 """Local bootstrap/session port, origin checks and bounded ASGI transport."""
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 import hashlib
 import secrets
@@ -41,6 +41,8 @@ class Session:
     principal: Principal
     csrf_hash: str
     expires: float
+    csrf_token: str = field(repr=False)
+    expires_at: str
 
 
 class Sessions:
@@ -73,8 +75,17 @@ class Sessions:
             if len(self._sessions) >= 32:
                 raise Problem("RATE_LIMITED")
             cookie, csrf = secrets.token_urlsafe(48), secrets.token_urlsafe(48)
-            self._sessions[token_hash(cookie)] = Session(entry[0], token_hash(csrf), self.clock()+self.session_seconds)
-            return cookie, {"principal_id": entry[0].principal_id, "csrf_token": csrf, "expires_at": (datetime.now(timezone.utc)+timedelta(seconds=self.session_seconds)).isoformat().replace("+00:00", "Z")}
+            deadline = (datetime.now(timezone.utc)+timedelta(seconds=self.session_seconds)).isoformat().replace("+00:00", "Z")
+            self._sessions[token_hash(cookie)] = Session(entry[0], token_hash(csrf), self.clock()+self.session_seconds, csrf, deadline)
+            return cookie, {"principal_id": entry[0].principal_id, "csrf_token": csrf, "expires_at": deadline}
+
+    def current(self, cookie: str) -> dict:
+        with self._lock:
+            self._prune()
+            session = self._sessions.get(token_hash(cookie))
+            if session is None:
+                raise Problem("NOT_AUTHENTICATED")
+            return {"principal_id": session.principal.principal_id, "csrf_token": session.csrf_token, "expires_at": session.expires_at}
 
     def authenticate(self, cookie: str, csrf: str | None = None) -> Principal:
         with self._lock:
@@ -134,6 +145,8 @@ class SecurityMiddleware:
                 raise Problem("ORIGIN_REJECTED")
             if scope.get("query_string") and scope["path"].endswith("/session"):
                 raise Problem("VALIDATION_FAILED")  # no token via query
+            if scope["method"] == "GET" and scope["path"].endswith("/session") and single_header(scope, b"sec-fetch-site") not in {None, "same-origin"}:
+                raise Problem("ORIGIN_REJECTED")
             if single_header(scope, b"content-encoding") not in (None, "identity"):
                 raise Problem("VALIDATION_FAILED")  # no decompression bombs
             maximum = self.settings.max_chunk if scope["method"] == "PUT" else self.settings.max_json
