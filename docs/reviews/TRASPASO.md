@@ -8,7 +8,7 @@ Fecha: 2026-10-11. Escrita para quien continúe (otro agente o persona) sin acce
 |---|---|---|---|
 | Registro de deuda y revisión externa | `claude/estabilizacion-registro-a-e-7imxti` | #1 | `main` |
 | A: calculadoras / `fftGood` | `claude/fix-a-calc-validation` | #2 | rama del registro |
-| E: inserción segura | `claude/fix-e-safe-html` | ver PR de E | rama de A |
+| E: inserción segura | `claude/fix-e-safe-html` | #3 | rama de A |
 
 Los PR están **apilados**: integrar en orden #1 → A → E (al fusionar uno, cambiar la base del siguiente a `main`). Ninguno está fusionado. `main` sigue en `ae3f35e`. Los SHA exactos de cada rama son los de la punta de la rama en GitHub.
 
