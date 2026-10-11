@@ -20,7 +20,7 @@ async function route(){
   side.classList.remove('open'); $('.scrim')?.remove();
   view.innerHTML='';
   current=v;
-  try{ await v.render(view); }catch(e){ console.error(e); view.innerHTML=`<div class="callout warn">Esta sección no pudo cargarse: ${String(e.message||e)}</div>`; }
+  try{ await v.render(view); }catch(e){ console.error(e); view.innerHTML=''; const box=document.createElement('div'); box.className='callout warn'; box.textContent='Esta sección no pudo cargarse: '+String(e.message||e); view.appendChild(box); }
   window.scrollTo(0,0);
 }
 nav();
