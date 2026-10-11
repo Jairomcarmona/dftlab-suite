@@ -81,10 +81,16 @@ export function chart(cv, cfg){
     cv.addEventListener('pointermove', ev=>{ if(cv._cfg.nohover) return; cv._hover=toData(ev); render(cv); });
     cv.addEventListener('pointerleave', ()=>{ cv._hover=null; render(cv); });
     cv.addEventListener('click', ev=>{ if(cv._cfg.onclick){ const d=toData(ev); if(d) cv._cfg.onclick(d.x,d.y,d); } });
-    new ResizeObserver(()=>render(cv)).observe(cv);
   }
+  if (!observed.has(cv)){ observed.add(cv); sizes().observe(cv); }
   render(cv);
 }
+// Un solo ResizeObserver para todos los gráficos. Un lienzo que sale del documento deja de observarse
+// (ResizeObserver notifica al quitarlo); releaseCharts() lo hace de forma explícita al abandonar una vista.
+const observed=new Set(); let ro=null;
+const sizes=()=>ro||(ro=new ResizeObserver(es=>{ for (const e of es){ const cv=e.target; if (!cv.isConnected) releaseChart(cv); else render(cv); } }));
+export function releaseChart(cv){ if (observed.delete(cv)) ro.unobserve(cv); }
+export function releaseCharts(root){ for (const cv of [...observed]) if (root.contains(cv)) releaseChart(cv); }
 export function render(cv){
   const cfg=cv._cfg; if(!cfg || !cv.isConnected || cv.offsetParent===null) return;
   const {c,W,H}=setupCanvas(cv);

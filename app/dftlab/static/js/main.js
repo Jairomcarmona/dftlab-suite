@@ -2,6 +2,7 @@
 // `view` es el ámbito de vida del montaje (core/lifecycle.js): lo que registre se libera al navegar.
 import { $, $$, toast } from './core/ui.js';
 import { createViewScope } from './core/lifecycle.js';
+import { releaseCharts } from './core/chart.js';
 import { VIEWS, GROUPS } from './views/registry.js';
 
 const side=$('#side'), view=$('#view');
@@ -26,6 +27,7 @@ async function route(){
   // Contenedor nuevo por montaje: lo que una vista abandonada escriba tras un await no alcanza a la siguiente.
   const host=document.createElement('div'); host.className='viewhost'; host.dataset.view=v.id;
   view.replaceChildren(host);
+  sc.add(()=>releaseCharts(host));   // los gráficos de la vista dejan de observarse al salir
   try{ await v.render(host, sc); }catch(e){ console.error(e); if(!sc.alive) return; host.replaceChildren(); const box=document.createElement('div'); box.className='callout warn'; box.textContent='Esta sección no pudo cargarse: '+String(e.message||e); host.appendChild(box); }
   if (my===seq) window.scrollTo(0,0);
 }
