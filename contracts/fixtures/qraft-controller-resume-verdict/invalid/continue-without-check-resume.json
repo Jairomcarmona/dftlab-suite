@@ -1,0 +1,22 @@
+{
+  "contract": "qraft.controller-resume-verdict@1.0",
+  "task_id": "hf1-lru",
+  "attempt_id": "attempt-0002",
+  "previous_attempt_id": "attempt-0001",
+  "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+  "decision": "CONTINUE",
+  "reason": "TECHNICAL_CONTINUATION",
+  "check_resume": null,
+  "blocking": [],
+  "continuation": {
+    "retained": [
+      "reference",
+      "response:lr_s000_p0p05_bare"
+    ],
+    "recovered": [],
+    "launch_pending": [
+      "response:lr_s000_p0p05_scf"
+    ]
+  },
+  "scientific_effect": "NONE"
+}

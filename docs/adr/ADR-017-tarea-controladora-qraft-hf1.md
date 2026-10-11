@@ -1,9 +1,9 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** del mismo día ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)). Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)) y la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) del mismo día. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
-El texto de abajo ya integra la Adenda 1. La sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué.
+El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
 
 ## Contexto
 
@@ -130,7 +130,7 @@ Eventos:
 | `LAUNCH_STARTED` | Con el proceso creado | PID |
 | `LAUNCH_FINISHED` | Al salir el proceso | código de salida |
 | `LAUNCH_ABANDONED` | Al cerrarlo por parada | motivo |
-| `NODE_SETTLED` | Después de que HubbardFlow guarda en su checkpoint un `NodeReceipt` terminal para esa clave | `NodeState` nativo (`VALIDATED` o un fallo terminal) y `evidence_digest`, copiados tal cual |
+| `NODE_SETTLED` | Después de que HubbardFlow guarda en su checkpoint un `NodeReceipt` terminal para esa clave y termina su paso nativo sin retirarlo (Adenda 2 §B.4) | `NodeState` nativo (`VALIDATED` o un fallo terminal) y `evidence_digest`, copiados tal cual |
 | `SETTLEMENT_RECOVERED` | En un intento posterior, para un recibo terminal del checkpoint cuya línea `NODE_SETTLED` se perdió por una caída entre guardar el checkpoint y anotar el libro | `source_attempt_id` (el intento donde terminó el lanzamiento) |
 
 Orden obligatorio: primero el checkpoint y después `NODE_SETTLED`. En la reanudación, las líneas `SETTLEMENT_RECOVERED` van **antes** de cualquier `LAUNCH_INTENT` del intento. Si el libro dice asentado y el checkpoint no, el estado es inconsistente: el controlador rechaza la reanudación (código 75, §6).
@@ -225,9 +225,9 @@ Ni la ausencia de un PID, ni la de un grupo, ni una cola vacía bastan. Si no ha
 **Reanudar lo hace el controlador, y QRAFT lo verifica.**
 
 1. En el intento N > 1, el descriptor lleva `previous_attempt`.
-2. Antes de cualquier lanzamiento interno, el controlador ejecuta `check_resume` (U-H4) y concilia su checkpoint con los libros anteriores. Para cada recibo terminal sin `NODE_SETTLED`, anota `SETTLEMENT_RECOVERED`.
-3. Escribe su veredicto en `paths.resume_verdict`.
-4. Si rechaza la reanudación (plan, pseudo, `.DM` o política cambiados, o libro y checkpoint inconsistentes), sale con el código reservado `75`. La tarea queda `BLOCKED` con el motivo nativo y no se reintenta desde cero.
+2. Antes de cualquier lanzamiento interno, el controlador ejecuta `check_resume` (U-H4) contra su línea base, carga el checkpoint, lo concilia con los libros anteriores y revalida en seco los recibos, todo según la Adenda 2 §B.2–§B.3. Para cada recibo terminal sin `NODE_SETTLED`, anota `SETTLEMENT_RECOVERED`.
+3. Escribe su veredicto `qraft.controller-resume-verdict@1.0` en `paths.resume_verdict`.
+4. Si el veredicto es `REFUSE` (plan, pseudo, `.DM` o política cambiados, libro y checkpoint inconsistentes, un fallo asentado o evidencia asentada que ya no revalida), sale con el código reservado `75`. La tarea queda `BLOCKED` con el motivo nativo y no se reintenta desde cero. `NOT_ESTABLISHED` de `check_resume` no es un rechazo ni una aceptación (Adenda 2 §B.1).
 
 **Sin doble envío.** Lo garantizan dos cosas a la vez: el checkpoint del controlador y las reglas de §4, que QRAFT evalúa sobre la clave estable. `max_attempts` cuenta intentos del controlador, y cada intento posterior al primero es una reanudación.
 
@@ -323,11 +323,12 @@ QRAFT no hace `sbatch` ni `scancel`: sigue siendo trabajo de SchedulerGateway (c
   - conciliación con `SETTLEMENT_RECOVERED` antes de lanzar;
   - `SIGTERM` → parada cooperativa;
   - prohibidos `setsid` y los lanzamientos fuera del árbol;
-  - `check_resume` antes de lanzar y código de salida 75 al rechazar.
+  - `check_resume` antes de lanzar y código de salida 75 al rechazar;
+  - línea base `resume-baseline.json`, revalidación nativa en seco y veredicto `qraft.controller-resume-verdict@1.0` (Adenda 2).
 - **Plataforma:**
   - `capability-descriptor` (`execution_shape`);
-  - schemas nuevos `qraft-controller-reservation` y `qraft-controller-ledger-entry`;
-  - vectores `controller-ledger-rules`.
+  - schemas nuevos `qraft-controller-reservation`, `qraft-controller-ledger-entry` y `qraft-controller-resume-verdict`;
+  - vectores `controller-ledger-rules` y `controller-resume-rules`.
 
   Todo es aditivo y sigue en `0.1.x`.
 
@@ -350,6 +351,7 @@ QRAFT, con consumidor instalado, sin checkout ni `PYTHONPATH`, con fixtures sint
    - Con cambio de `boot_id` simulado: reanuda.
    - Estado alterado: `CONTROLLER_STATE_TAMPERED`.
    - Veredicto 75: `BLOCKED`.
+   - HubbardFlow (U-H7), con el consumidor instalado: cada caso de `contracts/fixtures/controller-resume-rules/cases.json` produce su veredicto, que valida contra `qraft-controller-resume-verdict.schema.json`. Con campañas sintéticas, al menos: checkpoint validado sin cambios, nodo interrumpido, plan, pseudo, `.DM` y política cambiados, y respuesta sin calificación física (Adenda 2 §B.5).
    - Recibo terminal sin `NODE_SETTLED`: `SETTLEMENT_RECOVERED` y ningún relanzamiento.
 7. **Regresión.** Los paquetes `siesta`/`gate` 2.0 producen los mismos bytes, huellas y comportamiento. Los schemas empaquetados en QRAFT coinciden por SHA-256 con los de este repositorio.
 
@@ -368,3 +370,69 @@ Codex leyó la versión inicial (PR #51) y encontró tres compuertas lógicas si
 | A.1 | `inner_id` incluía el intento, así que la regla «mismo `inner_id` con éxito en dos intentos» no podía detectar un relanzamiento | Clave estable `key = {checkpoint_identity, node_id}` copiada del checkpoint nativo; `trace_id` solo traza. «Asentado» = recibo terminal nativo (también un fallo), con `NODE_SETTLED` después del checkpoint y `SETTLEMENT_RECOVERED` para la ventana de caída. Reglas con códigos, schema de línea y vectores ejecutables (§4, §6) |
 | A.2 | Un grupo vacío no prueba el cierre de descendientes que escapan | Supervisor *child subreaper* con pidfd y criterio `ECHILD`; cgroup v2 delegado opcional; sin contención positiva no se lanza. El cierre no probado retiene lease y cerrojo, y la muerte del dueño solo se prueba con cierre `CLOSED`, cambio de `boot_id` o job terminal con proctrack/cgroup. v1 limitado al host del runtime (§3, §5, §6, §7) |
 | A.3 | `total_cpus/nodes` no son las CPU físicas ni las facturadas | «Host completo» = exclusividad dentro de la allocation sobre `runtime_cpus`; `SLURM_JOB_CPUS_PER_NODE` como observación con mínimo; facturación desde `AllocTRES` del job, nunca desde ranks ni desde el descriptor (§1, §2, Lado plataforma) |
+
+## Adenda 2 (2026-10-11, HubbardFlow #43)
+
+Codex revisó HubbardFlow en `32ac193` y encontró que §6 pedía «salir con 75 si `check_resume` rechaza», pero `check_resume` nunca da un sí. Su docstring ([`api/resume.py:22-30`](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/32ac1936e396e33d7de63421f128b5e1c0641cdd/src/hubbardflow/api/resume.py#L22)) dice que hashes iguales no prueban equivalencia física. Las líneas 76–90 devuelven `IDENTITY_MISMATCH` o `NOT_ESTABLISHED`, siempre con `reusable_response_ids: []` y `physical_equivalence: NOT_ESTABLISHED`. La observación es correcta. Esta adenda fija la lectura sin cambiar la API pública, la política de reutilización, las fórmulas, los gates, las tolerancias ni `FIXED_PROTOCOL_GRID`.
+
+### B.1 Dos preguntas distintas
+
+- **Reutilización científica:** ¿una respuesta de otro run cuenta como la de este? Es la pregunta de `check_resume` y de `qualify_response_reuse`, y su respuesta nativa es «no establecido». El controlador **no** la hace: pide `responses: []`, no reutiliza respuestas y mantiene la política nativa de recálculo directo.
+- **Continuidad técnica:** ¿el intento N puede seguir el **mismo** checkpoint de la **misma** campaña sin relanzar nada asentado? La base positiva sale de evidencia nativa que ya existe:
+  1. `JsonDagCheckpoint.load` acepta el archivo, y su `campaign_digest` es la `checkpoint_identity` del libro.
+  2. El libro y el checkpoint concuerdan (§4 y Adenda 1).
+  3. La revalidación nativa, la misma que hace `CampaignRunner._revalidate_reuse` ([`campaign_runner.py:708-770`](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/32ac1936e396e33d7de63421f128b5e1c0641cdd/src/hubbardflow/execution/campaign_runner.py#L708)), conserva cada recibo lanzado. Para `REFERENCE` y `PERTURBATION` eso significa el validador nativo sobre los artefactos y el `.DM` de la referencia.
+  4. `check_resume` no encuentra ningún cambio frente a la línea base (§B.2).
+
+Por tanto, `NOT_ESTABLISHED` es **neutral** para la continuidad técnica: no rechaza ni autoriza nada. Solo `IDENTITY_MISMATCH` rechaza. El controlador copia el resultado tal cual en el veredicto, nunca lo convierte en aceptación y declara `scientific_effect: "NONE"`. La calificación científica sigue saliendo solo del análisis nativo.
+
+### B.2 Línea base y petición de `check_resume`
+
+En el intento 1, antes del primer `LAUNCH_INTENT`, el controlador escribe `resume-baseline.json` en `paths.state_dir`. Es una petición de `check_resume` completa con `observed_* = expected_*`, sin campos nuevos:
+
+- `expected_plan`: el mapping del `ResolvedPerturbationPlan` de `resolved_perturbation_plan_file`.
+- `expected_policies`: `{"campaign": <manifiesto de campaña>}`, con el JSON leído del archivo antes de que el cargador aplique valores por defecto.
+- `files`: una fila por entrada de `input_files` (`artifact_id = "input:<ruta>"`) y otra para el manifiesto (`"manifest:<ruta>"`). El `expected_sha256` se mide sobre los bytes; no se copia el declarado. El `.DM` padre de entrada y los pseudos entran aquí.
+- `responses: []`, siempre.
+
+En el intento N, la petición repite la línea base con `observed_plan`, `observed_policies` y `observed_sha256` medidos de nuevo (`null` si el archivo falta). La raíz de campaña completa (`.siestaflow`, `runs` y los `.DM` producidos) vive en `paths.state_dir`, de modo que `state_manifest_sha256` (§6) cubre la línea base y los artefactos de los nodos antes de que el controlador arranque.
+
+Una campaña sin `resolved_perturbation_plan_file` corre en el intento 1, pero no se puede reanudar: su intento N da `RESUME_EVIDENCE_INVALID`.
+
+### B.3 Veredicto: la primera regla que aplica decide
+
+| # | Condición observada | Decisión | `reason` |
+|---|---|---|---|
+| 1 | Falta la línea base, no es una petición válida, trae `responses` no vacío, o `check_resume` lanza `PublicApiError` | `REFUSE` | `RESUME_EVIDENCE_INVALID` |
+| 2 | `native_status = IDENTITY_MISMATCH` (`assessment = FAIL`); `blocking` = `changed` | `REFUSE` | `RESUME_INPUTS_CHANGED` |
+| 3 | `native_status` distinto de `NOT_ESTABLISHED` (también el histórico `EXACT_MATCH` o uno desconocido), `changed` no vacío, `reusable_response_ids` no vacío o `physical_equivalence ≠ NOT_ESTABLISHED` | `REFUSE` | `RESUME_STATUS_UNRECOGNIZED` |
+| 4 | El checkpoint no carga, o su `campaign_digest` no es la `checkpoint_identity` del libro | `REFUSE` | `CHECKPOINT_IDENTITY_MISMATCH` |
+| 5 | Una clave asentada sin recibo igual (estado y `evidence_digest`), o un recibo de nodo lanzable sin asentar y sin `LAUNCH_FINISHED` | `REFUSE` | `LEDGER_CHECKPOINT_INCONSISTENT` |
+| 6 | Un recibo de nodo lanzable (`REFERENCE`, `PERTURBATION`) distinto de `VALIDATED` | `REFUSE` | `SETTLED_FAILURE_PRESENT` |
+| 7 | La revalidación en seco invalida un nodo lanzable, avisa `NODE_EVIDENCE_DIGEST_MISMATCH` o deja un nodo lanzable entre los descendientes de un recibo invalidado | `REFUSE` | `SETTLED_EVIDENCE_INVALID` |
+| 8 | Ninguna de las anteriores | `CONTINUE` | `TECHNICAL_CONTINUATION` |
+
+`SETTLEMENT_RECOVERED` se anota después de pasar las reglas 1–5 y antes de la 6.
+
+Con `REFUSE` el controlador sale con 75 sin haber lanzado nada. Con `CONTINUE` ejecuta la reanudación nativa:
+
+- Lanza solo los nodos lanzables sin recibo (`launch_pending`): los no iniciados y los interrumpidos.
+- Los nodos derivados (`ALPHA_GATE`, `SHADOW_GATE`, `MATRIX_ANALYSIS`, `U_*`) se invalidan y se recalculan como hace hoy el código nativo, incluida la barrera `replay_barrier` de las sombras. No son lanzamientos internos y no aparecen en el libro.
+
+Reglas 6 y 7: la reanudación nativa (`resume`) relanzaría los fallos y lo que no revalida. El controlador no lo hace, porque sería relanzar una clave asentada (§4) o recalcular en silencio algo completado. La tarea queda `BLOCKED` y decide una persona. Un aviso de digest con el código fijado no debería aparecer nunca; si aparece en la calificación, es un defecto que se reporta, no una regla que se relaja.
+
+### B.4 Cuándo se asienta un nodo dentro de un intento
+
+`CampaignShadow.failed_shadow` retira el recibo fallido de un nodo sombra y vuelve a ejecutar el **mismo** `node_id` como `explicit_fallback` en el mismo intento. Para que §4 siga valiendo, el controlador anota `NODE_SETTLED` cuando termina el paso nativo de ese nodo y solo si el recibo sigue en el checkpoint. Un recibo retirado no se asienta. La clave queda sin asentar, y relanzarla está permitido porque su lanzamiento anterior está cerrado. La evidencia de la retirada queda en `failed_runs` del estado nativo de sombras. Vector: `fallback-de-sombra-en-el-mismo-intento` en `controller-ledger-rules`.
+
+Si el intento cae entre el guardado del recibo fallido y su retirada, el intento siguiente lo recupera como fallo asentado y la regla 6 lo bloquea. Es una ventana rara y la salida es conservadora.
+
+### B.5 Contrato, vectores y lo que cambia en HubbardFlow
+
+- Schema [`qraft-controller-resume-verdict.schema.json`](../../contracts/schemas/qraft-controller-resume-verdict.schema.json) (`qraft.controller-resume-verdict@1.0`). `CONTINUE` exige `NOT_ESTABLISHED` sin cambios, sin respuestas reutilizables y sin equivalencia física afirmada. `REFUSE` no lleva continuación.
+- [`contracts/fixtures/controller-resume-rules/cases.json`](../../contracts/fixtures/controller-resume-rules/cases.json) trae 21 vectores:
+  - aceptados: checkpoint validado sin cambios, nodo interrumpido, nada lanzado todavía, caída entre checkpoint y libro, respuesta sin calificación física y derivado inválido que se recalcula;
+  - rechazados: plan, pseudo, `.DM` de entrada y política cambiados, línea base ausente o con respuestas, estado no reconocido, respuestas reutilizables inesperadas, checkpoint de otro DAG, identidad distinta del libro, inconsistencias del libro, fallo asentado, evidencia que no revalida, digest distinto y referencia inválida que arrastra a sus descendientes.
+
+  `check-contracts.mjs` los evalúa con `evaluateControllerResume`, y `validate_fixtures.py` valida cada veredicto esperado.
+- En HubbardFlow (U-H7): la comprobación por nodo de `_revalidate_reuse` se separa en una función pura que devuelve conservados, inválidos y avisos sin escribir nada. `resume` nativo la usa y conserva su comportamiento. El controlador decide con ella antes de mutar el checkpoint. `check_resume` se llama como API pública, sin cambios.

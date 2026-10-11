@@ -297,6 +297,127 @@
       "expect": "ACCEPT"
     },
     {
+      "name": "fallback-de-sombra-en-el-mismo-intento",
+      "attempts": [
+        {
+          "attempt_id": "attempt-0001",
+          "end": "NORMAL",
+          "lines": [
+            {
+              "contract": "qraft.controller-inner-ledger@1.0",
+              "seq": 1,
+              "event": "LAUNCH_INTENT",
+              "at": "2026-10-11T19:00:00Z",
+              "task_id": "hf1-lru",
+              "attempt_id": "attempt-0001",
+              "key": {
+                "checkpoint_identity": "adaptive:5f0c",
+                "node_id": "response:lr_s001_p0p05_bare"
+              },
+              "trace_id": "hf1-lru/attempt-0001/1",
+              "hosts": [
+                "node-a"
+              ],
+              "ranks": 4,
+              "cpus_per_rank": 1,
+              "argv_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            {
+              "contract": "qraft.controller-inner-ledger@1.0",
+              "seq": 2,
+              "event": "LAUNCH_STARTED",
+              "at": "2026-10-11T19:00:00Z",
+              "task_id": "hf1-lru",
+              "attempt_id": "attempt-0001",
+              "key": {
+                "checkpoint_identity": "adaptive:5f0c",
+                "node_id": "response:lr_s001_p0p05_bare"
+              },
+              "trace_id": "hf1-lru/attempt-0001/1",
+              "pid": 4242
+            },
+            {
+              "contract": "qraft.controller-inner-ledger@1.0",
+              "seq": 3,
+              "event": "LAUNCH_FINISHED",
+              "at": "2026-10-11T19:00:00Z",
+              "task_id": "hf1-lru",
+              "attempt_id": "attempt-0001",
+              "key": {
+                "checkpoint_identity": "adaptive:5f0c",
+                "node_id": "response:lr_s001_p0p05_bare"
+              },
+              "trace_id": "hf1-lru/attempt-0001/1",
+              "exit_code": 0
+            },
+            {
+              "contract": "qraft.controller-inner-ledger@1.0",
+              "seq": 4,
+              "event": "LAUNCH_INTENT",
+              "at": "2026-10-11T19:00:00Z",
+              "task_id": "hf1-lru",
+              "attempt_id": "attempt-0001",
+              "key": {
+                "checkpoint_identity": "adaptive:5f0c",
+                "node_id": "response:lr_s001_p0p05_bare"
+              },
+              "trace_id": "hf1-lru/attempt-0001/4",
+              "hosts": [
+                "node-a"
+              ],
+              "ranks": 4,
+              "cpus_per_rank": 1,
+              "argv_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            {
+              "contract": "qraft.controller-inner-ledger@1.0",
+              "seq": 5,
+              "event": "LAUNCH_STARTED",
+              "at": "2026-10-11T19:00:00Z",
+              "task_id": "hf1-lru",
+              "attempt_id": "attempt-0001",
+              "key": {
+                "checkpoint_identity": "adaptive:5f0c",
+                "node_id": "response:lr_s001_p0p05_bare"
+              },
+              "trace_id": "hf1-lru/attempt-0001/4",
+              "pid": 4242
+            },
+            {
+              "contract": "qraft.controller-inner-ledger@1.0",
+              "seq": 6,
+              "event": "LAUNCH_FINISHED",
+              "at": "2026-10-11T19:00:00Z",
+              "task_id": "hf1-lru",
+              "attempt_id": "attempt-0001",
+              "key": {
+                "checkpoint_identity": "adaptive:5f0c",
+                "node_id": "response:lr_s001_p0p05_bare"
+              },
+              "trace_id": "hf1-lru/attempt-0001/4",
+              "exit_code": 0
+            },
+            {
+              "contract": "qraft.controller-inner-ledger@1.0",
+              "seq": 7,
+              "event": "NODE_SETTLED",
+              "at": "2026-10-11T19:00:00Z",
+              "task_id": "hf1-lru",
+              "attempt_id": "attempt-0001",
+              "key": {
+                "checkpoint_identity": "adaptive:5f0c",
+                "node_id": "response:lr_s001_p0p05_bare"
+              },
+              "trace_id": "hf1-lru/attempt-0001/4",
+              "native_state": "VALIDATED",
+              "evidence_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            }
+          ]
+        }
+      ],
+      "expect": "ACCEPT"
+    },
+    {
       "name": "relanzar-nodo-asentado-en-otro-intento",
       "attempts": [
         {

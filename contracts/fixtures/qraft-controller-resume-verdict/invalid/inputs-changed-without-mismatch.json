@@ -1,0 +1,21 @@
+{
+  "contract": "qraft.controller-resume-verdict@1.0",
+  "task_id": "hf1-lru",
+  "attempt_id": "attempt-0002",
+  "previous_attempt_id": "attempt-0001",
+  "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+  "decision": "REFUSE",
+  "reason": "RESUME_INPUTS_CHANGED",
+  "check_resume": {
+    "native_status": "NOT_ESTABLISHED",
+    "assessment": "NOT_ESTABLISHED",
+    "changed": [],
+    "reusable_response_ids": [],
+    "physical_equivalence": "NOT_ESTABLISHED"
+  },
+  "blocking": [
+    "file:input:Ni.psf"
+  ],
+  "continuation": null,
+  "scientific_effect": "NONE"
+}

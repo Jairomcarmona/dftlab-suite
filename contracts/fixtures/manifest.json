@@ -848,6 +848,66 @@
       "schema": "qraft-controller-reservation.schema.json",
       "expect": "invalid",
       "rule": "El lanzador interno es una ruta absoluta, sin PATH."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/valid/continue-interrupted-node.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "valid",
+      "rule": "Continuidad técnica: NOT_ESTABLISHED neutral, sin cambios, el nodo interrumpido queda lanzable."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/valid/refuse-inputs-changed.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "valid",
+      "rule": "IDENTITY_MISMATCH con cambios rechaza con 75."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/valid/refuse-evidence-invalid.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "valid",
+      "rule": "Sin petición válida de check_resume se rechaza."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/continue-despite-identity-mismatch.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "CONTINUE exige check_resume NOT_ESTABLISHED."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/continue-with-reusable-responses.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "Continuar nunca reutiliza respuestas: reusable_response_ids vacío."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/continue-claiming-physical-equivalence.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "La continuidad técnica no afirma equivalencia física."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/scientific-effect-promoted.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "Reanudar no tiene efecto científico."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/continue-without-check-resume.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "CONTINUE exige el resultado copiado de check_resume."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/refuse-with-continuation.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "Un rechazo no lanza nada."
+    },
+    {
+      "path": "fixtures/qraft-controller-resume-verdict/invalid/inputs-changed-without-mismatch.json",
+      "schema": "qraft-controller-resume-verdict.schema.json",
+      "expect": "invalid",
+      "rule": "RESUME_INPUTS_CHANGED exige IDENTITY_MISMATCH con cambios."
     }
   ]
 }

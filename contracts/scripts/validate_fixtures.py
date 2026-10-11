@@ -49,6 +49,14 @@ for case in ledger_vectors["cases"]:
             if errors:
                 failures.append(f"controller-ledger-rules {case['name']} seq {line.get('seq')}: {errors[0].message}")
 
+verdict_validator = Draft202012Validator(
+    schemas["qraft-controller-resume-verdict.schema.json"], registry=registry, format_checker=FormatChecker()
+)
+for case in load(ROOT / "fixtures" / "controller-resume-rules" / "cases.json")["cases"]:
+    errors = list(verdict_validator.iter_errors(case["expect"]))
+    if errors:
+        failures.append(f"controller-resume-rules {case['name']}: {errors[0].message}")
+
 try:
     from openapi_spec_validator import validate as validate_openapi
     from openapi_spec_validator.readers import read_from_filename

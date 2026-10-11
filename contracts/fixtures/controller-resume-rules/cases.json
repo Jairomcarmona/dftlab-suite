@@ -1,0 +1,1669 @@
+{
+  "description": "Vectores de conformidad del veredicto de reanudación qraft.controller-resume-verdict@1.0 (ADR-017 Adenda 2). Cada caso describe lo que el controlador observa en el intento N: el resultado de check_resume (null si no hubo petición válida), la carga del checkpoint nativo, lo asentado en los libros anteriores, y los recibos con el resultado de la revalidación nativa en seco (RETAINED, INVALID o DIGEST_WARNING). check-contracts.mjs aplica el evaluador de referencia; validate_fixtures.py valida cada expect contra el schema. Las pruebas de HubbardFlow (U-H7) deben dar el mismo veredicto en cada caso.",
+  "dag": [
+    {
+      "node_id": "reference",
+      "kind": "REFERENCE",
+      "dependencies": []
+    },
+    {
+      "node_id": "response:lr_s000_p0p05_bare",
+      "kind": "PERTURBATION",
+      "dependencies": [
+        "reference"
+      ]
+    },
+    {
+      "node_id": "response:lr_s000_p0p05_scf",
+      "kind": "PERTURBATION",
+      "dependencies": [
+        "reference"
+      ]
+    },
+    {
+      "node_id": "alpha-diagnostic-gate",
+      "kind": "ALPHA_GATE",
+      "dependencies": [
+        "response:lr_s000_p0p05_bare",
+        "response:lr_s000_p0p05_scf"
+      ]
+    },
+    {
+      "node_id": "matrix-analysis",
+      "kind": "MATRIX_ANALYSIS",
+      "dependencies": [
+        "alpha-diagnostic-gate"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "name": "checkpoint-validado-sin-cambios",
+      "description": "Línea base sin cambios y tres recibos VALIDATED que la revalidación nativa conserva: continúa sin relanzar nada; los nodos derivados los recalcula el código nativo.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "CONTINUE",
+        "reason": "TECHNICAL_CONTINUATION",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": {
+          "retained": [
+            "reference",
+            "response:lr_s000_p0p05_bare",
+            "response:lr_s000_p0p05_scf"
+          ],
+          "recovered": [],
+          "launch_pending": []
+        },
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "nodo-interrumpido",
+      "description": "Un SCF interno se cortó sin recibo (LAUNCH_ABANDONED o caída): continúa y ese nodo vuelve a ser lanzable.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "CONTINUE",
+        "reason": "TECHNICAL_CONTINUATION",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": {
+          "retained": [
+            "reference",
+            "response:lr_s000_p0p05_bare"
+          ],
+          "recovered": [],
+          "launch_pending": [
+            "response:lr_s000_p0p05_scf"
+          ]
+        },
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "nada-lanzado-todavia",
+      "description": "El intento anterior cayó antes del primer lanzamiento: libro vacío y checkpoint sin recibos.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": null,
+        "settled": [],
+        "finished_unsettled": []
+      },
+      "receipts": [],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "CONTINUE",
+        "reason": "TECHNICAL_CONTINUATION",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": {
+          "retained": [],
+          "recovered": [],
+          "launch_pending": [
+            "reference",
+            "response:lr_s000_p0p05_bare",
+            "response:lr_s000_p0p05_scf"
+          ]
+        },
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "caida-entre-checkpoint-y-libro",
+      "description": "El checkpoint guardó el recibo y el intento cayó antes de NODE_SETTLED: se anota SETTLEMENT_RECOVERED y no se relanza.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          }
+        ],
+        "finished_unsettled": [
+          "response:lr_s000_p0p05_scf"
+        ]
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "CONTINUE",
+        "reason": "TECHNICAL_CONTINUATION",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": {
+          "retained": [
+            "reference",
+            "response:lr_s000_p0p05_bare",
+            "response:lr_s000_p0p05_scf"
+          ],
+          "recovered": [
+            "response:lr_s000_p0p05_scf"
+          ],
+          "launch_pending": []
+        },
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "respuesta-sin-calificacion-fisica",
+      "description": "El análisis nativo dejó la respuesta sin calificación física (NOT_ESTABLISHED). La continuidad técnica no depende de la ciencia ni la promueve: continúa con scientific_effect NONE.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "alpha-diagnostic-gate",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-alpha-diagnostic-gate",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "matrix-analysis",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-matrix-analysis",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "native_science": {
+        "matrix-analysis": {
+          "numerical_status": "NOT_ESTABLISHED"
+        }
+      },
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "CONTINUE",
+        "reason": "TECHNICAL_CONTINUATION",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": {
+          "retained": [
+            "reference",
+            "response:lr_s000_p0p05_bare",
+            "response:lr_s000_p0p05_scf"
+          ],
+          "recovered": [],
+          "launch_pending": []
+        },
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "derivado-invalido-se-recalcula",
+      "description": "La evidencia del gate derivado no revalida: el código nativo lo invalida con sus descendientes (solo derivados) y lo recalcula; ningún nodo lanzado se toca.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "alpha-diagnostic-gate",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-alpha-diagnostic-gate",
+          "revalidation": "INVALID"
+        },
+        {
+          "node_id": "matrix-analysis",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-matrix-analysis",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "CONTINUE",
+        "reason": "TECHNICAL_CONTINUATION",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": {
+          "retained": [
+            "reference",
+            "response:lr_s000_p0p05_bare",
+            "response:lr_s000_p0p05_scf"
+          ],
+          "recovered": [],
+          "launch_pending": []
+        },
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "plan-cambiado",
+      "description": "El plan resuelto difiere del de la línea base.",
+      "check_resume": {
+        "native_status": "IDENTITY_MISMATCH",
+        "assessment": "FAIL",
+        "changed": [
+          "plan"
+        ],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "RESUME_INPUTS_CHANGED",
+        "check_resume": {
+          "native_status": "IDENTITY_MISMATCH",
+          "assessment": "FAIL",
+          "changed": [
+            "plan"
+          ],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "plan"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "pseudo-cambiado",
+      "description": "El .psf de entrada cambió de bytes.",
+      "check_resume": {
+        "native_status": "IDENTITY_MISMATCH",
+        "assessment": "FAIL",
+        "changed": [
+          "file:input:Ni.psf"
+        ],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "RESUME_INPUTS_CHANGED",
+        "check_resume": {
+          "native_status": "IDENTITY_MISMATCH",
+          "assessment": "FAIL",
+          "changed": [
+            "file:input:Ni.psf"
+          ],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "file:input:Ni.psf"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "dm-de-entrada-cambiado",
+      "description": "El .DM padre declarado en input_files cambió de bytes.",
+      "check_resume": {
+        "native_status": "IDENTITY_MISMATCH",
+        "assessment": "FAIL",
+        "changed": [
+          "file:input:parent.DM"
+        ],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "RESUME_INPUTS_CHANGED",
+        "check_resume": {
+          "native_status": "IDENTITY_MISMATCH",
+          "assessment": "FAIL",
+          "changed": [
+            "file:input:parent.DM"
+          ],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "file:input:parent.DM"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "politica-cambiada",
+      "description": "El manifiesto de campaña cambió una política: cambian a la vez policies y el hash del manifiesto.",
+      "check_resume": {
+        "native_status": "IDENTITY_MISMATCH",
+        "assessment": "FAIL",
+        "changed": [
+          "file:manifest:campaign.json",
+          "policies"
+        ],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "RESUME_INPUTS_CHANGED",
+        "check_resume": {
+          "native_status": "IDENTITY_MISMATCH",
+          "assessment": "FAIL",
+          "changed": [
+            "file:manifest:campaign.json",
+            "policies"
+          ],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "file:manifest:campaign.json",
+          "policies"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "linea-base-ausente-o-con-respuestas",
+      "description": "Falta resume-baseline.json, no es una petición válida, trae responses no vacío (reutilización de piloto) o check_resume lanza PublicApiError.",
+      "check_resume": null,
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "RESUME_EVIDENCE_INVALID",
+        "check_resume": null,
+        "blocking": [],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "estado-no-reconocido",
+      "description": "check_resume devuelve un estado distinto de NOT_ESTABLISHED e IDENTITY_MISMATCH (aquí el histórico EXACT_MATCH): nunca se lee como permiso.",
+      "check_resume": {
+        "native_status": "EXACT_MATCH",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "RESUME_STATUS_UNRECOGNIZED",
+        "check_resume": {
+          "native_status": "EXACT_MATCH",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "respuestas-reutilizables-inesperadas",
+      "description": "Un payload con reusable_response_ids no vacío no es el que el controlador pidió (responses vacío).",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [
+          "response:x"
+        ],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "RESUME_STATUS_UNRECOGNIZED",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [
+            "response:x"
+          ],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "checkpoint-de-otro-dag",
+      "description": "JsonDagCheckpoint.load rechaza el archivo (otro DAG científico o recibo malformado).",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": false,
+        "campaign_digest": null
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": null,
+        "decision": "REFUSE",
+        "reason": "CHECKPOINT_IDENTITY_MISMATCH",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "identidad-distinta-del-libro",
+      "description": "El checkpoint carga, pero su campaign_digest no es la checkpoint_identity del libro.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:ffff"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:ffff",
+        "decision": "REFUSE",
+        "reason": "CHECKPOINT_IDENTITY_MISMATCH",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "libro-asentado-sin-recibo",
+      "description": "El libro asentó un nodo que el checkpoint ya no tiene.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "LEDGER_CHECKPOINT_INCONSISTENT",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "response:lr_s000_p0p05_scf"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "recibo-sin-lanzamiento",
+      "description": "El checkpoint tiene un recibo de un nodo lanzable sin LAUNCH_FINISHED ni asentamiento en el libro.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "LEDGER_CHECKPOINT_INCONSISTENT",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "response:lr_s000_p0p05_scf"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "fallo-asentado",
+      "description": "Un nodo lanzado tiene un recibo de fallo terminal. La reanudación nativa lo relanzaría; el controlador no: queda BLOCKED para que decida una persona.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "FAILED_EXECUTION",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "FAILED_EXECUTION",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "SETTLED_FAILURE_PRESENT",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "response:lr_s000_p0p05_scf"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "evidencia-que-no-revalida",
+      "description": "Un recibo VALIDATED deja de validar con el validador nativo: relanzarlo sería recalcular en silencio algo asentado.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "INVALID"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "SETTLED_EVIDENCE_INVALID",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "response:lr_s000_p0p05_scf"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "digest-de-evidencia-distinto",
+      "description": "La revalidación nativa pasa pero avisa NODE_EVIDENCE_DIGEST_MISMATCH: los artefactos ya no son los asentados.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "DIGEST_WARNING"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "SETTLED_EVIDENCE_INVALID",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "response:lr_s000_p0p05_scf"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    },
+    {
+      "name": "referencia-invalida-arrastra-descendientes",
+      "description": "Si la referencia no revalida (falta su .DM), sus perturbaciones también caerían: rechazo con los tres nodos.",
+      "check_resume": {
+        "native_status": "NOT_ESTABLISHED",
+        "assessment": "NOT_ESTABLISHED",
+        "changed": [],
+        "reusable_response_ids": [],
+        "physical_equivalence": "NOT_ESTABLISHED"
+      },
+      "checkpoint": {
+        "loads": true,
+        "campaign_digest": "translation-shadow:5f0c:9a8b"
+      },
+      "ledger": {
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "settled": [
+          {
+            "node_id": "reference",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-reference"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_bare",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_bare"
+          },
+          {
+            "node_id": "response:lr_s000_p0p05_scf",
+            "native_state": "VALIDATED",
+            "evidence_digest": "ev-response:lr_s000_p0p05_scf"
+          }
+        ],
+        "finished_unsettled": []
+      },
+      "receipts": [
+        {
+          "node_id": "reference",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-reference",
+          "revalidation": "INVALID"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_bare",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_bare",
+          "revalidation": "RETAINED"
+        },
+        {
+          "node_id": "response:lr_s000_p0p05_scf",
+          "state": "VALIDATED",
+          "evidence_digest": "ev-response:lr_s000_p0p05_scf",
+          "revalidation": "RETAINED"
+        }
+      ],
+      "expect": {
+        "contract": "qraft.controller-resume-verdict@1.0",
+        "task_id": "hf1-lru",
+        "attempt_id": "attempt-0002",
+        "previous_attempt_id": "attempt-0001",
+        "checkpoint_identity": "translation-shadow:5f0c:9a8b",
+        "decision": "REFUSE",
+        "reason": "SETTLED_EVIDENCE_INVALID",
+        "check_resume": {
+          "native_status": "NOT_ESTABLISHED",
+          "assessment": "NOT_ESTABLISHED",
+          "changed": [],
+          "reusable_response_ids": [],
+          "physical_equivalence": "NOT_ESTABLISHED"
+        },
+        "blocking": [
+          "reference",
+          "response:lr_s000_p0p05_bare",
+          "response:lr_s000_p0p05_scf"
+        ],
+        "continuation": null,
+        "scientific_effect": "NONE"
+      }
+    }
+  ]
+}
