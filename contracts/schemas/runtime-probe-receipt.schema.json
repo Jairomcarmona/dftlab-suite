@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/runtime-probe-receipt.schema.json",
+  "title": "RuntimeProbeReceipt",
+  "description": "Observación del entorno de ejecución de un perfil (§25.3).",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.runtime-probe-receipt"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "profile",
+        "executable",
+        "launcher",
+        "capabilities",
+        "storage_checks",
+        "observed_at",
+        "valid_until"
+      ],
+      "properties": {
+        "profile": {
+          "type": "object",
+          "required": [
+            "profile_id",
+            "revision"
+          ],
+          "properties": {
+            "profile_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "revision": {
+              "$ref": "defs.schema.json#/$defs/revision"
+            }
+          },
+          "additionalProperties": false
+        },
+        "executable": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "build",
+            "sha256"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "build": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "sha256": {
+              "anyOf": [
+                {
+                  "$ref": "defs.schema.json#/$defs/sha256_hex"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "launcher": {
+          "type": "object",
+          "required": [
+            "kind",
+            "mpi",
+            "ranks",
+            "threads_per_rank"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "mpi": {
+              "type": "boolean"
+            },
+            "ranks": {
+              "$ref": "defs.schema.json#/$defs/safe_count"
+            },
+            "threads_per_rank": {
+              "$ref": "defs.schema.json#/$defs/safe_count"
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/code"
+          }
+        },
+        "storage_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "check",
+              "result"
+            ],
+            "properties": {
+              "check": {
+                "$ref": "defs.schema.json#/$defs/code"
+              },
+              "result": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "NOT_ESTABLISHED"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "observed_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "valid_until": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schema_id": "dftlab.capability-descriptor",
+  "schema_version": "0.1.0",
+  "record_id": "rec-capability-descriptor",
+  "project_id": null,
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "capability_id": "dftlab.reader.siesta-bands",
+    "version": "1.0.0",
+    "catalog_state": "IMPLEMENTED",
+    "admitted_for": [
+      "EXECUTION"
+    ],
+    "input_schemas": [],
+    "output_schemas": [
+      "dftlab.result-dataset@0.1"
+    ],
+    "protocol": null,
+    "modes": [],
+    "targets": [
+      "LOCAL_LINUX",
+      "LOCAL_WSL2"
+    ],
+    "engine_versions": [],
+    "supports": {
+      "cancel": "NONE",
+      "resume": "NONE"
+    },
+    "canonical_path": {
+      "describe": "OK",
+      "validate": "OK",
+      "compile": "NOT_APPLICABLE",
+      "prepare": "NOT_APPLICABLE",
+      "transport": "MISSING",
+      "execute": "MISSING",
+      "collect": "NOT_APPLICABLE",
+      "recover": "NOT_APPLICABLE"
+    },
+    "test_refs": [
+      "app/tests/siesta/run_bands_path_tests.mjs"
+    ]
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

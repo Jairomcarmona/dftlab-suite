@@ -1,0 +1,42 @@
+{
+  "schema_id": "dftlab.species-definition",
+  "schema_version": "0.1.0",
+  "record_id": "rec-species-definition",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "species_label": "Si",
+    "z": 14,
+    "pseudo": {
+      "artifact": {
+        "artifact_id": "art-Si.psml",
+        "sha256": "8df4401b776f9e19abcd30cc168e113ef303d4ba7abc9ca34f12fb2d9a5534f2",
+        "media_type": "application/xml"
+      },
+      "format": "psml",
+      "xc_functional": "PBE",
+      "license": null,
+      "source": "PseudoDojo"
+    },
+    "basis": {
+      "size": "DZP"
+    },
+    "atom_ids": [
+      "a1",
+      "a2"
+    ]
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

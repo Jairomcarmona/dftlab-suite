@@ -1,0 +1,28 @@
+{
+  "description": "Tabla de transiciones de OperationRecord (ADR-007, propuesta §25.2). Cada transición se aplica con compare-and-set sobre revision y se persiste antes de notificar. No sustituye estados nativos de QRAFT ni de la capa Hubbard.",
+  "states": ["PENDING", "RUNNING", "OUTCOME_UNKNOWN", "SUCCEEDED", "FAILED", "REJECTED", "CANCELLED"],
+  "terminal": ["SUCCEEDED", "FAILED", "REJECTED", "CANCELLED"],
+  "transitions": [
+    {"from": "PENDING", "to": "RUNNING", "trigger": "processor claims intent from outbox", "guard": "revision CAS; intent persisted"},
+    {"from": "PENDING", "to": "REJECTED", "trigger": "precondition or admission fails", "guard": "no external effect started", "evidence": "AdmissionReceipt or Problem"},
+    {"from": "PENDING", "to": "CANCELLED", "trigger": "operation withdrawn before any effect", "guard": "no external effect started"},
+    {"from": "RUNNING", "to": "SUCCEEDED", "trigger": "effect confirmed", "evidence": "receipt of the effect (e.g. SubmissionReceipt ACCEPTED)"},
+    {"from": "RUNNING", "to": "FAILED", "trigger": "effect failed with evidence of no external change", "evidence": "Problem + evidence"},
+    {"from": "RUNNING", "to": "OUTCOME_UNKNOWN", "trigger": "acknowledgement lost or worker restart mid-effect", "evidence": "SubmissionReceipt SUBMISSION_UNKNOWN"},
+    {"from": "OUTCOME_UNKNOWN", "to": "SUCCEEDED", "trigger": "reconciliation finds the effect", "evidence": "SubmissionReceipt RECONCILED_FOUND"},
+    {"from": "OUTCOME_UNKNOWN", "to": "FAILED", "trigger": "reconciliation proves absence", "evidence": "SubmissionReceipt RECONCILED_ABSENT_WITH_EVIDENCE"}
+  ],
+  "forbidden": [
+    {"from": "OUTCOME_UNKNOWN", "action": "blind resubmit", "rule": "Un timeout o una consulta vacía no autorizan reenviar."},
+    {"from": "*", "action": "state, owner or digest supplied by client", "rule": "Se derivan en el servidor."}
+  ],
+  "races": [
+    {"case": "Misma clave/request simultáneos", "rule": "Una sola OperationRecord; misma clave con otro request_hash => 409 IDEMPOTENCY_KEY_REUSED."},
+    {"case": "Cancel después de terminación", "rule": "Se registra la operación CANCEL_RUN como SUCCEEDED sin efecto; el estado observado del run no cambia."},
+    {"case": "Cancel antes de confirmación de submit", "rule": "Se conservan ambas operaciones; se reconcilia la aceptación y se aplica scancel si el job existe; no se asume ausencia."},
+    {"case": "Dos resume sobre el mismo plan", "rule": "Idempotencia por resume_plan_id + revisión; un solo ControllerAuthorityRecord vigente."},
+    {"case": "Callback de intento anterior", "rule": "Se conserva como evidencia; no actualiza RunProjection si attempt_id != current_attempt_id o authority_generation es menor."},
+    {"case": "Operación exitosa, run desconocido", "rule": "OperationRecord SUCCEEDED y RunProjection con dimensiones UNKNOWN; la UI muestra ambos."},
+    {"case": "Assessment nuevo con política distinta", "rule": "Nuevo AssessmentRecord con supersedes; el anterior queda intacto."}
+  ]
+}

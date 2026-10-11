@@ -1,0 +1,9 @@
+{
+  "description": "El mismo documento con los dos algoritmos nativos. Difieren por ensure_ascii; la plataforma conserva cada uno y no los unifica.",
+  "document": {
+    "name": "Níquel",
+    "sites": 2
+  },
+  "qraft.content-sha256-v1": "50687307fc731ff848f10ca5496ef49546526a7662f7bb280c686b4bdca582f9",
+  "hubbardflow.plan-digest-v1": "3fa64181a754af6315002b69d0a24549a4b5dc034ca8bb5237f1712fc248a3d3"
+}

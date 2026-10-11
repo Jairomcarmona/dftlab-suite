@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/operation-request.schema.json",
+  "title": "OperationRequest",
+  "description": "Cuerpo de toda mutación. El servidor deriva owner, estado y autoridad; no se aceptan del cliente (ADR-004 §4, ADR-007 §1).",
+  "type": "object",
+  "required": [
+    "action",
+    "project_id",
+    "target",
+    "payload",
+    "idempotency_key"
+  ],
+  "properties": {
+    "action": {
+      "enum": [
+        "VALIDATE_INPUT",
+        "CREATE_CAMPAIGN",
+        "CREATE_PLAN",
+        "PREPARE_PACKAGE",
+        "SUBMIT_RUN",
+        "CANCEL_RUN",
+        "CREATE_RESUME_PLAN",
+        "EXECUTE_RESUME_PLAN",
+        "RECONCILE_RUN"
+      ]
+    },
+    "project_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "target": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id",
+        "expected_revision"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "PROJECT",
+            "CAMPAIGN",
+            "PLAN",
+            "RUN",
+            "RESUME_PLAN"
+          ]
+        },
+        "id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "expected_revision": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "payload": {
+      "type": "object"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{16,128}$"
+    },
+    "budget_ref": {
+      "anyOf": [
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "profile_ref": {
+      "anyOf": [
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "SUBMIT_RUN"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "profile_ref"
+        ],
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "plan_id",
+              "package_id",
+              "admission_purpose"
+            ],
+            "properties": {
+              "plan_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "package_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "admission_purpose": {
+                "enum": [
+                  "EXPLORATORY",
+                  "QUALIFIED_RESULT"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "CANCEL_RUN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "reason"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "EXECUTE_RESUME_PLAN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "resume_plan_id"
+            ],
+            "properties": {
+              "resume_plan_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ]
+}

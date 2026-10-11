@@ -1,0 +1,405 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/event-record.schema.json",
+  "title": "EventRecord",
+  "description": "Envelope de evento §6.2. Orden por stream; consumidores deduplican por event_id. Tipos desconocidos validan y se ignoran sin efectos.",
+  "type": "object",
+  "required": [
+    "event_id",
+    "stream_id",
+    "sequence",
+    "occurred_at",
+    "recorded_at",
+    "type",
+    "schema_version",
+    "project_id",
+    "operation_id",
+    "run_id",
+    "attempt_id",
+    "payload",
+    "evidence_refs"
+  ],
+  "properties": {
+    "event_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "stream_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "sequence": {
+      "$ref": "defs.schema.json#/$defs/revision"
+    },
+    "occurred_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "recorded_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"
+    },
+    "schema_version": {
+      "$ref": "defs.schema.json#/$defs/semver"
+    },
+    "project_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "operation_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "attempt_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "payload": {
+      "type": "object"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "defs.schema.json#/$defs/evidence_ref"
+      }
+    },
+    "native_event": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "native"
+          ],
+          "properties": {
+            "native": {
+              "$ref": "native-contract-ref.schema.json"
+            },
+            "native_event_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "native_sequence": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "$ref": "defs.schema.json#/$defs/safe_count"
+                    },
+                    {
+                      "$ref": "defs.schema.json#/$defs/big_int_string"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "operation.state_changed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "operation_id",
+              "from",
+              "to",
+              "revision"
+            ],
+            "properties": {
+              "operation_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "from": {
+                "enum": [
+                  "PENDING",
+                  "RUNNING",
+                  "OUTCOME_UNKNOWN",
+                  "SUCCEEDED",
+                  "FAILED",
+                  "REJECTED",
+                  "CANCELLED"
+                ]
+              },
+              "to": {
+                "enum": [
+                  "PENDING",
+                  "RUNNING",
+                  "OUTCOME_UNKNOWN",
+                  "SUCCEEDED",
+                  "FAILED",
+                  "REJECTED",
+                  "CANCELLED"
+                ]
+              },
+              "revision": {
+                "$ref": "defs.schema.json#/$defs/revision"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "run.projection_updated"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "run_id",
+              "source_revision",
+              "changed_dimensions"
+            ],
+            "properties": {
+              "run_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "source_revision": {
+                "$ref": "defs.schema.json#/$defs/revision"
+              },
+              "changed_dimensions": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "scheduler",
+                    "execution",
+                    "integrity",
+                    "science"
+                  ]
+                },
+                "minItems": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "run.attempt_created"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "run_id",
+              "attempt_id"
+            ],
+            "properties": {
+              "run_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "attempt_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "resume_plan_id": {
+                "anyOf": [
+                  {
+                    "$ref": "defs.schema.json#/$defs/id"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "run.output_segment"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "run_id",
+              "stream",
+              "offset",
+              "text"
+            ],
+            "properties": {
+              "run_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "stream": {
+                "enum": [
+                  "stdout",
+                  "stderr",
+                  "pty",
+                  "log"
+                ]
+              },
+              "offset": {
+                "$ref": "defs.schema.json#/$defs/safe_count"
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 65536
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "artifact.committed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "artifact"
+            ],
+            "properties": {
+              "artifact": {
+                "$ref": "artifact-ref.schema.json"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "assessment.recorded"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "assessment_id",
+              "passport_state"
+            ],
+            "properties": {
+              "assessment_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "passport_state": {
+                "$ref": "defs.schema.json#/$defs/passport_state"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "stream.resync_required"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "reason",
+              "snapshot_url"
+            ],
+            "properties": {
+              "reason": {
+                "enum": [
+                  "CURSOR_EXPIRED",
+                  "SOURCE_REVISION_CHANGED",
+                  "REPLAY_LIMIT"
+                ]
+              },
+              "snapshot_url": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ]
+}

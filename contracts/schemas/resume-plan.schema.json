@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/resume-plan.schema.json",
+  "title": "ResumePlan",
+  "description": "Plan de reutilización: reutilizables, inválidos, pendientes y semillas con motivo (§13.4). Ejecutarlo crea un intento nuevo enlazado.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.resume-plan"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "resume_plan_id",
+        "run_id",
+        "from_attempt_id",
+        "plan_revision",
+        "native_checks",
+        "nodes",
+        "engine_versions",
+        "budget",
+        "expires_at",
+        "preconditions"
+      ],
+      "properties": {
+        "resume_plan_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "run_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "from_attempt_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "plan_revision": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "native_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "check",
+              "native_status",
+              "evidence"
+            ],
+            "properties": {
+              "check": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "native_status": {
+                "$ref": "defs.schema.json#/$defs/native_status"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "defs.schema.json#/$defs/evidence_ref"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "nodes": {
+          "type": "object",
+          "required": [
+            "reuse",
+            "invalid",
+            "pending",
+            "seed_candidates"
+          ],
+          "properties": {
+            "reuse": {
+              "type": "array",
+              "items": {
+                "$ref": "defs.schema.json#/$defs/id"
+              }
+            },
+            "invalid": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "node_id",
+                  "reason"
+                ],
+                "properties": {
+                  "node_id": {
+                    "$ref": "defs.schema.json#/$defs/id"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "pending": {
+              "type": "array",
+              "items": {
+                "$ref": "defs.schema.json#/$defs/id"
+              }
+            },
+            "seed_candidates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "node_id",
+                  "artifact",
+                  "kind",
+                  "compatibility"
+                ],
+                "properties": {
+                  "node_id": {
+                    "$ref": "defs.schema.json#/$defs/id"
+                  },
+                  "artifact": {
+                    "$ref": "artifact-ref.schema.json"
+                  },
+                  "kind": {
+                    "enum": [
+                      "DM",
+                      "XV"
+                    ]
+                  },
+                  "compatibility": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "engine_versions": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/engine_pin"
+          },
+          "minItems": 1
+        },
+        "budget": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "budget_ref",
+                "estimate"
+              ],
+              "properties": {
+                "budget_ref": {
+                  "$ref": "defs.schema.json#/$defs/id"
+                },
+                "estimate": {
+                  "$ref": "defs.schema.json#/$defs/quantity"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind",
+              "expected"
+            ],
+            "properties": {
+              "kind": {
+                "$ref": "defs.schema.json#/$defs/code"
+              },
+              "expected": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

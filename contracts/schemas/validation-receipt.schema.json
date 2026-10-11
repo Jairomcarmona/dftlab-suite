@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/validation-receipt.schema.json",
+  "title": "ValidationReceipt",
+  "description": "Recibo de validación (preflight). Un recibo viejo no valida un archivo modificado: va ligado a hashes de entrada.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.validation-receipt"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "validator",
+        "authority",
+        "input_refs",
+        "policies",
+        "diagnostics",
+        "decision",
+        "overrides",
+        "scope"
+      ],
+      "properties": {
+        "validator": {
+          "type": "object",
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "additionalProperties": false
+        },
+        "authority": {
+          "enum": [
+            "ORIENTATIVE",
+            "AUTHORITATIVE"
+          ]
+        },
+        "input_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "artifact-ref.schema.json"
+          },
+          "minItems": 1
+        },
+        "policies": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/policy_ref"
+          }
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "severity",
+              "rule_kind",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "$ref": "defs.schema.json#/$defs/code"
+              },
+              "severity": {
+                "enum": [
+                  "BLOCKING",
+                  "WARNING",
+                  "INFO"
+                ]
+              },
+              "rule_kind": {
+                "enum": [
+                  "HARD_RULE",
+                  "HEURISTIC"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "location": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "decision": {
+          "enum": [
+            "ACCEPTED",
+            "ACCEPTED_WITH_WARNINGS",
+            "BLOCKED"
+          ]
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "rule_kind",
+              "principal_id",
+              "justification",
+              "at"
+            ],
+            "properties": {
+              "code": {
+                "$ref": "defs.schema.json#/$defs/code"
+              },
+              "rule_kind": {
+                "const": "HEURISTIC"
+              },
+              "principal_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "justification": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "at": {
+                "$ref": "defs.schema.json#/$defs/timestamp"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

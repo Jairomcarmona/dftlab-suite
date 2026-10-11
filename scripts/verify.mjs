@@ -18,6 +18,7 @@ const tasks = [
   'app/tests/ui/run_resources_tests.mjs',
   'app/scripts/build.mjs',
   'app/tests/tooling/run_serve_tests.mjs',
+  'contracts/scripts/check-contracts.mjs',
 ];
 
 if (process.argv.includes('--browser')) tasks.push('app/scripts/test-browser.mjs');

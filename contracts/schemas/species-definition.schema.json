@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/species-definition.schema.json",
+  "title": "SpeciesDefinition",
+  "description": "Especie química con pseudo, base y átomos asociados.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.species-definition"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "species_label",
+        "z",
+        "pseudo",
+        "basis",
+        "atom_ids"
+      ],
+      "properties": {
+        "species_label": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "z": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 118
+        },
+        "pseudo": {
+          "type": "object",
+          "required": [
+            "artifact",
+            "format",
+            "xc_functional"
+          ],
+          "properties": {
+            "artifact": {
+              "$ref": "artifact-ref.schema.json"
+            },
+            "format": {
+              "enum": [
+                "psml",
+                "psf",
+                "upf",
+                "other"
+              ]
+            },
+            "xc_functional": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "license": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "basis": {
+          "type": "object"
+        },
+        "atom_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "minItems": 1
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "ghost": {
+          "type": "boolean"
+        },
+        "synthetic": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

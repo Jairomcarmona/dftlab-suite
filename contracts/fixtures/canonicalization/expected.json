@@ -1,0 +1,10 @@
+{
+  "keys-and-unicode": {
+    "canonical": "{\"a\":[3,null,true],\"b\":\"Å\",\"c\":{\"y\":\"x\",\"z\":1}}",
+    "sha256": "ba7b8eeab4e2158d7e956c007d33d418b6e201d6d9ea53eb088208b474c2cf36"
+  },
+  "numbers": {
+    "canonical": "{\"n\":[1,0.1,1e+21,0,123456789012345680000],\"s\":\"1.0\"}",
+    "sha256": "5d9f91d263d295f11459a0f01acbf3e0eba7be576e87cfa6b54b844dac330305"
+  }
+}

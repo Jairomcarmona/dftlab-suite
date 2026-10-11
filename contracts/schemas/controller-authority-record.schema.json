@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/controller-authority-record.schema.json",
+  "title": "ControllerAuthorityRecord",
+  "description": "Owner/lease con generación y fencing (ADR-007 §4). Sin fencing comprobable el takeover automático queda deshabilitado.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.controller-authority-record"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "attempt_id",
+        "owner_instance_id",
+        "generation",
+        "fencing",
+        "automatic_takeover",
+        "site_scope",
+        "lease_expires_at",
+        "validity_evidence",
+        "termination_evidence"
+      ],
+      "properties": {
+        "run_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "attempt_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "owner_instance_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "generation": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "fencing": {
+          "type": "object",
+          "required": [
+            "mechanism",
+            "checked_at"
+          ],
+          "properties": {
+            "mechanism": {
+              "enum": [
+                "NOT_SUPPORTED",
+                "ENGINE_TOKEN_CHECK",
+                "SITE_LOCK",
+                "TERMINATION_EVIDENCE"
+              ]
+            },
+            "checked_at": {
+              "enum": [
+                "NONE",
+                "LAUNCH",
+                "LAUNCH_AND_PUBLISH"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "automatic_takeover": {
+          "enum": [
+            "DISABLED",
+            "ALLOWED"
+          ]
+        },
+        "site_scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "lease_expires_at": {
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "validity_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/evidence_ref"
+          }
+        },
+        "termination_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/evidence_ref"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "fencing": {
+                "properties": {
+                  "mechanism": {
+                    "const": "NOT_SUPPORTED"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "automatic_takeover": {
+                "const": "DISABLED"
+              }
+            }
+          }
+        }
+      ],
+      "title": "payload"
+    }
+  }
+}

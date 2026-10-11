@@ -1,0 +1,76 @@
+{
+  "schema_id": "dftlab.structure-revision",
+  "schema_version": "0.1.0",
+  "record_id": "rec-structure-revision",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "structure_id": "str-si",
+    "revision": 1,
+    "parent_revision": null,
+    "convention": "cell-vectors-as-rows",
+    "cell": {
+      "vectors": [
+        [
+          0,
+          2.715,
+          2.715
+        ],
+        [
+          2.715,
+          0,
+          2.715
+        ],
+        [
+          2.715,
+          2.715,
+          0
+        ]
+      ],
+      "unit": "angstrom"
+    },
+    "periodicity": [
+      true,
+      true,
+      true
+    ],
+    "coordinates": {
+      "kind": "cartesian"
+    },
+    "sites": [
+      {
+        "atom_id": "a1",
+        "species_label": "Si",
+        "position": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "atom_id": "a2",
+        "species_label": "Si",
+        "position": [
+          0.25,
+          0.25,
+          0.25
+        ]
+      }
+    ],
+    "transformations": [],
+    "physical_intent": "BULK"
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}
