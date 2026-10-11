@@ -102,8 +102,20 @@ class PinnedEngines:
                     raise Problem("ENGINE_UNAVAILABLE")
                 apis[name] = api
             self.qraft, self.hubbardflow = apis["qraft"], apis["hubbardflow"]
+            self._roots, self._importer = roots, importer
         except (OSError, KeyError, ValueError, AttributeError, ImportError, metadata.PackageNotFoundError):
             # No exception detail/paths leak to clients or logs.
+            raise Problem("ENGINE_UNAVAILABLE") from None
+
+    def qraft_contracts(self):
+        """Pinned public core serialization facade; never implementation imports."""
+        try:
+            api = self._importer("qraft.contracts")
+            required = ("CORE_CONTRACT_VERSION", "ContractEnvelope", "VALIDATION_REPORT", "canonical_primitive", "canonical_json")
+            if not Path(api.__file__).resolve().is_relative_to(self._roots["qraft"]) or str(api.CORE_CONTRACT_VERSION) != "1.0" or any(name not in api.__all__ or not hasattr(api, name) for name in required):
+                raise Problem("ENGINE_UNAVAILABLE")
+            return api
+        except (OSError, AttributeError, ImportError, KeyError, ValueError):
             raise Problem("ENGINE_UNAVAILABLE") from None
 
 
@@ -121,14 +133,22 @@ class QraftAuthoring:
     def __init__(self, engines, *, contracts=None):
         self.engines, self.contracts = engines, contracts or Contracts()
 
-    def compile(self, intent, policy, fragments, *, source_root, lock_path):
+    def compile(self, intent, policy, fragments, *, source_root, lock_path, authoring_metadata=None):
         self.contracts.validate("run-intent", intent)
         if intent["integrity"]["status"] != "VERIFIED" or policy.execution_authorized is not False:
             raise Problem("PRECONDITION_FAILED")
         if policy.recipe_id != intent["payload"]["protocol"]["protocol_id"] or policy.recipe_version != intent["payload"]["protocol"]["version"]:
             raise Problem("PRECONDITION_FAILED")
         api = self.engines.qraft
-        identity = SimpleNamespace(intent_id=intent["payload"]["intent_id"], project_id=intent["project_id"], sha256=intent["integrity"]["digest"], metadata={"dftlab.run_intent_record_id": intent["record_id"], "dftlab.protocol": intent["payload"]["protocol"]})
+        metadata = {"dftlab.run_intent_record_id": intent["record_id"], "dftlab.protocol": intent["payload"]["protocol"]}
+        if authoring_metadata is not None:
+            # Adapter-owned, versioned metadata inside the existing native
+            # metadata extension. The motor computes its own lock digest.
+            from .contracts import canonical
+            if set(authoring_metadata) != {"dftlab.authoring"} or len(canonical(authoring_metadata)) > 262144:
+                raise Problem("PRECONDITION_FAILED")
+            metadata.update(authoring_metadata)
+        identity = SimpleNamespace(intent_id=intent["payload"]["intent_id"], project_id=intent["project_id"], sha256=intent["integrity"]["digest"], metadata=metadata)
         definition = api.WorkflowComposer().compose(identity, policy, fragments)
         compilation = api.WorkflowCompiler().compile_mapping(definition, source_root=Path(source_root))
         if not compilation.valid:
@@ -141,7 +161,7 @@ class QraftAuthoring:
         api.load_workflow_lock(lock_path)  # engine owns semantic/digest checking
         return NativePlan(identity.intent_id, identity.project_id, Path(source_root), lock_path, native, hashlib.sha256(lock_path.read_bytes()).hexdigest())
 
-    def prepare(self, plan, *, expected_native_digest, profile, output_root, run_id):
+    def prepare(self, plan, *, expected_native_digest, profile, output_root, run_id, validator=None):
         if expected_native_digest != plan.native_digest or hashlib.sha256(plan.lock_path.read_bytes()).hexdigest() != plan.file_sha256:
             raise Problem("REVISION_CONFLICT")
         api = self.engines.qraft
@@ -150,7 +170,8 @@ class QraftAuthoring:
             raise Problem("PRECONDITION_FAILED")
         # Installed RunPreparer owns the packaged runtime, input hashing and
         # DAG. Never pass a repository_root or implement another compiler.
-        result = api.RunPreparer().prepare(api.RunPreparationRequest(workflow_lock=plan.lock_path, source_root=plan.source_root, execution_profile=Path(profile), output_root=Path(output_root), run_id=run_id))
+        preparer = api.RunPreparer() if validator is None else api.RunPreparer(validator=validator)
+        result = preparer.prepare(api.RunPreparationRequest(workflow_lock=plan.lock_path, source_root=plan.source_root, execution_profile=Path(profile), output_root=Path(output_root), run_id=run_id))
         if result.execution_authorized is not False or result.submission_performed is not False or result.workflow_lock_sha256 != plan.native_digest or result.run_id != run_id:
             raise Problem("PRECONDITION_FAILED")
         package, archive = Path(result.package_path), Path(result.zip_path)
