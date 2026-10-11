@@ -1,0 +1,808 @@
+{
+  "version": 1,
+  "fecha": "2026-10-11",
+  "nota": "Fuente de verdad del estado de cada idea. Una idea no pasa de estado si hay dudas abiertas o faltan evidencias. Verificar con node scripts/verify-backlog-gates.mjs",
+  "dudas": [
+    {
+      "id": "DL-01",
+      "afirmacion": "Los átomos fantasma para corrección BSSE se definen con número atómico negativo y conservan la base sin carga en la versión fijada de SIESTA",
+      "verificacion": "Ejecutar un caso mínimo con fantasma, leer el .out y comprobar orbitales presentes, carga cero y energía finita; citar la sección del manual de la versión fijada",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-02",
+      "afirmacion": "El potencial en malla (.VH o .VT) comparte referencia de energía con el nivel de Fermi del .out",
+      "verificacion": "Calcular Φ de un metal con valor experimental conocido (p. ej. Al(111)) y comparar con tolerancia declarada ANTES de ejecutar",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-03",
+      "afirmacion": "Se puede obtener una densidad que incluya la contribución del core para la partición de Bader (opción de SIESTA o suma propia con el core de .ion)",
+      "verificacion": "Comprobar que la integral de la densidad usada reproduce el número esperado de electrones y que las cargas de Bader suman cero en un sistema neutro de referencia",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-04",
+      "afirmacion": "El ELF se puede calcular con implementación propia a partir de coeficientes de onda y orbitales atómicos",
+      "verificacion": "Reproducir el ELF de un sistema simple con otro programa o con valores publicados, con tolerancia declarada antes de ejecutar",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-05",
+      "afirmacion": "La constante dieléctrica estática necesaria para la corrección de defectos cargados es obtenible con SIESTA (ε∞ por óptica + parte iónica por cargas de Born)",
+      "verificacion": "Demostrar un flujo de cargas de Born (p. ej. por polarización de fase de Berry) en un material de referencia y comparar con valor publicado; si no se puede, la corrección se declara no disponible",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-06",
+      "afirmacion": "ASE funciona dentro de Pyodide en el build portátil con un tamaño y tiempo de carga aceptables",
+      "verificacion": "Prueba real en navegador: importar ase, construir una supercelda y exportar .fdf; medir MB descargados y segundos",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-07",
+      "afirmacion": "El error de truncamiento de la transformada de Kramers-Kronig sobre ε₂ de SIESTA acota ε∞ y ε₁ con precisión declarada",
+      "verificacion": "Probar con un oscilador de Lorentz analítico y con una energía máxima menor y mayor; reportar el error frente al valor exacto",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-08",
+      "afirmacion": "La suma de las contribuciones de .contrib.EPSIMG reproduce ε₂ total del .EPSIMG",
+      "verificacion": "Generar ambos archivos para un caso y comparar con tolerancia declarada antes de ejecutar; no hay fixture con .contrib.EPSIMG en el repo",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-09",
+      "afirmacion": "El módulo de sisl que calcula COOP/COHP existe con la API supuesta en la versión fijada",
+      "verificacion": "Importar la versión fijada y ejecutar el cálculo sobre el fixture; citar documentación de la versión",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-10",
+      "afirmacion": "Los DOI del informe de ChatGPT existen y corresponden a lo citado",
+      "verificacion": "Verificar cada DOI manualmente contra su editor; no se pudo desde el entorno de Claude",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-11",
+      "afirmacion": "El código de Bader del grupo de Henkelman puede redistribuirse o llamarse; si no, el algoritmo se reimplementa",
+      "verificacion": "Leer la licencia del programa y decidir llamar, redistribuir o reimplementar; registrar la decisión en un ADR",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-12",
+      "afirmacion": "Existe demanda de usuarios reales que justifica el orden de prioridades de las campañas",
+      "verificacion": "5 a 10 entrevistas a investigadores o empresas objetivo, con guion y resumen guardados",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-13",
+      "afirmacion": "La versión fijada de SIESTA ofrece lo que se asume: D3, vdW-DF, SOC y la ausencia de híbridos y GW",
+      "verificacion": "Leer el manual y el changelog de la versión de engine-versions.lock.json y listar cada capacidad con su sección",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-14",
+      "afirmacion": "Las tablas termodinámicas del gas y los modos vibracionales moleculares dan μ(T,p) consistente con el cálculo",
+      "verificacion": "Reproducir μ de H2 u O2 con una fuente citada a dos temperaturas, con tolerancia declarada antes de ejecutar",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    },
+    {
+      "id": "DL-15",
+      "afirmacion": "El alineamiento de bandas por potencial electrostático promedio reproduce un offset de referencia con los datos de SIESTA",
+      "verificacion": "Calcular un offset de una heterounión de referencia y comparar con valor publicado; tolerancia declarada antes",
+      "estado": "ABIERTA",
+      "evidencia": ""
+    }
+  ],
+  "ideas": [
+    {
+      "id": 1,
+      "titulo": "Modelo de estructura con id estable por átomo y registro de operaciones",
+      "grupo": "Arquitectura",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Esquema del modelo y de las operaciones propuesto como contrato en contracts/ y revisado por su dueño",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Aplicar una secuencia de operaciones y su inversa devuelve la estructura idéntica (hash)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Los ids de átomo se conservan tras supercelda y el atom-map es determinista",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Lista y visor 3D leen el mismo modelo (prueba de que un cambio se refleja en ambos)",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "titulo": "Costuras para subir a la web",
+      "grupo": "Arquitectura",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Alcance fijado por ADR-001, 008, 010 y 011 sin construir multiusuario",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "El cliente funciona contra el servicio en otro puerto o ruta base sin cambios",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Ninguna ruta de archivo absoluta cruza la API (comprobación automática)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Dos proyectos de prueba quedan aislados entre sí por identidad",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "titulo": "Editor manual en el navegador más ASE y pymatgen en el servicio",
+      "grupo": "Editor y Python",
+      "estado": "PROPUESTO",
+      "dudas": [
+        "DL-06"
+      ],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Idea 1 aceptada",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Versiones de ASE y pymatgen fijadas y licencias registradas",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Una operación manual y la misma operación vía Python producen estructuras equivalentes (tolerancia declarada)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Supercelda, slab y simetría coinciden con valores de referencia",
+          "evidencia": ""
+        },
+        {
+          "criterio": "El build portátil funciona sin servidor con el subconjunto declarado",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "titulo": "Vista única de propiedades por corrida y constructor de slabs, defectos e interfaces",
+      "grupo": "Editor y Python",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Idea 1 aceptada",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Alcance del constructor acordado (interfaces y molécula sobre superficie incluidas o no)",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Cada propiedad mostrada enlaza a su archivo y parámetros de origen",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Un slab generado conserva composición, orientación y vacío pedidos (pruebas con casos conocidos)",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "titulo": "Notebooks .ipynb y sincronización con Drive",
+      "grupo": "Servicios",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "SDK/CLI de T-051 disponible",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "El notebook generado ejecuta de principio a fin contra el servicio local",
+          "evidencia": ""
+        },
+        {
+          "criterio": "La sincronización por carpeta no sube secretos ni salidas voluminosas (prueba de exclusión)",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "titulo": "VPS y dominio",
+      "grupo": "Servicios",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Servicio local calificado",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Autenticación y autorización de T-018/T-045 implementadas",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Acceso solo con autenticación (prueba negativa sin credenciales)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Llaves SSH de uso exclusivo y ninguna visible en logs ni exportaciones",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "titulo": "MCP para proponer moléculas",
+      "grupo": "Servicios",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "SDK de T-051 y registro de operaciones de la idea 1",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Toda propuesta pasa validación geométrica y de composición antes de mostrarse",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Ninguna llamada del MCP lanza un cálculo sin aprobación explícita (prueba negativa)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Cada estructura propuesta lleva procedencia (modelo e instrucción)",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "titulo": "Exportador de datos de graficación y ejes editables",
+      "grupo": "Productos y visualización",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Formato de columnas acordado (cabecera, unidades, referencia al Fermi)",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "El archivo exportado regenera la figura con otro programa (prueba con gnuplot o equivalente)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "La vista previa y el SVG exportado coinciden en rangos y ticks",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Las unidades y la referencia de energía aparecen en la cabecera",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "titulo": "Importar carpetas por contenido y campañas",
+      "grupo": "Productos y visualización",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Lectores existentes inventariados (T-001)",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Una carpeta con todos los archivos de una corrida se agrupa por SystemLabel (fixtures)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "El parámetro variado inferido de los .fdf coincide con el real en campañas de prueba",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Un archivo no reconocido se informa y no se descarta en silencio",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "titulo": "Preflight de .fdf en flujo libre",
+      "grupo": "Productos y visualización",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "T-030 en curso",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Un .fdf subido se valida sin pasar por un preset",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Cada desconocido se informa explícitamente",
+          "evidencia": ""
+        },
+        {
+          "criterio": "El modo experto acepta advertencias sin bloquear",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "titulo": "Todo gráfico es un portal",
+      "grupo": "Productos y visualización",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Idea 1 aceptada",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Procedencia disponible por corrida",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Cada punto de una gráfica abre la corrida y el .fdf correctos (prueba automática por muestra)",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "titulo": "Deslizador sobre una campaña",
+      "grupo": "Productos y visualización",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Campaña con corridas reales y etiquetas del parámetro",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Cada fotograma corresponde a una corrida real y se enlaza a ella",
+          "evidencia": ""
+        },
+        {
+          "criterio": "No se interpola ni se inventa ningún valor entre corridas",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "titulo": "Comparar dos corridas en vistas enlazadas",
+      "grupo": "Productos y visualización",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Unidades y referencias de energía comparables entre corridas",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "La comparación avisa si las corridas no son comparables (distinto funcional, pseudo o referencia)",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "titulo": "Fatbands con zona de Brillouin y función de onda; ε(ω) por pares de banda y k",
+      "grupo": "Productos y visualización",
+      "estado": "PROPUESTO",
+      "dudas": [
+        "DL-08",
+        "DL-09"
+      ],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Corrida con .contrib.EPSIMG disponible como fixture",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Límites de tamaño de las funciones de onda definidos",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "La suma de contribuciones coincide con ε₂ total dentro de la tolerancia declarada",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Los pesos orbitales de las fatbands suman 1 por banda y k (prueba numérica)",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "titulo": "Análisis cuantitativos: masa efectiva, absorción, Tauc",
+      "grupo": "Productos y visualización",
+      "estado": "PROPUESTO",
+      "dudas": [
+        "DL-07"
+      ],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Política de análisis (ventana, referencias) definida antes de implementar",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "La masa efectiva reproduce una banda parabólica sintética con error declarado",
+          "evidencia": ""
+        },
+        {
+          "criterio": "La ventana de Tauc, el ajuste y su incertidumbre se muestran y se guardan con el resultado",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Todo resultado guarda política, parámetros y versión",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "titulo": "Análisis de carga y enlace: Bader, ELF, RDG/NCI, COHP",
+      "grupo": "Análisis",
+      "estado": "PROPUESTO",
+      "dudas": [
+        "DL-03",
+        "DL-04",
+        "DL-09",
+        "DL-11"
+      ],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Decisión sobre llamar, redistribuir o reimplementar Bader registrada",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Bader suma cargas cero en un sistema neutro de referencia dentro de la tolerancia declarada",
+          "evidencia": ""
+        },
+        {
+          "criterio": "El ELF reproduce el valor de referencia de DL-04",
+          "evidencia": ""
+        },
+        {
+          "criterio": "COHP coincide con el cálculo de referencia sobre el fixture",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Cada resultado declara si usa valencia sola o valencia más core",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "titulo": "Centro de productos finales",
+      "grupo": "Productos y visualización",
+      "estado": "PROPUESTO",
+      "dudas": [],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Ideas 8 y 16 aceptadas",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "El párrafo de métodos reproduce versión, funcional, pseudos, mallas y base de la corrida real (comparación automática con el .out)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Figura, datos y tabla se generan del mismo resultado y concuerdan entre sí",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "titulo": "Campañas nuevas frente a Mat3ra: formación y defectos, superficie, relajación, NEB, interfaces, elásticas, MD, STM",
+      "grupo": "Campañas",
+      "estado": "PROPUESTO",
+      "dudas": [
+        "DL-05",
+        "DL-15"
+      ],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Una compuerta de campaña (idea 21) definida para cada flujo",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Cada flujo reproduce un caso de referencia publicado dentro de la tolerancia declarada antes de ejecutar",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Los defectos cargados no se publican sin la corrección declarada disponible (DL-05)",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "titulo": "Priorización de campañas por demanda",
+      "grupo": "Campañas",
+      "estado": "PROPUESTO",
+      "dudas": [
+        "DL-12"
+      ],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Guion de entrevistas",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Resumen de las entrevistas guardado y orden de prioridades revisado con esa evidencia",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "titulo": "Campañas de termodinámica y catálisis",
+      "grupo": "Campañas",
+      "estado": "PROPUESTO",
+      "dudas": [
+        "DL-01",
+        "DL-02",
+        "DL-13",
+        "DL-14"
+      ],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Tabla termodinámica del gas con fuente citada",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Formación y casco: sin mezclar energías con y sin +U y con misma base y pseudos por especie (prueba automática)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Adsorción con corrección BSSE reproduce un caso de referencia",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Función de trabajo reproduce el valor de referencia de DL-02",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "titulo": "Compuertas automáticas por campaña",
+      "grupo": "Arquitectura",
+      "estado": "PROPUESTO",
+      "dudas": [
+        "DL-13"
+      ],
+      "entrada": [
+        {
+          "criterio": "Ticket asignado en el plan o en REPARTO_V21 y aprobado por Manuel",
+          "cumplida": false,
+          "evidencia": ""
+        },
+        {
+          "criterio": "Umbrales definidos como política versionada (ADR-009), no en el código",
+          "cumplida": false,
+          "evidencia": ""
+        }
+      ],
+      "salida": [
+        {
+          "criterio": "Un cálculo con eggbox sobre el umbral se rechaza (fixture que falla)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Un cambio de base o de pseudo entre las diferencias de energía se detecta (fixture que falla)",
+          "evidencia": ""
+        },
+        {
+          "criterio": "Los umbrales no se modifican para que pase una prueba",
+          "evidencia": ""
+        }
+      ]
+    }
+  ]
+}
