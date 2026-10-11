@@ -28,8 +28,8 @@
       "id": "DL-04",
       "afirmacion": "El ELF se puede calcular con implementación propia a partir de coeficientes de onda y orbitales atómicos",
       "verificacion": "Reproducir el ELF de un sistema simple con otro programa o con valores publicados, con tolerancia declarada antes de ejecutar",
-      "estado": "ABIERTA",
-      "evidencia": "Sin intento todavia (sigue ABIERTA). Referencia exacta disponible: para una sola orbital doblemente ocupada (H2) D=0 y ELF=1 en todo el espacio; requiere leer .WFSX y la base."
+      "estado": "RESUELTA",
+      "evidencia": "Pasa. ELF propio desde .selected.WFSX (coeficientes en Γ) y orbitales NAO de los .ion.nc, leidos con sisl 0.16.4: rho = 2·Σ|ψ|², tau = Σ|∇ψ|², D = tau − |∇rho|²/(8 rho), Dh = 0.3(3π²)^(2/3) rho^(5/3), ELF = 1/(1+(D/Dh)²). Criterios declarados antes: (a) H2, referencia exacta ELF = 1: minimo 1.0000 sobre rho > 1e-3 (cumple >= 0.999; integral de rho = 2.0000); (b) H2O contra PySCF (PBE/def2-TZVP, todos los electrones, misma geometria y formula) en la region de valencia (rho > 0.01 y a mas de 1.0 Bohr de O): |ΔELF| medio 0.018 (< 0.05, p95 0.050, max 0.085); maximo en el enlace O-H 0.986 vs 0.998 y en el par libre 0.913 vs 0.917 (< 0.05). HALLAZGO: la primera version derivaba rho por FFT y fallaba el criterio (ELF minimo 0.07 en las colas) por aliasing de rho = ψ²; calcular ∇rho = 4·Σψ∇ψ desde los orbitales lo arregla. Limites: solo Γ, capa cerrada sin polarizacion de espin, moleculas en caja de 14 A; en la cola (rho < ~0.01) el ELF no es fiable y debe enmascararse; los valores de la region del nucleo de O (pseudopotencial) no se comparan. Scripts: docs/development/evidencia/elf_siesta.py y elf_pyscf.py."
     },
     {
       "id": "DL-05",

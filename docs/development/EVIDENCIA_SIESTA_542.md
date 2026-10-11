@@ -62,3 +62,7 @@ No se pudo probar DL-06 (Pyodide): el proxy bloquea `cdn.jsdelivr.net`. DL-04 (E
 ## DL-06, ASE en Pyodide
 
 Pyodide 0.27.7 y ASE 3.29.0 funcionan juntos: bulk Si, slab Al(111) y escritura de extxyz y cif, con numpy, scipy y matplotlib de la distribución de Pyodide. Carga en frío 12.8 s en Node y 13.3 s en Chromium headless con servidor local, unos 40 MB de archivos. El proxy de este entorno bloquea `cdn.jsdelivr.net` y `unpkg.com`, pero `git clone`, `npm pack` y el tarball de `github.com/pyodide/pyodide/releases` sí funcionan. Scripts en `docs/development/evidencia/pyodide_ase_*`. No se probó pymatgen ni calculadores.
+
+## DL-04, ELF propio
+
+ELF calculado desde los coeficientes de onda de SIESTA (`.selected.WFSX`, Γ) y los orbitales atómicos (`.ion.nc`) con sisl. H2: ELF = 1.0000 en toda la región con ρ > 1e-3 e/Bohr³, que es el valor exacto para una sola orbital doblemente ocupada. H2O frente a PySCF (PBE/def2-TZVP, todos los electrones): diferencia media |ΔELF| = 0.018 en la región de valencia; máximos en enlace O–H 0.986 (0.998) y en par libre 0.913 (0.917). Lección para la implementación: calcular ∇ρ desde los orbitales, no derivando ρ por FFT, porque ρ = ψ² tiene aliasing. Enmascarar el ELF donde ρ < ~0.01 e/Bohr³.
