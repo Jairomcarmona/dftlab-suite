@@ -1,6 +1,6 @@
 # ADR-018: autoridad de los protocolos EOS, electrónica fina y superficie
 
-Estado: **propuesto** el 2026-10-11. Decide Manuel entre las opciones de §Decisión; hasta entonces T-035, T-036 (fat bands y masas) y T-040 no pasan a construcción.
+Estado: **aceptado** el 2026-10-11 por decisión de Manuel: **opción A** (QRAFT). Las fichas de `docs/scientific-protocols/` siguen en borrador y deben aceptarse antes de asignar T-035, T-036 fino y T-040 (compuerta del [plan §19](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md#19-auditoría-p5p10-y-compuerta-de-diseño)).
 Fecha: 2026-10-11. Fuente: [auditoría P5–P10](../reviews/2026-10-11-auditoria-p5-p10.md), [propuesta maestra](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) §11 y la matriz R-17/R-18/R-20. Relacionado: [ADR-003](ADR-003-autoridades-qraft-hubbardflow-plataforma.md), [ADR-009](ADR-009-politicas-gates-cientificos.md).
 
 ## Contexto
@@ -13,22 +13,22 @@ ADR-003 asigna autoridad a QRAFT (runtime y locks), a HubbardFlow (LR-U) y a la 
 
 Sin dueño, Codex tendría que elegir al implementar T-035: o pone la ciencia en `platform/` (un tercer autor de gates, contra ADR-003 regla 3) o abre cambios a la vez en QRAFT y en la plataforma sin contrato previo. Es el mismo patrón que obligó a dos adendas en ADR-017.
 
-## Decisión (propuesta)
+## Decisión
 
-**Opción A, recomendada.** QRAFT es la autoridad de los protocolos SIESTA no Hubbard: genera geometrías y planes, ejecuta, valida la evidencia y produce el resultado científico con su autoridad nativa. La plataforma solo proyecta (`AnalysisResult`, `AssessmentRecord` por referencia, ADR-005) y presenta.
+**Opción A, adoptada.** QRAFT es la autoridad de los protocolos SIESTA no Hubbard: genera geometrías y planes, ejecuta, valida la evidencia y produce el resultado científico con su autoridad nativa. La plataforma solo proyecta (`AnalysisResult`, `AssessmentRecord` por referencia, ADR-005) y presenta.
 
 1. Cada workflow (WF-EOS, WF-ELECTRONIC fino, WF-SURFACE) es un protocolo de QRAFT con capability propia, plan inmutable y digest, igual que M5–M8. Su ficha de entrada vive en `docs/scientific-protocols/` y se acepta **antes** del código (compuerta de diseño, [plan §19](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md#19-auditoría-p5p10-y-compuerta-de-diseño)).
 2. Los umbrales viven en políticas versionadas del protocolo (ADR-009). La ficha fija qué parámetros declara la política, no sus valores.
 3. Los lectores y vistas de la plataforma (por ejemplo, el ajuste BM de `views/calc.js` o el promedio planar de `views/potential.js`) siguen como herramientas de lectura y aprendizaje; no certifican ni alimentan una campaña.
-4. Cambios upstream: U-Q10…U-Q13 en el [inventario de QRAFT](../compatibility/QRAFT_4d996ea.md#5-cambios-upstream-necesarios-ola-1-codex). Cada uno parte de la ficha aceptada y de sus vectores.
+4. Cambios upstream: U-Q10…U-Q13, que entran en QRAFT **después** de U-Q9 y no en paralelo, para no competir con HF-1. Mientras tanto se aceptan las fichas y sus vectores. Están en el [inventario de QRAFT](../compatibility/QRAFT_4d996ea.md#5-cambios-upstream-necesarios-ola-1-codex). Cada uno parte de la ficha aceptada y de sus vectores.
 
-**Opción B.** Un paquete de análisis en `dftlab-suite` (por ejemplo `platform/science/`) ajusta y evalúa, y QRAFT solo ejecuta. Reduce cambios en QRAFT al análisis, pero la generación de geometrías y el fan-out siguen necesitando QRAFT (la plataforma no puede crear su propio DAG, ADR-003 regla 1). El resultado es el mismo número de repositorios por workflow y un tercer autor de gates.
+**Opción B (descartada).** Un paquete de análisis en `dftlab-suite` (por ejemplo `platform/science/`) ajusta y evalúa, y QRAFT solo ejecuta. Reduce cambios en QRAFT al análisis, pero la generación de geometrías y el fan-out siguen necesitando QRAFT (la plataforma no puede crear su propio DAG, ADR-003 regla 1). El resultado es el mismo número de repositorios por workflow y un tercer autor de gates.
 
-**Opción C.** Diferir: mantener EOS, fat bands, masas y superficie como exportación y lectura offline (P5) sin campaña operativa. Es válido si P6/P7 no son prioridad, pero el catálogo debe decir `DESIGNED`, no `RUNTIME_VERIFIED`.
+**Opción C (descartada).** Diferir: mantener EOS, fat bands, masas y superficie como exportación y lectura offline (P5) sin campaña operativa. Es válido si P6/P7 no son prioridad, pero el catálogo debe decir `DESIGNED`, no `RUNTIME_VERIFIED`.
 
 ## Alternativas
 
-| Opción | Motivo para no recomendarla |
+| Opción | Motivo para no adoptarla |
 |---|---|
 | B | Dos repositorios por workflow igual que A, más una segunda definición de gate fuera del motor que ejecuta. |
 | C | No resuelve P6/P7; solo los pospone. Aceptable como decisión explícita de alcance. |
@@ -54,4 +54,4 @@ Las de cada ficha, en particular:
 
 ## Migración
 
-No hay nada implementado de estos protocolos. Si se elige B o C, este ADR se reescribe antes de abrir T-035.
+No hay nada implementado de estos protocolos. Cambiar de opción exige un ADR nuevo antes de abrir T-035.

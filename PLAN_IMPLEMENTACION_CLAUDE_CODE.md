@@ -357,7 +357,7 @@ La evidencia de A-01…A-15 es de diseño y fuentes; su cierre exige ejecutar la
 
 ## 19. Auditoría P5–P10 y compuerta de diseño
 
-Añadido el 2026-10-11 tras la [auditoría P5–P10](docs/reviews/2026-10-11-auditoria-p5-p10.md). No cambia IDs ni alcance de los tickets; añade una condición de entrada y dependencias que faltaban. Propuesto; lo adopta Manuel.
+Añadido el 2026-10-11 tras la [auditoría P5–P10](docs/reviews/2026-10-11-auditoria-p5-p10.md). No cambia IDs ni alcance de los tickets; añade una condición de entrada y dependencias que faltaban. Adoptado por Manuel el 2026-10-11, junto con ADR-018 opción A.
 
 **Compuerta de diseño.** Un ticket que introduce un contrato, una decisión científica o un cambio en más de un repositorio no se asigna a Codex hasta tener:
 
@@ -372,9 +372,9 @@ Añadido el 2026-10-11 tras la [auditoría P5–P10](docs/reviews/2026-10-11-aud
 |---|---|
 | T-028 (G-05) | Celda con a3 ⟂ superficie y caras declaradas ([WF-SURFACE](docs/scientific-protocols/WF-SURFACE.md) S-1) |
 | T-030 | El validador de QRAFT es el preflight autoritativo; el frontend lo replica con fixtures comunes |
-| T-035 | [ADR-018](docs/adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) decidido, [WF-EOS](docs/scientific-protocols/WF-EOS.md) aceptada, U-Q10 y U-Q11 |
-| T-036 (fat bands y masas) | ADR-018 decidido, [WF-ELECTRONIC](docs/scientific-protocols/WF-ELECTRONIC.md) aceptada, U-Q13 |
-| T-040 | ADR-018 decidido, WF-SURFACE aceptada, U-Q12 y DL-02 con el caso de corrección dipolar |
+| T-035 | [ADR-018](docs/adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) (aceptado, QRAFT), [WF-EOS](docs/scientific-protocols/WF-EOS.md) aceptada, U-Q10 y U-Q11 |
+| T-036 (fat bands y masas) | [WF-ELECTRONIC](docs/scientific-protocols/WF-ELECTRONIC.md) aceptada, U-Q13 |
+| T-040 | WF-SURFACE aceptada, U-Q12 y DL-02 con el caso de corrección dipolar |
 | T-041 | Criterio de equivalencia HF-1/HF-2 fijado en un ADR antes de U-H5 |
 | T-042 | Utilidades (`vibra`, `fcbuild`) en el lock del worker y en el probe de runtime |
 | T-047 | U-Q7 (fencing) en QRAFT |

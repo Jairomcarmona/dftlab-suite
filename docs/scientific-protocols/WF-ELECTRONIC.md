@@ -1,6 +1,6 @@
 # Ficha de entrada: WF-ELECTRONIC fino (T-036: fat bands y masas)
 
-Estado: **borrador para aceptar antes del código**. Bandas, DOS y PDOS ya existen en QRAFT (protocolo M7, `siestaflow.siesta.band-structure` y `siestaflow.siesta.dos-pdos`). Esta ficha cubre lo que falta. Dueño propuesto: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md), opción A). Fuente: [maestro §11.2](../../PROPUESTA_MAESTRA_DFTLAB_V2.md).
+Estado: **borrador para aceptar antes del código**. Bandas, DOS y PDOS ya existen en QRAFT (protocolo M7, `siestaflow.siesta.band-structure` y `siestaflow.siesta.dos-pdos`). Esta ficha cubre lo que falta. Dueño: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md), aceptado). Fuente: [maestro §11.2](../../PROPUESTA_MAESTRA_DFTLAB_V2.md).
 
 ## Lo que ya resuelve QRAFT `41043ed`
 

@@ -4,8 +4,8 @@ Una ficha fija las decisiones de un workflow científico **antes** de escribir c
 
 | Ficha | Ticket | Estado |
 |---|---|---|
-| [WF-EOS](WF-EOS.md) | T-035 | Borrador; depende de ADR-018 |
-| [WF-ELECTRONIC fino](WF-ELECTRONIC.md) | T-036 | Borrador; depende de ADR-018 |
-| [WF-SURFACE](WF-SURFACE.md) | T-040 | Borrador; depende de ADR-018 y de DL-02 |
+| [WF-EOS](WF-EOS.md) | T-035 | Borrador; dueño QRAFT (ADR-018) |
+| [WF-ELECTRONIC fino](WF-ELECTRONIC.md) | T-036 | Borrador; dueño QRAFT (ADR-018) |
+| [WF-SURFACE](WF-SURFACE.md) | T-040 | Borrador; dueño QRAFT (ADR-018); depende de DL-02 |
 
 WF-HUBBARD no tiene ficha aquí: su protocolo es de HubbardFlow y su ejecución está en [ADR-017](../adr/ADR-017-tarea-controladora-qraft-hf1.md).

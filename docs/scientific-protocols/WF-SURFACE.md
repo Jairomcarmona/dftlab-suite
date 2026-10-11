@@ -1,6 +1,6 @@
 # Ficha de entrada: WF-SURFACE (T-040, depende de G-05/G-06 de T-028)
 
-Estado: **borrador para aceptar antes del código**. Dueño propuesto: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md), opción A). Fuente: [maestro §11.4](../../PROPUESTA_MAESTRA_DFTLAB_V2.md). Evidencia: [auditoría P5–P10](../reviews/2026-10-11-auditoria-p5-p10.md#evidencia-siesta-542).
+Estado: **borrador para aceptar antes del código**. Dueño: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md), aceptado). Fuente: [maestro §11.4](../../PROPUESTA_MAESTRA_DFTLAB_V2.md). Evidencia: [auditoría P5–P10](../reviews/2026-10-11-auditoria-p5-p10.md#evidencia-siesta-542).
 
 ## Decisiones
 

@@ -500,6 +500,6 @@ Los 15 cambios del inventario C2 quedan trazados por grupos coherentes. Los PR u
 ## Auditoría P5–P10 (Claude)
 
 - **Rama:** `claude/project-thread-15so4f`, desde `main` @ `9710b9e`. Solo documentos; sin código, sin tocar QRAFT, HubbardFlow ni ramas de Codex.
-- **Cambios:** [auditoría](2026-10-11-auditoria-p5-p10.md) con 17 hallazgos y evidencia de SIESTA 5.4.2 en `evidencia-p5-p10/`; [ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) propuesto; fichas `docs/scientific-protocols/` (WF-EOS, WF-ELECTRONIC, WF-SURFACE); U-Q10…U-Q13 en el inventario de QRAFT; plan §19 con la compuerta de diseño y dependencias de entrada.
-- **Pendiente de Manuel:** decidir ADR-018 (recomendada la opción A, QRAFT) y adoptar o no la compuerta de §19. DL-02 sigue ABIERTA en `backlog_gates.json`; la auditoría añade evidencia sin cambiar ese archivo.
-- **Siguiente paso:** con ADR-018 decidido, aceptar las fichas y crear sus vectores antes de asignar T-035, T-036 fino y T-040.
+- **Cambios:** [auditoría](2026-10-11-auditoria-p5-p10.md) con 17 hallazgos y evidencia de SIESTA 5.4.2 en `evidencia-p5-p10/`; [ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) aceptado por Manuel (opción A, QRAFT); fichas `docs/scientific-protocols/` (WF-EOS, WF-ELECTRONIC, WF-SURFACE); U-Q10…U-Q13 en el inventario de QRAFT; plan §19 con la compuerta de diseño y dependencias de entrada.
+- **Decidido por Manuel (2026-10-11):** ADR-018 opción A y compuerta de §19. U-Q10…U-Q13 entran en QRAFT después de U-Q9. DL-02 sigue ABIERTA en `backlog_gates.json`; la auditoría añade evidencia sin cambiar ese archivo.
+- **Siguiente paso:** aceptar las fichas y crear sus vectores antes de asignar T-035, T-036 fino y T-040.
