@@ -122,8 +122,16 @@ fixed-width fields that run together (`33.736569-44.788847315.508565`) are split
  x: Float64Array[nk] (1/Å path distance), xBohr (original),
  kpoints: [[kx,ky,kz]] (BandPoints, cartesian 1/Å) | null, kpointsBohr,
  bands: [spin][band] → Float64Array[nk]  (absolute eV),
- labels: [{x, xBohr, raw:'\Gamma', label:'Γ'}], warnings[]}
+ labels: [{x, xBohr, raw:'\Gamma', label:'Γ', kIndex}],
+ path: {source:'BandLines'|'none', segments:[{start, end, from, to}] (k indices, inclusive),
+        breaks:[first k index of each later segment], jumps:[{index, from, to}], note},
+ warnings[]}
 ```
+Segments come only from the file: in BandLines two labels on consecutive k-points after a labelled point
+(a `1`-point line, e.g. U then K) are a jump; `packBands` reads the explicit `A|B` restart at the same x.
+BandPoints has no segment information (one segment, `note` says so). `segmentSeries(x, y, breaks)` gives
+`[[x,y]]` with `[x, NaN]` before each segment start (the chart does not join across it);
+`segmentIndex(nk, breaks)` numbers the segments for exports.
 Helpers: `shiftToFermi(b)`, `bandEdges(b)` → `{vbm:{e,k,band,spin,x}, cbm, gap, metallic, direct}`, `prettyLabel()`.
 
 ## `parseEIG(text, kpText?)`, `parseKP(text)`

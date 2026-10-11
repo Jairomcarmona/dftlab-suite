@@ -250,7 +250,7 @@ Están tomados de `MAPA_DE_CONTENIDOS.md`. Cada uno es un hilo y depende solo de
 ### Pendiente técnico de la versión actual
 
 - Ni en PBE: la curva E(a) tiene ~3 meV de ruido que no se va con una tolerancia SCF más estricta; a₀ aproximado y sin B₀. Causa no encontrada.
-- En postproceso, las líneas de bandas no se cortan en las discontinuidades del camino k (por ejemplo, U|K).
+- Resuelto (bloque G, `docs/reviews/REGISTRO_DEUDA.md`): en postproceso las bandas se cortan en los saltos del camino k declarados por el formato (U|K en BandLines, `A|B` en paquetes). BandPoints no declara tramos y se une en orden.
 
 ## 7. Cómo construir y publicar
 
@@ -287,7 +287,7 @@ Manuel planea añadir una terminal para conectarse por SSH a sus servidores. **N
 
 - **Hechos:** densidad y cargas (9), potencial y función trabajo (10), espín y magnetismo (11), lectura anotada del .out (12), fonones (13), fuerzas, estrés y relajación (14) y más allá de DFT (15, solo literatura: no hay corridas ni generador de JSON; el JSON se copió a mano de las tablas citadas, excepción a la regla de §2 porque son datos de literatura). Cada uno tiene su fila en §5 y §6, sus corridas en `corridas/<nombre>.tar.gz` y su generador de JSON en `corridas/<nombre>_gen_json.mjs`.
 - **Pendiente:** «Temario y bitácora» (sin cálculo). Se numera 16 en `registry.js`, grupo `learn`, después de `beyond`. `registry.js` ya tiene la línea de `beyond`; añadir la nueva debajo.
-- **Pendiente técnico:** el de §6 (ruido de E(a) del Ni en PBE; bandas que no se cortan en U|K en postproceso).
+- **Pendiente técnico:** el de §6 (ruido de E(a) del Ni en PBE; el corte de bandas en U|K se resolvió en el bloque G).
 - **Modelo por módulo:** Opus 5.5 esfuerzo medio para fonones y fuerzas (física delicada y corridas que depurar); Sonnet 5.5 esfuerzo medio para el resto. Cada módulo va en un hilo nuevo que arranca solo con este documento.
 - **Fuerzas (notas para quien lo toque):** `parseOut` no repite coordenadas ni fuerzas por átomo dentro del paso en corridas de un solo punto; el generador las toma de `initialGeometry` y de `o.forces`. Se corrigió `readCell` en `siesta/out.js` para que un .out truncado (una corrida en marcha) no lance error; las 341 pruebas siguen pasando. En SIESTA 5, `DM.Tolerance` sola no controla el SCF: también exige `SCF.H.Tolerance`, por eso el barrido de tolerancia usa `SCF.H.Converge false`. Una corrida reutiliza su propio `.DM` si existe: borrar los `.DM` antes de repetir una corrida o poner `DM.UseSaveDM false`. En fdf, `0 0 0 1` como coordenada hace que SIESTA lea especie 0; usar `0.0 0.0 0.0 1`.
 
