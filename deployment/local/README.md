@@ -171,3 +171,46 @@ no es un sandbox frente al propio operador, no acredita resultados científicos
 y no habilita listCapabilities/admisión. T-023 sigue abierto hasta el worker,
 el envío durable, fencing y una corrida real calificada. Los tests de CI usan
 pins sintéticos y un puerto de diagnósticos; no requieren motores ni scheduler.
+
+### Handlers tipados sobre artefactos (T-022c)
+
+`AuthoringHandlers` se registra explícitamente en un `Processor`. El servicio
+predeterminado conserva las operaciones científicas deshabilitadas y ninguna
+capability de ejecución. Las cuatro acciones originales conservan los payloads
+C3 y confirman producto, operación, evento y outbox mediante `complete_local`.
+El borrador se lee por su revisión histórica autorizada. El snapshot, fuentes,
+reportes nativos, lock y ZIP se verifican y persisten antes de confirmar SQL;
+los artefactos huérfanos de una interrupción se conservan para recuperación.
+
+`QraftArtifactAuthoring` acepta recetas y perfiles registrados por el operador.
+Sus entradas son referencias de artefactos del mismo owner/proyecto; las rutas
+relativas se materializan solo en scratch privado creado por el adaptador.
+QRAFT posee compilación, gramática/preflight, digests y preparación/inspección.
+El módulo público `qraft.contracts` de la instalación fijada serializa los
+reportes originales; se conserva cada `REVIEW`, diagnóstico y digest nativo.
+La metadata extensible del lock contiene la vinculación a snapshot y fuentes
+para reconstruir el paquete sin depender del editor ni de archivos del checkout.
+No se inventan consultas/productos HTTP: su contrato espera C3, issue #35.
+
+Para probar esta integración instalada sin ejecutar motores de cálculo:
+
+```powershell
+uv run --project platform --frozen python deployment/local/qualify_engines.py --case handlers --wheelhouse runtime/wheelhouse --platform-wheel runtime/platform-qualification/artifacts/dftlab_platform-0.1.0.dev0-py3-none-any.whl --profile runtime/qualification/profile.json --pseudo app/tests/siesta/fixtures/pseudo/Si_lda_oncv.psml --output runtime/native-handlers-new
+```
+
+El driver crea un borrador `USER_AUTHORED/EXPLORATORY` específico de Si, con
+modelo y parámetros explícitos, y ejecuta VALIDATE_INPUT, CREATE_CAMPAIGN,
+CREATE_PLAN y PREPARE_PACKAGE. Conserva operaciones, snapshot, fuentes y
+reportes originales en `evidence/` además del lock y ZIP. Es una receta local
+acotada, no un traductor general ni un default científico. En Windows y WSL
+se instalan ambos motores por los hashes de sus respectivos targets, siempre
+en un consumidor externo y con Python `-I`; en WSL usar Python 3.12.10 y uv
+0.11.14 ya instalados. No necesita SIESTA ni SLURM para autoría/preparación.
+
+El nuevo caso usa `SCF.DM.Tolerance 1.e-5`: el manual oficial de [SIESTA 5.4](https://docs.siesta-project.org/projects/siesta/en/5.4/reference/siesta.html#convergence-criteria)
+confirma la etiqueta canónica y compatibilidad con `DM.Tolerance`. El registro
+fijado de QRAFT reconoce la primera. Cambia la etiqueta, conserva exactamente
+el valor y los reportes `REVIEW` anteriores; no modifica tolerancias de gates
+ni acredita convergencia/ciencia. El resultado conserva `NOT_ESTABLISHED`.
+Runtime, admisión, fencing, SLURM real y recuperación/restore siguen sujetos a
+sus pruebas separadas; no habilitar capabilities a partir de esta evidencia.

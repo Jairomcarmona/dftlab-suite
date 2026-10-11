@@ -81,6 +81,22 @@ class Engines(unittest.TestCase):
         self.apis["qraft.api"].__file__ = str(self.root/"foreign-checkout/api.py")
         self.problem("ENGINE_UNAVAILABLE", self.load)
 
+    def test_public_core_serializer_origin_version_and_exports(self):
+        loaded = self.load()
+        required = ["CORE_CONTRACT_VERSION", "ContractEnvelope", "VALIDATION_REPORT", "canonical_primitive", "canonical_json"]
+        core = SimpleNamespace(__file__=str(self.site/"qraft/__init__.py"), __all__=required,
+                               **{name: "1.0" if name == "CORE_CONTRACT_VERSION" else lambda: None for name in required})
+        self.apis["qraft.contracts"] = core
+        self.assertIs(loaded.qraft_contracts(), core)
+        core.CORE_CONTRACT_VERSION = "2.0"
+        self.problem("ENGINE_UNAVAILABLE", loaded.qraft_contracts)
+        core.CORE_CONTRACT_VERSION = "1.0"
+        core.__file__ = str(self.root/"foreign-core/__init__.py")
+        self.problem("ENGINE_UNAVAILABLE", loaded.qraft_contracts)
+        core.__file__ = str(self.site/"qraft/__init__.py")
+        core.__all__ = []
+        self.problem("ENGINE_UNAVAILABLE", loaded.qraft_contracts)
+
     def test_original_lock_bundled_with_mandatory_facades(self):
         lock = engine_lock()
         self.assertEqual(set(lock["engines"]), {"qraft", "hubbardflow"})
