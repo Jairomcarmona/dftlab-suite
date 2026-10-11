@@ -242,24 +242,16 @@ raise SystemExit(module.run(sys.argv[1]))
         with patch("dftlab_platform.hf1_children.sys.flags", SimpleNamespace(isolated=0)), self.assertRaises(Problem):
             OwnedLinuxChildren()
 
-    def test_native_preparer_protects_original_bundle_and_full_inner_capacity(self):
+    def test_native_preparer_refuses_unsupported_controller_resource_contract(self):
         capability = self.capability()
-        task = SimpleNamespace(task_id="hubbard", capability_id="dftlab.engine.hubbardflow.hf1", kind=SimpleNamespace(value="calculation"), settings={},
-                               inputs=(SimpleNamespace(external_artifact_id="native-bundle"),), outputs=(SimpleNamespace(relative_path="hf1-result.json", required=True),), dependencies=(),
-                               resources={"nodes": 1, "mpi_processes": 1, "processes_per_node": 1, "cpus_per_process": 8, "walltime_seconds": 60})
+        before = self.archive.read_bytes()
         protected = {}
-        arguments = {"by_task": {task.task_id: task}, "artifacts": {"native-bundle": SimpleNamespace(sha256=self.sha)}, "resolved_sources": {"native-bundle": self.archive}, "profile": object(), "protected": protected}
-        result = capability.prepare_controller_task(task, **arguments)
-        self.assertEqual(result["cpus_per_process"], 8)
-        self.assertEqual(result["mpi_processes"], 1)
-        self.assertEqual(result["nodes"], 1)
-        self.assertEqual(result["max_attempts"], 1)
-        self.assertEqual(protected, {result["input"]: self.archive})
-        self.assertEqual(result["required_artifacts"], ["hf1-result.json"])
-        for field, value in (("resources", {**task.resources, "mpi_processes": 4}), ("settings", {"command": "override"}), ("capability_id", "generic.command")):
-            changed = SimpleNamespace(**{**task.__dict__, field: value})
-            with self.assertRaises(Problem):
-                capability.prepare_controller_task(changed, **{**arguments, "protected": {}})
+        with self.assertRaises(Problem) as failure:
+            capability.prepare_controller_task(object(), protected=protected)
+        self.assertEqual(failure.exception.code, "ENGINE_UNAVAILABLE")
+        self.assertEqual(protected, {})
+        self.assertEqual(self.archive.read_bytes(), before)
+        self.assertEqual(sorted(path.name for path in self.root.iterdir()), ["inputs.zip"])
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "Real descendant containment is Linux/WSL only")
     def test_owned_descendants_close_without_signalling_foreign_process(self):
