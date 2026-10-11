@@ -220,6 +220,18 @@ parseStructOut: {cell (Å), nAtoms, species, Z, fractional, positions (Å)}
 `await unpackDftlab(objOrText)` turns every packed array into `{shape, dtype, data: TypedArray}`
 (C order). Helpers: `at(arr, i, j, …)`, `row(arr, i, j)` (view on the last axis),
 `dequantizeWF({scale, re, im})`. The pack layout is documented in `app/scripts/README.md`.
+Packs are validated: every decoded array must have exactly `prod(shape)` elements. For a viewer:
+`packBands(pack)` (same shape as `parseBands`, absolute eV), `packDOS(pack)` (`total[channel]`, `byL`, …),
+`packStructure(pack)` (`{lattice, positions (fractional), numbers}`) and `packContents(pack)` (what is
+viewable plus `extras`: fatbands, COOP/COHP, wavefunctions, named for the parts a screen does not show).
+
+## `runset.js` – a set of files imported together
+
+`createFileSet()` keeps each file in the form its reader needs (bytes for grid files, UTF-8 text for the rest),
+unpacks `.dftlab.json` and recomputes the `.EIG` ← `.KP` link (same label, readable, finite non-negative weights,
+same number of k-points) whenever a file is added, replaced or removed, so the result does not depend on the load
+order. `link` on each entry records the origin of weights and k-points (`{kp, weights, kpoints, note}`; on a `.KP`:
+`{usedBy}`). Tests: `app/tests/siesta/run_import_tests.mjs`.
 
 ## `parseFC(text, {nAtoms?})` (`fc.js`)
 Header `Force constants matrix. n_atoms, displacement [Ang]: N d` (old files: no numbers, pass `nAtoms`), then for each displaced
@@ -229,8 +241,8 @@ Returns `{nAtoms, displ (Å|null), nDisplaced, blocks: Float64Array(3N)[]}`; `fc
 
 ## Not supported in the browser
 
-Binary/NetCDF files (`.TSHS`, `.HSX`, `.DM`, `.WFSX`, `.fullBZ.WFSX`, `*.nc`, `.RHO`, `.VH`, …) –
-use `scripts/dftlab_pack.py`. Non-collinear `.bands` files cannot be told apart from unpolarized ones
+Binary/NetCDF files (`.TSHS`, `.HSX`, `.DM`, `.WFSX`, `.fullBZ.WFSX`, `*.nc`, …) – use `scripts/dftlab_pack.py`.
+The Fortran grid files (`.RHO`, `.DRHO`, `.VH`, `.VT`, …) are read by `rho.js: parseGrid` from their bytes. Non-collinear `.bands` files cannot be told apart from unpolarized ones
 from the file alone (`noncollinear: null`); take the spin setting from the `.out`. SIESTA ≤ 4.0 outputs
 were not available for testing (the parser accepts the older `siesta: iscf` SCF layout and `siesta:`-prefixed
 forces/timers, but this is untested).
