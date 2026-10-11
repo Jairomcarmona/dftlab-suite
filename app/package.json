@@ -10,12 +10,15 @@
     "test:browser": "node scripts/test-browser.mjs",
     "browser:install": "playwright install chromium",
     "build": "node scripts/build.mjs",
+    "contracts:generate": "node scripts/generate-contract-validators.mjs",
     "serve": "node scripts/serve.mjs"
   },
   "engines": {
     "node": "24.18.0"
   },
   "devDependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
     "esbuild": "0.25.10",
     "playwright": "1.56.1"
   }
