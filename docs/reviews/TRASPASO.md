@@ -191,4 +191,3 @@ Los 15 cambios del inventario C2 quedan trazados por grupos coherentes. Los PR u
 ## Backlog de ideas V2.1 (Claude)
 
 - Propuesta de ideas con compuertas verificables, sin aprobar: `docs/development/BACKLOG_V21.md` (verificación: `node scripts/verify-backlog-gates.mjs`).
-
