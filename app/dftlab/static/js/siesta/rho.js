@@ -23,7 +23,9 @@ export function parseGrid(input, name = '') {
   if (dv.getInt32(0, true) !== 72) { if (dv.getInt32(0, false) === 72) le = false; else throw new Error('no es un archivo de malla de SIESTA (primer registro ≠ 72 bytes)'); }
   let o = 0;
   const rec = () => {           // returns [start, length] of the next record and advances
+    if (o + 4 > u8.byteLength) throw new Error('archivo de malla truncado');
     const n = dv.getInt32(o, le); const s = o + 4; o = s + n + 4;
+    if (n < 0 || o > u8.byteLength) throw new Error('archivo de malla truncado');
     if (dv.getInt32(s + n, le) !== n) throw new Error('marcadores de registro Fortran inconsistentes');
     return [s, n];
   };
@@ -34,6 +36,8 @@ export function parseGrid(input, name = '') {
   const mesh = [dv.getInt32(s, le), dv.getInt32(s + 4, le), dv.getInt32(s + 8, le)];
   const nspin = dv.getInt32(s + 12, le);
   const [nx, ny, nz] = mesh;
+  if (!mesh.every((m) => m > 0) || !(nspin >= 1 && nspin <= 8)) throw new Error(`cabecera de malla no válida (malla ${mesh.join('×')}, nspin ${nspin})`);
+  if (nspin * nz * ny * (4 * nx + 8) > u8.byteLength - o) throw new Error(`archivo de malla truncado: la malla ${mesh.join('×')} no cabe en ${u8.byteLength} bytes`);
   const data = [];
   for (let is = 0; is < nspin; is++) {
     const g = new Float32Array(nx * ny * nz);

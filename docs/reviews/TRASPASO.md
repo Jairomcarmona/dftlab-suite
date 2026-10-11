@@ -28,14 +28,21 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 
 ## Pendiente
 
-- **C/D, G, H:** sin empezar. Ver el registro (`addTexts` de `postproc.js` para EIG/KP; `f.text()` para mallas; `.dftlab.json` sin `unpackDftlab` en `refresh()`).
+- **C/D:** hechos (ver «Bloques C y D»). **G, H:** sin empezar.
 - **H (heredado de B):** `ResizeObserver` por canvas en `core/chart.js`; liberación de geometrías/materiales/texturas en `core/three-view.js`; medir antes de introducir workers.
 - **F:** `npm test`, quitar el fallback `/opt/run/tools/node_modules` de `app/scripts/build.mjs`, sustituir `serve` con `python3`, Playwright como dependencia fijada y pruebas de navegador en CI (`browser_regressions.mjs` y `browser_lifecycle.mjs`, con `REQUIRE_BROWSER=1`), verificación offline.
 - La auditoría de E cubre las rutas de datos importados; no se revisaron las 19 vistas línea a línea.
 
+## Bloques C y D (importación en Postproceso)
+
+- **Rama:** `claude/bloques-c-d-importacion-qke0lu`, desde `main` @ `b691f25`; PR «C y D: importación coherente en Postproceso». Tras fusionar, la punta de `main` es su commit de fusión (`git log -1 origin/main`).
+- **Cambios:** `siesta/runset.js` (conjunto de archivos: bytes para mallas, texto para el resto, paquetes desempaquetados y enlace `.EIG ← .KP` recalculado en cada alta/sustitución/baja, con procedencia en `link`); `siesta/pack.js` (validación de tamaño de arreglos; `packBands`, `packDOS`, `packStructure`, `packContents`); `siesta/rho.js` (errores de truncado y cabecera); `views/postproc.js` (lee bytes, paneles de malla y paquete, estado leído/visualizado por archivo, procedencia de pesos en pantalla y exportaciones).
+- **Pruebas:** `app/tests/siesta/run_import_tests.mjs` 75/0 (añadida a `scripts/verify.mjs`); `app/tests/ui/browser_import.mjs` 33/0 (20 fallos en `b691f25`). Sin regresiones: `verify.mjs` completo, `browser_regressions.mjs` 24/0, `browser_lifecycle.mjs` en verde (Node 22.22.0, Linux, Playwright global). `browser_import.mjs` debe sumarse a la ejecución de pruebas de navegador en CI que prepara el bloque F (`REQUIRE_BROWSER=1`).
+- **Pendientes:** fatbands, COOP/COHP y funciones de onda del paquete no se visualizan en Postproceso (se declara); el emparejamiento EIG/KP no puede verificar coordenadas (el `.EIG` no las tiene).
+
 ## Siguiente paso
 
-Bloques **C y D** (importación coherente de archivos científicos en `views/postproc.js`): un conjunto de archivos por corrida con recálculo de dependencias EIG↔KP al añadir/sustituir/quitar; bytes para lectores de malla (`parseGrid`) y texto para los textuales; conectar `.dftlab.json` con `unpackDftlab` o declarar exactamente qué no se visualiza. Las vistas reciben ahora `render(el, view)`: comprobar `view.alive` tras cada `await` en el código nuevo.
+Bloque **G** (discontinuidades del camino k): `siesta/bands.js` (`.bands` con `BandLines`/`BandPoints`), las bandas de paquetes (`packBands`: etiquetas como `H|P` en Fe) y `drawBands` en `views/postproc.js`. Representar segmentos explícitos solo con respaldo del formato o metadatos, sin umbrales inventados; conservar unidades y la referencia de energía. Después, **H**. Las vistas reciben `render(el, view)`: comprobar `view.alive` tras cada `await`.
 
 ## Reglas a respetar
 

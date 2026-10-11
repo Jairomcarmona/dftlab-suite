@@ -44,8 +44,8 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 |---|---|---|---|---|
 | A | `fftGood` y calculadora bloquean la pestaña con entradas vacías/0/NaN/Infinity | Alta | **Reproducido** → corregido en la rama `claude/fix-a-calc-validation` (PR del bloque A) | PR A |
 | B | Suscripciones de tema y callbacks de vistas anteriores | Alta | **Reproducido** (58 fallos de navegador en `73dc701`) → corregido en PR #4 (rama `claude/bloque-b-ciclo-vida-pwt4cq`) | PR #4 |
-| C | Resultado EIG/KP depende del orden de carga | Alta | Confirmado por inspección (sin reproducción ejecutada aún) | pendiente |
-| D | `.RHO` leído como texto; `.dftlab.json` detectado sin visualización | Media | Confirmado por inspección | pendiente |
+| C | Resultado EIG/KP depende del orden de carga | Alta | **Reproducido** (EIG→KP: primer peso 0.00390625 en vez de 0.005, sin coordenadas k) → corregido en la rama `claude/bloques-c-d-importacion-qke0lu` | PR C/D |
+| D | `.RHO` leído como texto; `.dftlab.json` detectado sin visualización | Media | **Reproducido** («archivo de malla demasiado corto»; paquete «leído» sin paneles) → corregido en la misma rama | PR C/D |
 | E | Metadatos y nombres de archivo se insertan en `innerHTML` | Media | **Reproducido** (incluido manejador `onerror` ejecutado) → corregido en la rama `claude/fix-e-safe-html` (PR del bloque E, apilado sobre A) | PR E |
 | F | Puerta de calidad reproducible | Media | **Parcialmente resuelto** | parcial: `e502b71` |
 | G | Bandas unen segmentos desconectados | Media | Confirmado por inspección | pendiente |
@@ -78,17 +78,27 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 
 ## C. EIG/KP dependen del orden
 
-- **Prioridad:** alta (resultado científico distinto con pesos no uniformes).
-- **Archivos:** `views/postproc.js` (`addTexts`), `siesta/index.js` (`parseMany`), `siesta/eig.js`.
-- **Inspección:** `addTexts` añade los `.KP` ya cargados solo al parsear un `.EIG` nuevo; un `.KP` posterior no recalcula el `.EIG` existente.
-- **Reproducción:** pendiente (cargar fixture de Si: `.EIG` y luego `.KP`).
+- **Prioridad:** alta. Con pesos no uniformes cambia la DOS y las integrales; aun con pesos uniformes se pierden las coordenadas k y el informe no dice de dónde salen los pesos.
+- **Archivos:** `views/postproc.js` (`addTexts` → `addItems`), nuevo `siesta/runset.js`; `siesta/eig.js` y `parseMany` sin cambios.
+- **Reproducción antes del cambio (2026-10-11, `main` @ `b691f25`, Chromium + Playwright 1.56.1 sobre `dist/dftlab.html` sin red):** `app/tests/ui/browser_import.mjs` con `si.EIG` y un `.KP` de la misma malla con pesos no uniformes (el primero 0.005). EIG→KP: la exportación JSON da `weightsFromKP: false`, `weights[0] = 0.00390625` (1/256) y `kpoints: null`; sustituir el `.KP` tampoco recalcula. KP→EIG y la carga conjunta sí dan 0.005: el resultado dependía del orden. Un `.KP` de otra malla se mostraba como «leído» sin explicar que no se usaba. 20 de 33 comprobaciones de C y D fallan en `b691f25`.
+- **Causa:** `addTexts` solo pasaba los `.KP` ya cargados al parsear un `.EIG` nuevo; ningún `.EIG` existente se volvía a leer al añadir, sustituir o quitar su `.KP`.
+- **Corrección:** `createFileSet()` (`siesta/runset.js`, sin DOM) guarda el contenido original de cada archivo y, tras cada alta, sustitución o baja, recalcula el enlace `.EIG ← .KP` (`relink`). El enlace exige la misma etiqueta (regla de `parseMany`: `si.EIG` ↔ `si.KP`; `.PDOS.KP` no participa), un `.KP` legible, pesos finitos no negativos con suma positiva, coordenadas finitas y el mismo número de puntos k (comprobación existente de `parseEIG`). Dos `.KP` con la misma etiqueta no se desempatan. Si no hay enlace, pesos uniformes y el motivo en `link.note`. Solo se vuelve a leer el `.EIG` cuyo enlace cambió. Las altas se serializan y se aplican tras leer todos los archivos, así que dos cargas concurrentes no se intercalan. Procedencia: `link = {kp, weights, kpoints, note}` en el `.EIG` y `{usedBy}` en el `.KP`; visible en la tabla de archivos, en la lectura de la DOS («pesos si.KP») y en las exportaciones Markdown y JSON.
+- **Evidencia después:** `app/tests/siesta/run_import_tests.mjs` (en `scripts/verify.mjs`): los cuatro órdenes dan pesos, coordenadas y DOS idénticos al lector puro `parseEIG(EIG, KP)`; quitar, volver a añadir y sustituir el `.KP`; sustituir o quitar el `.EIG`; `.KP` de otra malla, de otra etiqueta, con peso NaN o negativo, ilegible, duplicado o `.PDOS.KP`. `browser_import.mjs`: los tres órdenes dan la misma exportación, quitar y sustituir recalculan, el motivo de un `.KP` incompatible es visible.
+- **Límites:** el emparejamiento sigue siendo por etiqueta y número de puntos k; no se comprueba que las coordenadas del `.KP` correspondan a la malla de la corrida (el `.EIG` no las contiene). No se tocaron algoritmos ni tolerancias de `eig.js`.
 
 ## D. Binarios y paquetes en postproceso
 
-- **Prioridad:** media.
-- **Archivos:** `views/postproc.js` (`addFiles` usa `f.text()`), `siesta/index.js`, `siesta/pack.js`.
-- **Inspección:** confirma lectura textual de todos los archivos y ausencia de uso de `unpackDftlab` en `refresh()`.
-- **Reproducción:** pendiente.
+- **Prioridad:** media (funciones anunciadas que no funcionaban; sin pérdida de datos).
+- **Archivos:** `views/postproc.js`, `siesta/runset.js`, `siesta/pack.js` (validación y adaptadores), `siesta/rho.js` (errores de truncado y cabecera), `siesta/README.md`.
+- **Reproducción antes del cambio (mismo entorno, `browser_import.mjs`):** `mgo.RHO` → «archivo de malla demasiado corto» (se leía con `f.text()`); una malla basura daba el mismo mensaje engañoso; `si.dftlab.json` → «leído» y «Ninguno de los archivos tiene un lector gráfico todavía»; un JSON con `"dftlab"` que no es paquete también figuraba como «leído».
+- **Causa:** todos los archivos se leían como texto; `refresh()` no usaba `unpackDftlab` ni había paneles para mallas o paquetes; el estado «leído» no distinguía lectura de visualización.
+- **Corrección:**
+  - Se leen los bytes (`arrayBuffer`); `readEntry` entrega bytes a los lectores de malla (por extensión, como `detectAndParse`) y texto UTF-8 a los demás, que siguen su ruta textual. Pasar texto a una malla da un error explícito. El SHA-256 del informe se calcula ahora sobre los bytes del archivo.
+  - Mallas: panel con malla, celda, volumen, unidades, ∫ (solo densidades) y promedio planar por eje en las unidades del archivo; enlace a «Densidad y cargas» o «Potencial» para cortes 2D. `parseGrid` informa «archivo de malla truncado» y rechaza cabeceras imposibles antes de reservar memoria (antes: `RangeError` de `DataView`).
+  - Paquetes: `unpackDftlab` en la importación; exige `"dftlab": "siesta-pack"`; `decodeArray` rechaza arreglos cuyo tamaño no coincide con `shape`. Paneles de bandas (`packBands`, energías absolutas sin modificar y E_F del paquete), DOS (`packDOS`, total o ↑/↓ y por l) y metadatos (origen, generador, espín, E_F, gap); la estructura se usa como geometría si no hay otra fuente. Lo que esta pantalla no visualiza se nombra: fatbands, COOP/COHP (n pares) y funciones de onda (n estados).
+  - Tabla de archivos: tipo (detección), error de lectura, y qué se visualiza de cada archivo («visualizado», «usado en el resumen», «leído; sin gráfica en esta pantalla», «pesos y k para si.EIG», contenido de paquete no visualizado). Exportación JSON: mallas y paquetes como metadatos y procedencia (sus arreglos completos siguen en el archivo original, identificado por SHA-256).
+- **Evidencia después:** `run_import_tests.mjs` (75 comprobaciones en total con C): `.RHO`/`.DRHO` desde bytes idénticos a `parseGrid` directo; texto, truncado y basura con error; `.out`, `.bands` y `live.jsonl` desde bytes iguales que desde texto; `si`, `fe` y `fesoc.dftlab.json` con bandas, DOS y estructura iguales a los arreglos originales (`at()`), y los extras nombrados; paquete truncado, no-paquete, arreglo dañado, forma incoherente, sin bandas y arreglos en línea. `browser_import.mjs` (33/33): panel de malla con gráfica, errores visibles sin excepciones, paquete con bandas/DOS/geometría y la lista de lo no visualizado.
+- **Límites:** fatbands, COOP/COHP y funciones de onda de un paquete no se visualizan en Postproceso (se declara en pantalla). Las bandas del paquete se dibujan con el mismo trazado que las de `.bands`, que todavía une segmentos desconectados del camino (p. ej. `H|P` en Fe): es el bloque G. `.TSHS`, `.HSX` y `.WFSX` siguen requiriendo `dftlab_pack.py`.
 
 ## E. Inserción de HTML desde metadatos y nombres
 
