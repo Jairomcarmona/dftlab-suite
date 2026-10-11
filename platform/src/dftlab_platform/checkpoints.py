@@ -1,8 +1,8 @@
 """Operator-only, single-owner SQLite/ArtifactStore checkpoint adapter.
 
 The packet codec is private and versioned; RecoveryCheckpoint is the original
-public envelope. This first adapter deliberately refuses native runs: their
-journals require a qualified quiescence/terminal adapter, not a DB write lock.
+public envelope. Native runs require a registered qualified quiescence source
+and public-engine restore verifier, rather than a DB write lock alone.
 No HTTP route, credentials, implicit overwrite, GC or admission reopening.
 """
 from dataclasses import dataclass
@@ -63,9 +63,12 @@ def write_new(path, data):
 
 def open_original(path):
     path = checked_path(path)
-    descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    before = path.lstat()
+    if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1:
+        raise Problem("PRECONDITION_FAILED")
+    descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0))
     information = os.fstat(descriptor)
-    if not stat.S_ISREG(information.st_mode) or information.st_nlink != 1:
+    if not stat.S_ISREG(information.st_mode) or information.st_nlink != 1 or (information.st_dev, information.st_ino) != (before.st_dev, before.st_ino):
         os.close(descriptor)
         raise Problem("PRECONDITION_FAILED")
     return os.fdopen(descriptor, "rb")
@@ -119,25 +122,25 @@ class SQLiteCheckpointStore:
     Packet control artifacts are bootstrap objects outside the snapshotted DB;
     they are not falsely advertised as already indexed by the restored store.
     """
-    def __init__(self, repository, artifacts, *, max_files=4096, max_bytes=4*1024**3):
+    def __init__(self, repository, artifacts, *, max_files=4096, max_bytes=4*1024**3, native_source=None, native_verifier=None):
         if artifacts.index.repository.path != repository.path or type(max_files) is not int or max_files < 1 or type(max_bytes) is not int or max_bytes < 1:
             raise ValueError("One bounded local repository/store required")
         self.repository, self.artifacts = repository, artifacts
         self.contracts = repository.contracts
         self.max_files, self.max_bytes = max_files, max_bytes
+        if native_source is not None and native_source.repository.path != repository.path:
+            raise ValueError("Native source must share the snapshotted repository")
+        self.native_source, self.native_verifier = native_source, native_verifier
 
     @staticmethod
     def _tables(db):
         return {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
 
-    def _metadata(self, db):
+    def _metadata(self, db, expected_native=()):
+        from .native_checkpoints import native_run_ids
         tables = self._tables(db)
-        # Do not claim a complete native checkpoint with absent journals.
-        if db.execute("SELECT 1 FROM resources WHERE kind='RUN' LIMIT 1").fetchone():
-            raise Problem("PRECONDITION_FAILED")
-        for table in ("controller_authorities", "scheduler_dispatches"):
-            if table in tables and db.execute(f"SELECT 1 FROM {table} LIMIT 1").fetchone():
-                raise Problem("PRECONDITION_FAILED")
+        if native_run_ids(db) != expected_native:
+            raise Problem("PRECONDITION_FAILED")  # no omitted/unfrozen native namespace
         revisions = {}
         for table in sorted(tables):
             if table == "migrations" or table.endswith("_migrations"):
@@ -194,18 +197,40 @@ class SQLiteCheckpointStore:
         return expected
 
     def create(self, owner, project, destination, engine_versions):
+        from .native_checkpoints import native_run_ids
+        with self.repository._connection() as db:
+            self.repository._project(db, owner, project)
+            expected = native_run_ids(db)
+        if not expected:
+            return self._create(owner, project, destination, engine_versions, ())
+        if self.native_source is None:
+            raise Problem("PRECONDITION_FAILED")
+        # Acquire the original kernel guards before the SQL writer barrier.
+        # The registered callbacks are readonly inside that barrier.
+        with self.native_source.freeze(owner, expected) as snapshots:
+            if tuple(sorted((value.registration.project_id, value.registration.run_id) for value in snapshots)) != expected:
+                raise Problem("PRECONDITION_FAILED")
+            return self._create(owner, project, destination, engine_versions, snapshots)
+
+    def _create(self, owner, project, destination, engine_versions, snapshots):
+        from .native_checkpoints import capture_native, check_native_pins
         self.contracts.validate_ref(BASE+"schemas/recovery-checkpoint.schema.json#/$defs/payload/properties/engine_versions", engine_versions)
         if not {"qraft", "hubbardflow"} <= {pin["engine"] for pin in engine_versions}:
             raise Problem("PRECONDITION_FAILED")
         destination = checked_path(destination)
         if destination.exists() or destination.is_relative_to(self.artifacts.root) or self.artifacts.root.is_relative_to(destination) or self.repository.path.is_relative_to(destination):
             raise Problem("PRECONDITION_FAILED")
+        for value in snapshots:
+            root = value.registration.root
+            if destination.is_relative_to(root) or root.is_relative_to(destination) or root.is_relative_to(self.artifacts.root) or self.artifacts.root.is_relative_to(root) or self.repository.path.is_relative_to(root):
+                raise Problem("PRECONDITION_FAILED")
         with self.repository.transaction() as db:
             self.repository._project(db, owner, project)
             projects = db.execute("SELECT project_id,owner_id FROM projects ORDER BY project_id").fetchall()
             if any(row[1] != owner.principal_id for row in projects):
                 raise Problem("PRECONDITION_FAILED")  # no implicit admin export
-            revisions, records, uploads, pending = self._metadata(db)
+            native_ids = tuple(sorted((value.registration.project_id, value.registration.run_id) for value in snapshots))
+            revisions, records, uploads, pending = self._metadata(db, native_ids)
             expected = self._expected_files(records, uploads, self.artifacts.root)
             for category in ("blobs", "staging"):
                 for path in (self.artifacts.root/category).iterdir():
@@ -231,20 +256,32 @@ class SQLiteCheckpointStore:
                     raise Problem("PRECONDITION_FAILED")
                 sha = copy_original(source if source.exists() else None, files/category/key, value["size_bytes"], value["sha256"])
                 entries.append({**value, "sha256": sha})
+            native, native_bytes, native_count = [], 0, 0
+            if snapshots:
+                (destination/"native").mkdir(mode=0o700)
+                available = self.max_bytes-db_size-sum(value["size_bytes"] for value in entries)
+                if available < 0:
+                    raise Problem("PAYLOAD_TOO_LARGE")
+                native, native_bytes, native_count = capture_native(snapshots, owner, self.artifacts, destination/"native", self.max_files-len(entries), available)
             manifest = {"format": "dftlab.sqlite-artifacts-checkpoint", "version": 1, "scope": "SINGLE_OWNER_INSTANCE",
                         "owner_principal_id": owner.principal_id, "project_ids": [row[0] for row in projects],
                         "schema_revisions": revisions, "artifact_records": records, "files": entries}
+            if native:
+                check_native_pins(native, engine_versions)
+                manifest.update(version=2, native_runs=native)
             manifest_bytes = canonical(manifest)
-            if len(manifest_bytes) > 16*1024**2 or db_size+sum(item["size_bytes"] for item in entries) > self.max_bytes:
+            if len(manifest_bytes) > 16*1024**2 or db_size+sum(item["size_bytes"] for item in entries)+native_bytes > self.max_bytes or len(entries)+native_count > self.max_files:
                 raise Problem("PAYLOAD_TOO_LARGE")
             write_new(objects/manifest_id, manifest_bytes)
             reference = lambda key, sha, media: {"artifact_id": key, "sha256": sha, "media_type": media}
             checkpoint = envelope("recovery-checkpoint", project,
                                   {"db_snapshot": {"method": "SQLITE_BACKUP_API", "artifact": reference(db_id, db_sha, "application/octet-stream"), "schema_revision": canonical(revisions).decode()},
                                    "artifact_manifest": reference(manifest_id, hashlib.sha256(manifest_bytes).hexdigest(), "application/json"),
-                                   "journal_cursors": [], "engine_versions": engine_versions, "taken_at": now(), "pending_operation_ids": pending}, contracts=self.contracts)
+                                   "journal_cursors": [{key: item[key] for key in ("run_id", "native", "cursor")} for item in native], "engine_versions": engine_versions, "taken_at": now(), "pending_operation_ids": pending}, contracts=self.contracts)
             sync_directory(objects)
             sync_directory(files)
+            for value in snapshots:
+                value.verify()  # terminal proof/cursor must still hold at publication
             # Sole readiness marker, written only after every verified object.
             write_new(destination/"checkpoint.json", canonical(checkpoint))
             sync_directory(destination.parent)
@@ -257,7 +294,7 @@ class SQLiteCheckpointStore:
         with open_original(packet/"checkpoint.json") as stream:
             checkpoint = self.contracts.validate("recovery-checkpoint", loads(stream.read(16*1024**2+1)))
         payload = checkpoint["payload"]
-        if checkpoint["integrity"]["status"] != "VERIFIED" or checkpoint["integrity"]["digest"] != expected_digest or payload["db_snapshot"]["method"] != "SQLITE_BACKUP_API" or payload["journal_cursors"]:
+        if checkpoint["integrity"]["status"] != "VERIFIED" or checkpoint["integrity"]["digest"] != expected_digest or payload["db_snapshot"]["method"] != "SQLITE_BACKUP_API":
             raise Problem("PRECONDITION_FAILED")
         if not {"qraft", "hubbardflow"} <= {pin["engine"] for pin in payload["engine_versions"]}:
             raise Problem("PRECONDITION_FAILED")
@@ -271,7 +308,14 @@ class SQLiteCheckpointStore:
             objects.append((source, size, sha))
         with open_original(objects[1][0]) as stream:
             manifest = loads(stream.read(16*1024**2+1))
-        if set(manifest) != {"format", "version", "scope", "owner_principal_id", "project_ids", "schema_revisions", "artifact_records", "files"} or manifest["format"] != "dftlab.sqlite-artifacts-checkpoint" or manifest["version"] != 1 or manifest["scope"] != "SINGLE_OWNER_INSTANCE" or canonical(manifest["schema_revisions"]).decode() != payload["db_snapshot"]["schema_revision"]:
+        keys = {"format", "version", "scope", "owner_principal_id", "project_ids", "schema_revisions", "artifact_records", "files"}
+        version = manifest.get("version")
+        if version == 2:
+            keys.add("native_runs")
+        if set(manifest) != keys or manifest["format"] != "dftlab.sqlite-artifacts-checkpoint" or type(version) is not int or version not in {1, 2} or manifest["scope"] != "SINGLE_OWNER_INSTANCE" or canonical(manifest["schema_revisions"]).decode() != payload["db_snapshot"]["schema_revision"]:
+            raise Problem("PRECONDITION_FAILED")
+        native = manifest.get("native_runs", [])
+        if version == 2 and (not native or not callable(self.native_verifier)):
             raise Problem("PRECONDITION_FAILED")
         if len(manifest["files"]) > self.max_files:
             raise Problem("PAYLOAD_TOO_LARGE")
@@ -289,6 +333,11 @@ class SQLiteCheckpointStore:
                 raise Problem("PAYLOAD_TOO_LARGE")
             if file_hash(packet/"files"/item["category"]/item["id"], self.max_bytes) != (item["size_bytes"], item["sha256"]):
                 raise Problem("PRECONDITION_FAILED")
+        from .native_checkpoints import validate_native_packet, restore_native, check_native_pins
+        native_ids = validate_native_packet(native, packet, self.artifacts, self.contracts, self.max_files-len(seen), self.max_bytes-total)
+        check_native_pins(native, payload["engine_versions"])
+        if payload["journal_cursors"] != [{key: item[key] for key in ("run_id", "native", "cursor")} for item in native]:
+            raise Problem("PRECONDITION_FAILED")
         destination.mkdir(mode=0o700, parents=False)
         private_directory(destination)
         state = destination/"state.sqlite"
@@ -302,7 +351,7 @@ class SQLiteCheckpointStore:
         with closing(sqlite3.connect(state)) as db:
             if db.execute("PRAGMA integrity_check").fetchall() != [("ok",)] or db.execute("PRAGMA foreign_key_check").fetchall():
                 raise Problem("PRECONDITION_FAILED")
-            revisions, records, uploads, pending = self._metadata(db)
+            revisions, records, uploads, pending = self._metadata(db, native_ids)
             projects = db.execute("SELECT project_id,owner_id FROM projects ORDER BY project_id").fetchall()
             if revisions != manifest["schema_revisions"] or records != manifest["artifact_records"] or pending != payload["pending_operation_ids"] or [row[0] for row in projects] != manifest["project_ids"] or any(row[1] != manifest["owner_principal_id"] for row in projects) or checkpoint["project_id"] not in manifest["project_ids"]:
                 raise Problem("PRECONDITION_FAILED")
@@ -318,6 +367,8 @@ class SQLiteCheckpointStore:
         store = LocalArtifactStore(destination/"artifacts", SQLiteArtifactIndex(repository))
         for item in manifest["files"]:
             copy_original(packet/"files"/item["category"]/item["id"], store._path(item["category"], item["id"]), item["size_bytes"], item["sha256"])
+        if native:
+            restore_native(native, packet, destination, store, Principal(manifest["owner_principal_id"]), self.native_verifier)
         # Preserve bootstrap objects/manifest outside ArtifactIndex, without
         # fabricating that the old snapshot already indexed their new IDs.
         bootstrap = destination/"checkpoint"

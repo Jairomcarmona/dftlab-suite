@@ -21,21 +21,8 @@ from dftlab_platform.runtime_probe import Binary, Observation
 from dftlab_platform.terminal_evidence import LocalTerminalSigner, SlurmTerminalCollector
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run", type=Path, required=True)
-    parser.add_argument("--config", type=Path, required=True)
-    parser.add_argument("--wheelhouse", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--job", required=True)
-    parser.add_argument("--sacct-sha256", required=True)
-    parser.add_argument("--bridge-sha256", required=True)
-    parser.add_argument("--timezone-sha256", required=True)
-    parser.add_argument("--history-file", type=Path, required=True)
-    parser.add_argument("--history-sha256", required=True)
-    args = parser.parse_args()
-    if os.name == "nt" or sys.flags.isolated != 1 or sys.version_info[:3] != (3, 12, 10) or "PYTHONPATH" in os.environ:
-        raise RuntimeError("Installed isolated WSL Python 3.12.10 required")
+def observe_registered(args):
+    """Operator qualification only; original readonly context and fresh proof."""
     root, output = checked_path(args.run), checked_path(args.output)
     if output.exists() or root.is_relative_to(output) or output.is_relative_to(root):
         raise RuntimeError("NEW independent private output required")
@@ -86,6 +73,26 @@ def main():
     signer = LocalTerminalSigner(engines.qraft, "wsl-local-terminal-"+secrets.token_hex(8), private_key)
     collected = SlurmTerminalCollector(engines, port, sacct, signer, history_commands=ReadonlyBridge(),
                                       completion_timezone=zone, allow_unknown_cluster=True).observe(intent, args.job)
+    return engines, value, repo, owner, store, package, intent, signer, collected
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--run", type=Path, required=True)
+    parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--wheelhouse", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--job", required=True)
+    parser.add_argument("--sacct-sha256", required=True)
+    parser.add_argument("--bridge-sha256", required=True)
+    parser.add_argument("--timezone-sha256", required=True)
+    parser.add_argument("--history-file", type=Path, required=True)
+    parser.add_argument("--history-sha256", required=True)
+    args = parser.parse_args()
+    if os.name == "nt" or sys.flags.isolated != 1 or sys.version_info[:3] != (3, 12, 10) or "PYTHONPATH" in os.environ:
+        raise RuntimeError("Installed isolated WSL Python 3.12.10 required")
+    engines, value, repo, owner, store, package, intent, signer, collected = observe_registered(args)
+    output = checked_path(args.output)
     plan = engines.qraft.RunInspector().resume(package, terminal_evidence=collected.native, verify_terminal_evidence=signer.verify, expected_job=collected.native.job)
     original = engines.qraft_contracts().canonical_json(collected.native).encode("utf-8")
     original_plan = engines.qraft_contracts().canonical_json(plan).encode("utf-8")
