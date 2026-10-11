@@ -16,14 +16,43 @@ from .domain import Problem
 
 class OwnedLinuxChildren:
     def __init__(self):
-        if not sys.platform.startswith("linux") or not sys.flags.isolated or not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
+        if not sys.platform.startswith("linux") or not sys.flags.isolated:
             raise Problem("ENGINE_UNAVAILABLE")
         libc = ctypes.CDLL(None, use_errno=True)
+        self.root, self.uid = os.getpid(), os.getuid()
+        # python-build-standalone 3.12.10 can omit Python's pidfd wrappers.
+        # Use the already installed glibc API with explicit ABI signatures;
+        # never guess syscall numbers or fall back to signalling numeric PIDs.
+        self._pidfd_open = getattr(os, "pidfd_open", None)
+        self._pidfd_signal = getattr(signal, "pidfd_send_signal", None)
+        if self._pidfd_open is None or self._pidfd_signal is None:
+            try:
+                opening, sending = libc.pidfd_open, libc.pidfd_send_signal
+            except AttributeError:
+                raise Problem("ENGINE_UNAVAILABLE") from None
+            opening.argtypes, opening.restype = (ctypes.c_int, ctypes.c_uint), ctypes.c_int
+            sending.argtypes, sending.restype = (ctypes.c_int, ctypes.c_int, ctypes.c_void_p, ctypes.c_uint), ctypes.c_int
+            def check(result):
+                if result == -1:
+                    error = ctypes.get_errno()
+                    raise OSError(error, os.strerror(error))
+                return result
+            if self._pidfd_open is None:
+                self._pidfd_open = lambda pid, flags: check(opening(pid, flags))
+            if self._pidfd_signal is None:
+                self._pidfd_signal = lambda fd, number: check(sending(fd, number, None, 0))
+        try:
+            descriptor = self._pidfd_open(self.root, 0)
+            try:
+                self._pidfd_signal(descriptor, 0)  # probe only, sends no signal
+            finally:
+                os.close(descriptor)
+        except OSError:
+            raise Problem("ENGINE_UNAVAILABLE") from None
         # PR_SET_CHILD_SUBREAPER changes this dedicated host only. It lets the
         # host retain/reap orphaned descendants after an MPI launcher exits.
         if libc.prctl(36, 1, 0, 0, 0) != 0:
             raise Problem("ENGINE_UNAVAILABLE")
-        self.root, self.uid = os.getpid(), os.getuid()
         self.observed = set()
 
     @staticmethod
@@ -65,7 +94,7 @@ class OwnedLinuxChildren:
     def _signal(self, row, number):
         pid, _, started, _, _ = row
         try:
-            descriptor = os.pidfd_open(pid, 0)
+            descriptor = self._pidfd_open(pid, 0)
         except ProcessLookupError:
             return
         try:
@@ -74,7 +103,7 @@ class OwnedLinuxChildren:
                 return
             if current[2] != started or (pid, started) not in self.observed or any(uid != self.uid for uid in current[4]):
                 raise Problem("PRECONDITION_FAILED")
-            signal.pidfd_send_signal(descriptor, number)
+            self._pidfd_signal(descriptor, number)
         except ProcessLookupError:
             pass
         finally:
