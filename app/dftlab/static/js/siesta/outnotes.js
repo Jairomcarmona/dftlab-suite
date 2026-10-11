@@ -3,6 +3,7 @@
 // Las anotaciones describen el formato de SIESTA 4/5; las que dependen de números del propio archivo
 // se calculan con esos números (tolerancias, conteos, sumas), nunca con valores fijos.
 import { parseOut } from './out.js';
+import { esc } from '../core/escape.js';
 
 const num = s => parseFloat(String(s).replace(/D/i, 'e'));
 const f = (x, n = 4) => (x === undefined || x === null || !isFinite(x)) ? '—' : (x < 0 ? '−' : '') + Math.abs(x).toFixed(n);
@@ -505,7 +506,8 @@ export function annotateLines(lines, ctx, opts = {}) {
     let note = null;
     for (const r of RULES) {
       const m = r.re.exec(l); if (!m) continue;
-      const h = r.h(m, ctx, l);
+      // las notas son HTML: el texto del archivo (capturas y línea) entra siempre escapado
+      const h = r.h(Object.assign(Array.from(m, x => x == null ? x : esc(x)), { index: m.index }), ctx, esc(l));
       if (h === null) { note = false; break; }
       note = { k: r.k, h }; break;
     }

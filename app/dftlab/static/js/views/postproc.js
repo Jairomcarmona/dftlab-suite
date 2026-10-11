@@ -12,6 +12,7 @@ import EX from '../data/examples.json';
 const KIND_NAME = { out:'salida principal', fdf:'entrada fdf', bands:'bandas', eig:'autovalores', kp:'puntos k', 'pdos-kp':'puntos k PDOS', pdos:'PDOS', 'pdos-text':'PDOS (texto)', dos:'DOS', epsimg:'ε₂ óptica', 'epsimg-contrib':'ε₂ por transición',
   'ion-xml':'base (.ion.xml)', ion:'base (.ion)', psf:'pseudo psf', psml:'pseudo psml', mde:'MD energías', ani:'trayectoria', fa:'fuerzas', xv:'geometría XV', struct:'geometría STRUCT', 'dftlab-pack':'paquete DFT Lab', live:'hook Lua (live.jsonl)', unknown:'no reconocido' };
 
+const H = html => ({ html }); // marca HTML de plantilla de confianza; el resto de valores de la tabla se escapa
 let V3 = null;
 export function destroy(){ if (V3){ V3.destroy(); V3=null; } }
 
@@ -79,17 +80,17 @@ export function mount(root){
     const fdfF=F.find(g=>g.kind==='fdf'&&g.data&&label(g)===label(f)); const fk=k=>{ const key=String(k).toLowerCase().replace(/[._-]/g,''); return (o.fdf?.keys?.[key]||fdfF?.data?.keys?.[key])?.value; };
     const xcS=[o.input?.xcFunctional||fk('XC.functional'),o.input?.xcAuthors||fk('XC.authors')].filter(Boolean).join(' ')||o.species?.[0]?.xc||'—';
     const basS=o.input?.basisSize||fk('PAO.BasisSize')||(o.species||[]).map(s=>s.label+': '+(s.basis||[]).map(b=>b.state+'×'+(b.zetas?.length||1)).join(' ')).join('; ')||'—';
-    const kv=[['Programa',o.program?.version||'—'],['SystemLabel',o.systemLabel||label(f)],['Terminó',o.run?.completed?'sí (Job completed)':'<b style="color:var(--bad)">no</b>'],
-      ['XC',esc(xcS)],['Base',esc(basS)],['Espín',o.spin?.config||'—'],
+    const kv=[['Programa',o.program?.version||'—'],['SystemLabel',o.systemLabel||label(f)],['Terminó',o.run?.completed?'sí (Job completed)':H('<b style="color:var(--bad)">no</b>')],
+      ['XC',xcS],['Base',basS],['Espín',o.spin?.config||'—'],
       ['Átomos / orbitales',`${o.nAtoms??'—'} / ${o.nOrbitals??'—'}`],['Electrones',o.nElectrons??'—'],['MeshCutoff usado',o.mesh?.cutoffUsed?`${fmt(o.mesh.cutoffUsed,1)} Ry, malla ${o.mesh.mesh?.join('×')}`:'—'],
       ['Malla k',o.kgrid?.supercell?o.kgrid.supercell.map((r,i)=>r[i]).join('×')+` (${o.kgrid.nk??'?'} puntos)`:'—'],['Temperatura electrónica',o.electronicTemperature?`${o.electronicTemperature.value} ${o.electronicTemperature.unit}`:'—'],
-      ['Pasos de geometría',o.nSteps??1],['SCF',fin.scfConverged===false?'<b style="color:var(--bad)">no convergió</b>':`${o.scf?.length??0} iteraciones en total`],
-      ['E total',fin.etot!=null?`<b>${fmt(fin.etot,6)} eV</b>`:'—'],['Energía libre',fin.freeEnergy!=null?`${fmt(fin.freeEnergy,6)} eV`:'—'],['Nivel de Fermi',o.fermi!=null?`${fmt(o.fermi,4)} eV`:'—'],
+      ['Pasos de geometría',o.nSteps??1],['SCF',fin.scfConverged===false?H('<b style="color:var(--bad)">no convergió</b>'):`${o.scf?.length??0} iteraciones en total`],
+      ['E total',fin.etot!=null?H(`<b>${fmt(fin.etot,6)} eV</b>`):'—'],['Energía libre',fin.freeEnergy!=null?`${fmt(fin.freeEnergy,6)} eV`:'—'],['Nivel de Fermi',o.fermi!=null?`${fmt(o.fermi,4)} eV`:'—'],
       ['Fuerza máxima',fin.maxForce!=null?`${fmt(fin.maxForce,4)} eV/Å`:'—'],['Presión',fin.pressureKbar!=null?`${fmt(fin.pressureKbar,3)} kbar`:'—'],
-      ['Momento de espín',o.spinMoment?`${fmt(o.spinMoment.abs,3)} μ<sub>B</sub>`:'—'],['Tiempo total',o.timers?.wallTime?`${fmt(o.timers.wallTime,1)} s`:'—']];
+      ['Momento de espín',o.spinMoment?H(`${fmt(o.spinMoment.abs,3)} μ<sub>B</sub>`):'—'],['Tiempo total',o.timers?.wallTime?`${fmt(o.timers.wallTime,1)} s`:'—']];
     const dec=Object.entries(fe).filter(([k,v])=>isFinite(v)&&Math.abs(v)>1e-9&&k!=='Fermi');
     const warn=(o.warnings||[]).slice(0,6);
-    return `<dl class="kv two">${kv.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
+    return `<dl class="kv two">${kv.map(([k,v])=>`<dt>${k}</dt><dd>${v&&v.html!=null?v.html:esc(v)}</dd>`).join('')}</dl>
       ${dec.length?`<h3 style="margin-top:12px">Energía final por términos</h3><div class="tblwrap"><table class="tbl"><tbody>${dec.map(([k,v])=>`<tr${k==='Total'?' class="hl"':''}><td>${esc(k)}</td><td>${fmt(v,6)} eV</td></tr>`).join('')}</tbody></table></div>`:''}
       ${warn.length?`<div class="callout warn" style="margin-top:10px">${warn.map(w=>esc(w.text)).join('<br>')}</div>`:''}`;
   }

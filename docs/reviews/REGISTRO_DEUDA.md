@@ -46,7 +46,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | B | Suscripciones de tema y callbacks de vistas anteriores | Alta | Confirmado por inspección (sin reproducción de navegador aún) | pendiente |
 | C | Resultado EIG/KP depende del orden de carga | Alta | Confirmado por inspección (sin reproducción ejecutada aún) | pendiente |
 | D | `.RHO` leído como texto; `.dftlab.json` detectado sin visualización | Media | Confirmado por inspección | pendiente |
-| E | Metadatos y nombres de archivo se insertan en `innerHTML` | Media | Confirmado por inspección; en corrección (PR del bloque E) | _ver PR E_ |
+| E | Metadatos y nombres de archivo se insertan en `innerHTML` | Media | **Reproducido** (incluido manejador `onerror` ejecutado) → corregido en la rama `claude/fix-e-safe-html` (PR del bloque E, apilado sobre A) | PR E |
 | F | Puerta de calidad reproducible | Media | **Parcialmente resuelto** | parcial: `e502b71` |
 | G | Bandas unen segmentos desconectados | Media | Confirmado por inspección | pendiente |
 | H | Recursos (ResizeObserver, escenas 3D) y cálculo pesado | Media/baja | Fugas: confirmadas por inspección; rendimiento: pendiente de medición | pendiente |
@@ -86,10 +86,12 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 ## E. Inserción de HTML desde metadatos y nombres
 
 - **Prioridad:** media (altera la interfaz desde un archivo importado; superficie para handlers de eventos).
-- **Archivos:** `core/ui.js` (`esc`), `views/postproc.js` y demás vistas que interpolan datos importados (`lectura`, `phonons`, `forces`, `density`, `potential`, `estructura`), `main.js` (mensaje de error del router).
-- **Inspección:** `esc` (`ui.js:15`) no escapa comillas; el resumen del `.out` interpola `o.systemLabel` sin escapar (`postproc.js:82`); los nombres de archivo van en atributos `data-export="${esc(...)}"`.
-- **Criterio de aceptación:** ver encargo (bloque E).
-- **Resuelto en:** _pendiente de PR_.
+- **Archivos:** `core/escape.js` (nuevo), `core/ui.js`, `siesta/outnotes.js`, `views/postproc.js`, `main.js`.
+- **Reproducción antes del cambio (2026-10-11, Chromium sobre `dist/dftlab.html`, red bloqueada):** cargar en `#post` un `.out` con `reinit: System Label: <b data-audit-label="yes">audit</b><img src=x onerror="window.__pwned=1">` crea los elementos `<b>` e `<img>` en el resumen y **ejecuta el manejador** (`window.__pwned === true`); también con nombre de archivo con comillas. Causa: `postproc.js` interpola `o.systemLabel` (y otros campos del `.out`) en `innerHTML` sin escapar; las notas HTML de `outnotes.js` concatenan capturas del archivo (p. ej. SystemLabel, etiqueta de especie, `xc_check`, `Begin …`) que `lectura.js` inserta como HTML; `esc()` no escapaba comillas; `main.js` mostraba `e.message` en `innerHTML`.
+- **Corrección:** `esc` (ahora en `core/escape.js`, reexportada por `ui.js`) escapa también `"` y `'`, válido en contenido y en atributos de ambas comillas. La tabla de resumen de `postproc.js` escapa todos los valores salvo los marcados como HTML de confianza con `H()`. `annotateLines` pasa a las reglas las capturas y la línea ya escapadas: las notas siguen siendo HTML propio con el texto del archivo como texto. El mensaje de error del router usa `textContent`. Revisados y ya escapados antes: nombres de archivo en paneles/atributos (`postproc`), `density`, `potential`, `phonons`, `forces`, `lectura` (título, detalle, nombre), `estructura` (origen, fórmula).
+- **Evidencia después:** `app/tests/ui/run_escape_tests.mjs` (15 comprobaciones; sin la corrección fallan 3 de las 4 cargas útiles en las notas) y `app/tests/ui/browser_regressions.mjs` (24 comprobaciones sobre el HTML compilado: sin elementos ni atributos `on*` inyectados, `__pwned` falso, etiqueta visible como texto, también con nombre de archivo con comillas; antes del cambio fallan las dos de postproceso).
+- **Límites:** no se auditó cada interpolación de las 19 vistas, sino todas las rutas por las que entran datos importados (archivos de usuario: `.out`, nombres, `.FC`, mallas, estructuras). Texto empaquetado en la app se considera de confianza. La prueba de navegador usa Playwright global; su integración reproducible en CI es del bloque F. No se añadió CSP.
+- **Resuelto en:** PR del bloque E.
 
 ## F. Calidad y reproducibilidad
 

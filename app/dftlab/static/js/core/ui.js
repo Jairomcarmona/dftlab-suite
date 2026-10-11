@@ -10,7 +10,7 @@ export function alpha(col, a){
 }
 export function rgb(col){ if(col.startsWith('#')){ const n=parseInt(col.slice(1,7),16); return [n>>16&255,n>>8&255,n&255]; } const m=/rgba?\(([^)]+)\)/.exec(col); return m?m[1].split(',').slice(0,3).map(Number):[0,0,0]; }
 export const fmt = (x, n=2) => !isFinite(x) ? '—' : (x<0?'−':'') + Math.abs(x).toFixed(n);
-export const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+export { esc } from './escape.js';
 export function html(strings, ...vals){ return strings.reduce((a,s,i)=>a+s+(i<vals.length?vals[i]:''),''); }
 export function el(tag, attrs={}, inner=''){ const e=document.createElement(tag); for (const [k,v] of Object.entries(attrs)){ if(k==='class') e.className=v; else if(k.startsWith('on')) e.addEventListener(k.slice(2),v); else e.setAttribute(k,v); } if(inner) e.innerHTML=inner; return e; }
 export function debounce(f, ms=60){ let t=0; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>f(...a),ms); }; }
