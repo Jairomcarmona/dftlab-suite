@@ -23,6 +23,7 @@ def main():
     parser.add_argument("--profile", type=Path, required=True)
     parser.add_argument("--pseudo", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--case", choices=("authoring", "handlers"), default="authoring")
     args = parser.parse_args()
     output = args.output.resolve()
     if output.exists() or output == ROOT/"runtime" or not output.is_relative_to(ROOT/"runtime"):
@@ -35,6 +36,8 @@ def main():
     environment.pop("PYTHONPATH", None)
     environment["PYTHONNOUSERSITE"] = "1"
     report = {"success": False, "scope": "installed public authoring/compiler/package/inspector only; runtime and science PENDING", "commands": []}
+    if args.case == "handlers":
+        report["scope"] = "installed service-internal typed handlers and public authoring/package; runtime/admission/science PENDING"
     def run(name, command, cwd):
         result = subprocess.run(command, cwd=cwd, env=environment, capture_output=True, timeout=180)
         log = result.stdout+result.stderr
@@ -68,7 +71,7 @@ def main():
             run("dependency-consistency", [uv, "pip", "check", "--python", str(python)], scratch)
             shutil.copyfile(args.profile, scratch/"profile.json")
             shutil.copyfile(args.pseudo, scratch/"Si.psml")
-            driver = Path(__file__).with_name("qualify_native_authoring.py")
+            driver = Path(__file__).with_name("qualify_native_authoring.py" if args.case == "authoring" else "qualify_native_handlers.py")
             result = run("native-authoring", [str(python), "-I", str(driver), str(scratch), str(args.wheelhouse.resolve())], scratch)
             observation = json.loads(result)
             report["observation"] = observation
@@ -77,6 +80,11 @@ def main():
             for relative in ("workflow.lock.json", "packages/native-qualification-run.zip"):
                 source = scratch/relative
                 shutil.copyfile(source, output/source.name)
+            if args.case == "handlers":
+                shutil.copytree(scratch/"evidence", output/"evidence")
+                report["evidence_files"] = [{"file": str(path.relative_to(output)), "bytes": path.stat().st_size,
+                                             "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+                                            for path in sorted((output/"evidence").iterdir()) if path.is_file()]
             report["success"] = True
     except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as error:
         report["error"] = str(error)

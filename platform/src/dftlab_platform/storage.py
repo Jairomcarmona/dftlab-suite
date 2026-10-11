@@ -256,6 +256,21 @@ class SQLiteRepository:
             validate_products(self.contracts, operation, values)
             return values
 
+    def local_product(self, owner, kind, product_id):
+        """Private application lookup, with the same authorized immutable read.
+
+        Current aggregate revisions can advance after accepting commands. Their
+        source product stays the original confirmed snapshot, not a UI cache.
+        """
+        with self._connection() as db:
+            row = db.execute("SELECT operation_id FROM operation_products WHERE kind=? AND product_id=?", (kind, product_id)).fetchone()
+        if row is None:
+            raise Problem("NOT_FOUND")
+        values = self.local_products(owner, row[0])
+        if len(values) != 1 or values[0].kind != kind or values[0].product_id != product_id:
+            raise Problem("PRECONDITION_FAILED")
+        return values[0]
+
     def _operation_document(self, raw: str) -> dict:
         return self.contracts.validate("operation-record", loads(raw))
 

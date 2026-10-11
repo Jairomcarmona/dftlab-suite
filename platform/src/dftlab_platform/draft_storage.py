@@ -1,5 +1,5 @@
 """SQLite adapter for immutable drafts with owner/project scoped idempotency."""
-from .contracts import canonical, digest, loads
+from .contracts import BASE, canonical, digest, loads
 from .domain import Problem
 from .drafts import materialize
 
@@ -96,6 +96,38 @@ class SQLiteDraftRepository:
     def get(self, owner, draft_id):
         with self.repository._connection() as db:
             return self._get(db, owner, draft_id)[2]
+
+    def get_revision(self, owner, draft_id, revision):
+        """Application port for an accepted command, never a new HTTP endpoint.
+
+        A newer editor revision cannot silently change a queued preflight/plan.
+        Both authorization and the selected immutable bundle are checked here.
+        """
+        self.contracts.validate_ref(BASE+"schemas/defs.schema.json#/$defs/revision", revision)
+        with self.repository._connection() as db:
+            project, _, _ = self._get(db, owner, draft_id)
+            version = db.execute("SELECT bundle FROM draft_versions WHERE draft_id=? AND revision=?", (draft_id, revision)).fetchone()
+            if version is None:
+                raise Problem("NOT_FOUND")
+            bundle = self._bundle(loads(version[0]))
+        draft, structure = bundle["draft"], bundle["structure"]
+        if draft["payload"]["draft_id"] != draft_id or draft["payload"]["revision"] != revision:
+            raise Problem("PRECONDITION_FAILED")
+        if draft["payload"]["structure"] != {"structure_id": structure["payload"]["structure_id"], "revision": structure["payload"]["revision"]}:
+            raise Problem("PRECONDITION_FAILED")
+        records = [draft, structure]
+        intent = bundle["intent"]
+        if intent is None:
+            if draft["payload"]["intent_id"] is not None:
+                raise Problem("PRECONDITION_FAILED")
+        else:
+            run = intent["run_intent"]["payload"]
+            if run["intent_id"] != draft["payload"]["intent_id"] or run["draft_id"] != draft_id or run["structure"] != draft["payload"]["structure"] or run["physical_model_ref"] != intent["physical_model"]["record_id"] or run["numerical_policy_ref"] != intent["numerical_policy"]["record_id"]:
+                raise Problem("PRECONDITION_FAILED")
+            records.extend(intent.values())
+        if any(record["project_id"] != project or record["integrity"]["status"] != "VERIFIED" for record in records):
+            raise Problem("PRECONDITION_FAILED")
+        return bundle
 
     def list(self, owner, project_id):
         with self.repository._connection() as db:
