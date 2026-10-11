@@ -1,6 +1,7 @@
 # ADR-012: releases compatibles, migraciones y catálogo de capabilities probado
 
 Estado: **aceptado** el 2026-10-11 (T-007). El mapeo del catálogo al registro nativo de QRAFT queda pendiente del inventario C2 (T-009).
+Enmendado por [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md): HubbardFlow es capa obligatoria bajo QRAFT y puede empaquetarse con la plataforma.
 Fecha: 2026-10-11. Fuente: [propuesta maestra](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) §5.4, §7, §16.3, §18.4, §19.2, §25.6–25.7.
 
 ## Contexto
