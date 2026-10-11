@@ -145,7 +145,7 @@ export function mount(root, view){
     const cloud=new V.THREE.Group(); gBZ.add(cloud); let lastW=null;
     V.update=()=>{ if (S.ik!==null){ kMark.visible=true; kMark.position.set(...B.kcart[S.ik]); } else kMark.visible=false;
       const dec=S.w===null?null:decAt(S.w), key=dec?dec.w:null;
-      if (key!==lastW){ lastW=key; while(cloud.children.length) cloud.remove(cloud.children[0]);
+      if (key!==lastW){ lastW=key; V.clear(cloud);
         if (dec){ const mx=Math.max(...dec.k.map(r=>r[3])); const mat=new V.THREE.MeshBasicMaterial({color:V.color('--accent'),transparent:true,opacity:.75}), geo=new V.THREE.SphereGeometry(1,10,10);
           for (const r of dec.k.slice(0,70)){ const s=new V.THREE.Mesh(geo,mat); const rad=.008+.028*Math.sqrt(r[3]/mx); s.scale.set(rad,rad,rad); s.position.set(r[0],r[1],r[2]); cloud.add(s); } } } };
   }catch(e){ $('#b3').innerHTML='<p class="note" style="padding:12px">La vista 3D no está disponible en este navegador (WebGL).</p>'; }
@@ -164,7 +164,7 @@ export function mount(root, view){
     else { const A2=new Float32Array(re.length); for (let i=0;i<re.length;i++) A2[i]=re[i]*re[i]+im[i]*im[i];
       parts.push(isoSurface(A2,dims,toCart,iso*iso,(p,q,t)=>{ const r=re[p]+(re[q]-re[p])*t, m=im[p]+(im[q]-im[p])*t; return hsl2rgb((Math.atan2(m,r)*180/Math.PI+360)%360,.72,.52); })); }
     const merged={pos:parts.flatMap(p=>p.pos),nor:parts.flatMap(p=>p.nor),col:parts.flatMap(p=>p.col)};
-    if (isoMesh){ gWf.remove(isoMesh); isoMesh.geometry.dispose(); } isoMesh=meshFrom(V,merged); gWf.add(isoMesh);
+    if (isoMesh){ gWf.remove(isoMesh); isoMesh.geometry.dispose(); isoMesh.material.dispose(); } isoMesh=meshFrom(V,merged); gWf.add(isoMesh);
     vizRead();
   }
   function setView(v){ S.view=v; setSel(v); if(!V) return; gBZ.visible=v==='bz'; gSt.visible=v==='st'; gWf.visible=v==='wf'; $('#wfCtl').hidden=v!=='wf';

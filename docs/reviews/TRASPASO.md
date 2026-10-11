@@ -28,9 +28,8 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 
 ## Pendiente
 
-- **C/D:** hechos (ver «Bloques C y D»). **G:** hecho (ver «Bloque G»). **H:** sin empezar.
-- **H (heredado de B):** `ResizeObserver` por canvas en `core/chart.js`; liberación de geometrías/materiales/texturas en `core/three-view.js`; medir antes de introducir workers.
-- **F:** PR #5 fusionado @ `296bb15`, después de CI Windows/Linux en verde con C/D. Entorno Python validado localmente y en CI en `codex/entorno-python`, PR #8 pendiente de revisión/integración. Ver entregas F al final de esta nota.
+- **C/D:** hechos (ver «Bloques C y D»). **G:** hecho (ver «Bloque G»). **H:** hecho (ver «Bloque H»).
+- **F:** PR #5 fusionado @ `296bb15`, después de CI Windows/Linux en verde con C/D. Entorno Python validado localmente y en CI en `codex/entorno-python`, entrega mediante PR #8. Ver entregas F al final de esta nota.
 - La auditoría de E cubre las rutas de datos importados; no se revisaron las 19 vistas línea a línea.
 
 ## Bloques C y D (importación en Postproceso)
@@ -48,9 +47,17 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 - **Pendientes:** un tramo de un paso escrito a propósito en BandLines se trata como salto; BandPoints se une en orden; el `.fdf` no se usa para confirmar el camino.
 - **Siguiente paso:** **H**. Si H toca `drawBands`, conservar `segmentSeries(x, y, b.path.breaks)`.
 
+## Bloque H (recursos y rendimiento)
+
+- **Rama:** `claude/bloque-h-recursos-16vtfq`, desde `main` @ `b691f25`, rebasada sobre `0851268` (F, C/D y G fusionados). Commit de la corrección: `e5016aa`; PR #9 «H: liberación de recursos y medición de rendimiento». Tras fusionar, la punta de `main` es su commit de fusión (`git log -1 origin/main`).
+- **Cambios:** `core/three-view.js` (`clear` libera geometrías, materiales y texturas de todo el subárbol; `destroy` idempotente con `OrbitControls.dispose` y `forceContextLoss`; `share` para recursos no propios; `collect`/`disposeAll` exportadas); `core/chart.js` (un `ResizeObserver` común, `releaseChart`/`releaseCharts`); `main.js` (el ámbito de vista libera los gráficos); `views/bands.js` (nube k e isosuperficie); `views/postproc.js` (una línea: destruir el visor de geometría antes de reconstruir paneles).
+- **Pruebas:** `app/tests/ui/run_resources_tests.mjs` 15/0 (en `scripts/verify.mjs`); `app/tests/ui/browser_resources.mjs` en verde (36 fallos en `0851268`), añadida a `app/scripts/test-browser.mjs` con límite de 300 s (tarda ~85 s en Linux con SwiftShader). Sin regresiones: `verify.mjs` completo, `browser_regressions` 24/0, `browser_lifecycle` en verde; manifiesto `baseline-v1` 480 archivos correcto (Node 22.22.0, Linux, Playwright 1.56.1 local).
+- **Mediciones:** `docs/reviews/MEDICIONES_H.md` (`app/tests/perf/measure_views.mjs`, `measure_parsers.mjs`; no forman parte de CI). Montón JS estable (≈20 MB tras 4 recorridos). Kohn–Sham con Xe: tarea de ~2 s, la única por encima de 1 s; fonones ~0.3 s; isosuperficie de bandas ~0.25 s; lectores de archivos reales de hasta 5 MB en decenas de ms.
+- **Pendientes:** decidir un worker para `solveAtom` (Kohn–Sham) tras medir en el equipo de uso; no medido con GPU real, equipos modestos ni mallas de usuario mayores que 108³.
+
 ## Siguiente paso
 
-Bloque **G** hecho (ver «Bloque G»). Sigue **H**. Las vistas reciben `render(el, view)`: comprobar `view.alive` tras cada `await`.
+Bloques A–H hechos. Queda de F el entorno Python fijado (`codex/entorno-python`) y, si se confirma con mediciones en el equipo de uso, el worker de Kohn–Sham. Las vistas reciben `render(el, view)`: comprobar `view.alive` tras cada `await`.
 
 ## Reglas a respetar
 
@@ -78,5 +85,6 @@ Bloque **G** hecho (ver «Bloque G»). Sigue **H**. Las vistas reciben `render(e
 - **Calificación:** cuatro generadores originales y seis suites Node en copia temporal; outputs e informe de procedencia en `runtime/`, sin modificar ni sustituir las referencias originales. La aceptación usa aserciones/tolerancias existentes. Los logs y artefactos permiten revisar diferencias de hashes.
 - **Pruebas locales:** WSL2 Ubuntu x86_64, CPython 3.12.10, uv 0.11.14, Node 24.18.0. Lock instalado con 19 paquetes binarios. Generación completa y suites contra resultados nuevos: 341/0, 81/0, 26/0, 101/0, C/D 75/0, cristalografía 371/371 y 71/71 formatos. Fuentes intactas según informe; 480 SHA-256 históricos correctos. Destinos fuente y carpeta existente rechazados (exit 2). Tres JSON nuevos difieren de los históricos; ninguno fue sustituido. `git diff --check` correcto; contenido ajeno a F de ambos documentos preservado por comparación con `296bb15`.
 - **CI verificada:** [Python references 38108049094](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38108049094) (Ubuntu) y [Baseline CI 38108049066](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38108049066) (Windows + Ubuntu), todos `success` @ `7ca6931`. Artefacto Python descargado e inspeccionado: versiones fijadas, diez procesos exit 0, informe exitoso y fuentes intactas. La documentación posterior no cambia código; confirmar checks de la punta actual antes de integrar.
-- **Pendiente F:** revisar e integrar PR #8. No se promete soporte nativo Windows para sisl 0.16.4 ni identidad binaria entre BLAS/sistemas; usar WSL2, frontend verificado en ambos sistemas. No se ejecutó SIESTA.
-- **Alcance protegido:** sin cambios en vistas, router, lectores, bandas, generadores científicos, `app/src` ni tolerancias. Sólo se actualizaron F en este traspaso y en el registro. G/H continúan en sus ramas; `dist` sigue fuera de Git.
+- **Integración con H:** `origin/main` @ `db0a60a717832130bba72c7c968c0d2428a4677d` (PR #9 fusionado) incorporado por merge en `codex/entorno-python`, conservando C/D/G/H. El conflicto se limitó al resumen de pendientes: H hecho, entorno Python F conservado. `npm test` mantiene `browser_resources.mjs` entre las siete suites de navegador, con límite propio de 300 s; `run_resources_tests.mjs` sigue en las suites Node. CI frontend continúa ejecutando `npm test` en Windows y Linux; la regeneración Python tiene su tercer check Ubuntu. Confirmar los tres checks de la punta del PR antes de integrar; SHA y resultados finales quedan en el PR #8.
+- **Límites F:** no se promete soporte nativo Windows para sisl 0.16.4 ni identidad binaria entre BLAS/sistemas; usar WSL2, frontend verificado en ambos sistemas. No se ejecutó SIESTA.
+- **Alcance protegido:** los cambios propios siguen limitados a F; vistas, router, lectores, bandas y pruebas H coinciden con `origin/main`. Generadores científicos, `app/src` y tolerancias intactos. Se conservaron las secciones C/D/G/H de ambos documentos; `dist` sigue fuera de Git.
