@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/draft-revision-request.schema.json",
+  "title": "DraftRevisionRequest",
+  "description": "Cuerpo de POST /drafts/{draft_id}/revisions (ADR-016 §1). Clave ausente en changes = sin cambio; intent null = quitar la plantilla. Cada revisión crea identidades nuevas; no edita registros existentes.",
+  "type": "object",
+  "required": [
+    "idempotency_key",
+    "expected_revision",
+    "changes"
+  ],
+  "properties": {
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{16,128}$"
+    },
+    "expected_revision": {
+      "$ref": "defs.schema.json#/$defs/revision"
+    },
+    "changes": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "purpose": {
+          "enum": [
+            "EXPLORATORY",
+            "OPERATIONAL"
+          ]
+        },
+        "structure": {
+          "type": "object",
+          "description": "Contenido de una StructureRevision sin identidad: structure_id, revision y parent_revision los asigna el servidor.",
+          "required": [
+            "convention",
+            "cell",
+            "periodicity",
+            "coordinates",
+            "sites",
+            "transformations"
+          ],
+          "properties": {
+            "convention": {
+              "$ref": "structure-revision.schema.json#/$defs/payload/properties/convention"
+            },
+            "cell": {
+              "$ref": "structure-revision.schema.json#/$defs/payload/properties/cell"
+            },
+            "periodicity": {
+              "$ref": "structure-revision.schema.json#/$defs/payload/properties/periodicity"
+            },
+            "coordinates": {
+              "$ref": "structure-revision.schema.json#/$defs/payload/properties/coordinates"
+            },
+            "sites": {
+              "$ref": "structure-revision.schema.json#/$defs/payload/properties/sites"
+            },
+            "transformations": {
+              "$ref": "structure-revision.schema.json#/$defs/payload/properties/transformations"
+            },
+            "physical_intent": {
+              "$ref": "structure-revision.schema.json#/$defs/payload/properties/physical_intent"
+            }
+          },
+          "additionalProperties": false
+        },
+        "intent": {
+          "anyOf": [
+            {
+              "type": "object",
+              "description": "Plantilla de RunIntent. El servidor materializa PhysicalModel y NumericalPolicy como registros nuevos y crea el RunIntent que los referencia.",
+              "required": [
+                "operation",
+                "protocol",
+                "physical_model",
+                "numerical_policy"
+              ],
+              "properties": {
+                "operation": {
+                  "$ref": "run-intent.schema.json#/$defs/payload/properties/operation"
+                },
+                "protocol": {
+                  "$ref": "run-intent.schema.json#/$defs/payload/properties/protocol"
+                },
+                "physical_model": {
+                  "$ref": "physical-model.schema.json#/$defs/payload"
+                },
+                "numerical_policy": {
+                  "$ref": "numerical-policy.schema.json#/$defs/payload"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,5 @@
+{
+  "idempotency_key": "draft-revise-key-0001",
+  "expected_revision": 1,
+  "changes": {}
+}

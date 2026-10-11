@@ -1,0 +1,19 @@
+{
+  "action": "CREATE_CAMPAIGN",
+  "project_id": "prj-demo",
+  "target": {
+    "kind": "PROJECT",
+    "id": "prj-demo",
+    "expected_revision": 2
+  },
+  "payload": {
+    "name": "Si bulk",
+    "drafts": [
+      {
+        "draft_id": "drf-1",
+        "revision": 2
+      }
+    ]
+  },
+  "idempotency_key": "campaign-key-000001"
+}

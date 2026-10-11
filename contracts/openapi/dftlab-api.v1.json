@@ -59,6 +59,46 @@
       }
     },
     "/api/v1/session": {
+      "get": {
+        "operationId": "getSession",
+        "summary": "Leer la sesión vigente y su token CSRF tras recargar",
+        "description": "Solo con la cookie de sesión. Devuelve el mismo token CSRF ligado a la sesión (no lo rota) para que una pestaña recargada pueda volver a editar sin un bootstrap nuevo y sin guardar el token en el navegador. Exige Host exacto; si llega Origin debe ser exacto y si llega Sec-Fetch-Site debe ser same-origin. Respuesta con Cache-Control: no-store; el token nunca se registra (ADR-016 §5).",
+        "responses": {
+          "200": {
+            "description": "Sesión vigente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "principal_id",
+                    "csrf_token",
+                    "expires_at"
+                  ],
+                  "properties": {
+                    "principal_id": {
+                      "$ref": "../schemas/defs.schema.json#/$defs/id"
+                    },
+                    "csrf_token": {
+                      "type": "string"
+                    },
+                    "expires_at": {
+                      "$ref": "../schemas/defs.schema.json#/$defs/timestamp"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          }
+        }
+      },
       "post": {
         "operationId": "createSession",
         "summary": "Canjear el bootstrap de un solo uso por una sesión",
@@ -313,6 +353,234 @@
           },
           "404": {
             "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/drafts": {
+      "get": {
+        "operationId": "listDrafts",
+        "summary": "Borradores del proyecto (última revisión de cada uno)",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Proyecto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "../schemas/draft.schema.json"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDraft",
+        "summary": "Crear un borrador (promoción desde Aprender, importación o edición propia)",
+        "description": "Mutación local sin efecto externo, síncrona como createProject: no pasa por OperationRequest ni por el procesador. El servidor asigna draft_id, StructureRevision (revision 1), y, si hay plantilla, PhysicalModel, NumericalPolicy y RunIntent nuevos; deriva provenance_state. Misma idempotency_key (ámbito owner+proyecto) y mismo cuerpo: 200 con el mismo bundle; otro cuerpo: 409 IDEMPOTENCY_KEY_REUSED. No crea runs ni campañas y no cambia Project.revision (ADR-016 §1, §3).",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Proyecto"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/draft-create-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftBundle"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftBundle"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "413": {
+            "$ref": "#/components/responses/P413"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          }
+        }
+      }
+    },
+    "/api/v1/drafts/{draft_id}": {
+      "get": {
+        "operationId": "getDraft",
+        "summary": "Última revisión de un borrador con sus registros",
+        "parameters": [
+          {
+            "name": "draft_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Borrador"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftBundle"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/drafts/{draft_id}/revisions": {
+      "post": {
+        "operationId": "reviseDraft",
+        "summary": "Revisar un borrador",
+        "description": "Crea la revisión expected_revision+1 con identidades nuevas: StructureRevision con parent_revision si cambia la estructura y RunIntent nuevo si hay plantilla y cambia cualquier cosa de la que depende. Los registros anteriores quedan intactos. expected_revision distinta: 412 REVISION_CONFLICT. Idempotencia como createDraft (ADR-016 §1).",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "draft_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Borrador"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/draft-revision-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Revisión creada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftBundle"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftBundle"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "413": {
+            "$ref": "#/components/responses/P413"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
           }
         }
       }
@@ -736,7 +1004,7 @@
       "get": {
         "operationId": "getRun",
         "summary": "Proyección del run (snapshot con cursor)",
-        "description": "Estado observado por dimensión con su fuente y antigüedad; snapshot_cursor permite reanudar eventos.",
+        "description": "Estado observado por dimensión con su fuente y antigüedad; snapshot_cursor permite reanudar eventos. source_revision es la revisión autoritativa del agregado Run (la que compara target.expected_revision); las observaciones avanzan snapshot_cursor sin cambiarla (ADR-016 §3).",
         "parameters": [
           {
             "name": "run_id",
@@ -776,7 +1044,7 @@
         "operationId": "cancelRun",
         "summary": "Solicitar cancelación",
         "x-dftlab-action": "CANCEL_RUN",
-        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. Cancelar es una solicitud: termina al observar evidencia. Cerrar la terminal no cancela.",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. Cancelar es una solicitud: termina al observar evidencia. Cerrar la terminal no cancela. target.expected_revision es la revisión del agregado Run que devuelve getRun en source_revision (ADR-016 §3).",
         "security": [
           {
             "session": [],
@@ -859,7 +1127,7 @@
         "operationId": "reconcileRun",
         "summary": "Reconciliar un run incierto",
         "x-dftlab-action": "RECONCILE_RUN",
-        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. ",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. target.expected_revision es la revisión del agregado Run que devuelve getRun en source_revision (ADR-016 §3).",
         "security": [
           {
             "session": [],
@@ -942,7 +1210,7 @@
         "operationId": "createResumePlan",
         "summary": "Preparar recuperación",
         "x-dftlab-action": "CREATE_RESUME_PLAN",
-        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. ",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. target.expected_revision es la revisión del agregado Run que devuelve getRun en source_revision (ADR-016 §3).",
         "security": [
           {
             "session": [],
@@ -1797,6 +2065,51 @@
           },
           "expires_at": {
             "$ref": "../schemas/defs.schema.json#/$defs/timestamp"
+          }
+        }
+      },
+      "DraftBundle": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Una revisión de borrador con los registros que referencia. intent es null si el borrador no tiene plantilla.",
+        "required": [
+          "draft",
+          "structure",
+          "intent"
+        ],
+        "properties": {
+          "draft": {
+            "$ref": "../schemas/draft.schema.json"
+          },
+          "structure": {
+            "$ref": "../schemas/structure-revision.schema.json"
+          },
+          "intent": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "run_intent",
+                  "physical_model",
+                  "numerical_policy"
+                ],
+                "properties": {
+                  "run_intent": {
+                    "$ref": "../schemas/run-intent.schema.json"
+                  },
+                  "physical_model": {
+                    "$ref": "../schemas/physical-model.schema.json"
+                  },
+                  "numerical_policy": {
+                    "$ref": "../schemas/numerical-policy.schema.json"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       }

@@ -152,6 +152,8 @@ if (tr) {
   for (const s of tr.states.filter((x) => !tr.terminal.includes(x))) {
     if (!tr.transitions.some((t) => t.from === s)) fail(`transitions: ${s} has no exit`);
   }
+  const classed = Object.entries(tr.effect_classes ?? {}).filter(([k]) => k !== 'description').flatMap(([, c]) => c.actions);
+  if (jcs([...classed].sort()) !== jcs([...actions].sort())) fail('transitions: effect_classes must cover every OperationRequest action exactly once');
 }
 const passport = doc('schemas/defs.schema.json')?.$defs?.passport_state?.enum ?? [];
 const proj = doc('vocabularies/native-status-projection.json');

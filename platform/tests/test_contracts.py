@@ -12,7 +12,7 @@ class ContractTests(unittest.TestCase):
 
     def test_all_shared_fixtures_and_consumer_semantics(self):
         entries = resource_json("fixtures/manifest.json")["fixtures"]
-        self.assertEqual(len(entries), 89)
+        self.assertEqual(len(entries), 120)
         for entry in entries:
             with self.subTest(path=entry["path"]):
                 value = resource_json(entry["path"])
