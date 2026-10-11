@@ -327,3 +327,53 @@ reenvía. El recibo forense de inyección no se usa como prueba de reconciliaci�
 Se conservan NOT_ESTABLISHED y la separación submit/lifecycle/science. Este
 diagnóstico no cierra P4, ni acredita admisión, controlador nativo, terminal,
 fencing nativo, checkpoint/restore o calificación científica.
+
+### Host de controlador instalado y Si real (T-023b / T-025b)
+
+`NativeWorker` es un proceso dedicado dentro de la reserva, separado del API.
+Recibe un `RegisteredNativeRun` interno de confianza con identidades/digests
+nativos originales, probe vigente del mismo proyecto/perfil y callbacks
+obligatorios que verifican bytes del paquete y correlación con la allocation.
+Estos callbacks no son parámetros de HTTP. No se registra en el servicio
+predeterminado ni sustituye la admisión. Ambos motores instalados son necesarios.
+
+Inspecciona mediante la fachada QRAFT fijada, valida run/workflow/profile y
+mantiene el lock local durante `CanonicalController.from_file(...).run()`.
+El heartbeat renueva la autoridad; perderlo pide shutdown, impide publicar y
+conserva la identidad SQL. Generación/fingerprint se verifican por el callback
+nativo. El puerto de publicación prepara/fsync los bytes originales mediante
+el serializador público y ejecuta solo el writer SQL en `authority.publish`.
+Resultado técnico y decisiones científicas nativas permanecen intactos;
+el resumen conserva `NOT_ESTABLISHED`. No hay takeover automático ni resume.
+
+Para calificación explícita, `qualify_native_runtime.py` exige consumidor WSL
+externo instalado con el procedimiento de hashes anterior y Python 3.12.10
+`-I`. Reutiliza SIESTA/SLURM existentes. El config privado añade a las claves
+del diagnóstico `siesta`, `mpi`, `sinfo` (pins `{path, sha256}`) y `node` observado.
+El perfil nativo es una identidad/revisión nueva: el caso local pide un nodo,
+cuatro ranks, un thread/rank, 512 MB, diez minutos y una tarea simultánea,
+sin módulos. Su environment contiene exactamente PATH, QRAFT_PYTHON del
+consumidor instalado, OMP_NUM_THREADS=1, OPENBLAS_NUM_THREADS=1 y MKL_NUM_THREADS=1.
+No cambiar el perfil anterior ni la física/tolerancias para repetir el caso.
+
+```sh
+/ruta/consumidor/bin/python -I /ruta/qualify_native_runtime.py --config /ruta/site.json --wheelhouse /ruta/wheelhouse-wsl --profile /ruta/perfil-nuevo.json --pseudo /ruta/Si_lda_oncv.psml --output /home/usuario/.local/state/dftlab-qualification/caso-nuevo
+```
+
+El driver crea un borrador USER_AUTHORED/EXPLORATORY de Si con el protocolo
+exacto anterior, pasa las cuatro operaciones de autoría y prepara el ZIP nativo.
+Verifica entradas seguras y bytes de todas sus entradas antes y después; no
+modifica el paquete. Un script hermano conserva las directivas SBATCH nativas
+y llama al worker instalado. EffectIntent y entrada RPC preceden a sbatch;
+workflow/run NativeContractRefs originales atraviesan el recibo. Un probe
+fresco antecede al envío. Una segunda adquisición de autoridad en proceso
+separado debe ser rechazada mientras el primer worker está activo.
+
+Se ejecutan single point y derivada con transferencia de DM mediante el DAG
+nativo; no se implementa un segundo scheduler. Se retienen stdout/stderr,
+manifiestos, archivos/eventos nativos, perfil, SQLite, hashes, recibos y reporte
+incluso si falla; un timeout nunca reenvía. El original incluye NOT_EVALUATED y
+PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED donde los emite QRAFT: no se sustituyen
+por validación científica. Los límites de archivos/tamaño son política acotada
+del harness, no SLA medido. Esta prueba no acredita terminal, acceso remoto,
+restore/resume, finalización completa, admisión, calificación científica ni P4.
