@@ -162,4 +162,3 @@ class LocalAuthorityManager:
                 # Expiry/closure is not terminal scheduler evidence. Keep the
                 # immutable identity in SQL; recovery must retire explicitly.
                 authority.close()
-

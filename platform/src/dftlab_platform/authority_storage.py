@@ -79,4 +79,3 @@ class SQLiteAuthorityStore:
             self._checked(db, owner, record, observed)
             db.execute("UPDATE controller_authorities SET last_observed_at=? WHERE run_id=?", (stamp(observed), record["payload"]["run_id"]))
             return result
-
