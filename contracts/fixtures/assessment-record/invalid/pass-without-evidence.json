@@ -1,0 +1,51 @@
+{
+  "schema_id": "dftlab.assessment-record",
+  "schema_version": "0.1.0",
+  "record_id": "rec-assessment-record",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "assessment_id": "as-1",
+    "subject_refs": [
+      "run-1"
+    ],
+    "assessment_type": "hubbard.lr-response",
+    "protocol": {
+      "policy_id": "hubbardflow.lr-protocol",
+      "version": "0.1.2",
+      "digest": "2697c21c5a76cc729478fe185cd947e7cf57826f9f7c3b6787ad3f58bdc5a3da"
+    },
+    "rule": "plan coverage",
+    "native_status": {
+      "authority": "qraft",
+      "vocabulary": "qraft.DecisionStatus",
+      "value": "PASS"
+    },
+    "passport_state": "PASS",
+    "reasons": [
+      "Evidencia SCF adicional ausente."
+    ],
+    "evidence": [],
+    "scope": "Ni 3d, plan lr-plan",
+    "supersedes": null,
+    "quantity_semantics": {
+      "quantity_kind": "U_scalar_charge",
+      "usable_as": [
+        "U_scalar_charge"
+      ]
+    }
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

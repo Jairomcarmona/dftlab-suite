@@ -1,0 +1,48 @@
+{
+  "schema_id": "dftlab.runtime-probe-receipt",
+  "schema_version": "0.1.0",
+  "record_id": "rec-runtime-probe-receipt",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "profile": {
+      "profile_id": "prof-hpc",
+      "revision": 2
+    },
+    "executable": {
+      "name": "siesta",
+      "version": "5.4.2",
+      "build": "mpi",
+      "sha256": null
+    },
+    "launcher": {
+      "kind": "srun",
+      "mpi": true,
+      "ranks": 32,
+      "threads_per_rank": 1
+    },
+    "capabilities": [
+      "MPI"
+    ],
+    "storage_checks": [
+      {
+        "check": "ATOMIC_RENAME",
+        "result": "PASS"
+      }
+    ],
+    "observed_at": "2026-10-11T05:00:00Z"
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

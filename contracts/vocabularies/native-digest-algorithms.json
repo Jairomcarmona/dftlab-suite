@@ -1,0 +1,21 @@
+{
+  "description": "Algoritmos de digest nativos que la plataforma conserva sin recalcular (ADR-004 §6, docs/compatibility/README.md conclusión 5). Fixture: fixtures/native-digests/two-algorithms.json.",
+  "algorithms": {
+    "qraft.content-sha256-v1": {
+      "definition": "SHA-256 de UTF-8 de json.dumps(canonical_primitive(v), sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False)",
+      "source": "https://github.com/Jairomcarmona/siestaflow/blob/4d996ea7c580e5638e470bbf32624c88fd762f7d/src/qraft/contracts/serialization.py#L59"
+    },
+    "hubbardflow.plan-digest-v1": {
+      "definition": "SHA-256 de json.dumps(to_mapping(), sort_keys=True, separators=(',', ':'), allow_nan=False) con ensure_ascii=True (valor por defecto)",
+      "source": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/e508f47aff1c6243deabb12915063b6b9d899d65/src/hubbardflow/domain/perturbation_plan.py#L445"
+    },
+    "dftlab.bytes-sha256": {
+      "definition": "SHA-256 de los bytes del archivo tal como se recibieron"
+    }
+  },
+  "platform_envelope": {
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "definition": "SHA-256 de la serialización JCS (RFC 8785) del envelope sin el miembro integrity. Fixtures: fixtures/canonicalization/."
+  }
+}

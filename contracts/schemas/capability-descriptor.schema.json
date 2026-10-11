@@ -1,0 +1,329 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/capability-descriptor.schema.json",
+  "title": "CapabilityDescriptor",
+  "description": "Entrada del catálogo de disponibilidad de plataforma (ADR-012). Lo publica GET /api/v1/capabilities con lo instalado y probado.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.capability-descriptor"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "capability_id",
+        "version",
+        "catalog_state",
+        "admitted_for",
+        "input_schemas",
+        "output_schemas",
+        "protocol",
+        "modes",
+        "targets",
+        "engine_versions",
+        "supports",
+        "canonical_path",
+        "test_refs"
+      ],
+      "properties": {
+        "capability_id": {
+          "$ref": "defs.schema.json#/$defs/namespaced_id"
+        },
+        "version": {
+          "$ref": "defs.schema.json#/$defs/semver"
+        },
+        "catalog_state": {
+          "enum": [
+            "DESIGNED",
+            "IMPLEMENTED",
+            "CONTRACT_TESTED",
+            "RUNTIME_VERIFIED",
+            "SCIENTIFICALLY_QUALIFIED"
+          ]
+        },
+        "admitted_for": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "PREVIEW",
+              "EXPORT",
+              "EXECUTION"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "input_schemas": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "output_schemas": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "protocol": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "protocol_id",
+                "version"
+              ],
+              "properties": {
+                "protocol_id": {
+                  "$ref": "defs.schema.json#/$defs/namespaced_id"
+                },
+                "version": {
+                  "$ref": "defs.schema.json#/$defs/semver"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "modes": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/code"
+          }
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "LOCAL_LINUX",
+              "LOCAL_WSL2",
+              "SSH_HOST",
+              "SLURM",
+              "WEB",
+              "KUBERNETES"
+            ]
+          }
+        },
+        "engine_versions": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/engine_pin"
+          }
+        },
+        "supports": {
+          "type": "object",
+          "required": [
+            "cancel",
+            "resume"
+          ],
+          "properties": {
+            "cancel": {
+              "enum": [
+                "NONE",
+                "SCHEDULER",
+                "COOPERATIVE"
+              ]
+            },
+            "resume": {
+              "enum": [
+                "NONE",
+                "NATIVE_VERIFIED",
+                "NATIVE_ASSERTED"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "canonical_path": {
+          "type": "object",
+          "required": [
+            "describe",
+            "validate",
+            "compile",
+            "prepare",
+            "transport",
+            "execute",
+            "collect",
+            "recover"
+          ],
+          "properties": {
+            "describe": {
+              "enum": [
+                "OK",
+                "MISSING",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "validate": {
+              "enum": [
+                "OK",
+                "MISSING",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "compile": {
+              "enum": [
+                "OK",
+                "MISSING",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "prepare": {
+              "enum": [
+                "OK",
+                "MISSING",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "transport": {
+              "enum": [
+                "OK",
+                "MISSING",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "execute": {
+              "enum": [
+                "OK",
+                "MISSING",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "collect": {
+              "enum": [
+                "OK",
+                "MISSING",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "recover": {
+              "enum": [
+                "OK",
+                "MISSING",
+                "NOT_APPLICABLE"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "test_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "native_descriptor": {
+          "anyOf": [
+            {
+              "$ref": "native-contract-ref.schema.json"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missing_diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "admitted_for": {
+                "contains": {
+                  "const": "EXECUTION"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "catalog_state": {
+                "enum": [
+                  "RUNTIME_VERIFIED",
+                  "SCIENTIFICALLY_QUALIFIED"
+                ]
+              },
+              "canonical_path": {
+                "properties": {
+                  "describe": {
+                    "enum": [
+                      "OK",
+                      "NOT_APPLICABLE"
+                    ]
+                  },
+                  "validate": {
+                    "enum": [
+                      "OK",
+                      "NOT_APPLICABLE"
+                    ]
+                  },
+                  "compile": {
+                    "enum": [
+                      "OK",
+                      "NOT_APPLICABLE"
+                    ]
+                  },
+                  "prepare": {
+                    "enum": [
+                      "OK",
+                      "NOT_APPLICABLE"
+                    ]
+                  },
+                  "transport": {
+                    "enum": [
+                      "OK",
+                      "NOT_APPLICABLE"
+                    ]
+                  },
+                  "execute": {
+                    "enum": [
+                      "OK",
+                      "NOT_APPLICABLE"
+                    ]
+                  },
+                  "collect": {
+                    "enum": [
+                      "OK",
+                      "NOT_APPLICABLE"
+                    ]
+                  },
+                  "recover": {
+                    "enum": [
+                      "OK",
+                      "NOT_APPLICABLE"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": "payload"
+    }
+  }
+}

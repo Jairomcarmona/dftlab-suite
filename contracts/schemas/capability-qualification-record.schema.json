@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/capability-qualification-record.schema.json",
+  "title": "CapabilityQualificationRecord",
+  "description": "Calificación por tupla (ADR-009 §6, §25.7). No concede calificación global.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.capability-qualification-record"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "capability_id",
+        "capability_version",
+        "adapter_version",
+        "engines",
+        "protocol",
+        "hubbard_mode",
+        "executable_profile",
+        "tested_scope",
+        "dimensions"
+      ],
+      "properties": {
+        "capability_id": {
+          "$ref": "defs.schema.json#/$defs/namespaced_id"
+        },
+        "capability_version": {
+          "$ref": "defs.schema.json#/$defs/semver"
+        },
+        "adapter_version": {
+          "$ref": "defs.schema.json#/$defs/semver"
+        },
+        "engines": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/engine_pin"
+          },
+          "minItems": 1
+        },
+        "protocol": {
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/policy_ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hubbard_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "HF-1",
+                "HF-2"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "executable_profile": {
+          "type": "object",
+          "required": [
+            "profile_id",
+            "revision",
+            "launcher"
+          ],
+          "properties": {
+            "profile_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "revision": {
+              "$ref": "defs.schema.json#/$defs/revision"
+            },
+            "launcher": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "additionalProperties": false
+        },
+        "tested_scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "dimensions": {
+          "type": "object",
+          "required": [
+            "contract",
+            "runtime",
+            "science",
+            "recovery",
+            "target"
+          ],
+          "properties": {
+            "contract": {
+              "type": "object",
+              "required": [
+                "state",
+                "evidence"
+              ],
+              "properties": {
+                "state": {
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT_APPLICABLE",
+                    "NOT_ESTABLISHED"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "defs.schema.json#/$defs/evidence_ref"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "runtime": {
+              "type": "object",
+              "required": [
+                "state",
+                "evidence"
+              ],
+              "properties": {
+                "state": {
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT_APPLICABLE",
+                    "NOT_ESTABLISHED"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "defs.schema.json#/$defs/evidence_ref"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "science": {
+              "type": "object",
+              "required": [
+                "state",
+                "evidence"
+              ],
+              "properties": {
+                "state": {
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT_APPLICABLE",
+                    "NOT_ESTABLISHED"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "defs.schema.json#/$defs/evidence_ref"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "recovery": {
+              "type": "object",
+              "required": [
+                "state",
+                "evidence"
+              ],
+              "properties": {
+                "state": {
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT_APPLICABLE",
+                    "NOT_ESTABLISHED"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "defs.schema.json#/$defs/evidence_ref"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "target": {
+              "type": "object",
+              "required": [
+                "state",
+                "evidence"
+              ],
+              "properties": {
+                "state": {
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT_APPLICABLE",
+                    "NOT_ESTABLISHED"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "defs.schema.json#/$defs/evidence_ref"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

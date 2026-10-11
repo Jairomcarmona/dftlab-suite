@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/native-contract-ref.schema.json",
+  "title": "NativeContractRef",
+  "description": "Documento nativo de un motor referenciado por motor, versión, contrato, digest nativo y ArtifactRecord con los bytes originales (ADR-003, ADR-005).",
+  "type": "object",
+  "required": [
+    "engine",
+    "distribution",
+    "version",
+    "commit",
+    "contract",
+    "digest",
+    "artifact",
+    "verification"
+  ],
+  "properties": {
+    "engine": {
+      "enum": [
+        "qraft",
+        "hubbardflow",
+        "siesta"
+      ]
+    },
+    "distribution": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "commit": {
+      "anyOf": [
+        {
+          "$ref": "defs.schema.json#/$defs/git_commit"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "contract": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]*@[0-9]+\\.[0-9]+$",
+      "description": "Contrato nativo, p. ej. siestaflow.workflow-lock@1.0."
+    },
+    "digest": {
+      "$ref": "defs.schema.json#/$defs/native_digest"
+    },
+    "artifact": {
+      "$ref": "artifact-ref.schema.json"
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "UNVERIFIED",
+            "VERIFIED",
+            "MISMATCH"
+          ]
+        },
+        "verified_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "verifier": {
+          "$ref": "defs.schema.json#/$defs/producer"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

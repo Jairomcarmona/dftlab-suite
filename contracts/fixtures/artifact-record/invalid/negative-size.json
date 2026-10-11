@@ -1,0 +1,42 @@
+{
+  "schema_id": "dftlab.artifact-record",
+  "schema_version": "0.1.0",
+  "record_id": "rec-artifact-record",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "artifact_id": "art-si.out",
+    "kind": "siesta.output",
+    "media_type": "text/plain",
+    "size_bytes": -1,
+    "sha256": "2aab92592a006d9049d224b27e6724338344b1aca6797fd9779938ecc085efb9",
+    "integrity_state": "VERIFIED",
+    "retention_class": "ESSENTIAL",
+    "producer_ref": {
+      "kind": "RUN_ATTEMPT",
+      "id": "att-1"
+    },
+    "input_refs": [
+      {
+        "artifact_id": "art-si.fdf",
+        "sha256": "d35274bf9a9c8eafedc5880cd28c961f5f1d0d9635bc5fe7b77dce9e64070df1",
+        "media_type": "text/plain"
+      }
+    ],
+    "parser": null,
+    "locator_id": "loc-7f3a"
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

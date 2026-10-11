@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/admission-receipt.schema.json",
+  "title": "AdmissionReceipt",
+  "description": "Admisión de una ejecución: principal, plan/paquete, perfil, calificación, probe y reserva (§25.3).",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.admission-receipt"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "principal_id",
+        "action",
+        "purpose",
+        "plan_digest",
+        "package_digest",
+        "profile",
+        "qualification_refs",
+        "runtime_probe_ref",
+        "reservation",
+        "decision",
+        "reasons",
+        "expires_at",
+        "preconditions"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "action": {
+          "enum": [
+            "VALIDATE_INPUT",
+            "CREATE_CAMPAIGN",
+            "CREATE_PLAN",
+            "PREPARE_PACKAGE",
+            "SUBMIT_RUN",
+            "CANCEL_RUN",
+            "CREATE_RESUME_PLAN",
+            "EXECUTE_RESUME_PLAN",
+            "RECONCILE_RUN"
+          ]
+        },
+        "purpose": {
+          "enum": [
+            "EXPLORATORY",
+            "QUALIFIED_RESULT"
+          ]
+        },
+        "plan_digest": {
+          "$ref": "defs.schema.json#/$defs/sha256_hex"
+        },
+        "package_digest": {
+          "$ref": "defs.schema.json#/$defs/sha256_hex"
+        },
+        "profile": {
+          "type": "object",
+          "required": [
+            "profile_id",
+            "revision"
+          ],
+          "properties": {
+            "profile_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "revision": {
+              "$ref": "defs.schema.json#/$defs/revision"
+            }
+          },
+          "additionalProperties": false
+        },
+        "qualification_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/id"
+          }
+        },
+        "runtime_probe_ref": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "reservation": {
+          "type": "object",
+          "required": [
+            "reservation_id",
+            "budget_ref",
+            "amount"
+          ],
+          "properties": {
+            "reservation_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "budget_ref": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "amount": {
+              "$ref": "defs.schema.json#/$defs/quantity"
+            }
+          },
+          "additionalProperties": false
+        },
+        "decision": {
+          "enum": [
+            "ADMITTED",
+            "REJECTED"
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "expires_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind",
+              "expected"
+            ],
+            "properties": {
+              "kind": {
+                "$ref": "defs.schema.json#/$defs/code"
+              },
+              "expected": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "purpose": {
+                "const": "QUALIFIED_RESULT"
+              },
+              "decision": {
+                "const": "ADMITTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "qualification_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ],
+      "title": "payload"
+    }
+  }
+}

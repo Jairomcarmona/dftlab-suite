@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/result-dataset.schema.json",
+  "title": "ResultDataset",
+  "description": "Ejes, unidades, canales de spin, referencia energética, parser y procedencia. Los valores viven en artefactos.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.result-dataset"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "dataset_id",
+        "classification",
+        "quantity_kind",
+        "axes",
+        "spin_components",
+        "energy_reference",
+        "values",
+        "parser",
+        "source_artifacts"
+      ],
+      "properties": {
+        "dataset_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "classification": {
+          "$ref": "defs.schema.json#/$defs/classification"
+        },
+        "quantity_kind": {
+          "$ref": "defs.schema.json#/$defs/namespaced_id"
+        },
+        "axes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "unit",
+              "length"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "length": {
+                "$ref": "defs.schema.json#/$defs/safe_count"
+              },
+              "labels": {
+                "anyOf": [
+                  {
+                    "$ref": "artifact-ref.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "spin_components": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "NONE",
+              "UP",
+              "DOWN",
+              "TOTAL",
+              "SX",
+              "SY",
+              "SZ"
+            ]
+          },
+          "minItems": 1
+        },
+        "energy_reference": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "kind",
+                "value"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "FERMI",
+                    "VACUUM",
+                    "VBM",
+                    "ABSOLUTE"
+                  ]
+                },
+                "value": {
+                  "$ref": "defs.schema.json#/$defs/quantity"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "values": {
+          "type": "object",
+          "required": [
+            "artifact",
+            "array"
+          ],
+          "properties": {
+            "artifact": {
+              "$ref": "artifact-ref.schema.json"
+            },
+            "array": {
+              "type": "object",
+              "required": [
+                "dtype",
+                "shape",
+                "dimension_order",
+                "byte_order",
+                "unit"
+              ],
+              "properties": {
+                "dtype": {
+                  "enum": [
+                    "float32",
+                    "float64",
+                    "int32",
+                    "int64",
+                    "complex64",
+                    "complex128",
+                    "uint8"
+                  ]
+                },
+                "shape": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "defs.schema.json#/$defs/safe_count"
+                  },
+                  "minItems": 1
+                },
+                "dimension_order": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "minItems": 1
+                },
+                "byte_order": {
+                  "enum": [
+                    "little",
+                    "big"
+                  ]
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "missing_value": {
+                  "anyOf": [
+                    {
+                      "type": [
+                        "number",
+                        "string"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "parser": {
+          "type": "object",
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "additionalProperties": false
+        },
+        "source_artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "artifact-ref.schema.json"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema_id": "dftlab.numerical-policy",
+  "schema_version": "0.1.0",
+  "record_id": "rec-numerical-policy",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "policy": {
+      "policy_id": "dftlab.scf-default",
+      "version": "0.1.0",
+      "digest": "823412d1eacb67956220e532959f0104603057c88704863ca38e7cd188fda812"
+    },
+    "basis": {
+      "size": "DZP",
+      "energy_shift": {
+        "value": 0.02,
+        "unit": "Ry"
+      }
+    },
+    "mesh_cutoff": {
+      "value": 300,
+      "unit": "Ry"
+    },
+    "kgrid": {
+      "kind": "MONKHORST_PACK",
+      "divisions": [
+        8,
+        8,
+        8
+      ],
+      "shift": [
+        0,
+        0,
+        0
+      ],
+      "k_includes_2pi": false
+    },
+    "smearing": null,
+    "solver": "diagon",
+    "tolerances": {
+      "dm_tolerance": {
+        "value": "1e-4",
+        "unit": "1"
+      }
+    },
+    "convergence_target": "total_energy",
+    "justification": "Ejemplo de política versionada; no es un umbral universal."
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

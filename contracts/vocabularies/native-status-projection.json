@@ -1,0 +1,45 @@
+{
+  "description": "Proyección de estados nativos al pasaporte (ADR-009 §3). Solo informa la vista resumida: el valor nativo se conserva intacto en native_status. Cualquier par (vocabulary, value) que no esté en esta tabla se proyecta como NOT_ESTABLISHED; ninguna regla por defecto produce PASS.",
+  "default_projection": "NOT_ESTABLISHED",
+  "vocabularies": {
+    "qraft.DecisionStatus": {
+      "source": "https://github.com/Jairomcarmona/siestaflow/blob/4d996ea7c580e5638e470bbf32624c88fd762f7d/src/qraft/contracts/status.py",
+      "exhaustive_at_pin": true,
+      "projection": {"PASS": "PASS", "REVIEW": "NOT_ESTABLISHED", "FAIL": "FAIL", "BLOCKED": "FAIL"}
+    },
+    "qraft.ScientificDecision": {
+      "source": "https://github.com/Jairomcarmona/siestaflow/blob/4d996ea7c580e5638e470bbf32624c88fd762f7d/src/qraft/core/runtime.py#L168",
+      "exhaustive_at_pin": true,
+      "projection": {"NOT_EVALUATED": "NOT_ESTABLISHED", "ACCEPTED": "PASS", "REJECTED": "FAIL"}
+    },
+    "qraft.TaskState": {
+      "source": "https://github.com/Jairomcarmona/siestaflow/blob/4d996ea7c580e5638e470bbf32624c88fd762f7d/src/qraft/contracts/status.py",
+      "exhaustive_at_pin": false,
+      "note": "Estado de ejecución, no científico: se transporta en la dimensión execution y no se proyecta al pasaporte. La lista completa de 12 valores queda para X5 (lectura del commit fijado).",
+      "projection": {}
+    },
+    "hubbardflow.PlanStatus": {
+      "source": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/e508f47aff1c6243deabb12915063b6b9d899d65/src/hubbardflow/domain/perturbation_plan.py",
+      "exhaustive_at_pin": true,
+      "projection": {"READY": "NOT_ESTABLISHED", "REVIEW": "NOT_ESTABLISHED", "NOT_ESTABLISHED": "NOT_ESTABLISHED", "FAIL": "FAIL"},
+      "note": "READY habilita la ejecución del plan; no es una evaluación científica del resultado."
+    },
+    "hubbardflow.NodeState": {
+      "source": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/e508f47aff1c6243deabb12915063b6b9d899d65/src/hubbardflow/execution/dag_contract.py#L7",
+      "exhaustive_at_pin": true,
+      "projection": {"MATERIALIZED": "NOT_ESTABLISHED", "RUNNING": "NOT_ESTABLISHED", "VALIDATED": "NOT_ESTABLISHED", "FAILED_EXECUTION": "FAIL", "FAILED_OUTPUT_VALIDATION": "FAIL", "FAILED_SCIENCE": "FAIL", "BLOCKED": "FAIL"}
+    },
+    "hubbardflow.NumericalStatus": {
+      "source": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/e508f47aff1c6243deabb12915063b6b9d899d65/src/hubbardflow/domain/lr_analysis_v2.py#L939",
+      "exhaustive_at_pin": false,
+      "projection": {"NUMERICAL_CANDIDATE": "NOT_ESTABLISHED", "NUMERICAL_CANDIDATE_SENSITIVE": "NOT_ESTABLISHED", "NUMERICAL_CANDIDATE_UNASSESSED": "NOT_ESTABLISHED"}
+    },
+    "hubbardflow.InverseCertification": {
+      "source": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/e508f47aff1c6243deabb12915063b6b9d899d65/src/hubbardflow/domain/u_certification.py",
+      "exhaustive_at_pin": false,
+      "note": "CERTIFIED certifica el intervalo de la inversa (aritmética exacta), no la validez científica de U. La UI no lo muestra como «U certificado».",
+      "projection": {"CERTIFIED": "NOT_ESTABLISHED", "CERTIFIED_WITH_FALLBACK": "NOT_ESTABLISHED"}
+    }
+  },
+  "vocabulary_labels_note": "Los nombres hubbardflow.NumericalStatus e hubbardflow.InverseCertification son etiquetas de plataforma para enums sin nombre de clase público en e508f47; la capa Hubbard (ADR-015) fija los definitivos."
+}

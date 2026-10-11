@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/run-intent.schema.json",
+  "title": "RunIntent",
+  "description": "Qué se pide calcular. Siempre pertenece a un borrador (ADR-002: no hay ruta de ejemplo a run).",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.run-intent"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "intent_id",
+        "draft_id",
+        "operation",
+        "purpose",
+        "structure",
+        "physical_model_ref",
+        "numerical_policy_ref",
+        "protocol"
+      ],
+      "properties": {
+        "intent_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "draft_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "operation": {
+          "$ref": "defs.schema.json#/$defs/namespaced_id"
+        },
+        "purpose": {
+          "enum": [
+            "EXPLORATORY",
+            "OPERATIONAL"
+          ]
+        },
+        "structure": {
+          "type": "object",
+          "required": [
+            "structure_id",
+            "revision"
+          ],
+          "properties": {
+            "structure_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "revision": {
+              "$ref": "defs.schema.json#/$defs/revision"
+            }
+          },
+          "additionalProperties": false
+        },
+        "physical_model_ref": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "numerical_policy_ref": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "protocol": {
+          "type": "object",
+          "required": [
+            "protocol_id",
+            "version"
+          ],
+          "properties": {
+            "protocol_id": {
+              "$ref": "defs.schema.json#/$defs/namespaced_id"
+            },
+            "version": {
+              "$ref": "defs.schema.json#/$defs/semver"
+            }
+          },
+          "additionalProperties": false
+        },
+        "promoted_from": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "learning_dataset_id",
+                "exported_kind"
+              ],
+              "properties": {
+                "learning_dataset_id": {
+                  "$ref": "defs.schema.json#/$defs/id"
+                },
+                "exported_kind": {
+                  "enum": [
+                    "STRUCTURE",
+                    "TEMPLATE"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

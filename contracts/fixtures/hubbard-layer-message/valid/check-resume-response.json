@@ -1,0 +1,24 @@
+{
+  "operation": "check_resume",
+  "kind": "response",
+  "correlation_id": "cor-1",
+  "layer": {
+    "name": "dftlab.hubbard",
+    "version": "0.1.0"
+  },
+  "body": {
+    "reuse_status": {
+      "authority": "hubbardflow",
+      "vocabulary": "hubbardflow.PlanStatus",
+      "value": "NOT_ESTABLISHED"
+    },
+    "reusable_nodes": [],
+    "invalid_nodes": [
+      {
+        "node_id": "n-1",
+        "reason": "política cambiada"
+      }
+    ],
+    "side_effects": "NONE"
+  }
+}
