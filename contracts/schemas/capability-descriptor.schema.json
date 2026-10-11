@@ -148,6 +148,13 @@
           },
           "additionalProperties": false
         },
+        "execution_shape": {
+          "description": "Forma de ejecución (ADR-017). STEP por omisión. CONTROLLER: un controlador lanzado sin MPI que reserva nodos completos durante toda su ejecución y lanza sus cálculos internos dentro de esa reserva (HF-1).",
+          "enum": [
+            "STEP",
+            "CONTROLLER"
+          ]
+        },
         "canonical_path": {
           "type": "object",
           "required": [
@@ -315,6 +322,35 @@
                     "enum": [
                       "OK",
                       "NOT_APPLICABLE"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "execution_shape"
+            ],
+            "properties": {
+              "execution_shape": {
+                "const": "CONTROLLER"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "supports": {
+                "properties": {
+                  "cancel": {
+                    "const": "COOPERATIVE"
+                  },
+                  "resume": {
+                    "enum": [
+                      "NONE",
+                      "NATIVE_VERIFIED"
                     ]
                   }
                 }

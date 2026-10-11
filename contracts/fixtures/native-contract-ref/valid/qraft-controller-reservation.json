@@ -1,0 +1,19 @@
+{
+  "engine": "qraft",
+  "distribution": "qraft-hpc",
+  "version": "0.2.0",
+  "commit": null,
+  "contract": "qraft.controller-reservation@1.0",
+  "digest": {
+    "algorithm": "qraft.content-sha256-v1",
+    "value": "b9f0ab5664a476c0ba60dca5e68ce2f3632c3dec247778488603564d3fe39773"
+  },
+  "artifact": {
+    "artifact_id": "art-controller-reservation",
+    "sha256": "05145bd4a378c287df30d7788fe66e5ecf2803f3ca844231f659ea808e206307",
+    "media_type": "application/json"
+  },
+  "verification": {
+    "status": "UNVERIFIED"
+  }
+}
