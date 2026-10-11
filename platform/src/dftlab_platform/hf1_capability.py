@@ -43,6 +43,7 @@ class HubbardFlowCampaignCapability:
             raise Problem("PRECONDITION_FAILED")
         self.run_id, self.bundle_sha256, self.profile_sha256 = run_id, bundle_sha256, profile_sha256
         self.reserved_cpus, self.max_seconds, self.grace_seconds = reserved_cpus, max_seconds, grace_seconds
+        self._prepared_identity = None
 
     def inspect_input(self, path):
         return inspect_bundle(path, expected_sha256=self.bundle_sha256, expected_profile_sha256=self.profile_sha256, reserved_cpus=self.reserved_cpus)
@@ -55,7 +56,7 @@ class HubbardFlowCampaignCapability:
 
     def prepare_task(self, inspected, workspace, **kwargs):
         workspace = checked_path(workspace)
-        if type(kwargs.get("task_id")) is not str or type(kwargs.get("attempt_id")) is not str or len(kwargs["inputs"]) != 1:
+        if self._prepared_identity is not None or type(kwargs.get("task_id")) is not str or type(kwargs.get("attempt_id")) is not str or len(kwargs["inputs"]) != 1:
             raise Problem("PRECONDITION_FAILED")
         source = next(iter(kwargs["inputs"].values()))
         original = self.inspect_input(source)
@@ -66,6 +67,7 @@ class HubbardFlowCampaignCapability:
                    "profile_sha256": self.profile_sha256, "reserved_cpus": self.reserved_cpus, "wheelhouse": str(self.wheelhouse), "max_seconds": self.max_seconds, "grace_seconds": self.grace_seconds, "campaign_id": original.campaign_id}
         request_path = workspace/"hf1-request.json"
         write_new(request_path, canonical(request))
+        self._prepared_identity = (request["task_id"], request["attempt_id"], original.campaign_id)
         return request_path
 
     def build_command(self, input_path, **kwargs):
@@ -84,11 +86,14 @@ class HubbardFlowCampaignCapability:
         value = loads(raw)
         if not isinstance(value, dict) or value.get("kind") != "dftlab.hf1.worker-result" or value.get("schema_version") != 1 or type(value.get("schema_version")) is not int or value.get("outer_run_id") != self.run_id or value.get("bundle_sha256") != self.bundle_sha256 or value.get("scientific_assessment") != "NOT_ESTABLISHED" or value.get("quantity_kind") != "U_scalar_charge":
             raise Problem("PRECONDITION_FAILED")
+        if self._prepared_identity is None or tuple(value.get(key) for key in ("task_id", "attempt_id", "campaign_id")) != self._prepared_identity:
+            raise Problem("PRECONDITION_FAILED")
         return value
 
     def classify_result(self, parsed, **kwargs):
         if parsed is None:
             return HF1Classification("REVIEW", "HF1_NATIVE_EVIDENCE_ABSENT", ("No original worker receipt observed",), None, None)
+        parsed = self.parse_output([canonical(parsed).decode("utf-8")])
         receipt = parsed.get("native_worker_receipt")
         if receipt is None:
             return HF1Classification("REVIEW", "HF1_NATIVE_EVIDENCE_ABSENT", ("No original worker receipt observed",), parsed["campaign_id"], None)

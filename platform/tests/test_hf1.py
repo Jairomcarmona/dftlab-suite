@@ -64,8 +64,15 @@ class HF1(unittest.TestCase):
     def capability(self):
         return HubbardFlowCampaignCapability(self.engines, self.root, run_id="synthetic-outer", bundle_sha256=self.sha, profile_sha256=self.profile_sha, reserved_cpus=8, max_seconds=60)
 
+    def prepared_capability(self):
+        capability = self.capability()
+        workspace = self.root/"attempt-0001"
+        workspace.mkdir()
+        capability.prepare_task(self.inspect(), workspace, task_id="hubbard", attempt_id="attempt-0001", inputs={"input": self.archive})
+        return capability
+
     def marker(self):
-        return {"schema_version": 1, "kind": "dftlab.hf1.worker-result", "outer_run_id": "synthetic-outer", "bundle_sha256": self.sha, "campaign_id": "synthetic-inner", "scientific_assessment": "NOT_ESTABLISHED", "quantity_kind": "U_scalar_charge", "exit_code": 0, "cancel_requested": False, "local_children_closed": True, "orphan_observed": False,
+        return {"schema_version": 1, "kind": "dftlab.hf1.worker-result", "outer_run_id": "synthetic-outer", "bundle_sha256": self.sha, "campaign_id": "synthetic-inner", "task_id": "hubbard", "attempt_id": "attempt-0001", "scientific_assessment": "NOT_ESTABLISHED", "quantity_kind": "U_scalar_charge", "exit_code": 0, "cancel_requested": False, "local_children_closed": True, "orphan_observed": False,
                 "native_worker_receipt": {"schema": "hubbardflow.api_result.v1", "operation": "worker_status", "native_status": "COMPLETED", "assessment": "NOT_ESTABLISHED", "payload": {"campaign_id": "synthetic-inner"}}}
 
     def test_original_bytes_materialize_in_new_namespace_without_mutating_archive(self):
@@ -205,7 +212,7 @@ raise SystemExit(module.run(sys.argv[1]))
                 capability.build_command(request, execution_spec=bad)
 
     def test_native_success_preserves_nonestablishment_and_scalar_semantics(self):
-        capability = self.capability()
+        capability = self.prepared_capability()
         original = self.marker()
         parsed = capability.parse_output([json.dumps(original)])
         classified = capability.classify_result(parsed)
@@ -215,7 +222,7 @@ raise SystemExit(module.run(sys.argv[1]))
         self.assertEqual(classified.quantity_kind, "U_scalar_charge")
 
     def test_exit_zero_unknown_status_cancel_or_orphan_never_become_success(self):
-        capability = self.capability()
+        capability = self.prepared_capability()
         for change in ({"native_worker_receipt": None}, {"local_children_closed": False}, {"orphan_observed": True}, {"cancel_requested": True}, {"exit_code": True}):
             marker = self.marker()
             marker.update(change)
@@ -227,8 +234,8 @@ raise SystemExit(module.run(sys.argv[1]))
         self.assertEqual(capability.classify_result(None).status, "REVIEW")
 
     def test_wrong_run_receipt_and_effective_parameter_cannot_be_projected(self):
-        capability = self.capability()
-        for update in ({"outer_run_id": "wrong"}, {"quantity_kind": "U_eff"}, {"scientific_assessment": "PASS"}, {"bundle_sha256": "0"*64}):
+        capability = self.prepared_capability()
+        for update in ({"task_id": "foreign"}, {"attempt_id": "foreign"}, {"campaign_id": "foreign"}, {"outer_run_id": "wrong"}, {"quantity_kind": "U_eff"}, {"scientific_assessment": "PASS"}, {"bundle_sha256": "0"*64}):
             marker = self.marker()
             marker.update(update)
             with self.assertRaises(Problem):
@@ -237,6 +244,17 @@ raise SystemExit(module.run(sys.argv[1]))
         marker["native_worker_receipt"]["payload"]["campaign_id"] = "foreign"
         with self.assertRaises(Problem):
             capability.classify_result(marker)
+
+    def test_unprepared_or_second_attempt_cannot_classify_or_materialize(self):
+        capability = self.capability()
+        with self.assertRaises(Problem):
+            capability.parse_output([json.dumps(self.marker())])
+        capability = self.prepared_capability()
+        workspace = self.root/"attempt-0002"
+        workspace.mkdir()
+        with self.assertRaises(Problem):
+            capability.prepare_task(self.inspect(), workspace, task_id="hubbard", attempt_id="attempt-0002", inputs={"input": self.archive})
+        self.assertEqual(list(workspace.iterdir()), [])
 
     def test_nonisolated_process_cannot_enable_subreaper(self):
         with patch("dftlab_platform.hf1_children.sys.flags", SimpleNamespace(isolated=0)), self.assertRaises(Problem):
