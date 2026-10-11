@@ -44,7 +44,7 @@ def original_guard(path):
         current = checked_path(path).stat()
         if current.st_nlink != 1 or (current.st_dev, current.st_ino) != (information.st_dev, information.st_ino):
             raise Problem("PRECONDITION_FAILED")
-        yield
+        yield information.st_dev, information.st_ino
     finally:
         os.close(descriptor)
 
@@ -64,8 +64,14 @@ class NativeCheckpointRegistration:
 class FrozenNativeSnapshot:
     registration: NativeCheckpointRegistration
     cursor: str
+    guard: Path
+    guard_identity: tuple
 
     def verify(self):
+        from .checkpoints import checked_path
+        information = checked_path(self.guard).stat()
+        if information.st_nlink != 1 or (information.st_dev, information.st_ino) != self.guard_identity:
+            raise Problem("PRECONDITION_FAILED")
         if self.registration.verify(self.registration.root) is not None or self.registration.read_cursor(self.registration.root) != self.cursor:
             raise Problem("PRECONDITION_FAILED")
 
@@ -116,13 +122,13 @@ class LocalNativeQuiescenceSource:
                         raise Problem("PRECONDITION_FAILED")
                     record = self.repository.contracts.validate("controller-authority-record", loads(row[1]))
                     payload = record["payload"]
-                    if record["integrity"]["status"] != "VERIFIED" or payload["automatic_takeover"] != "DISABLED" or payload["lease_expires_at"] is None or datetime.fromisoformat(payload["lease_expires_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc):
+                    if record["project_id"] != project or payload["run_id"] != run or record["integrity"]["status"] != "VERIFIED" or payload["automatic_takeover"] != "DISABLED" or payload["lease_expires_at"] is None or datetime.fromisoformat(payload["lease_expires_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc):
                         raise Problem("PRECONDITION_FAILED")
                 key = hashlib.sha256(canonical([project, run])).hexdigest()
                 path = checked_path(self.directory/(key+".lock"))
                 if not path.is_file() or path.stat().st_nlink != 1:
                     raise Problem("PRECONDITION_FAILED")  # never recreate a lost guard inode
-                locks.enter_context(original_guard(path))
+                identity = locks.enter_context(original_guard(path))
                 self.repository.contracts.validate("native-contract-ref", registered.native_ref)
                 if registered.native_ref["engine"] != "qraft" or registered.native_ref["contract"] != "siestaflow.run-lock@1.0" or registered.native_ref["verification"]["status"] != "VERIFIED" or not registered.quiescence_evidence:
                     raise Problem("PRECONDITION_FAILED")
@@ -133,7 +139,7 @@ class LocalNativeQuiescenceSource:
                 cursor = registered.read_cursor(registered.root)
                 if not isinstance(cursor, str) or not 1 <= len(cursor) <= 4096:
                     raise Problem("PRECONDITION_FAILED")
-                frozen.append(FrozenNativeSnapshot(registered, cursor))
+                frozen.append(FrozenNativeSnapshot(registered, cursor, path, identity))
             yield tuple(frozen)
 
 

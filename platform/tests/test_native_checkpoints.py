@@ -11,7 +11,7 @@ import test_checkpoints as fixture
 from dftlab_platform.authority import utcnow
 from dftlab_platform.authority_storage import SQLiteAuthorityStore
 from dftlab_platform.checkpoints import SQLiteCheckpointStore, file_hash
-from dftlab_platform.contracts import canonical, resource_json
+from dftlab_platform.contracts import canonical, loads, resource_json
 from dftlab_platform.domain import Problem, identifier
 from dftlab_platform.local_runtime import local_lock, private_directory
 from dftlab_platform.native_checkpoints import LocalNativeQuiescenceSource, NativeCheckpointRegistration, inventory_native, relative_native_path
@@ -169,6 +169,43 @@ class NativeCheckpoints(unittest.TestCase):
             fifo = self.root/"fixture-pipe"
             os.mkfifo(fifo)
             self.reject(file_hash, fifo, 1024)
+
+    def test_source_changes_during_copy_are_not_published_ready(self):
+        from dftlab_platform.checkpoints import copy_original
+        def changed(source, target, size, expected=None):
+            result = copy_original(source, target, size, expected)
+            if target.name == "Si.DM":
+                (self.package/"late-native-output.dat").write_bytes(b"late original")
+            return result
+        with patch("dftlab_platform.checkpoints.copy_original", changed):
+            self.reject(self.create)
+        self.assertFalse((self.packet/"checkpoint.json").exists())
+        self.assertTrue((self.package/"late-native-output.dat").exists())
+
+    def test_live_lease_foreign_evidence_and_pin_mismatch_fail_closed(self):
+        from dftlab_platform.domain import reseal
+        from dftlab_platform.authority import stamp
+        changed = loads(canonical(self.authority))
+        changed["payload"]["lease_expires_at"] = stamp(utcnow()+timedelta(seconds=60))
+        reseal(changed)
+        with self.repository.transaction() as db:
+            db.execute("UPDATE controller_authorities SET document=?", (canonical(changed).decode(),))
+        self.reject(self.create)
+        with self.repository.transaction() as db:
+            db.execute("UPDATE controller_authorities SET document=?", (canonical(self.authority).decode(),))
+        foreign = self.repository.create_project(self.owner, {"name": "other", "idempotency_key": "native-other-project"})[0]["project_id"]
+        data = b"other-project observation"
+        upload = self.artifacts.stage(self.owner, {"project_id": foreign, "kind": "dftlab.observation", "media_type": "application/json", "size_bytes": len(data), "sha256": hashlib.sha256(data).hexdigest(), "idempotency_key": "native-foreign-proof"})["upload_id"]
+        self.artifacts.write(self.owner, upload, 0, len(data)-1, len(data), data)
+        record = self.artifacts.commit(self.owner, upload)
+        self.configure(replace(self.registered, quiescence_evidence=({key: record["payload"][key] for key in ("artifact_id", "sha256", "media_type")},)))
+        self.reject(self.create)
+        self.assertFalse((self.packet/"checkpoint.json").exists())
+        self.packet = self.root/"mismatched-pins"
+        self.configure()
+        self.engines[0]["commit"] = "0"*40
+        self.reject(self.create)
+        self.assertFalse((self.packet/"checkpoint.json").exists())
 
 
 if __name__ == "__main__":
