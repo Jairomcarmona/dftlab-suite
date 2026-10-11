@@ -227,6 +227,27 @@ DurableSubmissions(repo,ledger,Port()).perform(operation,'crash-processor',inten
                         self.assertEqual(self.gateway.reconcile(self.owner, pending["record_id"])["payload"]["state"], "SUCCEEDED")
                 self.assertEqual(self.scheduler.calls, 0)  # reconciliation only
 
+    def test_concrete_rpc_requires_committed_dispatch_live_claim_and_is_one_shot(self):
+        self.accept()
+        operation = self.repo.claim("rpc-processor")
+        intent = self.intent(operation)
+        with self.assertRaises(Problem):
+            self.ledger.enter_rpc(intent, "rpc-processor")
+        self.ledger.reserve(operation["record_id"], operation["payload"]["revision"], "rpc-processor", intent)
+        with self.assertRaises(Problem):
+            self.ledger.enter_rpc(intent, "rpc-processor")
+        self.ledger.start(intent)
+        with self.assertRaises(Problem):
+            self.ledger.enter_rpc(intent, "other-processor")
+        self.assertIsNone(self.ledger.enter_rpc(intent, "rpc-processor"))
+        with self.assertRaises(Problem):
+            self.ledger.enter_rpc(intent, "rpc-processor")
+        self.repo.recover()
+        with self.assertRaises(Problem):
+            self.ledger.enter_rpc(intent, "rpc-processor")
+        with self.repo._connection() as db:
+            self.assertEqual(db.execute("SELECT count(*) FROM scheduler_rpc_entries").fetchone()[0], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

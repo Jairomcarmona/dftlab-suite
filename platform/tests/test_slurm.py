@@ -64,7 +64,7 @@ class Slurm(unittest.TestCase):
         return {"artifact_id": "synthetic-observation-"+str(len(self.evidence)), "sha256": hashlib.sha256(canonical(data)).hexdigest(), "media_type": "application/json"}
 
     def port(self, package=None, identity=None):
-        return SlurmSchedulerPort(self.site, {self.package.run_id: package or self.package}, self.capture,
+        return SlurmSchedulerPort(self.site, {self.package.run_id: package or self.package}, self.capture, lambda intent: None,
                                   commands=self.commands, identity=identity or (lambda: ("fixture", 1000)))
 
     def test_accepted_receipt_preserves_binding_and_actual_job_context(self):
@@ -156,6 +156,13 @@ class Slurm(unittest.TestCase):
             with self.subTest(package=package), self.assertRaises(Problem):
                 self.port(package, lambda: ("fixture", self.site.uid)).submit(self.intent)
         self.assertEqual(self.commands.calls, [])
+
+    def test_denied_rpc_authority_never_enters_sbatch(self):
+        port = self.prepare_identity()
+        port.authorize_dispatch = lambda intent: False
+        with self.assertRaises(Problem):
+            port.submit(self.intent)
+        self.assertFalse(any("--parsable" in argv for argv, _, _ in self.commands.calls))
 
 
 if __name__ == "__main__":

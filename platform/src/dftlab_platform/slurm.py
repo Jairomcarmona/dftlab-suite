@@ -50,11 +50,12 @@ class ManagedSlurmPackage:
 
 
 class SlurmSchedulerPort:
-    def __init__(self, site: SlurmSite, packages: Mapping[str, ManagedSlurmPackage], evidence_writer,
+    def __init__(self, site: SlurmSite, packages: Mapping[str, ManagedSlurmPackage], evidence_writer, authorize_dispatch,
                  *, commands=None, identity=local_identity):
         if re.fullmatch(r"[A-Za-z0-9_.-]{1,128}", site.cluster) is None or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_.-]{0,127}", site.remote_user) is None or type(site.uid) is not int or site.uid < 0:
             raise ValueError("Explicit local SLURM identity required")
         self.site, self.evidence_writer = site, evidence_writer
+        self.authorize_dispatch = authorize_dispatch
         self.packages = {key: replace(value, package_ref=deepcopy(value.package_ref), profile=deepcopy(value.profile)) for key, value in packages.items()}
         self.commands, self.identity, self.contracts = commands or BoundedCommands(), identity, Contracts()
         self.environment = {"PATH": "/usr/bin:/bin", "LC_ALL": "C", "LANG": "C", "TZ": "UTC"}
@@ -157,6 +158,8 @@ class SlurmSchedulerPort:
         evidence = []
         self._site(intent, root, evidence)
         token = intent["payload"]["attempt_token"]
+        if self.authorize_dispatch(intent) is not None:
+            raise Problem("PRECONDITION_FAILED")
         output, reference = self._command(intent, self.site.sbatch,
                                          ("--parsable", "--comment=dftlab:"+token, "--job-name=dftlab-"+token,
                                           "--chdir="+str(root), str(script)), root, "submit")
