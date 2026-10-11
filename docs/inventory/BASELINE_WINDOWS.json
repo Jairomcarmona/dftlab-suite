@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-11T05:38:43.995Z",
+  "sourceCommit": "a99ad60ed2dca74b0e2f297894262eaa40c44616",
+  "sourceTreeDirty": false,
+  "environment": {
+    "os": "win32",
+    "release": "10.0.26200",
+    "arch": "x64",
+    "node": "v24.18.0",
+    "npm": "11.16.0",
+    "python": "Not invoked; Python references have their own uv environment/workflow"
+  },
+  "commands": [
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/verify-original-baseline.mjs"
+      ],
+      "exitCode": 0,
+      "logSha256": "dfffaf4f2dc68548b22432a2b207feb508ac7a53d99fcf57f240b39bdab8dac8"
+    },
+    {
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "npm ci"
+      ],
+      "exitCode": 0,
+      "logSha256": "4298c0cf813c3088844788394feda322a8c5efb2ed16cd2b7c09d9167b4db335"
+    },
+    {
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "npm test"
+      ],
+      "exitCode": 0,
+      "logSha256": "72f8793c711cf3fb76782e3aae20e743960b45985a68a944379430d8afa22047"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "docs/inventory/audit.mjs"
+      ],
+      "exitCode": 0,
+      "logSha256": "36d666df62dd01cfd99e472f3b0337efa14a4924dce107caeb458cc1a4ff3b0e"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "app/dist/dftlab.html",
+      "bytes": 12589724,
+      "sha256": "0c612f527205cf31102b5b0d24ab8ed816db604e24ebf67af1b2fa98184089be",
+      "tracked": false
+    },
+    {
+      "file": "app/dist/dftlab_artifact.html",
+      "bytes": 12589550,
+      "sha256": "71413612ca5010a90f0b21aa83ed90f088859a65bb43f54f64a0c833323d3295",
+      "tracked": false
+    }
+  ],
+  "regressions": [],
+  "authoritativeSourcesUnchanged": true,
+  "success": true
+}
