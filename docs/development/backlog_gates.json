@@ -83,7 +83,7 @@
     {
       "id": "DL-12",
       "afirmacion": "Existe demanda de usuarios reales que justifica el orden de prioridades de las campañas",
-      "verificacion": "5 a 10 entrevistas a investigadores o empresas objetivo, con guion y resumen guardados",
+      "verificacion": "Decision de Manuel (2026-10-11): en vez de entrevistas, minar el corpus de articulos al que tiene acceso. Procedimiento propuesto, a confirmar antes de ejecutar: (1) fijar por escrito la lista de tipos de calculo (las campañas de la lista) y el corpus, el periodo y la consulta; (2) contar cuantos articulos reportan cada tipo, con DFT y con SIESTA o codigos de base local por separado; (3) declarar ANTES de mirar los conteos el umbral que cuenta como 'justifica prioridad' (p. ej. orden de campañas = orden por conteo, y una campaña entra a la Ola 1 solo si supera un conteo minimo fijado); (4) muestrear a mano una parte de las clasificaciones automaticas para estimar el error. Limite que se declara: esto mide lo que se publica, no la disposicion a usar la plataforma; no sustituye una validacion con usuarios si mas adelante se quiere ese dato.",
       "estado": "ABIERTA",
       "evidencia": ""
     },
