@@ -93,6 +93,7 @@ class SQLiteSubmissionLedger:
         It also requires the exact live processor claim and RUNNING operation.
         """
         with self.repository.transaction() as db:
+            self.repository._execution_ready(db)
             phase, _ = self._row(db, intent)
             row = db.execute("SELECT o.document,b.processor_id FROM operations o JOIN outbox b ON o.operation_id=b.operation_id WHERE o.operation_id=?", (intent["payload"]["operation_id"],)).fetchone()
             if phase != "DISPATCH_STARTED" or row is None or row[1] != processor_id or self.repository._operation_document(row[0])["payload"]["state"] != "RUNNING":
