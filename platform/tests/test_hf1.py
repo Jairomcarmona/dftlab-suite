@@ -115,6 +115,82 @@ class HF1(unittest.TestCase):
         with self.assertRaises(Problem):
             self.inspect()
 
+    def test_invalid_native_paths_and_file_ancestor_collision_rejected(self):
+        for field in ("execution_profile_file", "lr_config_file", "reference_fdf", "contract_file"):
+            original = self.manifest[field]
+            self.manifest[field] = ["unexpected"]
+            self.write()
+            with self.assertRaises(Problem):
+                self.inspect()
+            self.manifest[field] = original
+        self.files["reference.fdf/child"] = b"invalid ancestor"
+        self.write()
+        with self.assertRaises(Problem):
+            self.inspect()
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "Dedicated bridge containment is Linux/WSL only")
+    def test_installed_bridge_records_completed_fixture_and_closes_local_namespace(self):
+        self.bridge_fixture(cancel=False)
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "Dedicated bridge containment is Linux/WSL only")
+    def test_installed_bridge_cancel_closes_detached_grandchild_preserving_unknown_science(self):
+        self.bridge_fixture(cancel=True)
+
+    def bridge_fixture(self, *, cancel):
+        # Inject only a synthetic Python CLI transport inside the dedicated
+        # installed host. Never import/run a native engine in tests or CI.
+        root = self.root/"fixture-attempt"
+        root.mkdir()
+        materialize_bundle(self.inspect(), root/"hf1")
+        request = {"schema_version": 1, "outer_run_id": "synthetic-outer", "task_id": "hubbard", "attempt_id": "attempt-0001", "bundle": str(self.archive), "bundle_sha256": self.sha,
+                   "profile_sha256": self.profile_sha, "reserved_cpus": 8, "wheelhouse": str(self.root), "max_seconds": 10, "grace_seconds": 1, "campaign_id": "synthetic-inner"}
+        request_path = root/"request.json"
+        request_path.write_text(json.dumps(request))
+        # Fake run deliberately leaves a detached grandchild on cancel. The
+        # subreaper must contain it; process-group killing alone is insufficient.
+        completed = "from pathlib import Path;import json;Path('.siestaflow').mkdir();Path('.siestaflow/worker-state.json').write_text(json.dumps({'campaign_id':'synthetic-inner','status':'COMPLETED'}))"
+        running = "from pathlib import Path;import json,subprocess,sys,time;Path('.siestaflow').mkdir();Path('.siestaflow/worker-state.json').write_text(json.dumps({'campaign_id':'synthetic-inner','status':'RUNNING'}));p=subprocess.Popen([sys.executable,'-I','-c','import time;time.sleep(60)'],start_new_session=True);Path('detached.pid').write_text(str(p.pid));time.sleep(60)"
+        code = """
+import os,subprocess,sys
+from types import SimpleNamespace
+from dftlab_platform import hf1_worker as module
+saved=subprocess.Popen
+def fake(argv,**kwargs):
+    command=%r if argv[4]=='run' else "print('synthetic stop request only')"
+    return saved([sys.executable,'-I','-c',command],**kwargs)
+api=SimpleNamespace(worker_status=lambda request:SimpleNamespace(to_mapping=lambda:{'schema':'hubbardflow.api_result.v1','operation':'worker_status','native_status':request['snapshot']['status'],'assessment':'NOT_ESTABLISHED','payload':request['snapshot']}))
+module.PinnedEngines=lambda path:SimpleNamespace(evidence={'synthetic':'not a motor'},hubbardflow=api)
+module.subprocess.Popen=fake
+os.environ['SLURM_JOB_ID']='synthetic'.replace('synthetic','1234')
+raise SystemExit(module.run(sys.argv[1]))
+""" % (running if cancel else completed)
+        process = subprocess.Popen([sys.executable, "-I", "-c", code, str(request_path)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        try:
+            if cancel:
+                import signal
+                import time
+                deadline = time.monotonic()+10
+                while not (root/"hf1/detached.pid").exists() and process.poll() is None and time.monotonic() < deadline:
+                    time.sleep(.02)
+                self.assertTrue((root/"hf1/detached.pid").exists())
+                detached = int((root/"hf1/detached.pid").read_text())
+                process.send_signal(signal.SIGTERM)
+            stdout, stderr = process.communicate(timeout=20)
+            self.assertEqual(process.returncode, 130 if cancel else 0, stderr)
+            marker = json.loads(stdout)
+            self.assertTrue(marker["local_children_closed"])
+            self.assertEqual(marker["scientific_assessment"], "NOT_ESTABLISHED")
+            self.assertEqual(marker["quantity_kind"], "U_scalar_charge")
+            self.assertEqual(marker["native_worker_receipt"]["native_status"], "RUNNING" if cancel else "COMPLETED")
+            self.assertEqual(marker["cancel_requested"], cancel)
+            self.assertEqual(marker["bundle_sha256"], self.sha)
+            if cancel:
+                self.assertFalse(Path('/proc', str(detached)).exists())
+        finally:
+            if process.poll() is None:
+                process.kill()
+                process.wait(timeout=10)
+
     def test_one_controller_process_reserves_inner_capacity_without_mpi_or_shell(self):
         capability = self.capability()
         workspace = self.root/"attempt-0001"
@@ -165,6 +241,25 @@ class HF1(unittest.TestCase):
     def test_nonisolated_process_cannot_enable_subreaper(self):
         with patch("dftlab_platform.hf1_children.sys.flags", SimpleNamespace(isolated=0)), self.assertRaises(Problem):
             OwnedLinuxChildren()
+
+    def test_native_preparer_protects_original_bundle_and_full_inner_capacity(self):
+        capability = self.capability()
+        task = SimpleNamespace(task_id="hubbard", capability_id="dftlab.engine.hubbardflow.hf1", kind=SimpleNamespace(value="calculation"), settings={},
+                               inputs=(SimpleNamespace(external_artifact_id="native-bundle"),), outputs=(SimpleNamespace(relative_path="hf1-result.json", required=True),), dependencies=(),
+                               resources={"nodes": 1, "mpi_processes": 1, "processes_per_node": 1, "cpus_per_process": 8, "walltime_seconds": 60})
+        protected = {}
+        arguments = {"by_task": {task.task_id: task}, "artifacts": {"native-bundle": SimpleNamespace(sha256=self.sha)}, "resolved_sources": {"native-bundle": self.archive}, "profile": object(), "protected": protected}
+        result = capability.prepare_controller_task(task, **arguments)
+        self.assertEqual(result["cpus_per_process"], 8)
+        self.assertEqual(result["mpi_processes"], 1)
+        self.assertEqual(result["nodes"], 1)
+        self.assertEqual(result["max_attempts"], 1)
+        self.assertEqual(protected, {result["input"]: self.archive})
+        self.assertEqual(result["required_artifacts"], ["hf1-result.json"])
+        for field, value in (("resources", {**task.resources, "mpi_processes": 4}), ("settings", {"command": "override"}), ("capability_id", "generic.command")):
+            changed = SimpleNamespace(**{**task.__dict__, field: value})
+            with self.assertRaises(Problem):
+                capability.prepare_controller_task(changed, **{**arguments, "protected": {}})
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "Real descendant containment is Linux/WSL only")
     def test_owned_descendants_close_without_signalling_foreign_process(self):

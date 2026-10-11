@@ -104,7 +104,7 @@ def inspect_bundle(path, *, expected_sha256, expected_profile_sha256, reserved_c
     if set(files) != declared | {"campaign.v2.json"}:
         raise Problem("PRECONDITION_FAILED")
     for field in ("execution_profile_file", "lr_config_file", "reference_fdf", "contract_file"):
-        if manifest.get(field) not in declared:
+        if type(manifest.get(field)) is not str or manifest[field] not in declared:
             raise Problem("PRECONDITION_FAILED")
     if hashlib.sha256(files[manifest["execution_profile_file"]]).hexdigest() != expected_profile_sha256:
         # Site/executable/module authority comes from the registered operator,

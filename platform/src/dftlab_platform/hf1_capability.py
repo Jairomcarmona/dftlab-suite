@@ -13,6 +13,7 @@ from .contracts import canonical, loads
 from .domain import Problem
 from .hf1_bundle import inspect_bundle, materialize_bundle
 from .native_checkpoints import inventory_native
+from .hf1_bundle import safe_path
 
 
 CAPABILITY = "dftlab.engine.hubbardflow.hf1"
@@ -115,3 +116,33 @@ class HubbardFlowCampaignCapability:
             raise Problem("ENGINE_UNAVAILABLE")
         descriptor = core.CapabilityDescriptor(CAPABILITY, core.CapabilityKind.ENGINE, "0.1.0", (core.EXECUTION_REQUEST,), (core.EXECUTION_EVIDENCE,), metadata={"dftlab.hf1": {"mode": "HF-1", "scope": "fresh-single-node", "resume": "NOT_QUALIFIED"}})
         registry.register(core.PluginDescriptor("dftlab.plugin.hubbardflow.hf1", "0.1.0", core.ContractVersion(1, 0), (descriptor,), "dftlab-platform"), {CAPABILITY: self})
+
+    def prepare_controller_task(self, task, *, by_task, artifacts, resolved_sources, profile, protected):
+        """Public RunPreparer callback; native compiler/package remain owners.
+
+        Resource accounting reserves the full inner capacity, while direct
+        launch starts exactly one controller. Scientific input is one immutable
+        native bundle and cannot contain a producer state from a previous run.
+        """
+        if task.capability_id != CAPABILITY or task.kind.value != "calculation" or task.settings or len(task.inputs) != 1 or len(task.outputs) != 1:
+            raise Problem("PRECONDITION_FAILED")
+        binding, output = task.inputs[0], task.outputs[0]
+        if binding.external_artifact_id is None or output.relative_path != "hf1-result.json" or not output.required:
+            raise Problem("PRECONDITION_FAILED")
+        resources = dict(task.resources)
+        expected = {"nodes": 1, "mpi_processes": 1, "processes_per_node": 1, "cpus_per_process": self.reserved_cpus, "walltime_seconds": self.max_seconds}
+        if resources != expected or any(type(value) is not int for value in resources.values()):
+            raise Problem("PRECONDITION_FAILED")
+        source = resolved_sources[binding.external_artifact_id]
+        artifact = artifacts[binding.external_artifact_id]
+        if artifact.sha256 != self.bundle_sha256:
+            raise Problem("PRECONDITION_FAILED")
+        self.inspect_input(source)
+        source_name = (safe_path("protected")/safe_path(task.task_id)/"hf1-bundle.zip").as_posix()
+        if source_name in protected:
+            raise Problem("PRECONDITION_FAILED")
+        protected[source_name] = source
+        return {"task_id": task.task_id, "kind": "gate", "input": source_name, "input_hashes": {source_name: self.bundle_sha256}, "input_destinations": {source_name: "hf1-bundle.zip"},
+                "required_artifacts": ["hf1-result.json"], "optional_artifacts": [], "depends_on": list(task.dependencies), "transfers": [], "nodes": 1, "mpi_processes": 1,
+                "cpus_per_process": self.reserved_cpus, "estimated_runtime_seconds": self.max_seconds, "max_attempts": 1, "require_scf_converged": False,
+                "command": [sys.executable, "-I", "-m", "dftlab_platform.hf1_worker", "hf1-request.json"]}
