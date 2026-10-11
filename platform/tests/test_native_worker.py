@@ -30,7 +30,7 @@ class Worker(unittest.TestCase):
         current = datetime.now(timezone.utc)
         probe = envelope("runtime-probe-receipt", self.project, {"profile": profile, "executable": {"name": "siesta", "version": "5.4.2", "build": "mpi", "sha256": "a"*64},
                          "launcher": {"kind": "openmpi", "mpi": True, "ranks": 4, "threads_per_rank": 1}, "capabilities": [], "storage_checks": [],
-                         "observed_at": current.isoformat(), "valid_until": (current+timedelta(minutes=5)).isoformat()})
+                         "observed_at": current.isoformat().replace("+00:00", "Z"), "valid_until": (current+timedelta(minutes=5)).isoformat().replace("+00:00", "Z")})
         self.reg = RegisteredNativeRun(self.package, self.project, identifier(), identifier(), identifier(), profile, "a"*64, "b"*64, "c"*64, probe,
                                        lambda: None, lambda: None)
         self.run_lock = SimpleNamespace(run_id=self.reg.run_id, project_id=self.project, workflow_id=self.reg.workflow_id,
