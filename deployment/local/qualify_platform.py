@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -65,25 +66,43 @@ def main() -> int:
         if len(wheels) != 1 or len(list(build.glob("*.tar.gz"))) != 1:
             raise RuntimeError("Expected exactly one wheel and one source archive")
         wheel = wheels[0]
+        with zipfile.ZipFile(wheel) as archive:
+            bundled = {p.relative_to(ROOT / "contracts").as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT / "contracts").rglob("*") if p.is_file()}
+            for relative, expected in bundled.items():
+                if hashlib.sha256(archive.read("dftlab_platform/resources/contracts/" + relative)).hexdigest() != expected:
+                    raise RuntimeError("Bundled contracts differ from authoritative sources")
+            report["bundled_contract_sha256"] = bundled
         for artifact in sorted(build.iterdir()):
             report["artifacts"].append({"file": artifact.name, "bytes": artifact.stat().st_size, "sha256": hashlib.sha256(artifact.read_bytes()).hexdigest()})
         with tempfile.TemporaryDirectory(prefix="dftlab-installed-") as temporary:
             isolated = Path(temporary).resolve()
             if isolated.is_relative_to(ROOT):
                 raise RuntimeError("Installation test must live outside the checkout")
+            rebuilt = isolated / "rebuilt"
+            source_archive = next(build.glob("*.tar.gz"))
+            run("rebuild-sdist", [uv, "build", str(source_archive), "--python", sys.executable, "--no-build-isolation", "--wheel", "--out-dir", str(rebuilt), "--no-create-gitignore"], cwd=isolated)
+            rebuilt_wheels = list(rebuilt.glob("*.whl"))
+            if len(rebuilt_wheels) != 1 or hashlib.sha256(rebuilt_wheels[0].read_bytes()).digest() != hashlib.sha256(wheel.read_bytes()).digest():
+                raise RuntimeError("Rebuilt source distribution differs from the tested wheel")
+            report["sdist_rebuild_matches_wheel"] = True
             venv = isolated / "venv"
             run("clean-venv", [uv, "venv", "--python", sys.executable, str(venv)], cwd=isolated)
             python = venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+            requirements = isolated / "requirements.txt"
+            run("runtime-lock-export", [uv, "export", "--project", str(ROOT / "platform"), "--locked", "--no-dev", "--no-emit-project", "--format", "requirements-txt", "--output-file", str(requirements)])
+            run("runtime-dependencies", [uv, "pip", "install", "--python", str(python), "--require-hashes", "-r", str(requirements)], cwd=isolated)
             run("wheel-install", [uv, "pip", "install", "--python", str(python), "--no-index", "--no-deps", str(wheel)], cwd=isolated)
-            shutil.copy2(ROOT / "platform" / "tests" / "test_installed.py", isolated / "test_installed.py")
-            # -I excludes cwd and environment paths; run the copied test file.
-            run("installed-tests", [str(python), "-I", str(isolated / "test_installed.py"), "-v"], cwd=isolated)
+            shutil.copytree(ROOT / "platform" / "tests", isolated / "tests", ignore=shutil.ignore_patterns("__pycache__"))
+            # -I excludes cwd and environment paths; only unittest's explicit
+            # test directory is added, never the platform source checkout.
+            script = "import unittest,sys; suite=unittest.defaultTestLoader.discover(sys.argv[1]); result=unittest.TextTestRunner(verbosity=2).run(suite); sys.exit(not result.wasSuccessful())"
+            run("installed-tests", [str(python), "-I", "-c", script, str(isolated / "tests")], cwd=isolated)
         after = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in source_paths}
         report["authoritative_sources_unchanged"] = before == after
         if before != after:
             raise RuntimeError("Platform sources changed during qualification")
         report["installed_without_checkout_or_pythonpath"] = True
-        report["scope"] = "empty-domain package and process placeholder only; no scientific/HPC qualification"
+        report["scope"] = "installed platform and bundled contracts; no scientific/HPC qualification"
         report["success"] = True
     except (OSError, RuntimeError, subprocess.TimeoutExpired) as error:
         report["error"] = str(error)
