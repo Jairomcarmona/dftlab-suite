@@ -47,7 +47,7 @@ def reseal(value: dict) -> dict:
     return value
 
 
-def transition_guard(operation: dict, destination: str, result: dict | None, error: dict | None, *, no_effect: bool = False) -> None:
+def transition_guard(operation: dict, destination: str, result: dict | None, error: dict | None, *, no_effect: bool = False, effect_intent: dict | None = None) -> None:
     source = operation["payload"]["state"]
     allowed = {(t["from"], t["to"]) for t in resource_json("transitions/operation-transitions.json")["transitions"]}
     if (source, destination) not in allowed:
@@ -59,6 +59,8 @@ def transition_guard(operation: dict, destination: str, result: dict | None, err
             raise Problem("PRECONDITION_FAILED")
         Contracts().validate("problem", error)
     if destination == "FAILED" and source == "RUNNING" and (not no_effect or not result):
+        raise Problem("PRECONDITION_FAILED")
+    if destination == "FAILED" and source == "RUNNING" and effect_intent is not None:
         raise Problem("PRECONDITION_FAILED")
     if destination == "SUCCEEDED" and (not isinstance(result, dict) or not result):
         raise Problem("PRECONDITION_FAILED")
@@ -75,12 +77,31 @@ def transition_guard(operation: dict, destination: str, result: dict | None, err
         receipt = (result or {}).get("receipt")
         if not receipt:
             raise Problem("PRECONDITION_FAILED")
+        if destination == "FAILED" and (error or {}).get("code") != "OPERATION_INTERRUPTED":
+            raise Problem("PRECONDITION_FAILED")
+        if receipt.get("schema_id") == "dftlab.operation-resolution-receipt":
+            Contracts().validate("operation-resolution-receipt", receipt)
+            payload = receipt["payload"]
+            if receipt["integrity"]["status"] != "VERIFIED" or receipt["project_id"] != operation["project_id"] or payload["operation_id"] != operation["payload"]["operation_id"] or payload["action"] != operation["payload"]["action"] or payload["resulting_state"] != destination:
+                raise Problem("PRECONDITION_FAILED")
+            if payload["effect_class"] == "EXTERNAL_SUBMISSION" and effect_intent is not None:
+                raise Problem("PRECONDITION_FAILED")
+            return
+        if operation["payload"]["action"] not in {"SUBMIT_RUN", "EXECUTE_RESUME_PLAN"} or effect_intent is None:
+            raise Problem("PRECONDITION_FAILED")
         Contracts().validate("submission-receipt", receipt)
         if receipt["integrity"]["status"] != "VERIFIED":
             raise Problem("PRECONDITION_FAILED")
         expected = "RECONCILED_FOUND" if destination == "SUCCEEDED" else "RECONCILED_ABSENT_WITH_EVIDENCE"
         if receipt["project_id"] != operation["project_id"] or receipt["payload"]["status"] != expected or receipt["payload"]["operation_id"] != operation["payload"]["operation_id"]:
             raise Problem("PRECONDITION_FAILED")
+    if operation["payload"]["action"] in {"SUBMIT_RUN", "EXECUTE_RESUME_PLAN"} and destination in {"SUCCEEDED", "FAILED"} and (source == "OUTCOME_UNKNOWN" or destination == "SUCCEEDED"):
+        receipt = (result or {}).get("receipt")
+        if effect_intent is None:
+            raise Problem("PRECONDITION_FAILED")
+        for key in ("operation_id", "attempt_token", "package_ref", "profile", "scheduler", "authority_generation"):
+            if receipt["payload"][key] != effect_intent["payload"][key]:
+                raise Problem("PRECONDITION_FAILED")
 
 
 class Repository(Protocol):
@@ -94,6 +115,7 @@ class Repository(Protocol):
     def request_for_processor(self, operation_id: str, processor_id: str) -> dict: ...
     def claim(self, processor_id: str) -> dict | None: ...
     def transition(self, operation_id: str, revision: int, destination: str, *, result: dict | None = None, error: dict | None = None, no_effect: bool = False, processor_id: str | None = None) -> dict: ...
+    def persist_effect_intent(self, operation_id: str, revision: int, processor_id: str, document: dict) -> dict: ...
     def recover(self) -> int: ...
     def checkpoint(self, destination: Any) -> None: ...
 

@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import sqlite3
 
-from .contracts import Contracts, canonical, digest, loads, resource_json
+from .contracts import BASE, Contracts, canonical, digest, loads, resource_json
 from .domain import Principal, Problem, envelope, identifier, now, reseal, transition_guard
 
 MIGRATION_1 = """
@@ -62,6 +62,13 @@ class SQLiteRepository:
                 connection.execute("INSERT INTO migrations(version) VALUES(1)")
             elif versions != [1]:
                 raise ValueError("Unsupported database version; explicit migration required")
+            connection.execute("CREATE TABLE IF NOT EXISTS effect_migrations(version INTEGER PRIMARY KEY)")
+            effects = [r[0] for r in connection.execute("SELECT version FROM effect_migrations ORDER BY version")]
+            if not effects:
+                connection.execute("CREATE TABLE effect_intents(operation_id TEXT PRIMARY KEY REFERENCES operations(operation_id), document TEXT NOT NULL)")
+                connection.execute("INSERT INTO effect_migrations VALUES(1)")
+            elif effects != [1]:
+                raise ValueError("Explicit effect migration required")
             connection.commit()
         if os.name != "nt":
             self.path.chmod(0o600)
@@ -143,6 +150,8 @@ class SQLiteRepository:
 
     def accept(self, principal: Principal, request: dict) -> tuple[dict, bool]:
         self.contracts.validate("operation-request", request)
+        if request["action"] == "VALIDATE_INPUT":
+            self.contracts.validate_ref(BASE+"schemas/operation-request.schema.json#/$defs/validate_input_payload", request["payload"])
         targets = {"VALIDATE_INPUT": "PROJECT", "CREATE_CAMPAIGN": "PROJECT", "CREATE_PLAN": "CAMPAIGN", "PREPARE_PACKAGE": "PLAN", "SUBMIT_RUN": "PLAN", "CANCEL_RUN": "RUN", "RECONCILE_RUN": "RUN", "CREATE_RESUME_PLAN": "RUN", "EXECUTE_RESUME_PLAN": "RESUME_PLAN"}
         if request["target"]["kind"] != targets[request["action"]]:
             raise Problem("VALIDATION_FAILED")
@@ -213,7 +222,12 @@ class SQLiteRepository:
             row = db.execute("SELECT processor_id FROM outbox WHERE operation_id=?", (payload["operation_id"],)).fetchone()
             if not row or row[0] != processor_id:
                 raise Problem("PRECONDITION_FAILED")
-        transition_guard(operation, destination, result, error, no_effect=no_effect)
+        intent = self._effect_intent(db, payload["operation_id"])
+        if destination == "OUTCOME_UNKNOWN" and intent:
+            fields = {key: intent["payload"][key] for key in ("operation_id", "attempt_token", "package_ref", "profile", "scheduler", "authority_generation")}
+            receipt = envelope("submission-receipt", operation["project_id"], {**fields, "status": "SUBMISSION_UNKNOWN", "job": None, "evidence": []}, contracts=self.contracts)
+            result = {**(result or {}), "receipt": receipt}
+        transition_guard(operation, destination, result, error, no_effect=no_effect, effect_intent=intent)
         source = payload["state"]
         payload.update(state=destination, revision=revision+1, updated_at=now(), result=result, error=error)
         payload["key_retention"]["effects_alive"] = destination in {"PENDING", "RUNNING", "OUTCOME_UNKNOWN"}
@@ -244,6 +258,40 @@ class SQLiteRepository:
                     self._transition(db, operation, operation["payload"]["revision"], "OUTCOME_UNKNOWN")
                     count += 1
         return count
+
+    def _effect_intent(self, db, operation_id):
+        row = db.execute("SELECT document FROM effect_intents WHERE operation_id=?", (operation_id,)).fetchone()
+        return self.contracts.validate("effect-intent", loads(row[0])) if row else None
+
+    def persist_effect_intent(self, operation_id, revision, processor_id, document):
+        """Trusted processor write-ahead boundary, never a client HTTP endpoint."""
+        self.contracts.validate("effect-intent", document)
+        if document["integrity"]["status"] != "VERIFIED":
+            raise Problem("PRECONDITION_FAILED")
+        with self.transaction() as db:
+            row = db.execute("SELECT o.document,o.request,b.processor_id FROM operations o JOIN outbox b ON o.operation_id=b.operation_id WHERE o.operation_id=?", (operation_id,)).fetchone()
+            if not row or row[2] != processor_id:
+                raise Problem("PRECONDITION_FAILED")
+            operation, request = self._operation_document(row[0]), loads(row[1])
+            payload, intent = operation["payload"], document["payload"]
+            if payload["state"] != "RUNNING" or payload["revision"] != revision or intent["operation_id"] != operation_id or intent["action"] != payload["action"] or document["project_id"] != operation["project_id"]:
+                raise Problem("PRECONDITION_FAILED")
+            if request.get("profile_ref") is not None and intent["profile"]["profile_id"] != request["profile_ref"]:
+                raise Problem("PRECONDITION_FAILED")
+            if payload["action"] == "EXECUTE_RESUME_PLAN":
+                target = db.execute("SELECT document FROM resources WHERE resource_id=? AND kind='RESUME_PLAN' AND project_id=?", (request["target"]["id"], operation["project_id"])).fetchone()
+                if not target or target[0] is None:
+                    raise Problem("PRECONDITION_FAILED")
+                resume = self.contracts.validate("resume-plan", loads(target[0]))
+                if resume["payload"]["run_id"] != intent["run_id"]:
+                    raise Problem("PRECONDITION_FAILED")
+            previous = self._effect_intent(db, operation_id)
+            if previous:
+                if previous != document:
+                    raise Problem("PRECONDITION_FAILED")
+                return previous
+            db.execute("INSERT INTO effect_intents VALUES(?,?)", (operation_id, canonical(document).decode()))
+            return document
 
     def events(self, principal: Principal, project_id: str, after: int = 0) -> list[dict]:
         with self._connection() as db:

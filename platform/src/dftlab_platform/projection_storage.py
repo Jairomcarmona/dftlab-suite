@@ -1,6 +1,6 @@
 """SQLite adapter for rebuildable projections and bounded event replay."""
 from .contracts import canonical, loads
-from .domain import Principal, Problem
+from .domain import Principal, Problem, reseal
 
 
 class SQLiteReadModels:
@@ -34,7 +34,13 @@ class SQLiteReadModels:
             if target["document"] is None:
                 raise Problem("NOT_FOUND")
             schema = {"RUN": "run-projection", "RESUME_PLAN": "resume-plan"}[kind]
-            return self.repository.contracts.validate(schema, loads(target["document"]))
+            document = self.repository.contracts.validate(schema, loads(target["document"]))
+            if kind == "RUN" and document["payload"]["source_revision"] != target["revision"]:
+                # The projection may lag accepted commands. Only this platform
+                # field changes; native evidence, dimensions and cursor do not.
+                document["payload"]["source_revision"] = target["revision"]
+                reseal(document)
+            return self.repository.contracts.validate(schema, document)
 
     def put(self, owner, kind, record, expected_revision=None):
         """Trusted adapter/test seam, deliberately not an HTTP write endpoint."""

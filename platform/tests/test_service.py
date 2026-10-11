@@ -141,7 +141,9 @@ class HTTPService(unittest.TestCase):
 
     def test_operation_reads_are_authorized_and_open_commands_not_admitted(self):
         project = self.project()
-        request = {"action": "VALIDATE_INPUT", "project_id": project["project_id"], "target": {"kind": "PROJECT", "id": project["project_id"], "expected_revision": 1}, "payload": {}, "idempotency_key": "service-command-01"}
+        request = {"action": "VALIDATE_INPUT", "project_id": project["project_id"], "target": {"kind": "PROJECT", "id": project["project_id"], "expected_revision": 1}, "payload": {"draft": {"draft_id": "draft-fixture", "revision": 1}}, "idempotency_key": "service-command-01"}
+        invalid = copy.deepcopy(request);invalid["payload"] = {}
+        self.assert_problem(self.request("POST", "/projects/"+project["project_id"]+"/validations", invalid), 422, "VALIDATION_FAILED")
         self.assert_problem(self.request("POST", "/projects/"+project["project_id"]+"/validations", request), 503, "ENGINE_UNAVAILABLE")
         operation = Operations(self.repo).accept(self.alice, request)[0]
         response = self.request("GET", "/operations/"+operation["record_id"])
@@ -244,6 +246,22 @@ class HTTPService(unittest.TestCase):
         revision["idempotency_key"] = "service-revision-02"
         self.assert_problem(self.request("POST", draft_path+"/revisions", revision), 412, "PRECONDITION_FAILED")
         self.assertEqual(self.request("GET", "/projects/"+project["project_id"])[2], project)
+
+
+    def test_get_run_revision_tracks_accepted_command_and_preserves_dimensions(self):
+        project = self.project()
+        projection = resource_json("fixtures/run-projection/valid/completed-not-established.json")
+        projection["project_id"] = project["project_id"]
+        self.readmodels.put(self.alice, "RUN", projection)
+        run_id = projection["payload"]["run_id"]
+        request = {"action": "CANCEL_RUN", "project_id": project["project_id"], "target": {"kind": "RUN", "id": run_id, "expected_revision": projection["payload"]["source_revision"]}, "payload": {"reason": "fixture cancellation"}, "idempotency_key": "service-cancel-key"}
+        self.repo.accept(self.alice, request)
+        status, _, actual = self.request("GET", "/runs/"+run_id)
+        self.assertEqual(status, 200, actual)
+        self.assertEqual(actual["payload"]["source_revision"], self.readmodels.target(self.alice, "RUN", run_id)["revision"])
+        self.assertEqual(actual["payload"]["dimensions"], projection["payload"]["dimensions"])
+        self.assertEqual(actual["payload"]["snapshot_cursor"], projection["payload"]["snapshot_cursor"])
+        self.assertEqual(self.repo.project(self.alice, project["project_id"]), project)
 
 
 if __name__ == "__main__":
