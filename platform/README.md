@@ -49,6 +49,28 @@ de T-060: no habilita admisión operativa ni acredita recuperación HPC.
 Las pruebas instaladas incluyen concurrencia, autorización, rollback,
 reconciliación con fixture, callback tardío, corrupción y restauración de DB.
 
+## Artefactos (Ola 2, X6b)
+
+`artifacts.ArtifactStore` y `ArtifactIndex` separan contenido y metadatos.
+`LocalArtifactStore` guarda bytes en staging/blobs privados;
+`SQLiteArtifactIndex` usa una migración propia versionada en la misma DB.
+Los únicos nombres de disco son UUID generados por el servicio. El contrato
+recibe IDs opacos, SHA-256, tipo y tamaño, nunca rutas del host ni URLs.
+
+La subida admite chunks consecutivos de hasta 8 MiB y reintentos exactos del
+rango ya confirmado. Tras crash descarta la cola no confirmada. Commit verifica
+tamaño/hash, persiste COMMITTING antes del rename atómico y solo publica el
+ArtifactRecord después. Repetir commit recupera un rename o una publicación
+de índice interrumpidos. Hash incorrecto, enlace o contenido alterado fallan.
+Stream verifica antes de entregar y lee bloques de 1 MiB, con rango acotado.
+
+Límites locales configurables: 1 GiB por archivo, 32 uploads abiertos por owner
+y 4 GiB reservados por owner (incluye originales publicados). Expiry de staging
+24 h; una finalización ya iniciada sigue recuperable después. No se extraen
+ZIP/tar, ni se ejecutan importaciones. Los originales son ESSENTIAL; no hay GC
+que pueda borrarlos como caché. Retención/GC por runs y FinalizationReceipt del
+conjunto científico completo se califican en T-060/Ola 3, no por este upload.
+
 ## Base de proceso anterior (Ola 0, X2)
 
 Distribución `dftlab-platform` / paquete `dftlab_platform`, CPython 3.12.10 y uv 0.11.14 fijados, con dependencias de validación y build bloqueadas. En X5 todavía no hay campañas, sesiones, CSRF, SQLite ni API HTTP. El entry point `dftlab-platform start|status|stop` conserva por ahora el proceso de prueba de X2.
