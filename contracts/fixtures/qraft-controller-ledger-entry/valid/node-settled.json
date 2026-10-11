@@ -1,0 +1,15 @@
+{
+  "contract": "qraft.controller-inner-ledger@1.0",
+  "seq": 4,
+  "event": "NODE_SETTLED",
+  "at": "2026-10-11T19:00:00Z",
+  "task_id": "hf1-lru",
+  "attempt_id": "attempt-0001",
+  "key": {
+    "checkpoint_identity": "adaptive:5f0c",
+    "node_id": "reference"
+  },
+  "trace_id": "hf1-lru/attempt-0001/1",
+  "native_state": "VALIDATED",
+  "evidence_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+}

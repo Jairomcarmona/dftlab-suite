@@ -38,6 +38,17 @@ for entry in manifest:
         detail = errors[0].message if errors else "accepted"
         failures.append(f"{entry['path']}: expected {entry['expect']}, got {detail}")
 
+ledger_validator = Draft202012Validator(
+    schemas["qraft-controller-ledger-entry.schema.json"], registry=registry, format_checker=FormatChecker()
+)
+ledger_vectors = load(ROOT / "fixtures" / "controller-ledger-rules" / "cases.json")
+for case in ledger_vectors["cases"]:
+    for attempt in case["attempts"]:
+        for line in attempt["lines"]:
+            errors = list(ledger_validator.iter_errors(line))
+            if errors:
+                failures.append(f"controller-ledger-rules {case['name']} seq {line.get('seq')}: {errors[0].message}")
+
 try:
     from openapi_spec_validator import validate as validate_openapi
     from openapi_spec_validator.readers import read_from_filename
