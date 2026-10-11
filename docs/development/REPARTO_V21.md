@@ -12,11 +12,11 @@ El reparto sigue lo que cada entorno puede comprobar:
 
 | | Codex (carpeta local Windows/WSL) | Claude (hilos en la nube, Linux) |
 |---|---|---|
-| Ve | Windows nativo, WSL2, motores QRAFT/HubbardFlow locales, claves SSH y clúster de Manuel, el equipo de uso | Linux limpio, Chromium/Playwright, `sshd` local de prueba; varios hilos a la vez |
-| No ve | Varios bloques a la vez en la misma carpeta | Windows, el clúster real, SIESTA, QRAFT (no está en GitHub accesible) |
-| Por tanto | Empaquetado/instalación, SSH/terminal real, motores, worker WSL/SLURM, mediciones en el equipo de uso | Contratos, ADR, frontend, núcleo de la plataforma contra fixtures |
+| Ve | Windows nativo, WSL2, motores instalados y ejecutables, claves SSH y clúster de Manuel, el equipo de uso | Linux limpio, Chromium/Playwright, `sshd` local de prueba, fuente de QRAFT y HubbardFlow en GitHub (solo lectura); varios hilos a la vez |
+| No ve | Varios bloques a la vez en la misma carpeta | Windows, el clúster real, SIESTA; no puede empujar a los repositorios de los motores |
+| Por tanto | Empaquetado/instalación, SSH/terminal real, cambios upstream en los motores, worker WSL/SLURM, mediciones en el equipo de uso | Inventario de API de los motores, contratos, ADR, frontend, núcleo de la plataforma contra fixtures |
 
-Inferido, por confirmar: QRAFT @ `4d996ea` y HubbardFlow @ `e508f47` (rama `codex/hubbardflow-rename`) están en la máquina de Manuel. Si se suben a GitHub, T-009 puede pasar a Claude.
+Comprobado con `git ls-remote` el 2026-10-11: QRAFT @ `4d996ea` es la punta de `main` en `Jairomcarmona/siestaflow`, y HubbardFlow @ `e508f47` es la punta de `codex/hubbardflow-rename` en `Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE`. Ambos son públicos, así que Claude lee la fuente fijada; los cambios upstream que falten los hace Codex en esos repositorios.
 
 ## 2. Dueño de cada carpeta
 
@@ -25,7 +25,8 @@ Inferido, por confirmar: QRAFT @ `4d996ea` y HubbardFlow @ `e508f47` (rama `code
 | `docs/adr/` (ADR-001…012), `ARQUITECTURA.md` | Claude | ADR-014 sigue siendo de Codex |
 | `docs/inventory/` (nuevo) | Claude | T-001/T-002 |
 | `contracts/` (schemas, fixtures, openapi, events) | Claude | Codex consume; cambios por PR de Claude |
-| `docs/compatibility/`, `engine-versions.lock.json` (nuevos) | Codex | T-009/T-010 |
+| `docs/compatibility/` (nuevo) | Claude | T-009 |
+| `engine-versions.lock.json` (nuevo) | Codex | T-010: requiere construir e instalar las distribuciones |
 | `app/dftlab/static/js/**`, `app/scripts/build.mjs`, `app/tests/**` | Claude | Codex no edita `app/` durante P2 |
 | `platform/pyproject.toml`, lock, launcher, `deployment/` | Codex | Empaquetado y arranque (T-016 parte, T-057) |
 | `platform/src/dftlab_platform/{domain,application,api,infrastructure/storage}` | Claude | T-017/T-018 |
@@ -49,17 +50,18 @@ Codex lleva una cola en serie (una carpeta aislada por rama, como en F). Claude 
 |---|---|---|---|
 | C1 | Claude | T-001 inventario y T-002 baseline; marca T-003…T-006 como cubiertos por A–H con su evidencia | `docs/inventory/` |
 | C2 | Claude | T-007: ADR-001…012 y actualización de `ARQUITECTURA.md` | `docs/adr/`, `ARQUITECTURA.md` |
-| X1 | Codex | T-009 API pública real de QRAFT/HubbardFlow en los commits fijados y qué falta upstream; T-010 borrador del lock de versiones | `docs/compatibility/`, `engine-versions.lock.json` |
+| C0 | Claude | T-009: API pública real de QRAFT y HubbardFlow en los commits fijados y lista de lo que falta upstream | `docs/compatibility/` |
+| X1 | Codex | Esqueleto `platform/` (pyproject, uv lock, launcher start/status/stop, workflow propio), T-010 borrador del lock de versiones con distribuciones instaladas en Windows/WSL, comienzo de T-057 | `platform/` raíz, `deployment/local/`, `engine-versions.lock.json` |
 
-**Ola 1: contratos (depende de C2; NativeContractRef depende de X1)**
+**Ola 1: contratos (depende de C2; NativeContractRef depende de C0)**
 
 | Bloque | Quién | Tickets | Archivos |
 |---|---|---|---|
 | C3 | Claude | T-008 + T-056: schemas ejecutables con validación JS y Python, fixtures válidos/inválidos, `NOT_ESTABLISHED` y enum futuro | `contracts/schemas/`, `contracts/fixtures/` |
-| X2 | Codex | Esqueleto `platform/` (pyproject, uv lock, launcher start/status/stop, workflow propio) y comienzo de T-057 | `platform/` raíz, `deployment/local/` |
+| X2 | Codex | Cambios upstream en QRAFT/HubbardFlow que C0 identifique como necesarios, cada uno en su repositorio y con fixture de consumidor | repositorios de los motores |
 | C4 | Claude | T-011 OpenAPI, eventos, errores, idempotencia y cursor (tras C3) | `contracts/openapi/`, `contracts/events/` |
 
-**Ola 2: P2 y P3 en paralelo (tras C3 y X2)**
+**Ola 2: P2 y P3 en paralelo (tras C3 y X1)**
 
 | Bloque | Quién | Tickets | Archivos |
 |---|---|---|---|
@@ -82,7 +84,7 @@ El gate P4 se cierra solo con X4 y C9 fusionados y el escenario de §7 del plan 
 
 ## 4. Modelo para cada hilo de Claude
 
-Opus 5.5 medio cuando el bloque fija un contrato, una decisión de arquitectura, concurrencia o seguridad: C2, C3, C4, C5, C7, C9 y luego T-030 (preflight).
+Opus 5.5 medio cuando el bloque fija un contrato, una decisión de arquitectura, concurrencia o seguridad: C0, C2, C3, C4, C5, C7, C9 y luego T-030 (preflight).
 
 Sonnet 5.5 medio cuando el contrato ya está fijado y el trabajo es enumerar o aplicar: C1, C6, C8, C10 y las subtareas de P5 por lector o por G/S.
 
