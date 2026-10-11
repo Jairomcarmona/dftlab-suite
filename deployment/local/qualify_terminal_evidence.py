@@ -21,7 +21,7 @@ from dftlab_platform.runtime_probe import Binary, Observation
 from dftlab_platform.terminal_evidence import LocalTerminalSigner, SlurmTerminalCollector
 
 
-def observe_registered(args):
+def observe_registered(args, *, restored_context=None):
     """Operator qualification only; original readonly context and fresh proof."""
     root, output = checked_path(args.run), checked_path(args.output)
     if output.exists() or root.is_relative_to(output) or output.is_relative_to(root):
@@ -36,6 +36,18 @@ def observe_registered(args):
     helper = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(helper)
     value, repo, owner, store, package, intent, ledger, port, verify = helper.context(root, config, engines)
+    if restored_context is not None:
+        # Explicit operator qualification of a restored copy. Observe the
+        # ORIGINAL scheduler package/context; put fresh evidence in the copy.
+        from dftlab_platform.slurm import SlurmSchedulerPort
+        from dftlab_platform.submission_storage import SQLiteSubmissionLedger
+        repo, store = restored_context
+        ledger = SQLiteSubmissionLedger(repo)
+        def forbidden_dispatch(current):
+            raise RuntimeError("Readonly restored qualification cannot dispatch")
+        port = SlurmSchedulerPort(port.site, port.packages,
+                                  lambda current, raw: helper.blob(store, owner, current["project_id"], canonical(raw), "dftlab.scheduler-observation", "application/json"),
+                                  forbidden_dispatch)
     _, _, receipt = ledger.snapshot(owner, intent["payload"]["operation_id"])
     if receipt is None or receipt["payload"]["job"]["job_id"] != args.job:
         raise RuntimeError("Job not authorized by original durable receipt")
