@@ -110,6 +110,8 @@ export function parseBands(text) {
       labels.push({ x: xb / BOHR_ANG, xBohr: xb, raw, label: prettyLabel(raw) });
     }
   }
+  const path = format === 'BandLines' ? bandLinesPath(xBohr, labels, warnings) : unknownPath(nkRead,
+    'BandPoints no declara tramos ni etiquetas: los puntos se unen en el orden del archivo.');
 
   const x = Float64Array.from(xBohr, (v) => v / BOHR_ANG);
   return {
@@ -125,10 +127,115 @@ export function parseBands(text) {
     kpoints: kpointsBohr ? kpointsBohr.map((k) => k.map((v) => v / BOHR_ANG)) : null,
     kpointsBohr,
     bands,          // [spin][band][k], absolute energies in eV
-    labels,         // [{x (1/Ang), xBohr, raw, label}]
+    labels,         // [{x (1/Ang), xBohr, raw, label, kIndex}]
+    path,           // {source, segments [{start, end, from, to}], breaks, jumps [{index, from, to}], note}
     units: { energy: 'eV', x: '1/Ang', xBohr: '1/Bohr (original)', kpoints: '1/Ang cartesian', kpointsBohr: '1/Bohr (original)' },
     warnings,
   };
+}
+
+// ---------------------------------------------------------------- k-path segments
+//
+// A band plot joins consecutive k-points only inside a segment. Segments come from the file,
+// never from a distance or energy threshold:
+//  * BandLines (.bands): each label sits on a k-point (x written with the same 6 decimals, so
+//    the match tolerance below is the print precision, not a physical cut-off). A BandLines line
+//    with 1 point after a labelled point ("U" then "1 ... K") puts two labels on consecutive
+//    k-points: that is how seekpath-style paths and this app's fdf writer (tools/fdfgen.js,
+//    crystal writeBandLines) declare a jump. SIESTA itself just takes one straight step there,
+//    with no intermediate points, so the step is not drawn and both x values are kept.
+//  * dftlab pack: the jump is explicit, a new start point at the same x and a label "A|B".
+//  * BandPoints and anything else: no segment information; one segment, stated in `note`.
+
+const X_PRINT_TOL = 1e-6; // .bands writes x with 6 decimals (labels and k lines alike)
+
+function unknownPath(nk, note) {
+  return { source: 'none', segments: nk ? [{ start: 0, end: nk - 1, from: null, to: null }] : [], breaks: [], jumps: [], note };
+}
+
+function segmentsFromBreaks(nk, breaks, labelAt) {
+  const cuts = [0, ...breaks, nk], segments = [];
+  for (let i = 0; i + 1 < cuts.length; i++) {
+    const start = cuts[i], end = cuts[i + 1] - 1;
+    segments.push({ start, end, from: labelAt(start), to: labelAt(end) });
+  }
+  return segments;
+}
+
+function bandLinesPath(xBohr, labels, warnings) {
+  const nk = xBohr.length;
+  let p = 0;
+  for (const l of labels) {
+    let i = p;
+    while (i < nk && !(Math.abs(xBohr[i] - l.xBohr) <= X_PRINT_TOL)) i++;
+    if (i >= nk) {
+      warnings.push(`band label '${l.raw}' at x = ${l.xBohr} does not match any k-point; path segments unknown`);
+      labels.forEach((m) => { m.kIndex = null; });
+      return unknownPath(nk, 'Las etiquetas del .bands no coinciden con sus puntos k: no se puede reconstruir el camino; los puntos se unen en orden.');
+    }
+    l.kIndex = i;
+    p = i + 1;
+  }
+  const breaks = [], jumps = [];
+  for (let j = 1; j + 1 < labels.length; j++) {
+    const a = labels[j], b = labels[j + 1];
+    if (b.kIndex === a.kIndex + 1) { breaks.push(b.kIndex); jumps.push({ index: b.kIndex, from: a.label, to: b.label }); }
+  }
+  const byIndex = new Map(labels.map((l) => [l.kIndex, l.label]));
+  return {
+    source: 'BandLines',
+    segments: segmentsFromBreaks(nk, breaks, (i) => byIndex.get(i) ?? null),
+    breaks, jumps,
+    note: jumps.length
+      ? 'Saltos declarados en BandLines (línea de 1 punto tras un punto etiquetado): ' + jumps.map((j) => `${j.from}|${j.to}`).join(', ') + '. SIESTA da un solo paso recto entre ambos puntos, sin puntos intermedios; no se dibuja.'
+      : null,
+  };
+}
+
+/** Segments of a dftlab pack path: a break where a new start point repeats the previous x
+ *  and the label at that x is "A|B" (dftlab_pack.py build_path). Label x is written with 6
+ *  decimals and the x array may be float32, so labels match within that print/storage precision. */
+export function packPath(x, labels) {
+  const nk = x.length, breaks = [], jumps = [];
+  const same = (a, b) => Math.abs(a - b) <= 5e-7 + 1.2e-7 * Math.abs(b);
+  for (let i = 1; i < nk; i++) {
+    if (x[i] !== x[i - 1]) continue;
+    const l = labels.find((m) => same(m.x, x[i]) && m.label.includes('|'));
+    if (!l) continue;
+    const [from, to] = l.label.split('|');
+    breaks.push(i); jumps.push({ index: i, from, to });
+  }
+  const labelAt = (i) => {
+    const l = labels.find((m) => same(m.x, x[i]));
+    if (!l || !l.label.includes('|')) return l ? l.label : null;
+    const [from, to] = l.label.split('|');
+    return breaks.includes(i) ? to : from;   // end of the previous segment gets A, the new start gets B
+  };
+  return {
+    source: 'dftlab-pack',
+    segments: segmentsFromBreaks(nk, breaks, labelAt),
+    breaks, jumps,
+    note: jumps.length ? 'Saltos del camino en el paquete: ' + jumps.map((j) => `${j.from}|${j.to}`).join(', ') + '.' : null,
+  };
+}
+
+/** [[x, y]] for one band with a [x, NaN] row before every segment start, so the chart
+ *  (which joins only consecutive finite points) does not connect two segments. */
+export function segmentSeries(x, y, breaks = []) {
+  const br = new Set(breaks), d = [];
+  for (let i = 0; i < x.length; i++) {
+    if (br.has(i)) d.push([x[i], NaN]);
+    d.push([x[i], y[i]]);
+  }
+  return d;
+}
+
+/** 1-based segment number of every k-point (for exports). */
+export function segmentIndex(nk, breaks = []) {
+  const out = new Int32Array(nk), br = new Set(breaks);
+  let s = 1;
+  for (let i = 0; i < nk; i++) { if (br.has(i)) s++; out[i] = s; }
+  return out;
 }
 
 /** Return bands shifted so that E_F = 0 (new object, same shape). */

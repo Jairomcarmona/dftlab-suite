@@ -4,6 +4,8 @@
 // {shape, dtype, data: TypedArray} and leaves small inline arrays as nested JS arrays.
 // Gzip is inflated with the standard DecompressionStream (browsers, Node >= 18).
 
+import { packPath } from './bands.js';
+
 const DTYPES = {
   float32: Float32Array, float64: Float64Array, int8: Int8Array, uint8: Uint8Array,
   int16: Int16Array, uint16: Uint16Array, int32: Int32Array, uint32: Uint32Array,
@@ -108,13 +110,17 @@ export function packBands(pack) {
     for (let k = 0; k < nk; k++) v[k] = b.energies.data[(s * nk + k) * nBands + n];
     return v;
   }));
+  const x = Float64Array.from(b.x.data);
+  const labels = (b.labels || []).filter((l) => l && typeof l.label === 'string' && Number.isFinite(l.x))
+    .map((l) => ({ x: l.x, raw: l.label, label: l.label, k: l.k }));
   return {
     format: 'dftlab-pack', fermi: pack.fermi, nBands, nSpin, nk,
     noncollinear: !!pack.spin?.noncollinear,
-    x: Float64Array.from(b.x.data),
+    x,
     kpoints: isArr(b.kcart, 2) ? Array.from({ length: nk }, (_, k) => Array.from(b.kcart.data.subarray(3 * k, 3 * k + 3))) : null,
     bands,
-    labels: (b.labels || []).map((l) => ({ x: l.x, raw: l.label, label: l.label, k: l.k })),
+    labels,
+    path: packPath(x, labels),
     units: { energy: 'eV', x: '1/Ang', kpoints: '1/Ang cartesian' },
     warnings: [],
   };

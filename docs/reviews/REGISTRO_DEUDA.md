@@ -48,7 +48,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | D | `.RHO` leído como texto; `.dftlab.json` detectado sin visualización | Media | **Reproducido** («archivo de malla demasiado corto»; paquete «leído» sin paneles) → corregido en la misma rama | PR C/D |
 | E | Metadatos y nombres de archivo se insertan en `innerHTML` | Media | **Reproducido** (incluido manejador `onerror` ejecutado) → corregido en la rama `claude/fix-e-safe-html` (PR del bloque E, apilado sobre A) | PR E |
 | F | Puerta de calidad reproducible | Media | **Parcialmente resuelto**: alcance frontend verificado en Windows/Linux en PR #5; regeneración Python pendiente | PR #5, `481ea00`, CI @ `5b67a2a` |
-| G | Bandas unen segmentos desconectados | Media | Confirmado por inspección | pendiente |
+| G | Bandas unen segmentos desconectados | Media | **Reproducido** (26 líneas cruzan U→K en el `.bands` de Si; 26/30 líneas verticales en U\|K/H\|P de los paquetes) → corregido en la rama `claude/bloque-g-camino-k-ud21bh` | PR G |
 | H | Recursos (ResizeObserver, escenas 3D) y cálculo pesado | Media/baja | Fugas: confirmadas por inspección; rendimiento: pendiente de medición | pendiente |
 
 ## A. Calculadoras: `fftGood` sin dominio
@@ -141,9 +141,14 @@ Estado verificado, no solo declarado:
 
 ## G. Discontinuidades del camino k
 
-- **Prioridad:** media.
-- **Archivos:** `views/postproc.js` (bandas), `core/chart.js`, `siesta/bands.js`.
-- **Inspección:** pendiente de detalle; se reconoce en la arquitectura.
+- **Prioridad:** media. La gráfica sugiere una dispersión que no se calculó (U→K en Si, H→P en Fe); no bloquea ni corrompe datos.
+- **Archivos:** `siesta/bands.js` (modelo de camino), `siesta/pack.js` (`packBands`), `views/postproc.js` (`drawBands`, CSV, informe). `core/chart.js` no cambia: ya corta las líneas en valores no finitos.
+- **Reproducción antes del cambio (2026-10-11, `main` @ `b9de59a`, Node 22.22.0, Linux, Chromium + Playwright 1.56.1 global, `dist/dftlab.html` sin red):** `app/tests/ui/browser_bands.mjs` registra cada `lineTo` del canvas. `si.bands` (SIESTA 5.4.2, BandLines con `30 … U` seguido de `1 … K`): 26 líneas de banda cruzan de U a K. Paquetes: 26 líneas verticales en U\|K (`si.dftlab.json`) y 30 en H\|P (`fe.dftlab.json`, dos canales), uniendo el final de un tramo con el inicio del siguiente en la misma x. El CSV no distinguía tramos. 12 de 22 comprobaciones fallan; `run_bands_path_tests.mjs` falla porque no existe modelo de camino.
+- **Causa:** `parseBands` y `packBands` devolvían una sola serie por banda; `drawBands` la pasaba completa al gráfico, que une puntos finitos consecutivos.
+- **Origen de los cortes (sin umbrales):** en BandLines, cada etiqueta se asocia a su punto k (misma x con 6 decimales; la tolerancia es la precisión impresa) y dos etiquetas en puntos consecutivos tras un punto etiquetado son una línea de 1 punto, la forma con que seekpath y los generadores de la app (`tools/fdfgen.js`, `crystal writeBandLines`) declaran un salto. SIESTA da ahí un solo paso recto, sin puntos intermedios; no se dibuja y se conservan ambas x. En el paquete, el salto es explícito: punto inicial repetido en la misma x con etiqueta `A|B` (`dftlab_pack.py build_path`). BandPoints no trae tramos: un tramo y la limitación en `path.note`. Si una etiqueta no cae en un punto k, camino desconocido y aviso, sin cortes.
+- **Corrección:** `path = {source, segments [{start, end, from, to}], breaks, jumps, note}` en el resultado de `parseBands` y `packBands` (`labels[].kIndex` en BandLines); `segmentSeries` inserta `[x, NaN]` antes de cada inicio de tramo y `segmentIndex` numera los tramos. `drawBands` usa ambos; el CSV añade la columna `segment` y la nota del camino; la lectura en pantalla y el informe Markdown nombran los saltos. x, energías absolutas, E_F, unidades y etiquetas del eje no cambian.
+- **Evidencia después:** `app/tests/siesta/run_bands_path_tests.mjs` 32/0 (en `scripts/verify.mjs`) y `browser_bands.mjs` en `npm run test:browser` (CI): Si `.bands` corta solo entre U (60) y K (61) y conserva x y energías del archivo; Fe `.bands` (camino continuo) sin cortes; BandPoints con la limitación; etiqueta desalineada sin cortes; paso inicial de un punto no es salto; paquetes Si (U\|K, índice 62) y Fe (H\|P, índice 178, dos canales); paquete sin `A|B` sin corte. `app/tests/ui/browser_bands.mjs` 22/0: ninguna banda cruza U→K ni traza la vertical en U\|K y H\|P, el Fe continuo sigue unido, CSV con tramos, salto en pantalla e informe, sin excepciones. Sin regresiones: `verify.mjs` completo, `browser_import.mjs` 33/0, `browser_regressions.mjs` 24/0, `browser_lifecycle.mjs` en verde.
+- **Límites:** un `.bands` no distingue un salto de un tramo de un paso escrito a propósito (`1` en BandLines); se trata como salto y solo se omite la recta entre dos puntos calculados. BandPoints se sigue uniendo en el orden del archivo. El `.fdf` de la corrida no se usa para confirmar el camino. El eje del `.bands` conserva la distancia U→K que escribió SIESTA (hueco visible) en vez de juntar U\|K en una marca.
 
 ## H. Recursos y rendimiento
 

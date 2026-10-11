@@ -28,7 +28,7 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 
 ## Pendiente
 
-- **C/D:** hechos (ver «Bloques C y D»). **G, H:** sin empezar.
+- **C/D:** hechos (ver «Bloques C y D»). **G:** hecho (ver «Bloque G»). **H:** sin empezar.
 - **H (heredado de B):** `ResizeObserver` por canvas en `core/chart.js`; liberación de geometrías/materiales/texturas en `core/three-view.js`; medir antes de introducir workers.
 - **F:** alcance frontend verificado en `codex/bloque-f`, PR #5, CI Windows/Linux en verde. Queda fijar el entorno Python de regeneración de referencias. Ver entrega F al final de esta nota.
 - La auditoría de E cubre las rutas de datos importados; no se revisaron las 19 vistas línea a línea.
@@ -40,9 +40,17 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 - **Pruebas:** `app/tests/siesta/run_import_tests.mjs` 75/0 (añadida a `scripts/verify.mjs`); `app/tests/ui/browser_import.mjs` 33/0 (20 fallos en `b691f25`). Sin regresiones: `verify.mjs` completo, `browser_regressions.mjs` 24/0, `browser_lifecycle.mjs` en verde (Node 22.22.0, Linux, Playwright global). `browser_import.mjs` debe sumarse a la ejecución de pruebas de navegador en CI que prepara el bloque F (`REQUIRE_BROWSER=1`).
 - **Pendientes:** fatbands, COOP/COHP y funciones de onda del paquete no se visualizan en Postproceso (se declara); el emparejamiento EIG/KP no puede verificar coordenadas (el `.EIG` no las tiene).
 
+## Bloque G (camino k en bandas)
+
+- **Rama:** `claude/bloque-g-camino-k-ud21bh`, desde `main` @ `b9de59a`, rebasada sobre `296bb15` (F fusionado); PR #7 «G: bandas sin unir tramos desconectados del camino k». Tras fusionar, la punta de `main` es su commit de fusión (`git log -1 origin/main`).
+- **Cambios:** `siesta/bands.js` (`path` con tramos, cortes y saltos en `parseBands`; `packPath`, `segmentSeries`, `segmentIndex`); `siesta/pack.js` (`packBands` devuelve `path`); `views/postproc.js` (`drawBands` dibuja por tramos, CSV con columna `segment`, saltos en la lectura y en el informe). Cortes solo con respaldo del formato: dos etiquetas en puntos k consecutivos de BandLines (U→K) y el reinicio `A|B` del paquete (U\|K, H\|P). BandPoints: un tramo y la limitación declarada. `core/chart.js` sin cambios.
+- **Pruebas:** `app/tests/siesta/run_bands_path_tests.mjs` 32/0 (añadida a `scripts/verify.mjs`); `app/tests/ui/browser_bands.mjs` 22/0 (12 fallos en `b9de59a`), incluida en `app/scripts/test-browser.mjs` (`npm test` y CI). Sin regresiones: `verify.mjs` completo, `browser_import.mjs` 33/0, `browser_regressions.mjs` 24/0, `browser_lifecycle.mjs` en verde (Node 22.22.0, Linux, Playwright 1.56.1 global con `NODE_PATH=$(npm root -g)`).
+- **Pendientes:** un tramo de un paso escrito a propósito en BandLines se trata como salto; BandPoints se une en orden; el `.fdf` no se usa para confirmar el camino.
+- **Siguiente paso:** **H**. Si H toca `drawBands`, conservar `segmentSeries(x, y, b.path.breaks)`.
+
 ## Siguiente paso
 
-Bloque **G** (discontinuidades del camino k): `siesta/bands.js` (`.bands` con `BandLines`/`BandPoints`), las bandas de paquetes (`packBands`: etiquetas como `H|P` en Fe) y `drawBands` en `views/postproc.js`. Representar segmentos explícitos solo con respaldo del formato o metadatos, sin umbrales inventados; conservar unidades y la referencia de energía. Después, **H**. Las vistas reciben `render(el, view)`: comprobar `view.alive` tras cada `await`.
+Bloque **G** hecho (ver «Bloque G»). Sigue **H**. Las vistas reciben `render(el, view)`: comprobar `view.alive` tras cada `await`.
 
 ## Reglas a respetar
 
