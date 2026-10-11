@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/physical-model.schema.json",
+  "title": "PhysicalModel",
+  "description": "XC, carga, spin, relatividad, Hubbard y supuestos.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.physical-model"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "xc",
+        "total_charge",
+        "spin",
+        "relativistic",
+        "hubbard",
+        "assumptions"
+      ],
+      "properties": {
+        "xc": {
+          "type": "object",
+          "required": [
+            "functional",
+            "family"
+          ],
+          "properties": {
+            "functional": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "family": {
+              "enum": [
+                "LDA",
+                "GGA",
+                "META_GGA",
+                "HYBRID",
+                "OTHER"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "total_charge": {
+          "$ref": "defs.schema.json#/$defs/quantity"
+        },
+        "spin": {
+          "enum": [
+            "NONE",
+            "COLLINEAR",
+            "NONCOLLINEAR",
+            "SPIN_ORBIT"
+          ]
+        },
+        "relativistic": {
+          "enum": [
+            "NONE",
+            "SCALAR",
+            "FULL"
+          ]
+        },
+        "hubbard": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "quantity_kind",
+                "subspaces",
+                "source"
+              ],
+              "properties": {
+                "quantity_kind": {
+                  "enum": [
+                    "U_scalar_charge",
+                    "Ueff_Dudarev",
+                    "J",
+                    "V"
+                  ]
+                },
+                "subspaces": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "species_label",
+                      "orbital",
+                      "value"
+                    ],
+                    "properties": {
+                      "species_label": {
+                        "$ref": "defs.schema.json#/$defs/id"
+                      },
+                      "orbital": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4096
+                      },
+                      "value": {
+                        "$ref": "defs.schema.json#/$defs/quantity"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                },
+                "source": {
+                  "$ref": "defs.schema.json#/$defs/evidence_ref"
+                },
+                "derivation_evidence": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "defs.schema.json#/$defs/evidence_ref"
+                  }
+                }
+              },
+              "if": {
+                "properties": {
+                  "quantity_kind": {
+                    "enum": [
+                      "Ueff_Dudarev",
+                      "J",
+                      "V"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "derivation_evidence"
+                ],
+                "properties": {
+                  "derivation_evidence": {
+                    "minItems": 1
+                  }
+                }
+              },
+              "description": "§8.4: el resultado LR es U_scalar_charge; usarlo como Ueff/J/V exige evidencia de derivación."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

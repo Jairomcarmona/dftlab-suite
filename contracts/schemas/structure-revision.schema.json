@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/structure-revision.schema.json",
+  "title": "StructureRevision",
+  "description": "Revisión inmutable de estructura. Convención: vectores de celda como filas.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.structure-revision"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "structure_id",
+        "revision",
+        "parent_revision",
+        "convention",
+        "cell",
+        "periodicity",
+        "coordinates",
+        "sites",
+        "transformations"
+      ],
+      "properties": {
+        "structure_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "revision": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "parent_revision": {
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/revision"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "convention": {
+          "const": "cell-vectors-as-rows"
+        },
+        "cell": {
+          "type": "object",
+          "required": [
+            "vectors",
+            "unit"
+          ],
+          "properties": {
+            "vectors": {
+              "type": "array",
+              "items": {
+                "$ref": "defs.schema.json#/$defs/vector3"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "unit": {
+              "enum": [
+                "angstrom",
+                "bohr"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "periodicity": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "coordinates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "fractional",
+                "cartesian"
+              ]
+            },
+            "unit": {
+              "enum": [
+                "angstrom",
+                "bohr"
+              ]
+            }
+          },
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "cartesian"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "unit"
+            ]
+          }
+        },
+        "sites": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "atom_id",
+              "species_label",
+              "position"
+            ],
+            "properties": {
+              "atom_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "species_label": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "position": {
+                "$ref": "defs.schema.json#/$defs/vector3"
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "transformations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind",
+              "from_revision"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "STANDARDIZE",
+                  "SUPERCELL",
+                  "SLAB",
+                  "STRAIN",
+                  "EDIT",
+                  "IMPORT"
+                ]
+              },
+              "from_revision": {
+                "anyOf": [
+                  {
+                    "$ref": "defs.schema.json#/$defs/revision"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "atom_map": {
+                "anyOf": [
+                  {
+                    "$ref": "artifact-ref.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "parameters": {
+                "type": "object"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "physical_intent": {
+          "enum": [
+            "BULK",
+            "SLAB",
+            "MOLECULE",
+            "WIRE"
+          ],
+          "description": "Intención física, distinta de la caja periódica usada por SIESTA."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

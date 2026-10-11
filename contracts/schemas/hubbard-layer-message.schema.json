@@ -1,0 +1,740 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/hubbard-layer-message.schema.json",
+  "title": "Mensaje de la capa Hubbard",
+  "description": "Interfaz estable entre QRAFT (runtime) y la capa Hubbard de la plataforma (lógica de HubbardFlow extraída). Petición/respuesta por operación; los digests y estados nativos de HubbardFlow viajan sin traducir.",
+  "type": "object",
+  "required": [
+    "operation",
+    "kind",
+    "correlation_id",
+    "layer",
+    "body"
+  ],
+  "properties": {
+    "operation": {
+      "enum": [
+        "describe_capabilities",
+        "resolve_plan",
+        "validate_observation",
+        "evaluate_gate",
+        "analyze",
+        "check_resume",
+        "export_fragment",
+        "prepare_node"
+      ]
+    },
+    "kind": {
+      "enum": [
+        "request",
+        "response"
+      ]
+    },
+    "correlation_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "layer": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "const": "dftlab.hubbard"
+        },
+        "version": {
+          "$ref": "defs.schema.json#/$defs/semver"
+        }
+      },
+      "additionalProperties": false
+    },
+    "body": {
+      "type": "object"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "problem.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "describe_capabilities"
+          },
+          "kind": {
+            "const": "request"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "describe_capabilities"
+          },
+          "kind": {
+            "const": "response"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "layer_version",
+              "upstream_source",
+              "operations",
+              "modes",
+              "policies",
+              "schemas"
+            ],
+            "properties": {
+              "layer_version": {
+                "$ref": "defs.schema.json#/$defs/semver"
+              },
+              "upstream_source": {
+                "$ref": "defs.schema.json#/$defs/engine_pin"
+              },
+              "operations": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "describe_capabilities",
+                    "resolve_plan",
+                    "validate_observation",
+                    "evaluate_gate",
+                    "analyze",
+                    "check_resume",
+                    "export_fragment",
+                    "prepare_node"
+                  ]
+                },
+                "uniqueItems": true
+              },
+              "modes": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "HF-1",
+                    "HF-2"
+                  ]
+                },
+                "minItems": 1
+              },
+              "policies": {
+                "type": "array",
+                "items": {
+                  "$ref": "defs.schema.json#/$defs/policy_ref"
+                }
+              },
+              "schemas": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "resolve_plan"
+          },
+          "kind": {
+            "const": "request"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "inventory",
+              "coverage",
+              "response_protocol",
+              "source_fdf_sha256",
+              "alpha_strategy",
+              "planner_version",
+              "backend_identity"
+            ],
+            "properties": {
+              "inventory": {
+                "$ref": "artifact-ref.schema.json"
+              },
+              "coverage": {
+                "$ref": "artifact-ref.schema.json"
+              },
+              "response_protocol": {
+                "$ref": "defs.schema.json#/$defs/policy_ref"
+              },
+              "source_fdf_sha256": {
+                "$ref": "defs.schema.json#/$defs/sha256_hex"
+              },
+              "alpha_strategy": {
+                "enum": [
+                  "FIXED_GRID",
+                  "ADAPTIVE"
+                ]
+              },
+              "planner_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "backend_identity": {
+                "type": "object",
+                "required": [
+                  "engine",
+                  "version",
+                  "profile"
+                ],
+                "properties": {
+                  "engine": {
+                    "const": "siesta"
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "profile": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  }
+                },
+                "additionalProperties": false
+              },
+              "tau_u_ev": {
+                "anyOf": [
+                  {
+                    "$ref": "defs.schema.json#/$defs/decimal_string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "resolve_plan"
+          },
+          "kind": {
+            "const": "response"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "plan",
+              "plan_status",
+              "plan_reasons",
+              "dag_digest"
+            ],
+            "properties": {
+              "plan": {
+                "$ref": "native-contract-ref.schema.json"
+              },
+              "plan_status": {
+                "$ref": "defs.schema.json#/$defs/native_status"
+              },
+              "plan_reasons": {
+                "type": "array",
+                "items": {
+                  "$ref": "defs.schema.json#/$defs/code"
+                }
+              },
+              "dag_digest": {
+                "anyOf": [
+                  {
+                    "$ref": "defs.schema.json#/$defs/native_digest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "validate_observation"
+          },
+          "kind": {
+            "const": "request"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "plan_digest",
+              "node_id",
+              "mode",
+              "outputs",
+              "run_identity"
+            ],
+            "properties": {
+              "plan_digest": {
+                "$ref": "defs.schema.json#/$defs/native_digest"
+              },
+              "node_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "mode": {
+                "enum": [
+                  "BARE",
+                  "SCREENED",
+                  "REFERENCE"
+                ]
+              },
+              "outputs": {
+                "type": "array",
+                "items": {
+                  "$ref": "artifact-ref.schema.json"
+                },
+                "minItems": 1
+              },
+              "run_identity": {
+                "$ref": "defs.schema.json#/$defs/native_digest"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "validate_observation"
+          },
+          "kind": {
+            "const": "response"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "observation",
+              "native_status",
+              "selector_policy",
+              "occupations_precision",
+              "diagnostics"
+            ],
+            "properties": {
+              "observation": {
+                "anyOf": [
+                  {
+                    "$ref": "native-contract-ref.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "native_status": {
+                "$ref": "defs.schema.json#/$defs/native_status"
+              },
+              "selector_policy": {
+                "$ref": "defs.schema.json#/$defs/policy_ref"
+              },
+              "occupations_precision": {
+                "anyOf": [
+                  {
+                    "$ref": "defs.schema.json#/$defs/decimal_string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "diagnostics": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "evaluate_gate"
+          },
+          "kind": {
+            "const": "request"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "plan_digest",
+              "gate_id",
+              "observation_refs"
+            ],
+            "properties": {
+              "plan_digest": {
+                "$ref": "defs.schema.json#/$defs/native_digest"
+              },
+              "gate_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "observation_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "native-contract-ref.schema.json"
+                },
+                "minItems": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "evaluate_gate"
+          },
+          "kind": {
+            "const": "response"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "decision",
+              "reasons",
+              "evidence",
+              "allowed_next"
+            ],
+            "properties": {
+              "decision": {
+                "$ref": "defs.schema.json#/$defs/native_status"
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "defs.schema.json#/$defs/evidence_ref"
+                }
+              },
+              "allowed_next": {
+                "type": "array",
+                "items": {
+                  "$ref": "defs.schema.json#/$defs/id"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "analyze"
+          },
+          "kind": {
+            "const": "request"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "plan_digest",
+              "observation_refs",
+              "policy"
+            ],
+            "properties": {
+              "plan_digest": {
+                "$ref": "defs.schema.json#/$defs/native_digest"
+              },
+              "observation_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "native-contract-ref.schema.json"
+                },
+                "minItems": 1
+              },
+              "policy": {
+                "$ref": "defs.schema.json#/$defs/policy_ref"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "analyze"
+          },
+          "kind": {
+            "const": "response"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "analysis",
+              "numerical_status",
+              "quantity_kind",
+              "matrices",
+              "inverse_certification",
+              "bounds",
+              "scope"
+            ],
+            "properties": {
+              "analysis": {
+                "$ref": "native-contract-ref.schema.json"
+              },
+              "numerical_status": {
+                "$ref": "defs.schema.json#/$defs/native_status"
+              },
+              "quantity_kind": {
+                "const": "U_scalar_charge"
+              },
+              "matrices": {
+                "type": "array",
+                "items": {
+                  "$ref": "artifact-ref.schema.json"
+                }
+              },
+              "inverse_certification": {
+                "anyOf": [
+                  {
+                    "$ref": "defs.schema.json#/$defs/native_status"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "bounds": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "lower",
+                      "upper"
+                    ],
+                    "properties": {
+                      "lower": {
+                        "$ref": "defs.schema.json#/$defs/quantity"
+                      },
+                      "upper": {
+                        "$ref": "defs.schema.json#/$defs/quantity"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "scope": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "check_resume"
+          },
+          "kind": {
+            "const": "request"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "plan_digest",
+              "previous_attempt",
+              "policy_digests",
+              "inputs"
+            ],
+            "properties": {
+              "plan_digest": {
+                "$ref": "defs.schema.json#/$defs/native_digest"
+              },
+              "previous_attempt": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "policy_digests": {
+                "type": "array",
+                "items": {
+                  "$ref": "defs.schema.json#/$defs/native_digest"
+                }
+              },
+              "inputs": {
+                "type": "array",
+                "items": {
+                  "$ref": "artifact-ref.schema.json"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "check_resume"
+          },
+          "kind": {
+            "const": "response"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [
+              "reuse_status",
+              "reusable_nodes",
+              "invalid_nodes",
+              "side_effects"
+            ],
+            "properties": {
+              "reuse_status": {
+                "$ref": "defs.schema.json#/$defs/native_status"
+              },
+              "reusable_nodes": {
+                "type": "array",
+                "items": {
+                  "$ref": "defs.schema.json#/$defs/id"
+                }
+              },
+              "invalid_nodes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "node_id",
+                    "reason"
+                  ],
+                  "properties": {
+                    "node_id": {
+                      "$ref": "defs.schema.json#/$defs/id"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "side_effects": {
+                "const": "NONE"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ]
+}

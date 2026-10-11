@@ -1,0 +1,74 @@
+{
+  "schema_id": "dftlab.finalization-receipt",
+  "schema_version": "0.1.0",
+  "record_id": "rec-finalization-receipt",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "run_id": "run-1",
+    "attempt_id": "att-1",
+    "native_refs": [
+      {
+        "engine": "qraft",
+        "distribution": "qraft-hpc",
+        "version": "0.2.0",
+        "commit": "4d996ea7c580e5638e470bbf32624c88fd762f7d",
+        "contract": "siestaflow.workflow-lock@1.0",
+        "digest": {
+          "algorithm": "qraft.content-sha256-v1",
+          "value": "3da86b90d9f2babc528ae93d85f64d208b06180b173d4a93b46a0b284dc35187"
+        },
+        "artifact": {
+          "artifact_id": "art-workflow-lock",
+          "sha256": "0e2bcda1436e9a3503f5562bbd3af9525aa7d3097a14ba6a5227e9e5b33c1383",
+          "media_type": "application/json"
+        },
+        "verification": {
+          "status": "VERIFIED",
+          "verified_at": "2026-10-11T05:00:00Z"
+        }
+      }
+    ],
+    "journal_cursor": "j:120",
+    "expected_artifacts": [
+      {
+        "artifact_id": "art-si.out",
+        "sha256": "2aab92592a006d9049d224b27e6724338344b1aca6797fd9779938ecc085efb9",
+        "media_type": "text/plain"
+      }
+    ],
+    "verified_artifacts": [
+      {
+        "artifact_id": "art-si.out",
+        "sha256": "2aab92592a006d9049d224b27e6724338344b1aca6797fd9779938ecc085efb9",
+        "media_type": "text/plain"
+      }
+    ],
+    "missing": [
+      {
+        "artifact_id": "art-si.DM",
+        "sha256": "e54546b960a2365b168014e17da2df6c70c45047284ea0a0b1ae773a0efee7c6",
+        "media_type": "application/octet-stream"
+      }
+    ],
+    "validation_refs": [],
+    "assessment_refs": [
+      "as-1"
+    ],
+    "authority_generation": 1,
+    "state": "PUBLISHED"
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

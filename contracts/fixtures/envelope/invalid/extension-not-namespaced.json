@@ -1,0 +1,26 @@
+{
+  "schema_id": "dftlab.example-record",
+  "schema_version": "0.1.0",
+  "record_id": "rec-example-record",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "note": "ejemplo"
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "VERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": "42f208481f96f375acaa0c1a72c9c8738b5ec3f59dbd337502b6a159c2a12cd7"
+  },
+  "extensions": {
+    "foo": 1
+  }
+}

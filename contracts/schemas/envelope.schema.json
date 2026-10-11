@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/envelope.schema.json",
+  "title": "Envelope de plataforma",
+  "description": "ADR-004 §2. Campos desconocidos de primer nivel se rechazan; las extensiones van namespaced en `extensions`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "record_id",
+    "project_id",
+    "producer",
+    "created_at",
+    "payload",
+    "native_contract_refs",
+    "integrity"
+  ],
+  "properties": {
+    "schema_id": {
+      "type": "string",
+      "pattern": "^dftlab\\.[a-z0-9][a-z0-9-]*$"
+    },
+    "schema_version": {
+      "$ref": "defs.schema.json#/$defs/semver"
+    },
+    "record_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "project_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "producer": {
+      "$ref": "defs.schema.json#/$defs/producer"
+    },
+    "created_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "native_contract_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "native-contract-ref.schema.json"
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "canonicalization",
+        "algorithm",
+        "digest"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "UNVERIFIED",
+            "VERIFIED",
+            "MISMATCH"
+          ]
+        },
+        "canonicalization": {
+          "const": "jcs-rfc8785"
+        },
+        "algorithm": {
+          "const": "sha-256"
+        },
+        "digest": {
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/sha256_hex"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "VERIFIED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "digest": {
+            "$ref": "defs.schema.json#/$defs/sha256_hex"
+          }
+        }
+      },
+      "description": "digest = SHA-256 de la forma JCS del envelope sin el miembro `integrity`. UNVERIFIED impide presentarlo como evidencia íntegra."
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "defs.schema.json#/$defs/namespaced_id"
+      }
+    }
+  }
+}

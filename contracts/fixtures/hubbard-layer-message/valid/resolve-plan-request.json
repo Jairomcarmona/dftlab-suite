@@ -1,0 +1,35 @@
+{
+  "operation": "resolve_plan",
+  "kind": "request",
+  "correlation_id": "cor-1",
+  "layer": {
+    "name": "dftlab.hubbard",
+    "version": "0.1.0"
+  },
+  "body": {
+    "inventory": {
+      "artifact_id": "art-inventory.json",
+      "sha256": "427412cbd213243a9c3c27584df652a9b5ed997a8d4f17a47bfc27534b5cbc47",
+      "media_type": "application/json"
+    },
+    "coverage": {
+      "artifact_id": "art-coverage.json",
+      "sha256": "901a7acca725d1dc86d14f4245a03829f75710f1fab8e0ad214ad3e40c9ad5a7",
+      "media_type": "application/json"
+    },
+    "response_protocol": {
+      "policy_id": "hubbardflow.response-protocol",
+      "version": "1.0.0",
+      "digest": "424bb8a77cf5542441a97076704aa9a3663f196c49cd6824810df1ca54c98213"
+    },
+    "source_fdf_sha256": "2f54d09c7042db247898144bc42bef003085e8bdaf7b7c4d05826b4025e11a43",
+    "alpha_strategy": "FIXED_GRID",
+    "planner_version": "0.1.2",
+    "backend_identity": {
+      "engine": "siesta",
+      "version": "5.4.2",
+      "profile": "bare"
+    },
+    "tau_u_ev": "0.05"
+  }
+}

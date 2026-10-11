@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/recovery-checkpoint.schema.json",
+  "title": "RecoveryCheckpoint",
+  "description": "Snapshot consistente para restore en modo recuperación (ADR-010 §7).",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.recovery-checkpoint"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "db_snapshot",
+        "artifact_manifest",
+        "journal_cursors",
+        "engine_versions",
+        "taken_at",
+        "pending_operation_ids"
+      ],
+      "properties": {
+        "db_snapshot": {
+          "type": "object",
+          "required": [
+            "method",
+            "artifact",
+            "schema_revision"
+          ],
+          "properties": {
+            "method": {
+              "enum": [
+                "SQLITE_BACKUP_API",
+                "QUIESCED_COPY",
+                "PG_BASEBACKUP",
+                "PG_DUMP"
+              ]
+            },
+            "artifact": {
+              "$ref": "artifact-ref.schema.json"
+            },
+            "schema_revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "additionalProperties": false
+        },
+        "artifact_manifest": {
+          "$ref": "artifact-ref.schema.json"
+        },
+        "journal_cursors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "run_id",
+              "native",
+              "cursor"
+            ],
+            "properties": {
+              "run_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "native": {
+                "$ref": "native-contract-ref.schema.json"
+              },
+              "cursor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "engine_versions": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/engine_pin"
+          },
+          "minItems": 1
+        },
+        "taken_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "pending_operation_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/id"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

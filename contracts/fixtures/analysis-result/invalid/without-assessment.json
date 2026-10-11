@@ -1,0 +1,63 @@
+{
+  "schema_id": "dftlab.analysis-result",
+  "schema_version": "0.1.0",
+  "record_id": "rec-analysis-result",
+  "project_id": "prj-demo",
+  "producer": {
+    "package": "dftlab-platform",
+    "version": "0.1.0",
+    "commit": null,
+    "algorithm": null
+  },
+  "created_at": "2026-10-11T05:00:00Z",
+  "payload": {
+    "analysis_id": "an-1",
+    "observable_kind": "hubbard.u-scalar-charge",
+    "model": "linear response",
+    "input_refs": [
+      {
+        "engine": "hubbardflow",
+        "distribution": "dftlab-hubbard",
+        "version": "0.1.2",
+        "commit": "e508f47aff1c6243deabb12915063b6b9d899d65",
+        "contract": "hubbardflow.resolved-perturbation-plan@1.0",
+        "digest": {
+          "algorithm": "hubbardflow.plan-digest-v1",
+          "value": "a7034a324d4b09577497bd4e6a3acc82e472120e4958ec00b75cf40e69e5bbd6"
+        },
+        "artifact": {
+          "artifact_id": "art-lr-plan",
+          "sha256": "041dc84fe6db647a1ce190ee7188330eb1fc1a308a521a21610f7a7bcf7573db",
+          "media_type": "application/json"
+        },
+        "verification": {
+          "status": "VERIFIED",
+          "verified_at": "2026-10-11T05:00:00Z"
+        }
+      }
+    ],
+    "algorithm": {
+      "name": "hubbardflow.analyze_verified_lr",
+      "version": "0.1.2",
+      "policy": {
+        "policy_id": "hubbardflow.lr-analysis",
+        "version": "2.0.0",
+        "digest": "34509d61e3110e8044ace57dd82aab6c692a99b7ca617a36cd49ebaf55ef8c53"
+      }
+    },
+    "result_dataset_refs": [
+      "ds-u"
+    ],
+    "assessment_refs": [],
+    "limits": [
+      "sin estimación de sensibilidad"
+    ]
+  },
+  "native_contract_refs": [],
+  "integrity": {
+    "status": "UNVERIFIED",
+    "canonicalization": "jcs-rfc8785",
+    "algorithm": "sha-256",
+    "digest": null
+  }
+}

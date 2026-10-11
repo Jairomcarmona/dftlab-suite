@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/numerical-policy.schema.json",
+  "title": "NumericalPolicy",
+  "description": "Política numérica versionada; ningún umbral es universal (ADR-009).",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.numerical-policy"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "policy",
+        "basis",
+        "mesh_cutoff",
+        "kgrid",
+        "smearing",
+        "solver",
+        "tolerances",
+        "convergence_target",
+        "justification"
+      ],
+      "properties": {
+        "policy": {
+          "$ref": "defs.schema.json#/$defs/policy_ref"
+        },
+        "basis": {
+          "type": "object",
+          "required": [
+            "size"
+          ],
+          "properties": {
+            "size": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "energy_shift": {
+              "$ref": "defs.schema.json#/$defs/quantity"
+            }
+          },
+          "additionalProperties": false
+        },
+        "mesh_cutoff": {
+          "$ref": "defs.schema.json#/$defs/quantity"
+        },
+        "kgrid": {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "MONKHORST_PACK",
+                "GAMMA_ONLY",
+                "EXPLICIT"
+              ]
+            },
+            "divisions": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "shift": {
+              "$ref": "defs.schema.json#/$defs/vector3"
+            },
+            "k_includes_2pi": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "smearing": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "method",
+                "width"
+              ],
+              "properties": {
+                "method": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "width": {
+                  "$ref": "defs.schema.json#/$defs/quantity"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "solver": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "tolerances": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "defs.schema.json#/$defs/quantity"
+          },
+          "minProperties": 1
+        },
+        "convergence_target": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "justification": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

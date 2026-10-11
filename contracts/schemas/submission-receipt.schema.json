@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/submission-receipt.schema.json",
+  "title": "SubmissionReceipt",
+  "description": "Resultado de un envío con attempt token. Ack perdido = SUBMISSION_UNKNOWN; nunca autoriza reenviar (ADR-007 §3).",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.submission-receipt"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "required": [
+        "attempt_token",
+        "operation_id",
+        "package_ref",
+        "profile",
+        "scheduler",
+        "status",
+        "job",
+        "authority_generation",
+        "evidence"
+      ],
+      "properties": {
+        "attempt_token": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "operation_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "package_ref": {
+          "$ref": "artifact-ref.schema.json"
+        },
+        "profile": {
+          "type": "object",
+          "required": [
+            "profile_id",
+            "revision"
+          ],
+          "properties": {
+            "profile_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "revision": {
+              "$ref": "defs.schema.json#/$defs/revision"
+            }
+          },
+          "additionalProperties": false
+        },
+        "scheduler": {
+          "enum": [
+            "SLURM",
+            "LOCAL_SUPERVISOR"
+          ]
+        },
+        "status": {
+          "enum": [
+            "ACCEPTED",
+            "SUBMISSION_UNKNOWN",
+            "REJECTED_BY_SCHEDULER",
+            "RECONCILED_FOUND",
+            "RECONCILED_ABSENT_WITH_EVIDENCE"
+          ]
+        },
+        "job": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "job_id",
+                "cluster",
+                "remote_user",
+                "submitted_at"
+              ],
+              "properties": {
+                "job_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "cluster": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "remote_user": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "submitted_at": {
+                  "$ref": "defs.schema.json#/$defs/timestamp"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "authority_generation": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/evidence_ref"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "ACCEPTED",
+                  "RECONCILED_FOUND"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "job": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "RECONCILED_ABSENT_WITH_EVIDENCE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ],
+      "title": "payload"
+    }
+  }
+}

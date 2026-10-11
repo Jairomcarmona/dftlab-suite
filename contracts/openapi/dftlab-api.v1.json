@@ -1,0 +1,1907 @@
+{
+  "openapi": "3.1.0",
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "info": {
+    "title": "DFT Lab platform API",
+    "version": "0.1.0",
+    "description": "Contrato de la API local/web de DFT Lab (T-011, ADR-004/007/008/010/012). Diseño: no implementado. Errores con Problem Details (RFC 9457) y códigos de contracts/errors/error-codes.json. Eventos con cursor y replay limitado; WebSocket de terminal descrito en x-dftlab-websockets."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:{port}",
+      "description": "Servicio local, solo loopback (ADR-008).",
+      "variables": {
+        "port": {
+          "default": "8765"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "session": []
+    }
+  ],
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Salud mínima sin configuración privada",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "status",
+                    "api_version"
+                  ],
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "OK",
+                        "DEGRADED"
+                      ]
+                    },
+                    "api_version": {
+                      "$ref": "../schemas/defs.schema.json#/$defs/semver"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/session": {
+      "post": {
+        "operationId": "createSession",
+        "summary": "Canjear el bootstrap de un solo uso por una sesión",
+        "security": [],
+        "description": "El token de bootstrap viaja en el cuerpo, nunca en la query string. Responde con cookie HttpOnly SameSite=Strict y el token CSRF en el cuerpo.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "bootstrap_token"
+                ],
+                "properties": {
+                  "bootstrap_token": {
+                    "type": "string",
+                    "minLength": 32,
+                    "maxLength": 256
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sesión creada.",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "principal_id",
+                    "csrf_token",
+                    "expires_at"
+                  ],
+                  "properties": {
+                    "principal_id": {
+                      "$ref": "../schemas/defs.schema.json#/$defs/id"
+                    },
+                    "csrf_token": {
+                      "type": "string"
+                    },
+                    "expires_at": {
+                      "$ref": "../schemas/defs.schema.json#/$defs/timestamp"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteSession",
+        "summary": "Cerrar la sesión",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Cerrada."
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          }
+        }
+      }
+    },
+    "/api/v1/capabilities": {
+      "get": {
+        "operationId": "listCapabilities",
+        "summary": "Catálogo de lo realmente instalado y probado",
+        "description": "Incluye la capa Hubbard y los motores con su versión fijada. Una capability en el catálogo no concede permiso.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "../schemas/capability-descriptor.schema.json"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/projects": {
+      "get": {
+        "operationId": "listProjects",
+        "summary": "Proyectos visibles para el principal",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Project"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createProject",
+        "summary": "Crear proyecto",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "idempotency_key"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{16,128}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}": {
+      "get": {
+        "operationId": "getProject",
+        "summary": "Proyecto con su revisión",
+        "description": "",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Proyecto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/validations": {
+      "post": {
+        "operationId": "validateInput",
+        "summary": "Preflight autoritativo",
+        "x-dftlab-action": "VALIDATE_INPUT",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. El resultado es un ValidationReceipt enlazado desde result.",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Proyecto"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/campaigns": {
+      "post": {
+        "operationId": "createCampaign",
+        "summary": "Diseñar campaña (borrador versionado)",
+        "x-dftlab-action": "CREATE_CAMPAIGN",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. ",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Proyecto"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{campaign_id}/plans": {
+      "post": {
+        "operationId": "createPlan",
+        "summary": "Planificar/compilar mediante QRAFT y la capa Hubbard",
+        "x-dftlab-action": "CREATE_PLAN",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. Devuelve refs a locks nativos; los defaults resueltos quedan en el plan.",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Campaña"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/plans/{plan_id}/packages": {
+      "post": {
+        "operationId": "preparePackage",
+        "summary": "Preparar paquete",
+        "x-dftlab-action": "PREPARE_PACKAGE",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. ",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "plan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Plan"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/plans/{plan_id}/runs": {
+      "post": {
+        "operationId": "submitRun",
+        "summary": "Enviar ejecución",
+        "x-dftlab-action": "SUBMIT_RUN",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. Hace admisión (AdmissionReceipt). Si el ack se pierde, la operación queda OUTCOME_UNKNOWN y se reconcilia; nunca se reenvía a ciegas.",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "plan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Plan"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}": {
+      "get": {
+        "operationId": "getRun",
+        "summary": "Proyección del run (snapshot con cursor)",
+        "description": "Estado observado por dimensión con su fuente y antigüedad; snapshot_cursor permite reanudar eventos.",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Run"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/run-projection.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/cancel": {
+      "post": {
+        "operationId": "cancelRun",
+        "summary": "Solicitar cancelación",
+        "x-dftlab-action": "CANCEL_RUN",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. Cancelar es una solicitud: termina al observar evidencia. Cerrar la terminal no cancela.",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Run"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/reconcile": {
+      "post": {
+        "operationId": "reconcileRun",
+        "summary": "Reconciliar un run incierto",
+        "x-dftlab-action": "RECONCILE_RUN",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. ",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Run"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/resume-plans": {
+      "post": {
+        "operationId": "createResumePlan",
+        "summary": "Preparar recuperación",
+        "x-dftlab-action": "CREATE_RESUME_PLAN",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. ",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Run"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/resume-plans/{resume_plan_id}": {
+      "get": {
+        "operationId": "getResumePlan",
+        "summary": "Plan de recuperación",
+        "description": "",
+        "parameters": [
+          {
+            "name": "resume_plan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "ResumePlan"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/resume-plan.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/resume-plans/{resume_plan_id}/runs": {
+      "post": {
+        "operationId": "executeResumePlan",
+        "summary": "Ejecutar recuperación (intento nuevo enlazado)",
+        "x-dftlab-action": "EXECUTE_RESUME_PLAN",
+        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. ",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "resume_plan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "ResumePlan"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/operations/{operation_id}": {
+      "get": {
+        "operationId": "getOperation",
+        "summary": "OperationRecord",
+        "description": "",
+        "parameters": [
+          {
+            "name": "operation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Operación"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/events": {
+      "get": {
+        "operationId": "listRunEvents",
+        "summary": "Eventos del run con cursor y replay limitado",
+        "description": "Orden garantizado por stream. Con Accept: text/event-stream se sirve SSE (id = cursor). Si el cursor ya no está disponible: 410 CURSOR_EXPIRED; el cliente consulta GET /runs/{run_id} y reanuda desde snapshot_cursor. La autorización se comprueba también en el replay.",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Run"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "description": "Cursor opaco; ausente = desde el snapshot actual."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Página de eventos o stream SSE.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "events",
+                    "next_cursor"
+                  ],
+                  "properties": {
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "../schemas/event-record.schema.json"
+                      }
+                    },
+                    "next_cursor": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "410": {
+            "$ref": "#/components/responses/P410"
+          }
+        }
+      }
+    },
+    "/api/v1/artifacts/uploads": {
+      "post": {
+        "operationId": "createUpload",
+        "summary": "Abrir staging de un archivo",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Staging abierto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Upload"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "413": {
+            "$ref": "#/components/responses/P413"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          }
+        }
+      }
+    },
+    "/api/v1/artifacts/uploads/{upload_id}": {
+      "put": {
+        "operationId": "putUploadRange",
+        "summary": "Subir un rango",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "upload_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Staging"
+          },
+          {
+            "name": "Content-Range",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^bytes [0-9]+-[0-9]+/[0-9]+$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "contentMediaType": "application/octet-stream"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rango aceptado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Upload"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "413": {
+            "$ref": "#/components/responses/P413"
+          },
+          "416": {
+            "$ref": "#/components/responses/P416"
+          }
+        }
+      }
+    },
+    "/api/v1/artifacts/uploads/{upload_id}/commit": {
+      "post": {
+        "operationId": "commitUpload",
+        "summary": "Verificar tamaño y SHA-256 y publicar",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "description": "Publica por rename donde sea atómico. Un SHA-256 distinto del declarado: 412 PRECONDITION_FAILED y nada se publica.",
+        "parameters": [
+          {
+            "name": "upload_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Staging"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Publicado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/artifact-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "412": {
+            "$ref": "#/components/responses/P412"
+          }
+        }
+      }
+    },
+    "/api/v1/artifacts/{artifact_id}": {
+      "get": {
+        "operationId": "getArtifact",
+        "summary": "Metadata del artefacto",
+        "description": "locator_id es opaco; nunca se devuelve una ruta del host.",
+        "parameters": [
+          {
+            "name": "artifact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Artefacto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/artifact-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/artifacts/{artifact_id}/content": {
+      "get": {
+        "operationId": "getArtifactContent",
+        "summary": "Descarga autorizada por stream",
+        "parameters": [
+          {
+            "name": "artifact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Artefacto"
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contenido.",
+            "headers": {
+              "Digest": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "application/octet-stream"
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Rango.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "application/octet-stream"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "416": {
+            "$ref": "#/components/responses/P416"
+          }
+        }
+      }
+    },
+    "/api/v1/terminal-sessions": {
+      "post": {
+        "operationId": "createTerminalSession",
+        "summary": "Abrir terminal (capacidad privilegiada)",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "description": "Se audita apertura, owner y host lógico, no el contenido. Cerrar la terminal no cancela trabajos batch.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "profile_ref",
+                  "cols",
+                  "rows"
+                ],
+                "properties": {
+                  "profile_ref": {
+                    "$ref": "../schemas/defs.schema.json#/$defs/id"
+                  },
+                  "cols": {
+                    "type": "integer",
+                    "minimum": 10,
+                    "maximum": 1000
+                  },
+                  "rows": {
+                    "type": "integer",
+                    "minimum": 5,
+                    "maximum": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sesión abierta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "terminal_session_id",
+                    "websocket_path",
+                    "expires_at"
+                  ],
+                  "properties": {
+                    "terminal_session_id": {
+                      "$ref": "../schemas/defs.schema.json#/$defs/id"
+                    },
+                    "websocket_path": {
+                      "type": "string"
+                    },
+                    "expires_at": {
+                      "$ref": "../schemas/defs.schema.json#/$defs/timestamp"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "409": {
+            "$ref": "#/components/responses/P409"
+          },
+          "503": {
+            "$ref": "#/components/responses/P503"
+          }
+        }
+      }
+    },
+    "/api/v1/terminal-sessions/{terminal_session_id}": {
+      "delete": {
+        "operationId": "closeTerminalSession",
+        "summary": "Cerrar terminal",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "terminal_session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Terminal"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Cerrada."
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    }
+  },
+  "x-dftlab-websockets": {
+    "/api/v1/terminal-sessions/{terminal_session_id}/ws": {
+      "auth": "Cookie de sesión + Origin exacto; sin token en la URL.",
+      "client_messages": {
+        "input": {
+          "data": "string"
+        },
+        "resize": {
+          "cols": "integer",
+          "rows": "integer"
+        },
+        "signal": {
+          "name": "INT"
+        }
+      },
+      "server_messages": {
+        "output": {
+          "data": "string"
+        },
+        "exit": {
+          "code": "integer|null"
+        },
+        "error": "Problem"
+      },
+      "reconnect": "Mismo owner dentro de expires_at; otro principal recibe 403."
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "session": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "dftlab_session",
+        "description": "Cookie HttpOnly SameSite=Strict creada por POST /api/v1/session."
+      },
+      "csrf": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-CSRF-Token",
+        "description": "Obligatorio en toda mutación."
+      }
+    },
+    "headers": {
+      "OperationLocation": {
+        "description": "/api/v1/operations/{operation_id}",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "Project": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_id",
+          "name",
+          "revision",
+          "owner_principal_id",
+          "created_at"
+        ],
+        "properties": {
+          "project_id": {
+            "$ref": "../schemas/defs.schema.json#/$defs/id"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "revision": {
+            "$ref": "../schemas/defs.schema.json#/$defs/revision"
+          },
+          "owner_principal_id": {
+            "$ref": "../schemas/defs.schema.json#/$defs/id"
+          },
+          "created_at": {
+            "$ref": "../schemas/defs.schema.json#/$defs/timestamp"
+          }
+        }
+      },
+      "UploadRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_id",
+          "kind",
+          "media_type",
+          "size_bytes",
+          "sha256",
+          "idempotency_key"
+        ],
+        "properties": {
+          "project_id": {
+            "$ref": "../schemas/defs.schema.json#/$defs/id"
+          },
+          "kind": {
+            "$ref": "../schemas/defs.schema.json#/$defs/namespaced_id"
+          },
+          "media_type": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "$ref": "../schemas/defs.schema.json#/$defs/safe_count"
+          },
+          "sha256": {
+            "$ref": "../schemas/defs.schema.json#/$defs/sha256_hex"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{16,128}$"
+          }
+        }
+      },
+      "Upload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "upload_id",
+          "received_bytes",
+          "size_bytes",
+          "expires_at"
+        ],
+        "properties": {
+          "upload_id": {
+            "$ref": "../schemas/defs.schema.json#/$defs/id"
+          },
+          "received_bytes": {
+            "$ref": "../schemas/defs.schema.json#/$defs/safe_count"
+          },
+          "size_bytes": {
+            "$ref": "../schemas/defs.schema.json#/$defs/safe_count"
+          },
+          "expires_at": {
+            "$ref": "../schemas/defs.schema.json#/$defs/timestamp"
+          }
+        }
+      }
+    },
+    "responses": {
+      "P401": {
+        "description": "No autenticado",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      },
+      "P403": {
+        "description": "Prohibido (permiso, Origin o CSRF)",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      },
+      "P404": {
+        "description": "No encontrado",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      },
+      "P409": {
+        "description": "Conflicto (idempotencia o admisión)",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      },
+      "P410": {
+        "description": "Cursor expirado",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      },
+      "P412": {
+        "description": "Precondición o revisión",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      },
+      "P413": {
+        "description": "Demasiado grande",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      },
+      "P416": {
+        "description": "Rango inválido",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      },
+      "P422": {
+        "description": "Validación",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      },
+      "P503": {
+        "description": "Motor o capa no disponible",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../schemas/problem.schema.json"
+            }
+          }
+        }
+      }
+    }
+  }
+}
