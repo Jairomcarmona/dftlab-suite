@@ -55,6 +55,8 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | X3 | Ola 1: 15 cambios upstream trazados; APIs y distribución fijadas | Ola 1 | Implementado salvo U-H5/HF-2 diferido; U-H0 resuelto según ADR-015, sin restricción de licencia; CI upstream y cinco checks suite SUCCESS @ `d275835`; instalación/API Windows/WSL calificada; operación real PENDING | QRAFT #6/#7/#8/#9 y HubbardFlow #42 fusionados; suite PR #19, implementación `d275835` |
 | X4 | T-012/T-013: ViewScope y stores por área/proyecto | Ola 1 | Fusionado con cinco checks finales SUCCESS @ `28affc5`; npm test completo; ciencia/tolerancias intactas; X8 sigue | PR #18, merge `77464b7`; implementación `a2eb2ec` |
 | X5 | Validadores JS/Python, schemas/OpenAPI instalados y fixtures comunes | Ola 2 | Implementado; 89 fixtures y consumer/JCS en ambos lenguajes; ocho tests wheel instalado Windows y suites Node verdes; CI Windows/Linux requerida | Rama codex/x5-contract-validation; implementación `185f4e2` |
+| X6a | Identidad/proyectos y operaciones/outbox durables detrás de Repository | Ola 2 | Implementado; 17 tests instalados Windows, concurrencia/CAS/aislamiento/rollback/recovery/checkpoint; sin handlers científicos ni admisión real; CI Windows/Linux requerida | Rama codex/x6-domain-storage; implementación `9ae3673` |
+| X6b | ArtifactStore/ArtifactIndex por interfaces, subida resumible y publicación recuperable | Ola 2 | Implementado; 26 tests instalados Windows PASS / un skip por privilegio symlink; hashes/rangos/owners/crash/retry/links/corrupción; sin extracción ni GC de originales; CI Windows/Linux requerida | Rama codex/x6-artifact-store; implementación `f4ab7f6` |
 
 ## A. Calculadoras: `fftGood` sin dominio
 
