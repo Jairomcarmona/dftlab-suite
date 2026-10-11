@@ -42,7 +42,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 
 | ID | Hallazgo | Prioridad | Estado | PR/commit |
 |---|---|---|---|---|
-| A | `fftGood` y calculadora bloquean la pestaña con entradas vacías/0/NaN/Infinity | Alta | Reproducido; en corrección (PR del bloque A) | _ver PR A_ |
+| A | `fftGood` y calculadora bloquean la pestaña con entradas vacías/0/NaN/Infinity | Alta | **Reproducido** → corregido en la rama `claude/fix-a-calc-validation` (PR del bloque A) | PR A |
 | B | Suscripciones de tema y callbacks de vistas anteriores | Alta | Confirmado por inspección (sin reproducción de navegador aún) | pendiente |
 | C | Resultado EIG/KP depende del orden de carga | Alta | Confirmado por inspección (sin reproducción ejecutada aún) | pendiente |
 | D | `.RHO` leído como texto; `.dftlab.json` detectado sin visualización | Media | Confirmado por inspección | pendiente |
@@ -57,8 +57,9 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 - **Archivos:** `app/dftlab/static/js/views/calc.js` (`fftGood`, `doCell2`).
 - **Reproducción (2026-10-11, Node 22.22.0, `timeout 2`):** `fftGood(1)` → 1; `fftGood(0)`, `NaN`, `Infinity` y `-3` exceden el límite (código 124). El campo vacío se lee como `+'' = 0` (longitud 0 → `Math.ceil(0/h) = 0` → `fftGood(0)`); `MeshCutoff` vacío da `h = Infinity`.
 - **Criterio de aceptación:** entradas vacías, 0, negativas, NaN e Infinity no bloquean; `fftGood` tiene dominio explícito y terminación garantizada; `doCell2`, `dk` y `ec` se validan por significado físico; valores válidos conservan resultados; entrada inválida muestra un mensaje y no un resultado aparente; pruebas con aislamiento y timeout.
-- **Evidencia:** PR del bloque A (ver abajo cuando se complete).
-- **Resuelto en:** _pendiente de PR_.
+- **Corrección:** nuevo módulo sin DOM `tools/cellmesh.js` (`fftGood` con dominio entero 1…2²⁰ y `RangeError` fuera de él, búsqueda acotada por la siguiente potencia de 2; `validateCellInputs` con rangos físicos: longitudes 0.1–10⁴ Å, ángulos 1–179°, Δk 0.001–10 Å⁻¹, MeshCutoff 1–10⁵ Ry, celda no degenerada, malla real ≤ 8192 y malla k ≤ 1000 por eje). `calc.js` muestra «completa todos los campos» mientras haya un campo vacío y un mensaje de error en entradas inválidas; no genera bloque `.fdf` ni permite exportarlo en esos estados. Las demás calculadoras no se tocaron: no tienen el bucle (campos vacíos/ceros dan «—» o un mensaje).
+- **Evidencia después del cambio:** `app/tests/ui/run_calc_tests.mjs` (51 comprobaciones; las entradas peligrosas se ejecutan en procesos hijo con timeout de 5–10 s; `fftGood` verificado para n=1…4000 contra una definición independiente; mallas de los tres presets idénticas a la implementación anterior: Si 36×36×36, Mg 40×40×160, grafito 24×24×60). Comprobación en Chromium sobre `dist/dftlab.html` con red bloqueada: vaciar, 0, negativo en a, γ, Δk y MeshCutoff responde en ms con mensaje, sin excepciones (script de verificación manual; la prueba de navegador persistente se añade con el bloque F).
+- **Límites:** los rangos son límites de la interfaz, no restricciones de SIESTA. La prueba de navegador aún no está en CI (pendiente F).
 
 ## B. Ciclo de vida de vistas
 
