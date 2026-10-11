@@ -199,3 +199,10 @@ Estado verificado, no solo declarado:
 - **Evidencia:** `e846f74b7a43390ee399c88a46e79f86db8ed611` + corrección `d4fe787a61851c40b05a98a92c15e6394e6f34b4`, [PR #32](https://github.com/Jairomcarmona/dftlab-suite/pull/32), wheel externo Windows Python 3.12.10 / uv 0.11.14: 52 tests (51 PASS / 1 SKIP), navegador operativo PASS; sdist idéntico, fuentes intactas. Cinco checks Windows/Linux exigidos para fusión; CI no usa motores ni secretos. X8b PR #29 fusionado @ `201052b` con cinco checks SUCCESS e informes CI inspeccionados.
 - **Pendiente X6c:** LOCAL_ATOMIC producto/SUCCEEDED juntos (T-022); crash SLURM/fencing/restore reales y recovery mode (T-024/058/060), sin calificación científica hasta sus gates. C3 exige payload global vía [issue #31](https://github.com/Jairomcarmona/dftlab-suite/issues/31).
 - **Pendiente X9:** conexión cliente-servicio del PTY bloqueada por envoltura/schemas/fixtures/reconexión de frames sin definir ([issue #30](https://github.com/Jairomcarmona/dftlab-suite/issues/30)); avanzar solo lo independiente.
+
+
+## T-022a: producto local y operación en una transacción
+
+- **Implementado:** puerto complete_local, productos inmutables por operation_id, CAS/claim, evento/outbox en la misma transacción; Processor no permite éxito local mediante dict sin producto. Lectura autorizada conserva versión/digest originales, incluyendo NativeContractRef sin sustituir el algoritmo del motor.
+- **Evidencia:** rama codex/t022-atomic-products desde main @ 7a27e30; implementación dfb5c9e4d363d9fb6bf7ba854330318ebde1660f; Windows 11 / Python 3.12.10 / uv 0.11.14: 61 tests wheel externo (60 PASS / 1 SKIP), 43.480 s, navegador PASS, sdist idéntico, fuentes conservadas y baseline intacto. [PR #33](https://github.com/Jairomcarmona/dftlab-suite/pull/33); cinco checks Windows/Linux SUCCESS exigidos para fusionar. Pruebas con fixtures y caída real de proceso durante SQL/después del commit; cero engines/jobs en CI.
+- **Pendiente T-022a:** handlers y cadena instalada QRAFT/HubbardFlow; fsync/validación de bytes por el puerto de artefactos, admisión, worker real y recuperación/restore T-060. P4 sigue abierto.

@@ -116,6 +116,8 @@ class Repository(Protocol):
     def claim(self, processor_id: str) -> dict | None: ...
     def transition(self, operation_id: str, revision: int, destination: str, *, result: dict | None = None, error: dict | None = None, no_effect: bool = False, processor_id: str | None = None) -> dict: ...
     def persist_effect_intent(self, operation_id: str, revision: int, processor_id: str, document: dict) -> dict: ...
+    def complete_local(self, operation_id: str, revision: int, processor_id: str, products: tuple) -> dict: ...
+    def local_products(self, owner: Principal, operation_id: str) -> tuple: ...
     def recover(self) -> int: ...
     def checkpoint(self, destination: Any) -> None: ...
 
@@ -154,7 +156,13 @@ registration of engine operations waits for the contracts/adapters of Ola 3.
         try:
             request = self.repository.request_for_processor(payload["operation_id"], self.processor_id)
             result = handler(operation, request)
-            self.repository.transition(payload["operation_id"], payload["revision"], "SUCCEEDED", result=result, processor_id=self.processor_id)
+            from .local_effects import LocalEffect, PRODUCTS
+            if payload["action"] in PRODUCTS:
+                if not isinstance(result, LocalEffect):
+                    raise Problem("PRECONDITION_FAILED")
+                self.repository.complete_local(payload["operation_id"], payload["revision"], self.processor_id, result.products)
+            else:
+                self.repository.transition(payload["operation_id"], payload["revision"], "SUCCEEDED", result=result, processor_id=self.processor_id)
         except Exception:
             # Catching an exception proves neither remote failure nor absence.
             self.repository.transition(payload["operation_id"], payload["revision"], "OUTCOME_UNKNOWN", processor_id=self.processor_id)
