@@ -63,4 +63,4 @@ Las regresiones A/E, B y C/D también recorren el HTML compilado sin red. El smo
 
 ## Límites
 
-Estas pruebas no ejecutan SIESTA ni certifican los motores HPC. Las referencias Python ya versionadas se consumen sin regenerarlas ni alterar tolerancias. Fijar y validar el entorno Python para **regenerar** referencias sigue pendiente en el registro F y no es requisito del build/frontend de esta entrega. Los bloques C/D, G y H se trabajan aparte.
+Estas pruebas no ejecutan SIESTA ni certifican los motores HPC. Las referencias Python ya versionadas se consumen sin regenerarlas ni alterar tolerancias. Para **regenerarlas y calificarlas** en Linux x86_64 (WSL2 en Windows), usar el [entorno Python independiente](PYTHON_REFERENCES.md), con intérprete y dependencias fijados. No es requisito del build/frontend. Los bloques G y H se trabajan aparte.
