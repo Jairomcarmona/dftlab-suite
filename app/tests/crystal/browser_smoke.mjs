@@ -3,26 +3,18 @@
 // from a local static server and checks the three moyo loading modes
 // (fetch over http, 'inline' base64 module, globalThis.MOYO_WASM_BASE64).
 //
-//   NODE_PATH=$(npm root -g) node browser_smoke.mjs
+//   npm ci && npm run browser:install (desde app/); node browser_smoke.mjs
 //
-// Skips (exit 0) when Playwright is not installed.
+// Fails when the pinned local Playwright/Chromium is unavailable.
 
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
+import { chromium } from 'playwright';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../../dftlab/static');
-let chromium;
-try {
-  const require = createRequire(import.meta.url);
-  ({ chromium } = require('playwright'));
-} catch {
-  console.log('playwright not available: browser smoke test skipped');
-  process.exit(0);
-}
 
 const TYPES = { '.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm', '.html': 'text/html' };
 const page = (mode) => `<!doctype html><meta charset="utf-8"><title>smoke</title>
@@ -59,7 +51,7 @@ const server = http.createServer((req, res) => {
 });
 await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
 const port = server.address().port;
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--enable-unsafe-swiftshader'] });
 let fail = 0;
 for (const mode of ['fetch', 'inline', 'global']) {
   const p = await browser.newPage();

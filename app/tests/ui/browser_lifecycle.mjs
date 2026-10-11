@@ -4,25 +4,14 @@
 // Recorre las 19 pantallas: montar, cambiar tema, volver a #inicio y cambiar tema; repite xc <-> inicio
 // y abandona el postproceso mientras carga un ejemplo. Falla con errores de página o de consola,
 // suscripciones de tema que sobreviven a su vista o bucles de animación que siguen tras salir.
-// Necesita Playwright + Chromium. Sin ellos se OMITE de forma visible (exit 0) salvo REQUIRE_BROWSER=1.
+// Necesita las dependencias locales fijadas: npm ci && npm run browser:install. Si faltan, falla.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createRequire } from 'node:module';
+import { chromium } from 'playwright';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const HTML = path.resolve(HERE, '../../dist/dftlab.html');
-const need = process.env.REQUIRE_BROWSER === '1';
-let chromium;
-try {
-  const req = createRequire(import.meta.url);
-  const roots = [undefined, ...(process.env.NODE_PATH || '').split(path.delimiter).filter(Boolean)];
-  for (const r of roots) { try { chromium = (r ? createRequire(path.join(r, 'x.js'))('playwright') : req('playwright')).chromium; break; } catch {} }
-  if (!chromium) throw new Error('playwright no instalado');
-} catch (e) {
-  console.log(`browser lifecycle: SKIPPED (${e.message}). Defina REQUIRE_BROWSER=1 para que sea un fallo.`);
-  process.exit(need ? 1 : 0);
-}
 if (!fs.existsSync(HTML)) { console.log('Falta dist/dftlab.html: ejecute "node scripts/build.mjs".'); process.exit(1); }
 
 // Count live observers/listeners that watch the theme: MutationObservers observing data-theme on
@@ -55,7 +44,7 @@ const INSTRUMENT = () => {
 const failures = [];
 const check = (ok, msg) => { if (!ok) failures.push(msg); console.log(`${ok ? 'ok  ' : 'FAIL'} ${msg}`); };
 
-const browser = await chromium.launch({ args: ['--no-sandbox'] });
+const browser = await chromium.launch({ args: ['--enable-unsafe-swiftshader'] });
 try {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   await ctx.route('**/*', r => /^(file|data|blob):/.test(r.request().url()) ? r.continue() : r.abort()); // sin red

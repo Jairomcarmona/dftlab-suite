@@ -14,7 +14,10 @@ const tasks = [
   'app/tests/ui/run_escape_tests.mjs',
   'app/tests/ui/run_lifecycle_tests.mjs',
   'app/scripts/build.mjs',
+  'app/tests/tooling/run_serve_tests.mjs',
 ];
+
+if (process.argv.includes('--browser')) tasks.push('app/scripts/test-browser.mjs');
 
 for (const task of tasks) {
   console.log(`\nRunning ${task}`);
@@ -27,4 +30,4 @@ for (const task of tasks) {
     process.exit(result.status || 1);
   }
 }
-console.log('\nAll reference suites and the build completed.');
+console.log(`\nAll reference suites, tooling and the build completed${process.argv.includes('--browser') ? ', including browser checks' : ' (browser checks not requested)'}.`);
