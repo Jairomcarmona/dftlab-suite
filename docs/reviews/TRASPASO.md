@@ -30,7 +30,7 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 
 - **C/D:** hechos (ver «Bloques C y D»). **G, H:** sin empezar.
 - **H (heredado de B):** `ResizeObserver` por canvas en `core/chart.js`; liberación de geometrías/materiales/texturas en `core/three-view.js`; medir antes de introducir workers.
-- **F:** `npm test`, quitar el fallback `/opt/run/tools/node_modules` de `app/scripts/build.mjs`, sustituir `serve` con `python3`, Playwright como dependencia fijada y pruebas de navegador en CI (`browser_regressions.mjs` y `browser_lifecycle.mjs`, con `REQUIRE_BROWSER=1`), verificación offline.
+- **F:** alcance frontend verificado en `codex/bloque-f`, PR #5, CI Windows/Linux en verde. Queda fijar el entorno Python de regeneración de referencias. Ver entrega F al final de esta nota.
 - La auditoría de E cubre las rutas de datos importados; no se revisaron las 19 vistas línea a línea.
 
 ## Bloques C y D (importación en Postproceso)
@@ -47,3 +47,16 @@ Bloque **G** (discontinuidades del camino k): `siesta/bands.js` (`.bands` con `B
 ## Reglas a respetar
 
 `baseline-v1` intacta; no cambiar tolerancias científicas; no migrar a React todavía; no dos agentes en la misma carpeta.
+
+## Entrega F: calidad reproducible del frontend
+
+- **Rama:** `codex/bloque-f`, creada desde `origin/main` @ `b691f253425470d9e1a68b7326cf0566813c8d30` después de verificar la fusión del PR #4.
+- **SHA de implementación:** `481ea0072f5a1c87f17d35ed4df2a7e679e16304`. Los commits siguientes actualizan sólo el registro y esta nota; consultar la punta con `git rev-parse origin/codex/bloque-f` después de `git fetch origin`.
+- **Carpeta aislada:** `C:\Users\Jairo\Downloads\DFTQUANTUMLAB\dftlab-suite-codex-bloque-f`. La carpeta principal permaneció sin cambios.
+- **Cambios:** `npm test` como puerta completa; `test:node` parcial explícita; build con esbuild local sin fallback de contenedor; preview Node sólo en loopback; Playwright 1.56.1 y lockfile; CI instala Chromium y ejecuta navegador obligatorio con `REQUIRE_BROWSER=1`. Pruebas existentes A/E y B usan dependencia local y fallan si falta; nombres hostiles mediante FilePayload también en Windows. Nueva prueba de ambos HTML aislados y sin red; smoke Moyo obligatorio. El build usa tipografías de sistema sin enlaces externos opcionales. Guía de copia limpia en `docs/development/INSTALL_AND_VERIFY.md`.
+- **Pruebas locales:** Windows, Node 24.18.0, npm 11.16.0. `npm ci` + `npm test`: referencias 341/81/26/101, estructuras 371 y formatos 71; calc 51, escape 15 y lifecycle Node 21; servidor; A/E navegador 24/0; B en verde; ambos HTML offline con WASM/SG 227/cF2/WebGL/exportación FDF; smoke fetch/inline/global. Manifiesto 480 SHA-256 correcto. Comprobación negativa: sin Chromium, exit 1.
+- **PR y CI:** [PR #5](https://github.com/Jairomcarmona/dftlab-suite/pull/5). **SHA verificado:** `5b67a2ab4ec47cc8f982bb5c55124990684a32ec`; [ejecución 38106584161](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38106584161), ambos jobs `Verify (windows-2022)` / `Verify (ubuntu-24.04)` completados con `success`, incluyendo checkout limpio, `npm ci`, navegador y offline. Esta nota posterior registra el resultado sin cambiar código; comprobar los checks de la punta actual del PR antes de integrar.
+- **Pendiente F:** entorno Python fijado y validado para regenerar referencias; se consumen las actuales sin modificación. Permanecen los tres avisos `import.meta` heredados, con ruta inline comprobada; no se cambió vendor para ocultarlos.
+- **Límite de esta entrega:** router, vistas, `app/src`, física, tolerancias y `baseline-v1` intactos. `dist` sin seguimiento. C/D se trabajan en paralelo; esta entrega no los corrige ni integra. No se ejecutó SIESTA.
+- **Continuidad F:** revisar el PR y sus checks antes de integrar; si se continúa en la regeneración Python, abrir tarea y rama específica. No reutilizar ramas de C/D ni modificar su implementación como parte de F.
+- **Integración C/D en F:** se incorporó `origin/main` @ `b9de59a` (PR #6) mediante merge, preservando el registro C/D y su implementación. `npm test` y CI ejecutan ahora también `browser_import.mjs` con Playwright local y sin omisiones; verificación Windows local: importación Node 75/0 y navegador C/D 33/0, junto a las demás suites en verde. El alcance del PR #5 sigue siendo F; el entorno Python se realizará después de su fusión, en `codex/entorno-python`.

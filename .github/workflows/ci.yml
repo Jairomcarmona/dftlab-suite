@@ -37,8 +37,19 @@ jobs:
         run: npm ci
       - name: Verify historical source bytes
         run: node scripts/verify-original-baseline.mjs
-      - name: Readers, crystallography and build
-        run: node scripts/verify.mjs
+      - name: Install pinned Chromium and Linux libraries
+        if: runner.os == 'Linux'
+        working-directory: app
+        run: npx --no-install playwright install --with-deps chromium
+      - name: Install pinned Chromium on Windows
+        if: runner.os == 'Windows'
+        working-directory: app
+        run: npm run browser:install
+      - name: Readers, UI regressions, lifecycle, offline HTML and build
+        working-directory: app
+        env:
+          REQUIRE_BROWSER: '1'
+        run: npm test
       - name: Store compiled HTML
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

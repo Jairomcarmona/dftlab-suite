@@ -47,7 +47,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | C | Resultado EIG/KP depende del orden de carga | Alta | **Reproducido** (EIG→KP: primer peso 0.00390625 en vez de 0.005, sin coordenadas k) → corregido en la rama `claude/bloques-c-d-importacion-qke0lu` | PR C/D |
 | D | `.RHO` leído como texto; `.dftlab.json` detectado sin visualización | Media | **Reproducido** («archivo de malla demasiado corto»; paquete «leído» sin paneles) → corregido en la misma rama | PR C/D |
 | E | Metadatos y nombres de archivo se insertan en `innerHTML` | Media | **Reproducido** (incluido manejador `onerror` ejecutado) → corregido en la rama `claude/fix-e-safe-html` (PR del bloque E, apilado sobre A) | PR E |
-| F | Puerta de calidad reproducible | Media | **Parcialmente resuelto** | parcial: `e502b71` |
+| F | Puerta de calidad reproducible | Media | **Parcialmente resuelto**: alcance frontend verificado en Windows/Linux en PR #5; regeneración Python pendiente | PR #5, `481ea00`, CI @ `5b67a2a` |
 | G | Bandas unen segmentos desconectados | Media | Confirmado por inspección | pendiente |
 | H | Recursos (ResizeObserver, escenas 3D) y cálculo pesado | Media/baja | Fugas: confirmadas por inspección; rendimiento: pendiente de medición | pendiente |
 
@@ -119,15 +119,25 @@ Estado verificado, no solo declarado:
 | Lockfile npm | Resuelto | `app/package-lock.json`; CI usa `npm ci` |
 | Rutas ESM en Windows | Resuelto | `run_tests.mjs:12-17`; CI Windows ejecuta `scripts/verify.mjs`. Se verificó aquí en Linux; la ejecución en Windows queda acreditada por la CI, no por este contraste |
 | Git / `.gitignore` / `dist` fuera de Git | Resuelto | `.gitignore`, CI sube HTML como artefacto |
-| CI Windows + Linux | Resuelto (configuración) | `.github/workflows/ci.yml` |
+| CI Windows + Linux | Verificada para alcance F en PR #5 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml); [ejecución 38106584161](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38106584161), ambos jobs en verde |
 | Política de versión de Node | Resuelto en CI y README (24.18.0) | Local de este contraste: 22.22.0 |
-| `npm test` | **Pendiente** | `app/package.json` solo tiene `build` y `serve` |
-| Fallback `/opt/run/tools/node_modules` | **Pendiente** | `app/scripts/build.mjs:8` |
-| `serve` depende de `python3` | **Pendiente** | `app/package.json` |
-| Pruebas de navegador | **Pendiente** | `browser_smoke.mjs` sale con 0 si falta Playwright; `browser_regressions.mjs` (A, E) y `browser_lifecycle.mjs` (B) existen pero no están en CI |
-| Verificación offline del HTML | **Pendiente** | |
-| Dependencias de referencias Python fijadas | **Pendiente** | |
-| Procedimiento de copia limpia documentado | Parcial | README: `npm ci` + verify |
+| `npm test` | Verificado en Windows y Linux (PR #5) | `app/package.json`: referencias, Node A/E/B, build, servidor y navegador obligatorio; `test:node` identifica explícitamente la cobertura parcial |
+| Fallback `/opt/run/tools/node_modules` | Resuelto en rama F | `build.mjs` importa esbuild local; sin fallback ni `DFTLAB_NODE_MODULES` |
+| `serve` depende de `python3` | Resuelto en rama F | `scripts/serve.mjs`, Node, loopback; prueba del proceso real, GET/HEAD, 404, métodos y límites de rutas |
+| Pruebas de navegador | Verificadas en CI Windows/Linux (PR #5) | Playwright local 1.56.1 + lockfile; Chromium 1194; CI instala navegador y ejecuta A/E, B, offline y smoke Moyo. Sin skips por dependencias ausentes |
+| Verificación offline del HTML | Verificada en Windows y Linux (PR #5) | Cada HTML aislado en carpeta vacía, `file://`, contexto sin red y sin assets vecinos: WASM SG 227, camino cF2, WebGL y descarga FDF; sin errores ni solicitudes externas |
+| Dependencias de referencias Python fijadas | **Pendiente: regeneración, fuera del alcance frontend solicitado** | CI consume referencias versionadas sin regenerarlas ni alterar tolerancias |
+| Procedimiento de copia limpia documentado | Resuelto en rama F | [Instalación y verificación](../development/INSTALL_AND_VERIFY.md): clone, `npm ci`, navegador local, `npm test`, Linux `--with-deps`, límites y artefactos |
+
+### Entrega F: alcance y evidencia
+
+- **Base:** `origin/main` @ `b691f253425470d9e1a68b7326cf0566813c8d30`; PR #4 confirmado fusionado antes de crear la rama. **Rama:** `codex/bloque-f`. **Commit de implementación:** `481ea0072f5a1c87f17d35ed4df2a7e679e16304`.
+- **Verificación local:** Windows, Node 24.18.0, npm 11.16.0, Playwright 1.56.1 / Chromium 141.0.7390.37 (1194). Tras `npm ci`, `npm test` completo pasa: lectores 341, mallas 81, notas 26, FC 101, estructuras 371 y formatos 71; calc 51, escape 15 y lifecycle Node 21; servidor Node; A/E navegador 24/0; B sin errores/acumulación; ambos HTML offline; smoke Moyo fetch/inline/global. Manifiesto histórico: 480 SHA-256 coinciden. Chromium ausente devuelve exit 1.
+- **Build portable:** elimina los enlaces opcionales Google Fonts/preconnect únicamente del entregable, usando fallbacks de sistema ya presentes. Los tres avisos heredados de `import.meta` siguen visibles; se verifican las rutas inline. `dist` sigue ignorado y sin archivos seguidos.
+- **Alcance:** sin cambios en router, vistas, `app/src`, vendor, algoritmos ni tolerancias. Las cargas útiles con nombres hostiles se envían en memoria para que Windows no omita ese caso. No se trabajó C/D, G ni H.
+- **PR y CI:** [PR #5](https://github.com/Jairomcarmona/dftlab-suite/pull/5), SHA `5b67a2ab4ec47cc8f982bb5c55124990684a32ec`; [ejecución 38106584161](https://github.com/Jairomcarmona/dftlab-suite/actions/runs/38106584161): `Verify (windows-2022)` y `Verify (ubuntu-24.04)` completados con `success`. Checkout limpio, `npm ci`, instalación de Chromium y puerta completa, incluidos navegador y offline. La evidencia Linux procede de ese runner, no de la prueba local. Esta actualización posterior registra el resultado sin cambiar implementación.
+- **Pendiente F:** fijar y validar el entorno Python de regeneración de referencias en una entrega específica; no condiciona el build/frontend. No se ejecutó SIESTA.
+- **Integración posterior:** merge de `origin/main` @ `b9de59a` (PR #6, C/D) en `codex/bloque-f`; contenido C/D preservado. `browser_import.mjs` se añade al runner de navegador de `npm test` y, por él, a CI. Playwright local obligatorio y configuración WebGL de las demás pruebas; sin cambios en sus criterios científicos. Windows local: importación Node 75/0, navegador C/D 33/0 y puerta completa en verde. La regeneración Python se atenderá en rama independiente después de fusionar F.
 
 ## G. Discontinuidades del camino k
 

@@ -11,14 +11,17 @@ Requisito de desarrollo: Node.js 24.18.0 y Git. CI usa esa misma versión en Win
 ```sh
 cd app
 npm ci
+npm run browser:install
+npm test
 cd ..
 node scripts/verify-original-baseline.mjs
-node scripts/verify.mjs
 ```
 
-La verificación ejecuta las suites existentes y compila `app/dist/dftlab.html` y `app/dist/dftlab_artifact.html`. El primer archivo puede abrirse directamente en el navegador. Los resultados de compilación no se versionan; CI los conserva como artefactos durante 14 días.
+`npm test` ejecuta las suites existentes, las regresiones A/E y B en Chromium y la verificación offline; también compila `app/dist/dftlab.html` y `app/dist/dftlab_artifact.html`. El primer archivo puede abrirse directamente en el navegador. Para vista previa HTTP, ejecutar `npm run serve` desde `app/`: usa Node y escucha en `127.0.0.1:8000`. Los resultados de compilación no se versionan; CI los conserva como artefactos durante 14 días.
 
-La compilación actual emite tres advertencias heredadas sobre `import.meta` en el bundle IIFE de Moyo. Las pruebas de referencias y el build no equivalen a una prueba de todas las vistas del HTML: la compatibilidad offline y la ejecución en navegador deben verificarse también durante la migración.
+La compilación actual emite tres advertencias heredadas sobre `import.meta` en el bundle IIFE de Moyo. El HTML usa WASM inline, verificado en Chromium sin red y sin assets vecinos. El entregable utiliza fuentes de sistema para evitar solicitudes opcionales a Google Fonts. La cobertura de navegador no implica una auditoría exhaustiva de todas las interacciones ni precisión científica adicional.
+
+Ver [instalación desde copia limpia, comandos y límites](docs/development/INSTALL_AND_VERIFY.md), incluida la instalación de bibliotecas Chromium en Linux. `npm run test:node` permite ejecutar referencias y build sin navegador; no sustituye la puerta completa de CI.
 
 ## Originales y migración
 
