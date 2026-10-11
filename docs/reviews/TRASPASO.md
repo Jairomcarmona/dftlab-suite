@@ -30,7 +30,7 @@ Corregir fallos funcionales, de seguridad y de ciclo de vida del frontend actual
 
 - **C/D, G, H:** sin empezar. Ver el registro (`addTexts` de `postproc.js` para EIG/KP; `f.text()` para mallas; `.dftlab.json` sin `unpackDftlab` en `refresh()`).
 - **H (heredado de B):** `ResizeObserver` por canvas en `core/chart.js`; liberación de geometrías/materiales/texturas en `core/three-view.js`; medir antes de introducir workers.
-- **F:** `npm test`, quitar el fallback `/opt/run/tools/node_modules` de `app/scripts/build.mjs`, sustituir `serve` con `python3`, Playwright como dependencia fijada y pruebas de navegador en CI (`browser_regressions.mjs` y `browser_lifecycle.mjs`, con `REQUIRE_BROWSER=1`), verificación offline.
+- **F:** alcance frontend implementado en `codex/bloque-f`; CI del PR pendiente de confirmar. Queda fijar el entorno Python de regeneración de referencias. Ver entrega F al final de esta nota.
 - La auditoría de E cubre las rutas de datos importados; no se revisaron las 19 vistas línea a línea.
 
 ## Siguiente paso
@@ -40,3 +40,15 @@ Bloques **C y D** (importación coherente de archivos científicos en `views/pos
 ## Reglas a respetar
 
 `baseline-v1` intacta; no cambiar tolerancias científicas; no migrar a React todavía; no dos agentes en la misma carpeta.
+
+## Entrega F: calidad reproducible del frontend
+
+- **Rama:** `codex/bloque-f`, creada desde `origin/main` @ `b691f253425470d9e1a68b7326cf0566813c8d30` después de verificar la fusión del PR #4.
+- **SHA de implementación:** `481ea0072f5a1c87f17d35ed4df2a7e679e16304`. Los commits siguientes actualizan sólo el registro y esta nota; consultar la punta con `git rev-parse origin/codex/bloque-f` después de `git fetch origin`.
+- **Carpeta aislada:** `C:\Users\Jairo\Downloads\DFTQUANTUMLAB\dftlab-suite-codex-bloque-f`. La carpeta principal permaneció sin cambios.
+- **Cambios:** `npm test` como puerta completa; `test:node` parcial explícita; build con esbuild local sin fallback de contenedor; preview Node sólo en loopback; Playwright 1.56.1 y lockfile; CI instala Chromium y ejecuta navegador obligatorio con `REQUIRE_BROWSER=1`. Pruebas existentes A/E y B usan dependencia local y fallan si falta; nombres hostiles mediante FilePayload también en Windows. Nueva prueba de ambos HTML aislados y sin red; smoke Moyo obligatorio. El build usa tipografías de sistema sin enlaces externos opcionales. Guía de copia limpia en `docs/development/INSTALL_AND_VERIFY.md`.
+- **Pruebas locales:** Windows, Node 24.18.0, npm 11.16.0. `npm ci` + `npm test`: referencias 341/81/26/101, estructuras 371 y formatos 71; calc 51, escape 15 y lifecycle Node 21; servidor; A/E navegador 24/0; B en verde; ambos HTML offline con WASM/SG 227/cF2/WebGL/exportación FDF; smoke fetch/inline/global. Manifiesto 480 SHA-256 correcto. Comprobación negativa: sin Chromium, exit 1.
+- **PR y CI:** pendiente de apertura/confirmación en Windows 2022 y Ubuntu 24.04. Actualizar esta línea con evidencia antes del traspaso final.
+- **Pendiente F:** entorno Python fijado y validado para regenerar referencias; se consumen las actuales sin modificación. Permanecen los tres avisos `import.meta` heredados, con ruta inline comprobada; no se cambió vendor para ocultarlos.
+- **Límite de esta entrega:** router, vistas, `app/src`, física, tolerancias y `baseline-v1` intactos. `dist` sin seguimiento. C/D se trabajan en paralelo; esta entrega no los corrige ni integra. No se ejecutó SIESTA.
+- **Continuidad F:** revisar el PR y sus checks antes de integrar; si se continúa en la regeneración Python, abrir tarea y rama específica. No reutilizar ramas de C/D ni modificar su implementación como parte de F.

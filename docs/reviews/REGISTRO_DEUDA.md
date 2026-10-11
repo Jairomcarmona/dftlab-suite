@@ -47,7 +47,7 @@ Origen: [revisión técnica externa del 2026-10-10](2026-10-10-revision-tecnica-
 | C | Resultado EIG/KP depende del orden de carga | Alta | Confirmado por inspección (sin reproducción ejecutada aún) | pendiente |
 | D | `.RHO` leído como texto; `.dftlab.json` detectado sin visualización | Media | Confirmado por inspección | pendiente |
 | E | Metadatos y nombres de archivo se insertan en `innerHTML` | Media | **Reproducido** (incluido manejador `onerror` ejecutado) → corregido en la rama `claude/fix-e-safe-html` (PR del bloque E, apilado sobre A) | PR E |
-| F | Puerta de calidad reproducible | Media | **Parcialmente resuelto** | parcial: `e502b71` |
+| F | Puerta de calidad reproducible | Media | **Parcialmente resuelto**: alcance frontend implementado en `codex/bloque-f`, CI pendiente; regeneración Python pendiente | `e502b71`, `481ea00` |
 | G | Bandas unen segmentos desconectados | Media | Confirmado por inspección | pendiente |
 | H | Recursos (ResizeObserver, escenas 3D) y cálculo pesado | Media/baja | Fugas: confirmadas por inspección; rendimiento: pendiente de medición | pendiente |
 
@@ -111,13 +111,22 @@ Estado verificado, no solo declarado:
 | Git / `.gitignore` / `dist` fuera de Git | Resuelto | `.gitignore`, CI sube HTML como artefacto |
 | CI Windows + Linux | Resuelto (configuración) | `.github/workflows/ci.yml` |
 | Política de versión de Node | Resuelto en CI y README (24.18.0) | Local de este contraste: 22.22.0 |
-| `npm test` | **Pendiente** | `app/package.json` solo tiene `build` y `serve` |
-| Fallback `/opt/run/tools/node_modules` | **Pendiente** | `app/scripts/build.mjs:8` |
-| `serve` depende de `python3` | **Pendiente** | `app/package.json` |
-| Pruebas de navegador | **Pendiente** | `browser_smoke.mjs` sale con 0 si falta Playwright; `browser_regressions.mjs` (A, E) y `browser_lifecycle.mjs` (B) existen pero no están en CI |
-| Verificación offline del HTML | **Pendiente** | |
-| Dependencias de referencias Python fijadas | **Pendiente** | |
-| Procedimiento de copia limpia documentado | Parcial | README: `npm ci` + verify |
+| `npm test` | Implementado y verificado en Windows; CI pendiente | `app/package.json`: referencias, Node A/E/B, build, servidor y navegador obligatorio; `test:node` identifica explícitamente la cobertura parcial |
+| Fallback `/opt/run/tools/node_modules` | Resuelto en rama F | `build.mjs` importa esbuild local; sin fallback ni `DFTLAB_NODE_MODULES` |
+| `serve` depende de `python3` | Resuelto en rama F | `scripts/serve.mjs`, Node, loopback; prueba del proceso real, GET/HEAD, 404, métodos y límites de rutas |
+| Pruebas de navegador | Implementadas; CI pendiente | Playwright local 1.56.1 + lockfile; Chromium 1194; CI Windows/Linux instala navegador y ejecuta A/E, B, offline y smoke Moyo. Sin skips por dependencias ausentes |
+| Verificación offline del HTML | Verificada en Windows; CI pendiente | Cada HTML aislado en carpeta vacía, `file://`, contexto sin red y sin assets vecinos: WASM SG 227, camino cF2, WebGL y descarga FDF; sin errores ni solicitudes externas |
+| Dependencias de referencias Python fijadas | **Pendiente: regeneración, fuera del alcance frontend solicitado** | CI consume referencias versionadas sin regenerarlas ni alterar tolerancias |
+| Procedimiento de copia limpia documentado | Resuelto en rama F | [Instalación y verificación](../development/INSTALL_AND_VERIFY.md): clone, `npm ci`, navegador local, `npm test`, Linux `--with-deps`, límites y artefactos |
+
+### Entrega F: alcance y evidencia
+
+- **Base:** `origin/main` @ `b691f253425470d9e1a68b7326cf0566813c8d30`; PR #4 confirmado fusionado antes de crear la rama. **Rama:** `codex/bloque-f`. **Commit de implementación:** `481ea0072f5a1c87f17d35ed4df2a7e679e16304`.
+- **Verificación local:** Windows, Node 24.18.0, npm 11.16.0, Playwright 1.56.1 / Chromium 141.0.7390.37 (1194). Tras `npm ci`, `npm test` completo pasa: lectores 341, mallas 81, notas 26, FC 101, estructuras 371 y formatos 71; calc 51, escape 15 y lifecycle Node 21; servidor Node; A/E navegador 24/0; B sin errores/acumulación; ambos HTML offline; smoke Moyo fetch/inline/global. Manifiesto histórico: 480 SHA-256 coinciden. Chromium ausente devuelve exit 1.
+- **Build portable:** elimina los enlaces opcionales Google Fonts/preconnect únicamente del entregable, usando fallbacks de sistema ya presentes. Los tres avisos heredados de `import.meta` siguen visibles; se verifican las rutas inline. `dist` sigue ignorado y sin archivos seguidos.
+- **Alcance:** sin cambios en router, vistas, `app/src`, vendor, algoritmos ni tolerancias. Las cargas útiles con nombres hostiles se envían en memoria para que Windows no omita ese caso. No se trabajó C/D, G ni H.
+- **CI:** pendiente de ejecutar el PR en Windows 2022 y Ubuntu 24.04. No se acredita Linux por la verificación local de Windows.
+- **Pendiente F:** fijar y validar el entorno Python de regeneración de referencias en una entrega específica; no condiciona el build/frontend. No se ejecutó SIESTA.
 
 ## G. Discontinuidades del camino k
 
