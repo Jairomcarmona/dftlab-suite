@@ -236,6 +236,8 @@ def main():
             time.sleep(1)
         if not (root/"worker-return.json").exists():
             raise RuntimeError("Worker outcome unconfirmed; retain job/state, never resend")
+        if not checked_second:
+            raise RuntimeError("Live second-controller rejection was not observed")
         result = loads((root/"worker-return.json").read_bytes())
         report["worker"] = result
         report["native_results"] = loads((root/"original-runtime-result.json").read_bytes())

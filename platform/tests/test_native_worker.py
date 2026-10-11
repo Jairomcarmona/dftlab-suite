@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
+from threading import Event
 import unittest
 
 from dftlab_platform.authority import LocalAuthorityManager
@@ -38,11 +39,13 @@ class Worker(unittest.TestCase):
                                         execution_profile_id=profile["profile_id"])
         self.workflow = SimpleNamespace(project_id=self.project, workflow_id=self.reg.workflow_id)
         self.calls, self.controllers, self.published = [], [], []
+        self.shutdown_observed = Event()
         self.hook = lambda controller: None
         outer = self
         class Shutdown:
             def request(self, reason):
                 outer.calls.append(("shutdown", reason))
+                outer.shutdown_observed.set()
         class Controller:
             @staticmethod
             def from_file(path, **kwargs):
@@ -133,6 +136,20 @@ class Worker(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(Problem):
                 self.execute(replace(self.reg, probe=probe))
         self.assertEqual(self.controllers, [])
+
+    def test_heartbeat_loss_requests_shutdown_and_never_commits_publication(self):
+        self.worker = NativeWorker(self.engines, self.repo, self.manager, lease_seconds=2, heartbeat_seconds=0.01)
+        def fail_renewal(controller):
+            def fail(*args):
+                raise Problem("PRECONDITION_FAILED")
+            self.manager.store.renew = fail
+            self.assertTrue(self.shutdown_observed.wait(1))
+        self.hook = fail_renewal
+        with self.assertRaises(Problem):
+            self.execute()
+        self.assertIn(("shutdown", "AUTHORITY_LOST"), self.calls)
+        with self.repo._connection() as db:
+            self.assertEqual(db.execute("SELECT count(*) FROM worker_test_publications").fetchone()[0], 0)
 
 
 if __name__ == "__main__":
