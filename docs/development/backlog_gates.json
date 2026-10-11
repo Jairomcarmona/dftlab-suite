@@ -61,10 +61,10 @@
     },
     {
       "id": "DL-09",
-      "afirmacion": "El módulo de sisl que calcula COOP/COHP existe con la API supuesta en la versión fijada",
+      "afirmacion": "El cálculo de COOP/COHP existe en sisl con una API utilizable en la versión fijada (no se asume un módulo con nombre concreto)",
       "verificacion": "Importar la versión fijada y ejecutar el cálculo sobre el fixture; citar documentación de la versión",
-      "estado": "ABIERTA",
-      "evidencia": ""
+      "estado": "RESUELTA",
+      "evidencia": "2026-10-11: pip install sisl (0.16.4) en un venv; sisl/physics/electron.py define COOP y COHP como métodos de los estados propios (orbital_COOP, atom_COOP, \"COP: calculate COOP or COHP curves\"). No existe un módulo sisl.physics.cohp. Falta fijar la versión en engine-versions.lock.json y ejecutar el cálculo sobre un fixture con H y S reales."
     },
     {
       "id": "DL-10",
