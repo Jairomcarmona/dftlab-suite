@@ -1,6 +1,6 @@
 # ADR-015: HubbardFlow como capa obligatoria bajo QRAFT; código reutilizable sin restricción de licencia
 
-Estado: **aceptado** el 2026-10-11 por decisión de Manuel. Enmienda [ADR-011](ADR-011-despliegues-por-target-workers-fijados.md) y [ADR-012](ADR-012-releases-migraciones-catalogo-capabilities.md) en lo que toca a la distribución de HubbardFlow.
+Estado: **aceptado** el 2026-10-11 por decisión de Manuel. Enmienda [ADR-011](ADR-011-despliegues-por-target-workers-fijados.md) y [ADR-012](ADR-012-releases-migraciones-catalogo-capabilities.md) en lo que toca a HubbardFlow.
 Fecha: 2026-10-11. Relacionado: [ADR-003](ADR-003-autoridades-qraft-hubbardflow-plataforma.md), [ADR-006](ADR-006-hubbard-hf1-hf2.md), [inventario de HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md) (U-H0…U-H3).
 
 ## Contexto
@@ -34,7 +34,7 @@ Comprobado el 2026-10-11 con la API de GitHub: `Jairomcarmona/dftlab-suite` es *
 
 ## Contratos afectados
 
-`CapabilityDescriptor` (capability Hubbard HF-1), `engine-versions.lock.json` (entrada privada), schemas de la frontera Hubbard en `contracts/`, `CapabilityQualificationRecord`.
+`CapabilityDescriptor` (capability Hubbard HF-1), `engine-versions.lock.json` (entrada de HubbardFlow), schemas de la frontera Hubbard en `contracts/`, `CapabilityQualificationRecord`.
 
 ## Pruebas exigidas
 
