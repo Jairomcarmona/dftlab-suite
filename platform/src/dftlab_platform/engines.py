@@ -161,7 +161,7 @@ class QraftAuthoring:
         api.load_workflow_lock(lock_path)  # engine owns semantic/digest checking
         return NativePlan(identity.intent_id, identity.project_id, Path(source_root), lock_path, native, hashlib.sha256(lock_path.read_bytes()).hexdigest())
 
-    def prepare(self, plan, *, expected_native_digest, profile, output_root, run_id, validator=None):
+    def prepare(self, plan, *, expected_native_digest, profile, output_root, run_id, validator=None, task_adapters=None):
         if expected_native_digest != plan.native_digest or hashlib.sha256(plan.lock_path.read_bytes()).hexdigest() != plan.file_sha256:
             raise Problem("REVISION_CONFLICT")
         api = self.engines.qraft
@@ -170,7 +170,17 @@ class QraftAuthoring:
             raise Problem("PRECONDITION_FAILED")
         # Installed RunPreparer owns the packaged runtime, input hashing and
         # DAG. Never pass a repository_root or implement another compiler.
-        preparer = api.RunPreparer() if validator is None else api.RunPreparer(validator=validator)
+        preparation_arguments = {} if validator is None else {"validator": validator}
+        if task_adapters is not None:
+            if not isinstance(task_adapters, dict) or not 1 <= len(task_adapters) <= 64 or any(type(name) is not str or not name or not callable(adapter) for name, adapter in task_adapters.items()):
+                raise Problem("PRECONDITION_FAILED")
+            # Trusted application callbacks only, keyed by the native lock's
+            # original capability IDs. No dynamic discovery or HTTP input.
+            declared = {task.capability_id for task in workflow.tasks}
+            if not set(task_adapters) <= declared:
+                raise Problem("PRECONDITION_FAILED")
+            preparation_arguments["task_adapters"] = dict(task_adapters)
+        preparer = api.RunPreparer(**preparation_arguments)
         result = preparer.prepare(api.RunPreparationRequest(workflow_lock=plan.lock_path, source_root=plan.source_root, execution_profile=Path(profile), output_root=Path(output_root), run_id=run_id))
         if result.execution_authorized is not False or result.submission_performed is not False or result.workflow_lock_sha256 != plan.native_digest or result.run_id != run_id:
             raise Problem("PRECONDITION_FAILED")
