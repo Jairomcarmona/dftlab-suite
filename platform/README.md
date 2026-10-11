@@ -100,7 +100,28 @@ instalados en este wheel ni EXECUTION. QRAFT requiere HubbardFlow bajo él,
 sin restricción de licencia (ADR-015). Terminal/WS no se ofrecen hasta X9.
 El launcher sigue X7b antes de usar el servicio instalado con acceso local.
 
-## Base de proceso anterior (Ola 0, X2)
+## Runtime instalado (Ola 2, X7b)
+
+`dftlab-platform start|status|stop --state-dir <directorio-local>` inicia la
+API loopback en puerto libre y un procesador durable separado. Admite
+`--base-path /lab` y `start --open`. Los dos entry points explícitos son
+`dftlab-platform-api` y `dftlab-platform-processor`. No ejecutan campañas:
+el procesador no registra todavía handlers científicos.
+
+El propietario y sus proyectos sobreviven al reinicio en SQLite. Cada arranque
+emite un bootstrap nuevo, de un uso y 120 s, en `access.json` privado; seleccionar
+ese archivo en el cliente operativo de X8. La URL pública y status nunca llevan
+credenciales. Reiniciar invalida las sesiones anteriores. En Linux el directorio
+tiene modo 0700; en Windows una DACL protegida concede acceso solo al usuario.
+
+Los guard locks del sistema operativo acreditan exclusión de API/procesador;
+un heartbeat viejo nunca permite tomar autoridad. Stop es cooperativo y espera
+ambos procesos; Windows espera el handle capturado sin terminar procesos por PID.
+`recover-local` solo repara una reserva abandonada cuando ambos guard locks están
+libres. Conserva DB/artefactos y no concede derechos sobre jobs remotos. Una salida
+incierta mantiene la reserva. Fallos del monitor detienen la API supervisada.
+
+## Base de proceso anterior (Ola 0, X2; registro histórico)
 
 Distribución `dftlab-platform` / paquete `dftlab_platform`, CPython 3.12.10 y uv 0.11.14 fijados, con dependencias de validación y build bloqueadas. En X5 todavía no hay campañas, sesiones, CSRF, SQLite ni API HTTP. El entry point `dftlab-platform start|status|stop` conserva por ahora el proceso de prueba de X2.
 
