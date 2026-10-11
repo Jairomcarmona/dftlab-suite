@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "success": true,
+  "target": {
+    "os": "Linux",
+    "release": "6.18.33.2-microsoft-standard-WSL2",
+    "machine": "x86_64",
+    "python": "3.12.10"
+  },
+  "commands": [
+    {
+      "name": "uv-version",
+      "argv": [
+        "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-entorno-python/runtime/bootstrap/uv-x86_64-unknown-linux-gnu/uv",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log_sha256": "505417591634193da37f0d44ef7f779b5edb184a2027a00a41e65a0e0276589d"
+    },
+    {
+      "name": "build",
+      "argv": [
+        "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-entorno-python/runtime/bootstrap/uv-x86_64-unknown-linux-gnu/uv",
+        "build",
+        "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-x2-platform-base/platform",
+        "--python",
+        "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-x2-platform-base/runtime/platform-venv-wsl/bin/python3",
+        "--no-build-isolation",
+        "--wheel",
+        "--sdist",
+        "--out-dir",
+        "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-x2-platform-base/runtime/platform-wsl-final/artifacts",
+        "--no-create-gitignore"
+      ],
+      "exit_code": 0,
+      "log_sha256": "9b48b53f530dd735f0e9cb09b0aa80f111ac6cd51ff6f773f67fd9929128566a"
+    },
+    {
+      "name": "clean-venv",
+      "argv": [
+        "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-entorno-python/runtime/bootstrap/uv-x86_64-unknown-linux-gnu/uv",
+        "venv",
+        "--python",
+        "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-x2-platform-base/runtime/platform-venv-wsl/bin/python3",
+        "/tmp/dftlab-installed-hs_lg5kc/venv"
+      ],
+      "exit_code": 0,
+      "log_sha256": "4e084f202b3f0d6c28e9a2c6be330cde36f63381bfc5b4bfe7c68d089505470a"
+    },
+    {
+      "name": "wheel-install",
+      "argv": [
+        "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-entorno-python/runtime/bootstrap/uv-x86_64-unknown-linux-gnu/uv",
+        "pip",
+        "install",
+        "--python",
+        "/tmp/dftlab-installed-hs_lg5kc/venv/bin/python",
+        "--no-index",
+        "--no-deps",
+        "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-x2-platform-base/runtime/platform-wsl-final/artifacts/dftlab_platform-0.1.0.dev0-py3-none-any.whl"
+      ],
+      "exit_code": 0,
+      "log_sha256": "0b9afed5e267457083f2aac9acf3a8faad3e52889593bc9eddfb3478dbdff92f"
+    },
+    {
+      "name": "installed-tests",
+      "argv": [
+        "/tmp/dftlab-installed-hs_lg5kc/venv/bin/python",
+        "-I",
+        "/tmp/dftlab-installed-hs_lg5kc/test_installed.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log_sha256": "5c17175aacc2d022cb1d7115569957e1568ef0a7a45ed9b7f6bb71da035c1485"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "dftlab_platform-0.1.0.dev0-py3-none-any.whl",
+      "bytes": 5188,
+      "sha256": "1722abfabc7c6fca34990afe57fdef557e8a3c2e82aa16294fc1c4cac191a6d8"
+    },
+    {
+      "file": "dftlab_platform-0.1.0.dev0.tar.gz",
+      "bytes": 6654,
+      "sha256": "1c599801ca761820140a97770265782ccfcca21845c9036da04457f6fe6b7064"
+    }
+  ],
+  "source_commit": "754c3593e637fe832f4f72cdb21cae4b58c35a05",
+  "source_identity_origin": "explicit_cli; source contents verified by manifest",
+  "source_tree_dirty": null,
+  "source_sha256": {
+    "platform/pyproject.toml": "65c760e800e3e10f36aba4a173d2dd6e3d28cf30ea6187a6671d2be5cd374fef",
+    "platform/README.md": "94318e1665d5ef98ed912cd4abc96a522cac5909e10cf5a59681ebe56f973c15",
+    "platform/uv.lock": "62821d72fbe66a516e02b39f3e91abf05e97c57539771e63a9078f9585d7e520",
+    "platform/tests/test_installed.py": "5408cd58906f7cce6b115285243e8d6a25582fba09c5fa671d39bf82c48d19db",
+    "platform/src/dftlab_platform/launcher.py": "b8cbd6b52d00b80dea193de236d717e5d41f10d4cae1bb85a0b486d195ced1de",
+    "platform/src/dftlab_platform/__init__.py": "32854909888e55f6261b49cef79e7830709b30031d5d4f9fa9a775b4e7d438ad"
+  },
+  "authoritative_sources_unchanged": true,
+  "installed_without_checkout_or_pythonpath": true,
+  "scope": "empty-domain package and process placeholder only; no scientific/HPC qualification"
+}

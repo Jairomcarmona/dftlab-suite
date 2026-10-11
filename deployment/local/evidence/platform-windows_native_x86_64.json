@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "success": true,
+  "target": {
+    "os": "Windows",
+    "release": "11",
+    "machine": "AMD64",
+    "python": "3.12.10"
+  },
+  "commands": [
+    {
+      "name": "uv-version",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log_sha256": "374a029b7648d9b12f93a912b3e1ba56b93bffdb8d552df57f3b706744588bef"
+    },
+    {
+      "name": "source-commit",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "log_sha256": "ac803d863c47398f1a60a59ddcf152b652527fedce441a9612e877ce573f739e"
+    },
+    {
+      "name": "source-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "log_sha256": "1729570f3b0aba9ee234ad40d8960230471c6c4747ceb2f8ea9d371156bb52ed"
+    },
+    {
+      "name": "build",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "build",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-x2-platform-base\\platform",
+        "--python",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-x2-platform-base\\platform\\.venv\\Scripts\\python.exe",
+        "--no-build-isolation",
+        "--wheel",
+        "--sdist",
+        "--out-dir",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-x2-platform-base\\runtime\\platform-windows-final\\artifacts",
+        "--no-create-gitignore"
+      ],
+      "exit_code": 0,
+      "log_sha256": "faf21c2426b4f0f1470ab68f1666b55a23baeb6d2a2a66f35fdaae1b66e2ca9b"
+    },
+    {
+      "name": "clean-venv",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "venv",
+        "--python",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-x2-platform-base\\platform\\.venv\\Scripts\\python.exe",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-vds94y9u\\venv"
+      ],
+      "exit_code": 0,
+      "log_sha256": "24ca832d62c8236326e1c711d6e762cac018fce37c3e97c8c931c311ceee5d02"
+    },
+    {
+      "name": "wheel-install",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "pip",
+        "install",
+        "--python",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-vds94y9u\\venv\\Scripts\\python.exe",
+        "--no-index",
+        "--no-deps",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-x2-platform-base\\runtime\\platform-windows-final\\artifacts\\dftlab_platform-0.1.0.dev0-py3-none-any.whl"
+      ],
+      "exit_code": 0,
+      "log_sha256": "ee2522213c1439fcb7d4b7ee5f1f490e5cc98638bde081396249194f2ae4ec37"
+    },
+    {
+      "name": "installed-tests",
+      "argv": [
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-vds94y9u\\venv\\Scripts\\python.exe",
+        "-I",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-vds94y9u\\test_installed.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log_sha256": "d415fe11d8f0dbd1645f57331ff1c2965364c56f8a2431f44eb15afd4987f0ea"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "dftlab_platform-0.1.0.dev0-py3-none-any.whl",
+      "bytes": 5188,
+      "sha256": "918654e76adb9c6f6ab03bea126fdcdfff0f6299d6480f6fbfe369c2206db52f"
+    },
+    {
+      "file": "dftlab_platform-0.1.0.dev0.tar.gz",
+      "bytes": 6649,
+      "sha256": "954c7ddbd8fdc694e89eacfe607804361a28d2ff5aac02c0df59b69635338542"
+    }
+  ],
+  "source_commit": "9f94cdc9be11cd6c3b1285aeda871111084836b2",
+  "source_identity_origin": "git_worktree",
+  "source_tree_dirty": true,
+  "source_sha256": {
+    "platform\\pyproject.toml": "65c760e800e3e10f36aba4a173d2dd6e3d28cf30ea6187a6671d2be5cd374fef",
+    "platform\\README.md": "94318e1665d5ef98ed912cd4abc96a522cac5909e10cf5a59681ebe56f973c15",
+    "platform\\uv.lock": "62821d72fbe66a516e02b39f3e91abf05e97c57539771e63a9078f9585d7e520",
+    "platform\\tests\\test_installed.py": "5408cd58906f7cce6b115285243e8d6a25582fba09c5fa671d39bf82c48d19db",
+    "platform\\src\\dftlab_platform\\launcher.py": "b8cbd6b52d00b80dea193de236d717e5d41f10d4cae1bb85a0b486d195ced1de",
+    "platform\\src\\dftlab_platform\\__init__.py": "32854909888e55f6261b49cef79e7830709b30031d5d4f9fa9a775b4e7d438ad"
+  },
+  "authoritative_sources_unchanged": true,
+  "installed_without_checkout_or_pythonpath": true,
+  "scope": "empty-domain package and process placeholder only; no scientific/HPC qualification"
+}
