@@ -189,3 +189,27 @@ El servicio y el repositorio ya exigen el payload normativo de VALIDATE_INPUT me
 ValidationReceipt, ArtifactRecord, ResumePlan y NativeContractRef usan sus schemas originales; el lock de QRAFT conserva el algoritmo/digest nativos. Campaign es bookkeeping privado, sin crear contrato ni endpoint público. El handler sigue siendo responsable de resolver borradores/recibos autorizados, validar la versión del motor, comprobar bytes por el puerto de artefactos y preparar/fsync los archivos antes del commit. Un archivo staged huérfano no prueba que el producto fue confirmado.
 
 Esta entrega no registra handlers de producción, admite cálculos ni anuncia capabilities. Las pruebas utilizan fixtures y terminan un subproceso durante SQL y después del commit; no ejecutan motores ni SLURM. La resolución automática de ausencia y un restore completo siguen pendientes de T-060: una DB restaurada no prueba ausencia remota.
+
+## Checkpoints nativos privados (T-060b)
+
+`SQLiteCheckpointStore` conserva el packet v1 de autoría. Para una instancia con
+runs nativos requiere `LocalNativeQuiescenceSource` con raíces/ref originales,
+prueba terminal positiva registrada y lector público de cursor. Se mantiene el
+kernel guard original existente durante el snapshot; un lease vencido no basta.
+El registro y los callbacks pertenecen al operador, nunca al HTTP o al packet.
+Se copia el árbol completo con límites combinados de archivos/directorios y bytes;
+enlaces, archivos especiales, huérfanos, mutaciones o cursores rotados rechazan READY.
+
+El packet privado v2 mantiene el envelope RecoveryCheckpoint sin cambios. Restore
+requiere `native_verifier(owner, manifest, root, artifacts)` readonly (None o excepción),
+que compruebe las identidades/digests/cursores mediante el motor público fijado.
+Conserva autoridades y deja RECOVERY durable; no reabre ejecución ni retira/reemplaza
+controladores. Es un puerto privado local single-owner, no un endpoint de admisión.
+Las claves de firma viven fuera de SQLite, ArtifactStore y los paquetes nativos.
+
+`deployment/local/qualify_native_checkpoints.py` es un ensayo explícito del operador
+sobre un job propio completado, instalado con ambos motores y sin PYTHONPATH. Lee
+historial y contexto SLURM positivo sin cambiar el sitio, restaura en destino nuevo,
+compara todos los bytes/eventos originales y comprueba la decisión pública de resume.
+Nunca lo ejecutar en CI. NO_RESUBMISSION_REQUIRED en ese caso no acredita reanudar
+un cálculo interrumpido, una capability científica ni portabilidad general entre OS.

@@ -10,6 +10,7 @@ import hashlib
 import importlib.util
 import os
 from pathlib import Path
+import re
 import sys
 import time
 
@@ -17,6 +18,8 @@ from dftlab_platform.checkpoints import SQLiteCheckpointStore, checked_path, wri
 from dftlab_platform.contracts import canonical, loads
 from dftlab_platform.native_checkpoints import LocalNativeQuiescenceSource, NativeCheckpointRegistration, inventory_native
 from dftlab_platform.domain import Problem
+from dftlab_platform.runtime_probe import Binary, BoundedCommands
+from dftlab_platform.terminal_evidence import SlurmTerminalCollector
 
 
 def main():
@@ -35,6 +38,24 @@ def main():
     engines, value, repo, owner, store, package, intent, signer, collected = helper.observe_registered(args)
     output, run = checked_path(args.output), checked_path(args.run)
     native = next(ref for ref in intent["native_contract_refs"] if ref["contract"] == "siestaflow.run-lock@1.0")
+    config = loads(args.config.read_bytes())
+    scontrol = Binary(Path(config["scontrol"]["path"]), config["scontrol"]["sha256"])
+    expected_contexts = []
+    for reference in collected.observations:
+        document = loads(b"".join(store.stream(owner, reference["artifact_id"])))
+        if document["command"] == "job-context":
+            expected_contexts.append(document["output"])
+    keys = "JobId|JobName|UserId|Comment|SubmitTime|WorkDir|Command"
+    def context_fields(raw):
+        pairs = re.findall(r"(?:^|\s)("+keys+r")=(\S+)", raw)
+        if len(pairs) != len(dict(pairs)) or len(pairs) != 7:
+            raise RuntimeError("Current scheduler identity is ambiguous")
+        return dict(pairs), SlurmTerminalCollector.fields(raw)
+    if len(expected_contexts) != 2 or context_fields(expected_contexts[0]) != context_fields(expected_contexts[1]):
+        raise RuntimeError("Positive original scheduler contexts disagree")
+    expected_context = context_fields(expected_contexts[0])
+    readonly = BoundedCommands(timeout=15, limit=65536)
+    raw_checks = []
     original_identity = loads((package/"evidence/workflow_events.stream.json").read_bytes())
     def events(root):
         stream = engines.qraft.NativeEventStream(root/"evidence/workflow_events.jsonl", original_identity["runtime_fingerprint"], expected_stream_id=original_identity["stream_id"])
@@ -51,6 +72,16 @@ def main():
         return events(root)[0]
     decisions = []
     def verify(root):
+        executable = scontrol.verified()
+        observation = readonly.run((str(executable), "--oneliner", "show", "job", args.job), cwd=package, environment={"PATH": "/usr/bin:/bin", "LC_ALL": "C", "LANG": "C", "TZ": "UTC"})
+        scontrol.verified()
+        if observation.returncode != 0 or context_fields(observation.output) != expected_context:
+            raise RuntimeError("Allocation requeued or identity/terminal context changed")
+        # Readonly scheduler observations remain private outside packet/SQL.
+        raw_path = output/("current-context-%02d.json" % len(raw_checks))
+        raw = canonical({"argv": [str(executable), "--oneliner", "show", "job", args.job], "output": observation.output, "returncode": observation.returncode})
+        write_new(raw_path, raw)
+        raw_checks.append(hashlib.sha256(raw).hexdigest())
         inspected = engines.qraft.RunInspector().inspect(root)
         env, payload = engines.qraft.load_run_lock(root/"run.lock.json")
         if inspected.status != "PREPARED_RUN_VERIFIED" or inspected.run_id != value["run_id"] or inspected.project_id != intent["project_id"] or env.content_sha256 != native["digest"]["value"] or payload.run_id != value["run_id"] or not signer.verify(collected.native):
@@ -102,6 +133,7 @@ def main():
               "original_artifacts": len(ids), "original_events": len(original_events[1]), "native_cursor": original_events[0],
               "create_seconds": create_seconds, "restore_seconds": restore_seconds, "rpo_rto_global": "NOT_ESTABLISHED",
               "native_resume_status": "NO_RESUBMISSION_REQUIRED", "native_resume_original_sha256": hashlib.sha256(decisions[-1].encode()).hexdigest(),
+              "readonly_current_context_sha256": raw_checks,
               "jobs_launched": 0, "authority_retired": False, "mode": "RECOVERY", "scientific_assessment": "NOT_ESTABLISHED", "engines": engines.evidence}
     write_new(output/"report.json", canonical(report))
     print(canonical(report).decode())
