@@ -16,6 +16,13 @@ class CustomBuildHook(BuildHookInterface):
             raise RuntimeError("Authoritative contracts missing; cannot build")
         destination = "dftlab_platform/resources/contracts" if self.target_name == "wheel" else "contracts"
         build_data.setdefault("force_include", {})[str(source)] = destination
+        engine_lock = root / "engine-versions.lock.json"
+        if not engine_lock.is_file():
+            engine_lock = root.parent / "engine-versions.lock.json"
+        if not engine_lock.is_file():
+            raise RuntimeError("Pinned engine lock missing; cannot build")
+        engine_destination = "dftlab_platform/resources/engine-versions.lock.json" if self.target_name == "wheel" else "engine-versions.lock.json"
+        build_data["force_include"][str(engine_lock)] = engine_destination
         operative = root / "operative"
         if not operative.is_dir():
             operative = root.parent / "app/dist/operative"

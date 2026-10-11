@@ -73,6 +73,10 @@ def main() -> int:
             raise RuntimeError("Expected exactly one wheel and one source archive")
         wheel = wheels[0]
         with zipfile.ZipFile(wheel) as archive:
+            engine_lock = (ROOT / "engine-versions.lock.json").read_bytes()
+            if archive.read("dftlab_platform/resources/engine-versions.lock.json") != engine_lock:
+                raise RuntimeError("Bundled engine lock differs from authoritative source")
+            report["bundled_engine_lock_sha256"] = hashlib.sha256(engine_lock).hexdigest()
             bundled = {p.relative_to(ROOT / "contracts").as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT / "contracts").rglob("*") if p.is_file()}
             for relative, expected in bundled.items():
                 if hashlib.sha256(archive.read("dftlab_platform/resources/contracts/" + relative)).hexdigest() != expected:
