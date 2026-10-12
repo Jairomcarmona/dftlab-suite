@@ -1,6 +1,6 @@
 # Ficha de entrada: pseudopotenciales, especies y bundles (T-031)
 
-Estado: **aceptada** (2026-10-12), salvo la licencia de la biblioteca. Autoridad: el preflight y el staging de QRAFT (`engines/siesta/pseudopotentials.py`) deciden si una corrida puede usar un conjunto de pseudos; la plataforma guarda la biblioteca, los hashes y las licencias. Fuente: [maestro §10](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) («Se controla XC, valencia, relatividad, capacidades y alias») y [plan T-031](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md). Evidencia: [corridas de pseudos](../reviews/evidencia-p5-p10/README.md#pseudopotenciales-t-031).
+Estado: **aceptada** (2026-10-12). La biblioteca propia es propietaria (D-7). Autoridad: el preflight y el staging de QRAFT (`engines/siesta/pseudopotentials.py`) deciden si una corrida puede usar un conjunto de pseudos; la plataforma guarda la biblioteca, los hashes y las licencias. Fuente: [maestro §10](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) («Se controla XC, valencia, relatividad, capacidades y alias») y [plan T-031](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md). Evidencia: [corridas de pseudos](../reviews/evidencia-p5-p10/README.md#pseudopotenciales-t-031).
 
 Esta ficha está escrita para que la implemente quien solo programa: si algo no está aquí, en el oráculo o en los vectores, **se pregunta antes de decidirlo**. Los vectores dicen lo que hizo SIESTA; no se cambian para que una prueba pase.
 
@@ -25,7 +25,8 @@ La biblioteca del proyecto (`app/dftlab/data/pseudos/`, con su [README](../../ap
 | D-2 | En el manifiesto y en la carpeta de la corrida, el archivo de cada especie es exactamente `<etiqueta>.<formato>`, con mayúsculas iguales. Si no, `FAIL` `SPECIES_FILENAME_MISMATCH`. `manifestCheck`. |
 | D-3 | El staging deja **un solo** archivo `<etiqueta>.{vps,psf,psml}` por especie y comprueba su hash después de copiar. Si hay más de uno, `FAIL` `PSEUDO_FILE_AMBIGUOUS` (PS-1: SIESTA usaría el primero sin avisar). `resolvePseudoFile` informa el archivo que SIESTA usaría y si es ambiguo. |
 | D-4 | Un alias (`SpeciesDefinition` con etiqueta propia y el mismo pseudo) se materializa como una copia con el nombre de la etiqueta; el manifiesto guarda, por etiqueta, el hash del origen. Las copias tienen el mismo hash. |
-| D-5 | Cada pseudo del catálogo guarda: elemento, Z, valencia (`z-pseudo`), relatividad, NLCC, identificadores de libxc, formato, hash SHA-256 del archivo, origen y licencia o «sin licencia declarada». La relatividad `scalar` o `no` no sirve para spin-órbita (QRAFT ya lo comprueba en `magnetism.py`). |
+| D-5 | Cada pseudo del catálogo guarda: elemento, Z, valencia (`z-pseudo`), relatividad, NLCC, identificadores de libxc, formato, hash SHA-256 del archivo, origen y licencia («propietaria» para la biblioteca propia, o la del origen para un pseudo externo, o «sin licencia declarada»). La relatividad `scalar` o `no` no sirve para spin-órbita (QRAFT ya lo comprueba en `magnetism.py`). |
+| D-7 | La biblioteca propia (60 archivos PSML) es **propietaria, de uso comercial privado**: todos los derechos reservados, sin licencia de uso ni redistribución a terceros (decisión de Manuel, 2026-10-12). Un bundle que la incluya se marca como no redistribuible y no se publica fuera del proyecto. Cambiar esto exige una decisión nueva de Manuel y un cambio en el README de los pseudos. |
 | D-6 | El catálogo se anuncia como «30 elementos en LDA (CA-PZ) y PBE», no como 60 pseudos. Un pseudo externo entra con los mismos campos de D-5 y no cambia en silencio una revisión que ya usaba otro. |
 
 ## Diferencias que hay que corregir
@@ -50,4 +51,4 @@ La biblioteca del proyecto (`app/dftlab/data/pseudos/`, con su [README](../../ap
 
 Aprobado por Manuel el 2026-10-12: U-Q18, que entra en QRAFT después de U-Q9.
 
-Pendiente: qué licencia declara la biblioteca propia. Hasta entonces el catálogo la muestra como «sin licencia declarada» (D-5) y un bundle no se presenta como redistribuible.
+Licencia: Manuel decidió el 2026-10-12 que la biblioteca propia es propietaria y de uso comercial privado, sin redistribución (D-7).

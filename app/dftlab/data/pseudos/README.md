@@ -1,5 +1,7 @@
 # DFT Lab pseudopotential library (ONCVPSP 3.3.1 → PSML, for SIESTA 5.4.2)
 
+> **License: proprietary, all rights reserved.** This library is DFT Lab's own work, intended for private commercial use. No licence to use, copy, modify or redistribute it is granted to third parties, and it must not be published or shipped in a distributable bundle (decision recorded 2026-10-12; see `docs/scientific-protocols/PSEUDOS.md`, D-7). ONCVPSP's own licence applies to its source code, not to the files it produces.
+
 30 elements × 2 functionals (LDA, PBE). Every potential is a scalar-relativistic, optimized norm-conserving
 Vanderbilt potential (Hamann, PRB 88, 085117 (2013)) with **2 projectors per angular-momentum channel**,
 written directly in PSML by the PSML-enabled ONCVPSP build (`/opt/oncv/build/src/oncvpsp.x`).
