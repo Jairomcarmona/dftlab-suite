@@ -7,7 +7,7 @@ src=open(os.path.join(HERE,'eos_tables.py')).read().replace("S='RUNS/runs/'","S=
 exec(src)   # define table() y bm3()
 T={"fix":table('bfix',1.075),"var":table('b154',1.075),"out80":table('frac',1.0)}
 EV=160.21766208
-POLICY={"policy_id":"qraft.eos.policy@1-draft","energy_quantity":"free_energy","relaxation_mode":"fixed-fractional",
+POLICY={"policy_id":"qraft.eos.policy@1","energy_quantity":"free_energy","relaxation_mode":"fixed-fractional",
         "min_points":7,"min_points_each_side":2,"max_rms_meV_per_atom":0.5,"max_rel_dV0":0.005,"max_rel_dB0":0.05}
 a=5.43
 si_ref={"cell":[[0,a/2,a/2],[a/2,0,a/2],[a/2,a/2,0]],"atoms":[{"id":"Si1","species":"Si","cart":[0,0,0]},{"id":"Si2","species":"Si","cart":[a/4,a/4,a/4]}]}

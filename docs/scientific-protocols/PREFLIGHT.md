@@ -1,6 +1,6 @@
 # Ficha de entrada: preflight del FDF (T-030)
 
-Estado: **lista para aceptar**. Autoridad: el validador de QRAFT (plan §19: «el validador de QRAFT es el preflight autoritativo; el frontend lo replica con fixtures comunes»). Esta ficha fija **cómo lee SIESTA 5.4.2 un FDF**, comprobado con corridas, para que QRAFT, el servicio y el frontend digan lo mismo. Fuente: [maestro §10](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) y [plan T-030](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md). Evidencia: [corridas de lectura FDF](../reviews/evidencia-p5-p10/README.md#lectura-fdf-t-030).
+Estado: **aceptada** (2026-10-12). Autoridad: el validador de QRAFT (plan §19: «el validador de QRAFT es el preflight autoritativo; el frontend lo replica con fixtures comunes»). Esta ficha fija **cómo lee SIESTA 5.4.2 un FDF**, comprobado con corridas, para que QRAFT, el servicio y el frontend digan lo mismo. Fuente: [maestro §10](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) y [plan T-030](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md). Evidencia: [corridas de lectura FDF](../reviews/evidencia-p5-p10/README.md#lectura-fdf-t-030).
 
 Esta ficha está escrita para que la implemente quien solo programa: si algo no está aquí, en el oráculo o en los vectores, **se pregunta antes de decidirlo**. Los vectores dicen lo que SIESTA hizo; no se cambian para que una prueba pase.
 
@@ -50,6 +50,6 @@ Esta ficha está escrita para que la implemente quien solo programa: si algo no 
 2. **Plataforma:** el servicio llama al validador de QRAFT y guarda sus hallazgos (D-6); el frontend corrige `parseFDF` (primera aparición) y pasa los vectores de resolución.
 3. Subir el pin de QRAFT cuando U-Q17 entre.
 
-## Decisión pendiente de Manuel
+## Decisiones de Manuel
 
-Aceptar U-Q17 y su orden (después de U-Q9).
+Aprobado por Manuel el 2026-10-12: U-Q17, que entra en QRAFT después de U-Q9.

@@ -1,6 +1,6 @@
 # Ficha de entrada: WF-EOS (T-035)
 
-Estado: **lista para aceptar**. Las decisiones científicas están cerradas y la política v1 está propuesta; Manuel aprueba sus valores (ADR-009). Dueño: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md)). Fuente: [maestro §11.1](../../PROPUESTA_MAESTRA_DFTLAB_V2.md). Evidencia: [auditoría P5–P10](../reviews/2026-10-11-auditoria-p5-p10.md#evidencia-siesta-542).
+Estado: **aceptada** (2026-10-12). Las decisiones científicas están cerradas y Manuel aprobó la política v1 y su alcance (ADR-009). Dueño: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md)). Fuente: [maestro §11.1](../../PROPUESTA_MAESTRA_DFTLAB_V2.md). Evidencia: [auditoría P5–P10](../reviews/2026-10-11-auditoria-p5-p10.md#evidencia-siesta-542).
 
 Esta ficha está escrita para que la implemente quien solo programa: si algo no está aquí, en el oráculo o en los vectores, **se pregunta antes de decidirlo**. No se cambian los valores de la política ni los vectores para que una prueba pase.
 
@@ -38,7 +38,7 @@ Esta ficha está escrita para que la implemente quien solo programa: si algo no 
 
 `status`, `reasons` (lista ordenada), `fit` {`E0_eV`, `V0_A3`, `B0_GPa`, `B0_prime`, `rms_meV`} por celda, `sensitivity` {`max_rel_dV0`, `max_rel_dB0`}, `per_atom` {`V0_A3`, `E0_eV`}, `n_atoms`, `quantity`, `policy_id` y la tabla de puntos (`volume_factor`, `volume_A3`, `energy_eV`, `mesh`, `kgrid`, `relaxation_mode`, hash del stdout). Autoridad nativa `PROVISIONAL`. Un `NOT_ESTABLISHED` conserva el ajuste para inspección, pero no se presenta como resultado.
 
-## Política v1 propuesta (`qraft.eos.policy@1-draft`, aprueba Manuel)
+## Política v1 (`qraft.eos.policy@1`, aprobada por Manuel el 2026-10-12)
 
 | Campo | Valor | Razón |
 |---|---|---|
@@ -63,7 +63,6 @@ Siguiendo el patrón de los protocolos existentes, sin decidir nada nuevo:
 2. **U-Q11, evaluación.** Leer cada salida con la regla E-4, construir la tabla y evaluarla como `evaluate`. Debe ser un módulo sin autoridad de ejecución, como `protocols/magnetic_selection.py`.
 3. **Pruebas.** Portar `wf-eos.cases.json` como fixture de QRAFT: la implementación Python debe pasar los 20 casos con `arithmetic_tolerance`. Añadir una corrida SIESTA real pequeña (Si, como en la evidencia) en la validación local, no en la CI de PR.
 
-## Decisiones pendientes de Manuel
+## Decisiones de Manuel
 
-1. Aprobar los valores de la política v1 o cambiarlos **antes** de implementar.
-2. Confirmar el alcance v1 (sin spin y sin `shape`).
+Aprobado por Manuel el 2026-10-12: la política v1 y el alcance v1 (sin spin y sin `shape`). U-Q10 y U-Q11 entran en QRAFT después de U-Q9.

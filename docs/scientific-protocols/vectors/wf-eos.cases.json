@@ -545,7 +545,7 @@
    "kind": "table",
    "title": "Si SZP/PBE, malla fija 30³: ajuste establecido",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
@@ -823,7 +823,7 @@
    "kind": "table",
    "title": "Si con MeshCutoff fijo: la malla salta 24³→30³",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
@@ -1088,7 +1088,7 @@
    "kind": "table",
    "title": "Si centrado en 5.43 Å: el mínimo del modelo cae fuera",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
@@ -1353,7 +1353,7 @@
    "kind": "table",
    "title": "Un punto con kgrid.Cutoff",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
@@ -1599,7 +1599,7 @@
    "kind": "table",
    "title": "Tabla en energía total con política de energía libre",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
@@ -1864,7 +1864,7 @@
    "kind": "table",
    "title": "Solo cinco volúmenes",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
@@ -2061,7 +2061,7 @@
    "kind": "table",
    "title": "Modos de relajación mezclados",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
@@ -2326,7 +2326,7 @@
    "kind": "table",
    "title": "BM3 sintético exacto: el ajuste recupera E0, V0, B0 y B0′",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
@@ -2596,7 +2596,7 @@
    "kind": "table",
    "title": "Mínimo entre el primer y el segundo punto: un solo punto por debajo",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
@@ -2861,7 +2861,7 @@
    "kind": "table",
    "title": "Un punto con +4 meV de error: residuo y B0 sensible",
    "policy": {
-    "policy_id": "qraft.eos.policy@1-draft",
+    "policy_id": "qraft.eos.policy@1",
     "energy_quantity": "free_energy",
     "relaxation_mode": "fixed-fractional",
     "min_points": 7,
