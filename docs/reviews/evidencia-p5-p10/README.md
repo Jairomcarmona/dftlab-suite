@@ -84,6 +84,18 @@ Mismo entorno, más `fat` del mismo `siesta-env`. Si diamante, `pbe/Si.psml`, DZ
 | `fat` | El mismo camino con 45 k; `fat -b 1 -B 8` con `fatsi.mpr` (s, p, d) y `fatat.mpr` (átomo 1, átomo 2, átomo 2 sin d) | Gap 0.5684 eV; s+p+d = 1 con error 1·10⁻⁵; átomo 1 + átomo 2 = 1; los 38 estados donde el átomo 1 no pesa 0.5 son degenerados |
 | `mass` | `BandPoints`: cuatro líneas de 49 puntos, paso 0.0025·2π/a: [100] y [010] por (0.847, 0, 0)·2π/a, [100] y [111] por Γ | m_l = 0.925, m_t = 0.194 (ventana ±0.05 Å⁻¹); valencia triple en Γ (separación 0.6 meV) |
 
+## Pseudopotenciales (T-031)
+
+Mismo entorno. Si con `si_eos_fdf.py 1.0 frac 150` (SZP, 150 Ry) y los cambios indicados. Los valores esperados están en [`pseudos.cases.json`](../../scientific-protocols/vectors/pseudos.cases.json), generado por `build_pseudo_cases.py`.
+
+| Corrida | Cambio | Resultado |
+|---|---|---|
+| `pbe_ok`, `lda_ok` | `pbe/Si.psml` con GGA PBE; `lda/Si.psml` con LDA CA | Sin aviso de `xc_check` |
+| `pbe_on_lda`, `lda_ca`, `lda_pw92` | `lda/Si.psml` con GGA PBE; `pbe/Si.psml` con LDA CA; `lda/Si.psml` con LDA PW92 | «xc_check: WARNING: Pseudopotential generated with … functional»; `Job completed` |
+| `both`, `psfonly` | `Si.psf` (fixture, Troullier-Martins LDA) junto a `Si.psml`, y solo `Si.psf` | En los dos lee `Si.psf`, sin avisar de que hay otro archivo |
+| `label` | Etiqueta `Si1` con solo `Si.psml` | «Pseudopotential file not found: Si1.{vps,psf,psml}»; código de salida 134 |
+| `alias` | Especies `Si1` y `Si2` con copias de `pbe/Si.psml` | E_KS = −265.4858 eV, igual que `pbe_ok` |
+
 ## Límites
 
 No se ejecutaron `macroave` ni `fcbuild`; solo se comprobó que están en el entorno. `vibra` y `denchar` se ejecutaron para los presets y `fat` para T-036. El caso de superficie es simétrico, neutro y sin corrección dipolar. Las corridas no se suben a Git; se reproducen con estos scripts.

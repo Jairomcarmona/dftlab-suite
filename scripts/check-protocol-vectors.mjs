@@ -110,6 +110,18 @@ const runners = {
       return [`tipo desconocido ${c.kind}`];
     };
   },
+  async PSEUDOS(doc) {
+    const o = await import(pathToFileURL(path.join(root, doc.oracle)));
+    const tol = doc.arithmetic_tolerance;
+    return c => {
+      if (c.kind === 'psml') return close(o.psmlInfo(c.psml), c.expect, tol, 'cabecera');
+      if (c.kind === 'xc') return close(o.xcGate(c.run, c.pseudos), c.expect, tol, 'funcional');
+      if (c.kind === 'stdout') return close(o.stdoutXcWarnings(c.stdout), c.expect, tol, 'avisos');
+      if (c.kind === 'file') return close(o.resolvePseudoFile(c.label, c.files), c.expect, tol, 'archivo');
+      if (c.kind === 'manifest') return close(o.manifestCheck(c.entries), c.expect, tol, 'manifiesto');
+      return [`tipo desconocido ${c.kind}`];
+    };
+  },
   async ELECTRONIC(doc) {
     const o = await import(pathToFileURL(path.join(root, doc.oracle)));
     // Masas, curvaturas y gaps: relativa; desplazamientos del extremo y direcciones cerca de cero: absoluta.
