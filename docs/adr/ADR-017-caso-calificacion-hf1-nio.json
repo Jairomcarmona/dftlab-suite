@@ -64,7 +64,7 @@
       "launcher": "openmpi",
       "max_attempts": 3,
       "allocation_time_seconds": 3600,
-      "task_walltime_seconds": 3600,
+      "task_walltime_seconds": 1800,
       "memory_mb": 2048,
       "sbatch_no_requeue_in_q": true,
       "source": "ADR-017 Adenda 6 F.2"
