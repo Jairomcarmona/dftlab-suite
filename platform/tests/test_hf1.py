@@ -1,6 +1,7 @@
 """HF1 transport/process adversaries; no installed engine, SIESTA or Slurm."""
 import copy
 import hashlib
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -420,8 +421,14 @@ raise SystemExit(module.run(sys.argv[1]))
         capability.register(SimpleNamespace(register=lambda *args: None))
         extension = descriptors[0]["qraft.controller"]
         self.assertEqual((extension["distribution"], extension["entrypoint"]), ("dftlab-platform", "dftlab-hf1-controller"))
-        pyproject = (Path(__file__).resolve().parents[1]/"pyproject.toml").read_text()
-        self.assertIn('dftlab-hf1-controller = "dftlab_platform.hf1_controller_entry:main"', pyproject)
+        try:  # installed wheel (tests run outside the source tree) or source tree
+            declared = any(point.group == "console_scripts" and point.name == "dftlab-hf1-controller"
+                           and point.value == "dftlab_platform.hf1_controller_entry:main"
+                           for point in importlib.metadata.distribution("dftlab-platform").entry_points)
+        except importlib.metadata.PackageNotFoundError:
+            pyproject = Path(__file__).resolve().parents[1]/"pyproject.toml"
+            declared = 'dftlab-hf1-controller = "dftlab_platform.hf1_controller_entry:main"' in pyproject.read_text()
+        self.assertTrue(declared)
 
     def test_controller_mode_ignores_legacy_worker_limits(self):
         # ADR-017 Adenda 5: max_seconds/grace_seconds bound only hf1_worker.
