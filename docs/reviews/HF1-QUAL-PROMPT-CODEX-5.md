@@ -2,6 +2,14 @@
 
 Pega esto tal cual. Sustituye a los prompts [1](HF1-QUAL-PROMPT-CODEX.md), [2](HF1-QUAL-PROMPT-CODEX-2.md), [3](HF1-QUAL-PROMPT-CODEX-3.md) y [4](HF1-QUAL-PROMPT-CODEX-4.md). Todo está resuelto en [ADR-017 Adenda 10](../adr/ADR-017-tarea-controladora-qraft-hf1.md#adenda-10-2026-10-12-issue-70-c0-r2-dio-no_numerical_u-la-campaña-se-inicializa-en-su-raíz-final), la [Adenda 9](../adr/ADR-017-tarea-controladora-qraft-hf1.md#adenda-9-2026-10-12-issue-70-c0-falló-por-state-without-an-owner-la-plataforma-prepara-el-estado-después-de-que-qraft-lo-reclama) y la [Adenda 8](../adr/ADR-017-tarea-controladora-qraft-hf1.md#adenda-8-2026-10-12-issue-70-receta-hf-1-registrada-recorrido-completo-de-c0-a-q6-y-arnés-especificado). No preguntes diseño.
 
+## Antes de hacer nada: lee las reglas del proyecto
+
+Lee `AGENTS.md` y `docs/development/WORKING_RULES.md` completos, y cita en tu **primer comentario de #70** que los leíste. Ya se rompió la regla de pocos PR varias veces; si no abres los archivos, esta es la regla completa:
+
+> **Pocos PR (regla fija de todo el proyecto).** El avance diario va en comentarios del issue de seguimiento (#70) o en notas no versionadas, no en un PR por paso. `docs/reviews/TRASPASO.md` se actualiza una vez por etapa cerrada, dentro del PR de código de esa etapa, o en un único PR al cerrar un bloque. Nunca se abre un PR documental solo para anotar que otro PR se fusionó. Los arreglos de código relacionados van en un solo PR.
+
+En esta tarea eso significa: cero PR documentales, y como máximo un PR de código si G.4 te obliga.
+
 ## Qué cambió
 
 El `NO_NUMERICAL_U` de C0-r2 no era un dato faltante ni ciencia: el PSML de NiLR0 sí estaba en el inventario. HubbardFlow escribe en `lr_config.json` rutas absolutas de la raíz donde inicializa la campaña, y al observar las convierte en relativas a la raíz donde corre. La campaña de C0-r2 se inicializó en una raíz y se ejecutó en otra, así que la ruta quedó absoluta y fuera del inventario. Ahora **el arnés inicializa la campaña en la raíz final** (Adenda 10 J.2), y la plataforma lo comprueba antes de lanzar (`final_root_findings`). QRAFT y HubbardFlow no cambian. El wheel debe reconstruirse.
