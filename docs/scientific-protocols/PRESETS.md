@@ -97,7 +97,7 @@ Ruta M8 de QRAFT sin cambios: `validate_magnetic_input` acepta solo declaracione
 |---|---|---|
 | `max_reference_force_eV_A` | 0.01 | H2O relajada con tolerancias de 0.005 y 0.002 eV/Å dio Max entre 0.0006 y 0.0034 eV/Å al iniciar FC; sin relajar, 2.3 eV/Å |
 | `fc_displacement_A` | 0.02 | F-2 |
-| `imaginary_tol_cm1` | 20 (propuesto, sin evidencia propia) | F-6; Manuel confirma o cambia el valor |
+| `imaginary_tol_cm1` | 20 (propuesto) | F-6. Medido con SIESTA 5.4.2 (DZP/PBE, relajación CG y FC a 0.02 Å): H2O a 200, 400 y 700 Ry y etano SZP a 200 Ry no dan ninguna frecuencia proyectada negativa; la más baja es la torsión del etano, 256 cm⁻¹. El ruido no se pudo acotar porque no apareció ninguno, así que 20 es un margen conservador y no un valor ajustado. Manuel confirma o cambia el valor |
 | `symprec_A` | el de G-02 (T-028) | V-4; se fija con la ficha de T-028 |
 
 Ningún otro gate de esta ficha tiene umbral: se decide con líneas de la salida o con las tolerancias que el propio FDF declara.
