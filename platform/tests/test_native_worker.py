@@ -11,7 +11,7 @@ import unittest
 from dftlab_platform.authority import LocalAuthorityManager
 from dftlab_platform.authority_storage import SQLiteAuthorityStore
 from dftlab_platform.domain import Problem, envelope, identifier
-from dftlab_platform.native_worker import NativeWorker, RegisteredNativeRun
+from dftlab_platform.native_worker import NativeWorker, RegisteredNativeExtensions, RegisteredNativeRun
 from dftlab_platform.storage import SQLiteRepository
 
 
@@ -37,7 +37,7 @@ class Worker(unittest.TestCase):
         self.run_lock = SimpleNamespace(run_id=self.reg.run_id, project_id=self.project, workflow_id=self.reg.workflow_id,
                                         workflow_lock_sha256=self.reg.workflow_digest, execution_profile_sha256=self.reg.profile_digest,
                                         execution_profile_id=profile["profile_id"])
-        self.workflow = SimpleNamespace(project_id=self.project, workflow_id=self.reg.workflow_id)
+        self.workflow = SimpleNamespace(project_id=self.project, workflow_id=self.reg.workflow_id, tasks=())
         self.calls, self.controllers, self.published = [], [], []
         self.shutdown_observed = Event()
         self.hook = lambda controller: None
@@ -150,6 +150,33 @@ class Worker(unittest.TestCase):
         self.assertIn(("shutdown", "AUTHORITY_LOST"), self.calls)
         with self.repo._connection() as db:
             self.assertEqual(db.execute("SELECT count(*) FROM worker_test_publications").fetchone()[0], 0)
+
+    def test_operator_factory_registers_exact_lock_bound_extension_before_controller(self):
+        capability = "dftlab.engine.hubbardflow.hf1"
+        self.workflow.tasks = (SimpleNamespace(task_id="hf1-lru", capability_id=capability),)
+        calls = []
+        register = lambda registry: calls.append(("register", registry))
+        verify = lambda: None
+        def factory(*, registered, root, workflow_digest, bindings):
+            calls.append((registered.run_id, root, workflow_digest, bindings))
+            return RegisteredNativeExtensions(workflow_digest, bindings, register, verify)
+        self.worker = NativeWorker(self.engines, self.repo, self.manager,
+                                  native_extension_capabilities=(capability,),
+                                  native_extensions_factory=factory)
+        self.execute()
+        self.assertEqual(calls[0], (self.reg.run_id, self.package, self.reg.workflow_digest,
+                                    (("hf1-lru", capability),)))
+        self.assertIs(self.controllers[0].kwargs["register_capabilities"], register)
+        self.assertEqual(self.controllers[0].kwargs["capability_bindings"], {"hf1-lru": capability})
+
+    def test_lock_bound_extension_is_required_and_extra_bindings_rejected(self):
+        capability = "dftlab.engine.hubbardflow.hf1"
+        self.workflow.tasks = (SimpleNamespace(task_id="hf1-lru", capability_id=capability),)
+        self.worker = NativeWorker(self.engines, self.repo, self.manager,
+                                  native_extension_capabilities=(capability,))
+        with self.assertRaises(Problem):
+            self.execute()
+        self.assertEqual(self.controllers, [])
 
 
 if __name__ == "__main__":
