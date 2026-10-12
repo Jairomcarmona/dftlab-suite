@@ -354,3 +354,31 @@ Subtareas mínimas:
 - T-062: objetivos medibles por escenario/perfil, inicialmente DRAFT; benchmarks/runbooks; targets aceptados antes del release; incidente y restore de ensayo; evitar dependencias artificiales entre módulos científicos.
 
 La evidencia de A-01…A-15 es de diseño y fuentes; su cierre exige ejecutar las pruebas correspondientes. Ninguna marca documental puede promover una capability a producción sin ese cierre. Todos los requisitos funcionales anteriores y baselines científicas permanecen en el plan.
+
+## 19. Auditoría P5–P10 y compuerta de diseño
+
+Añadido el 2026-10-11 tras la [auditoría P5–P10](docs/reviews/2026-10-11-auditoria-p5-p10.md). No cambia IDs ni alcance de los tickets; añade una condición de entrada y dependencias que faltaban. Adoptado por Manuel el 2026-10-11, junto con ADR-018 opción A.
+
+**Compuerta de diseño.** Un ticket que introduce un contrato, una decisión científica o un cambio en más de un repositorio no se asigna a Codex hasta tener:
+
+1. Ficha aceptada (en `docs/scientific-protocols/` si es ciencia, ADR o adenda si es contrato) con decisiones, lo que declara la política y preguntas abiertas cerradas.
+2. Vectores ejecutables en `contracts/fixtures/` o en el repositorio dueño, incluidos los casos que deben fallar.
+3. Un caso real pequeño (corrida de SIESTA, paquete instalado o salida del motor) que confirme cada supuesto sobre el comportamiento de un programa externo.
+4. Orden de repositorios: ficha y vectores, PR upstream que cita el SHA de los vectores, pin en `engine-versions.lock.json`, consumidor en la plataforma.
+
+**Dependencias de entrada añadidas.**
+
+| Ticket | Antes de construir |
+|---|---|
+| T-028 (G-05, G-06) | [Ficha de slabs](docs/scientific-protocols/SLABS.md) aceptada: celda con a3 ⟂ superficie, terminación, atom map, equivalencia de caras y restricciones ([WF-SURFACE](docs/scientific-protocols/WF-SURFACE.md) S-1) |
+| T-029 | [Ficha de presets](docs/scientific-protocols/PRESETS.md) aceptada; S-01, S-03 y S-07 esperan U-Q14, U-Q15 y U-Q16 y se muestran `DESIGNED` hasta entonces |
+| T-030 | El validador de QRAFT es el preflight autoritativo; el frontend lo replica con fixtures comunes. [Ficha de preflight](docs/scientific-protocols/PREFLIGHT.md) aceptada y U-Q17 en QRAFT |
+| T-031 | [Ficha de pseudopotenciales](docs/scientific-protocols/PSEUDOS.md) aceptada y U-Q18 en QRAFT |
+| T-035 | [ADR-018](docs/adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) (aceptado, QRAFT), [WF-EOS](docs/scientific-protocols/WF-EOS.md) aceptada, U-Q10 y U-Q11 |
+| T-036 (gap, fat bands y masas) | [WF-ELECTRONIC](docs/scientific-protocols/WF-ELECTRONIC.md) aceptada, con su política v1, y U-Q13 en QRAFT |
+| T-037 | Usa la convergencia de malla y de malla k de QRAFT fijado, sin reimplementarla; la plataforma guarda regla e informe y registra la aceptación humana ([fichas](docs/scientific-protocols/README.md)) |
+| T-040 | WF-SURFACE aceptada, U-Q12 y DL-02 con el caso de corrección dipolar |
+| T-041 | Criterio de equivalencia HF-1/HF-2 fijado en un ADR antes de U-H5 |
+| T-042 | Utilidades (`vibra`, `fcbuild`, `denchar`) en el lock del worker y en el probe de runtime; para moléculas, las frecuencias salen del `.FC` con proyección de Eckart, no de `vibra` (presets F-3) |
+| T-047 | U-Q7 (fencing) en QRAFT |
+| T-049, T-050 | HF-1 no se anuncia en PBS ni Kubernetes hasta calificar la prueba de muerte del dueño de ADR-017 §7 en ese target |

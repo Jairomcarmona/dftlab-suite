@@ -24,6 +24,7 @@ const tasks = [
   'app/scripts/build.mjs',
   'app/tests/tooling/run_serve_tests.mjs',
   'contracts/scripts/check-contracts.mjs',
+  'scripts/check-protocol-vectors.mjs',
   'docs/inventory/audit.mjs',
 ];
 
