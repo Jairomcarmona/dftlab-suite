@@ -1,6 +1,6 @@
 # Ficha de entrada: pseudopotenciales, especies y bundles (T-031)
 
-Estado: **lista para aceptar**. Autoridad: el preflight y el staging de QRAFT (`engines/siesta/pseudopotentials.py`) deciden si una corrida puede usar un conjunto de pseudos; la plataforma guarda la biblioteca, los hashes y las licencias. Fuente: [maestro §10](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) («Se controla XC, valencia, relatividad, capacidades y alias») y [plan T-031](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md). Evidencia: [corridas de pseudos](../reviews/evidencia-p5-p10/README.md#pseudopotenciales-t-031).
+Estado: **aceptada** (2026-10-12), salvo la licencia de la biblioteca. Autoridad: el preflight y el staging de QRAFT (`engines/siesta/pseudopotentials.py`) deciden si una corrida puede usar un conjunto de pseudos; la plataforma guarda la biblioteca, los hashes y las licencias. Fuente: [maestro §10](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) («Se controla XC, valencia, relatividad, capacidades y alias») y [plan T-031](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md). Evidencia: [corridas de pseudos](../reviews/evidencia-p5-p10/README.md#pseudopotenciales-t-031).
 
 Esta ficha está escrita para que la implemente quien solo programa: si algo no está aquí, en el oráculo o en los vectores, **se pregunta antes de decidirlo**. Los vectores dicen lo que hizo SIESTA; no se cambian para que una prueba pase.
 
@@ -46,6 +46,8 @@ La biblioteca del proyecto (`app/dftlab/data/pseudos/`, con su [README](../../ap
 2. **Plataforma:** catálogo con los campos de D-5, alias de D-4 y texto de D-6; el bundle lleva los archivos con el nombre de su etiqueta y el manifiesto de hashes.
 3. Subir el pin de QRAFT cuando U-Q18 entre.
 
-## Decisión pendiente de Manuel
+## Decisiones de Manuel
 
-Aceptar U-Q18 y su orden (después de U-Q9), y decir qué licencia declara la biblioteca propia.
+Aprobado por Manuel el 2026-10-12: U-Q18, que entra en QRAFT después de U-Q9.
+
+Pendiente: qué licencia declara la biblioteca propia. Hasta entonces el catálogo la muestra como «sin licencia declarada» (D-5) y un bundle no se presenta como redistribuible.

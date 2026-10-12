@@ -182,7 +182,7 @@ def water(L, shift=None):
 
 # rc máximos de la salida de SIESTA (DZP, PAO.EnergyShift por defecto), en Bohr.
 RADII = {'O': {'orb': 4.299534, 'kb': 1.372412}, 'H': {'orb': 5.232664, 'kb': 1.328875}}
-POLICY = {'policy_id': 'qraft.presets.policy@1-draft', 'max_reference_force_eV_A': 0.01}
+POLICY = {'policy_id': 'qraft.presets.policy@1', 'max_reference_force_eV_A': 0.01}
 
 cases = []
 def C(**k): cases.append(k)

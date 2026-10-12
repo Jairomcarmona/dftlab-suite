@@ -190,7 +190,7 @@ for cid, names, btxt, b, title in (('el-fat-spd', ('s', 'p', 'd'), ftxt, F, 'Pro
 
 doc = {'schema': 'dftlab.protocol-vectors@1', 'protocol': 'ELECTRONIC', 'ficha': 'docs/scientific-protocols/WF-ELECTRONIC.md',
        'oracle': 'docs/scientific-protocols/vectors/electronic-oracle.mjs', 'engine': 'SIESTA 5.4.2 y fat (siesta-env conda-forge)',
-       'policy': 'qraft.electronic.policy@1-draft', 'arithmetic_tolerance': {'rel': 1e-6, 'abs': 1e-9}, 'inputs': inputs, 'cases': cases}
+       'policy': 'qraft.electronic.policy@1', 'arithmetic_tolerance': {'rel': 1e-6, 'abs': 1e-9}, 'inputs': inputs, 'cases': cases}
 open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'electronic.cases.json'), 'w').write(json.dumps(doc, ensure_ascii=False, indent=1) + '\n')
 print(len(cases), 'casos')
 for c in cases:

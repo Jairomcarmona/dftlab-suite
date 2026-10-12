@@ -9,7 +9,7 @@
     "qraft": {
       "repository": "https://github.com/Jairomcarmona/siestaflow",
       "branch_hint": "main",
-      "commit": "41043edcabef39026fe3cb6b7776362695faf9c6",
+      "commit": "334df6603fa739562c2696c7cf4f5f5733eb1a37",
       "distribution": "qraft-hpc",
       "declared_version": "0.2.0",
       "module": "qraft",
@@ -20,12 +20,6 @@
           "status": "INSTALL_PUBLIC_API_HELP_VERIFIED",
           "installed_distribution": "qraft-hpc",
           "installed_version": "0.2.0",
-          "wheel": {
-            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
-            "bytes": 475959,
-            "sha256": "288337c8778a4b20e24b30a2c290812f9a6b043057c54e3213637e4ca33b4d88"
-          },
-          "installed_file_manifest_sha256": "4d029039c506a524864895946f3566029fa73962de595e16393c21ae1166d426",
           "public_import": {
             "exit_code": 0,
             "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d"
@@ -52,21 +46,21 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/windows_native_x86_64_ola1.json",
-          "evidence_sha256": "cb10dcf397529d024af573ac9a94a755c8740375dcc4ff25df9ae824b1917a16",
+          "evidence_file": "deployment/local/evidence/windows_native_x86_64_hf1.json",
+          "evidence_sha256": "4b857bb53ea70669bc55b08039ff95c27677856409abd4b36649d28a47c06602",
           "scientific_qualification": "PENDING",
-          "hpc_runtime_qualification": "PENDING"
+          "hpc_runtime_qualification": "PENDING",
+          "wheel": {
+            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
+            "bytes": 513715,
+            "sha256": "67b80b6c67c361adbeda5de146b9024e2150c2bd611382904ae50ae2885ee687"
+          },
+          "installed_file_manifest_sha256": "7aaafbec3641e9e569e65daa16d4b01400378448d16126ce45c6d1a07bd292c6"
         },
         "wsl2_linux_x86_64": {
           "status": "INSTALL_PUBLIC_API_HELP_VERIFIED",
           "installed_distribution": "qraft-hpc",
           "installed_version": "0.2.0",
-          "wheel": {
-            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
-            "bytes": 475917,
-            "sha256": "42d446af2df14995ba44a2083c5ba50e1e523d921a9b04cbda79146ada3f4a2f"
-          },
-          "installed_file_manifest_sha256": "9f817a2c69a27635ff5d351127a962f4f26786388c15bedf25087e3d81f1f395",
           "public_import": {
             "exit_code": 0,
             "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d"
@@ -93,10 +87,16 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_ola1.json",
-          "evidence_sha256": "c48fc3db49fb0b4e878a575e66ba5d6694da305b6d766b5504283b4a280637ce",
+          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_hf1.json",
+          "evidence_sha256": "8258d48198c1e0b13a0369011ac70f5db3253f4379a1f7cdbc80c7c747ac1831",
           "scientific_qualification": "PENDING",
-          "hpc_runtime_qualification": "PENDING"
+          "hpc_runtime_qualification": "PENDING",
+          "wheel": {
+            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
+            "bytes": 513673,
+            "sha256": "b584244402e846cf5f67cf6953082e370b1db00e9d527abcfa5f8bbcc498df5b"
+          },
+          "installed_file_manifest_sha256": "5949b7ab9ab5847c1105f59d6c890e7d4ba0eef5f3078492ab8f5fe81dc7df84"
         }
       },
       "operational_capabilities": {
@@ -124,15 +124,15 @@
         ]
       },
       "upstream_delivery": {
-        "pull_request": "https://github.com/Jairomcarmona/siestaflow/pull/9",
-        "merge_commit": "41043edcabef39026fe3cb6b7776362695faf9c6"
+        "pull_request": "https://github.com/Jairomcarmona/siestaflow/pull/12",
+        "merge_commit": "e4cac1e"
       },
-      "source_archive_sha256": "0e9f2aaff0172c8d16c0ab2df3ad807f2bfe176068b802846856d1c8df7fa6bd"
+      "source_archive_sha256": "aa488a8e33093c3479df3ad0e0999e985edb5924f9a8c39bb7dcd558912ad007"
     },
     "hubbardflow": {
       "repository": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE",
       "branch_hint": "codex/hubbardflow-rename",
-      "commit": "32ac1936e396e33d7de63421f128b5e1c0641cdd",
+      "commit": "d7e0b77be20f1f7bd67522764db5b366ebc3ab07",
       "distribution": "hubbardflow",
       "declared_version": "0.1.3",
       "module": "hubbardflow",
@@ -145,12 +145,6 @@
           "status": "INSTALL_PUBLIC_API_HELP_VERIFIED",
           "installed_distribution": "hubbardflow",
           "installed_version": "0.1.3",
-          "wheel": {
-            "file": "hubbardflow-0.1.3-py3-none-any.whl",
-            "bytes": 532552,
-            "sha256": "d730ce41218e122a07d468bc3d9c256a1055af43bb9ab71582eb63ba11ee4be9"
-          },
-          "installed_file_manifest_sha256": "5405029a9e71e390c7fca959b1b8b6910ccc1d8a6f5568d2090967cc2f071ded",
           "public_import": {
             "exit_code": 0,
             "log_sha256": "f0cf375f900b931628cc95974e769cf8b63c4e9424d66016c0e3fe6c68f56d2c"
@@ -177,21 +171,21 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/windows_native_x86_64_ola1.json",
-          "evidence_sha256": "cb10dcf397529d024af573ac9a94a755c8740375dcc4ff25df9ae824b1917a16",
+          "evidence_file": "deployment/local/evidence/windows_native_x86_64_hf1.json",
+          "evidence_sha256": "4b857bb53ea70669bc55b08039ff95c27677856409abd4b36649d28a47c06602",
           "scientific_qualification": "PENDING",
-          "hpc_runtime_qualification": "PENDING"
+          "hpc_runtime_qualification": "PENDING",
+          "wheel": {
+            "file": "hubbardflow-0.1.3-py3-none-any.whl",
+            "bytes": 563137,
+            "sha256": "348435d595e5ae9a27df914caa0208061c6473ea0a0af10c86089d6612801901"
+          },
+          "installed_file_manifest_sha256": "261b047f5382d2462e7f0c865148d768525e41af929ad1ef48d5fdd3400bb764"
         },
         "wsl2_linux_x86_64": {
           "status": "INSTALL_PUBLIC_API_HELP_VERIFIED",
           "installed_distribution": "hubbardflow",
           "installed_version": "0.1.3",
-          "wheel": {
-            "file": "hubbardflow-0.1.3-py3-none-any.whl",
-            "bytes": 532550,
-            "sha256": "6eecba060ba010838a25342997bae2b2450c204c6f66574d9fd2c19dd356aedd"
-          },
-          "installed_file_manifest_sha256": "1139876c91f2d990b56230302019e4399496077cabfcbd8800f26b8f2ccea659",
           "public_import": {
             "exit_code": 0,
             "log_sha256": "f0cf375f900b931628cc95974e769cf8b63c4e9424d66016c0e3fe6c68f56d2c"
@@ -218,10 +212,16 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_ola1.json",
-          "evidence_sha256": "c48fc3db49fb0b4e878a575e66ba5d6694da305b6d766b5504283b4a280637ce",
+          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_hf1.json",
+          "evidence_sha256": "8258d48198c1e0b13a0369011ac70f5db3253f4379a1f7cdbc80c7c747ac1831",
           "scientific_qualification": "PENDING",
-          "hpc_runtime_qualification": "PENDING"
+          "hpc_runtime_qualification": "PENDING",
+          "wheel": {
+            "file": "hubbardflow-0.1.3-py3-none-any.whl",
+            "bytes": 563136,
+            "sha256": "4414ec06fa2c1d36f7703295414f04a545ca5a290e9dd8b14f66ba664576b119"
+          },
+          "installed_file_manifest_sha256": "224374bbdd2e2cf6f877064e6186e2ed902cbfb5c3ce953a2aa3dd55448ee2e0"
         }
       },
       "operational_capabilities": {
@@ -250,10 +250,10 @@
         ]
       },
       "upstream_delivery": {
-        "pull_request": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/pull/42",
-        "merge_commit": "32ac1936e396e33d7de63421f128b5e1c0641cdd"
+        "pull_request": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/pull/44",
+        "merge_commit": "d7e0b77be20f1f7bd67522764db5b366ebc3ab07"
       },
-      "source_archive_sha256": "fc4fa6de69053cdaa4bc7a2aa3fa67b6e7cc31833dc70613047c38959ad051e7"
+      "source_archive_sha256": "6eaa8ec8cdca49dec60c94146072ae65a773e11f3de6ffc5325ce89ea01638cb"
     }
   },
   "pending": [

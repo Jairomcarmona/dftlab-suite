@@ -4,7 +4,7 @@
  "ficha": "docs/scientific-protocols/WF-ELECTRONIC.md",
  "oracle": "docs/scientific-protocols/vectors/electronic-oracle.mjs",
  "engine": "SIESTA 5.4.2 y fat (siesta-env conda-forge)",
- "policy": "qraft.electronic.policy@1-draft",
+ "policy": "qraft.electronic.policy@1",
  "arithmetic_tolerance": {
   "rel": 1e-06,
   "abs": 1e-09

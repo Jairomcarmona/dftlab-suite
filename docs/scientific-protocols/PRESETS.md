@@ -1,6 +1,6 @@
 # Ficha de entrada: presets de corrida simple S-01…S-08 (T-029)
 
-Estado: **lista para aceptar**. Las decisiones están cerradas y probadas con SIESTA 5.4.2; Manuel aprueba la política v1 y los cambios upstream U-Q14…U-Q16. Dueño de los gates: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md): QRAFT es la autoridad de los protocolos SIESTA no Hubbard). La plataforma elige el preset, construye el `RunIntent` y presenta. Fuente: [maestro §9.2](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) y [plan T-029](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md). Evidencia: [corridas de presets](../reviews/evidencia-p5-p10/README.md#presets-s-01s-08).
+Estado: **aceptada** (2026-10-12). Las decisiones están cerradas y probadas con SIESTA 5.4.2; Manuel aprobó la política v1 y los cambios upstream U-Q14…U-Q16. Dueño de los gates: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md): QRAFT es la autoridad de los protocolos SIESTA no Hubbard). La plataforma elige el preset, construye el `RunIntent` y presenta. Fuente: [maestro §9.2](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) y [plan T-029](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md). Evidencia: [corridas de presets](../reviews/evidencia-p5-p10/README.md#presets-s-01s-08).
 
 Esta ficha está escrita para que la implemente quien solo programa: si algo no está aquí, en el oráculo o en los vectores, **se pregunta antes de decidirlo**. No se cambian los valores de la política ni los vectores para que una prueba pase.
 
@@ -14,7 +14,7 @@ Esta ficha está escrita para que la implemente quien solo programa: si algo no 
 
 | # | Regla | Por qué |
 |---|---|---|
-| P-1 | Cada preset produce un `RunIntent` (`contracts/schemas/run-intent.schema.json`) con `protocol.protocol_id` y `protocol.version` de la tabla de presets, `purpose` `EXPLORATORY` por defecto y `numerical_policy_ref` a `qraft.presets.policy@1-draft`. | Maestro §9.2: «todo preset produce un RunIntent». |
+| P-1 | Cada preset produce un `RunIntent` (`contracts/schemas/run-intent.schema.json`) con `protocol.protocol_id` y `protocol.version` de la tabla de presets, `purpose` `EXPLORATORY` por defecto y `numerical_policy_ref` a `qraft.presets.policy@1`. | Maestro §9.2: «todo preset produce un RunIntent». |
 | P-2 | La energía de una corrida es la última `siesta: FreeEng =` (6 decimales), como en [WF-EOS](WF-EOS.md) E-4. | Una sola regla de lectura en toda la plataforma. |
 | P-3 | El FDF usa los nombres no obsoletos de 5.4.2: `FC.Displacement`, `FC.First`, `FC.Last` (no `MD.FCDispl`, que 5.4.2 marca «deprecated») y `Charge.Mulliken end` (no `WriteMullikenPop`). Única excepción: S-05 escribe `MD.NumCGSteps 0` porque QRAFT M6 lo exige; 5.4.2 lo traduce a `MD.Steps` (comprobado con 0 y con 2). | El log `fdf.*.log` de 5.4.2 avisa de los nombres obsoletos. |
 | P-4 | En toda relajación, la fuerza neta de la última geometría cumple \|ΣF\| < `MD.MaxForceTol`; si no, `NET_FORCE_ABOVE_TOLERANCE` en **revisión** (no rechazo: es ruido de la malla, no un fallo de la relajación). Solo se aplica sin `Geometry.Constraints`; con átomos fijos la fuerza neta no es cero (S-04) y solo se informa. En S-01 la fuerza neta también solo se informa. | Por invariancia traslacional ΣF = 0; lo que queda es error de la malla real. En H2O relajada a 200 Ry, \|ΣF\| fue 0.0008 eV/Å; con la misma geometría a 300, 400 y 500 Ry fue 0.092, 0.022 y 0.307 eV/Å, y a 700 Ry 0.0003 eV/Å. Una fuerza neta mayor que la tolerancia hace que «relajada» no signifique nada. |
@@ -91,13 +91,13 @@ M6 sin cambios. El FDF lleva `MD.TypeOfRun CG` y `MD.NumCGSteps 0` (requisito de
 
 Ruta M8 de QRAFT sin cambios: `validate_magnetic_input` acepta solo declaraciones magnéticas completas y exige evidencia de pseudo relativista para SOC. En una molécula se aplican además M-3 y M-4. Un sistema periódico con carga neta ya da `PERIODIC_NET_CHARGE_REVIEW` en el validador de QRAFT; el preset lo muestra tal cual.
 
-## Política v1 propuesta (`qraft.presets.policy@1-draft`, aprueba Manuel)
+## Política v1 (`qraft.presets.policy@1`, aprobada por Manuel el 2026-10-12)
 
 | Campo | Valor | Razón |
 |---|---|---|
 | `max_reference_force_eV_A` | 0.01 | H2O relajada con tolerancias de 0.005 y 0.002 eV/Å dio Max entre 0.0006 y 0.0034 eV/Å al iniciar FC; sin relajar, 2.3 eV/Å |
 | `fc_displacement_A` | 0.02 | F-2 |
-| `imaginary_tol_cm1` | 20 (propuesto) | F-6. Medido con SIESTA 5.4.2 (DZP/PBE, relajación CG y FC a 0.02 Å): H2O a 200, 400 y 700 Ry y etano SZP a 200 Ry no dan ninguna frecuencia proyectada negativa; la más baja es la torsión del etano, 256 cm⁻¹. El ruido no se pudo acotar porque no apareció ninguno, así que 20 es un margen conservador y no un valor ajustado. Manuel confirma o cambia el valor |
+| `imaginary_tol_cm1` | 20 (aprobado por Manuel el 2026-10-12) | F-6. Medido con SIESTA 5.4.2 (DZP/PBE, relajación CG y FC a 0.02 Å): H2O a 200, 400 y 700 Ry y etano SZP a 200 Ry no dan ninguna frecuencia proyectada negativa; la más baja es la torsión del etano, 256 cm⁻¹. El ruido no se pudo acotar porque no apareció ninguno, así que 20 es un margen conservador y no un valor ajustado. Manuel aprobó el valor |
 | `symprec_A` | el de G-02 (T-028) | V-4; se fija con la ficha de T-028 |
 
 Ningún otro gate de esta ficha tiene umbral: se decide con líneas de la salida o con las tolerancias que el propio FDF declara.
@@ -112,7 +112,6 @@ Ningún otro gate de esta ficha tiene umbral: se decide con líneas de la salida
 2. **QRAFT U-Q14** (gates de molécula, M-1…M-4), **U-Q15** (P-4 y `NOT_RELAXED` en M5; protocolo de celda variable V-1…V-4) y **U-Q16** (FC y análisis armónico F-1…F-6). Cada uno porta su parte de `presets.cases.json` como fixture y debe pasarla sin cambiar valores ni tolerancias.
 3. **Plataforma.** Subir el pin de QRAFT y quitar `DESIGNED` de cada preset cuyo cambio upstream entró.
 
-## Decisiones pendientes de Manuel
+## Decisiones de Manuel
 
-1. Aprobar la política v1.
-2. Aceptar U-Q14…U-Q16 en el inventario de QRAFT y su orden respecto de U-Q10…U-Q13 (todos después de U-Q9).
+Aprobado por Manuel el 2026-10-12: la política v1 y U-Q14…U-Q16, que entran en QRAFT después de U-Q9 junto con U-Q10…U-Q13.

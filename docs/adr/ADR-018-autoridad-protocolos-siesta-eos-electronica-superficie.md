@@ -63,6 +63,6 @@ Revisión independiente de las fichas del PR #60. Las fichas [PRESETS](../scient
 - QRAFT es la autoridad de los gates de molécula, relajación y celda variable, vibración molecular (FC), lectura del FDF y verificación de pseudos: **U-Q14…U-Q18** del [inventario](../compatibility/QRAFT_4d996ea.md#5-cambios-upstream-necesarios-ola-1-codex).
 - La plataforma solo elige el preset, construye el `RunIntent` y presenta; el frontend es vista previa.
 - Orden: igual que U-Q10…U-Q13, todos **después** de U-Q9.
-- Los umbrales de presets viven en `qraft.presets.policy@1-draft` (ADR-009) y los aprueba Manuel.
+- Los umbrales de presets viven en `qraft.presets.policy@1` (ADR-009) y los aprueba Manuel.
 
-Estado: **propuesta**, pendiente de que Manuel la acepte.
+Estado: **aceptada** por Manuel el 2026-10-12 (aprobación de las políticas v1 y de U-Q13…U-Q18).
