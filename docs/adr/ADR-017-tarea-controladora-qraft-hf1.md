@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; está propuesta, pendiente de aprobación. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -496,3 +496,133 @@ la copia nativa de este caso inconsistente. Los vectores nuevos comprueban la
 precedencia y los fixtures inválidos rechazan un resultado neutral ordinario,
 un mismatch con cambios o un blocking fabricado bajo ese reason. La razón,
 la versión del contrato y todos sus campos ya existían.
+
+## Adenda 4 (2026-10-12, issue #70): caso de calificación real HF-1 e integridad tras caída sin sello
+
+Estado: **propuesta, pendiente de aprobación de Manuel**. Fija el caso que §Pruebas llama «HF-1 real pequeño en WSL» y cierra un hueco de §6 que la calificación encontraría. No cambia fórmulas, gates, tolerancias, schemas ni la política de reutilización. La ficha ejecutable está en [`ADR-017-caso-calificacion-hf1-nio.json`](ADR-017-caso-calificacion-hf1-nio.json); si este texto y la ficha difieren, se detiene y se pregunta.
+
+### D.1 Caso elegido: NiO AFM-II PBE de Stage U-B V6
+
+Se reutiliza un caso ya aprobado, sin ciencia nueva: el material NiO de Stage U-B en HubbardFlow `d7e0b77` (`benchmarks/lr_u/stage_u_b/materials/NiO/`), con calificación U `ACCEPTED` en el baseline V6 ([`SCIENTIFIC_BASELINE_V6.md`](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/d7e0b77be20f1f7bd67522764db5b366ebc3ab07/docs/history/SCIENTIFIC_BASELINE_V6.md)).
+
+| Elemento | Valor |
+|---|---|
+| Sistema | NiO rocksalt, celda magnética AFM-II de 4 átomos (2 Ni, 2 O), `a = 4.17 Å` |
+| Física | PBE, espín polarizado, DZP (`EnergyShift 0.005 Ry`), `MeshCutoff 200 Ry`, malla k 2×4×4, proyectores `DFTU.proj` 3d con radio 3.0 Bohr |
+| Sitios | `NiLR0` (átomo 1) y `NiLR1` (átomo 2) |
+| Malla α | `±0.02, ±0.04, ±0.06 eV`, `FIXED_PROTOCOL_GRID`, BARE y SCREENED |
+| Análisis | polinomio grado 3, `minimum_residual_dof = 1`, inversión `raw` |
+| DAG | 1 referencia + 24 respuestas (25 SIESTA), `alpha-diagnostic-gate`, `matrix-analysis` |
+| Ejecución | SIESTA 5.4.2 Open MPI, 4 ranks, 1 SIESTA a la vez |
+
+Por qué es el más barato que ejercita de verdad la respuesta lineal: tiene los dos modos y la inversión de una matriz 2×2 completa (`χ⁰` y `χ` de rango 2), y una campaña entera dura de 5 a 8 minutos en la laptop. En la corrida P5 los nodos tardaron unos 44 s (referencia), 6 s (BARE) y de 20 a 30 s (SCREENED).
+
+| Alternativa | Motivo para no elegirla |
+|---|---|
+| Un solo sitio Ni | Es ciencia nueva, sin corrida previa con la que comparar, y no ejercita la inversión matricial |
+| NiO 2×1×1 de `corridas/nio` | No es una campaña HubbardFlow ni usa estos inputs aprobados |
+| FeO o CoO de Stage U-B | Más caros; CoO quedó en `REVIEW` |
+| MnO | `PROTOCOL_REVIEW_REQUIRED` en Stage U-B |
+
+### D.2 Entradas fijadas
+
+La campaña se inicializa con HubbardFlow `d7e0b77` instalado, desde los archivos fuente de abajo, sin editarlos. Los hashes con «sí» no dependen de la ruta ni del UUID: Claude inicializó la campaña dos veces en raíces distintas con `initialize_campaign` de ese commit y salieron idénticos.
+
+| Archivo | SHA-256 | Independiente de ruta |
+|---|---|---|
+| `materials/NiO/reference.fdf` → `reference.fdf` | `b4fb34e642d862be6949a5b2033a60c5b9fcae56119879583bb3eaf237620ee7` | sí |
+| `materials/NiO/material.json` → `provenance/source_lr_config.json` | `4d1ee8d43dd10438e1d85f2132a2767242d8d83b1018e65bc6fbf476c2e0cc8d` | sí |
+| `pseudopotentials/NiLR0.psml` y `NiLR1.psml` (mismo archivo) | `192eb05ffb64671715e570e2ca9a99a551cf15544984592082d43004f8554e06` | sí |
+| `pseudopotentials/O.psml` | `224ded5c59176d9bcb76d19b7a4a68a48d5dffabf8b262f64d5760250e87c35e` | sí |
+| `runtime/backend_compatibility.json` | `5189620dfa1e8b6090cbdbb9c36c412835d16feb5c50bbc82b16c139d3bcff2e` | sí |
+| `runtime/siesta_version.txt` | `bb5a9b03dfaec9953401a7ef8db045149461047c44f15f9c5bf7758900b5f3ee` | sí |
+| `resolved_perturbation_plan.json` (generado) | `bb6f99dba2414e50889a35c5b4f440e63924745b6a9533ce85c296a6f644abd9`; digest del plan `ce285ffdc500f40204861fb36121d81f3eb246abe15d41632ab793b795f1eb0c` | sí |
+| `campaign.lock` (generado) | `d85cbf053a3a62f2fac2e1bcdb969f8ce28c462fcc582af3e83d55f3a6643226` | sí |
+
+`lr_config.json`, `backend_contract.json`, `execution_profile.json`, `campaign_id` e `input_identity` dependen de la ruta o del UUID y no se fijan. El perfil de ejecución es el privado ya declarado `VALIDATED_RUNTIME` (4 CPU, 4 ranks). La raíz de la campaña es `paths.state_dir` (§6, Adenda 2 §B.2). La tarea `controller` usa `reservation = {nodes: 1, inner_launcher: openmpi, inner_processes_per_node: 4, inner_cpus_per_process: 1, max_concurrent_inner_launches: 1}` y `max_attempts: 3`.
+
+### D.3 Resultado esperado y tolerancia
+
+La cantidad es `U_scalar_charge` y sigue siendo `physical_acceptance = NOT_ESTABLISHED` (ADR-006 §4). El valor esperado sale de corridas, no de la literatura: el U de respuesta lineal depende de cómo se definen los proyectores y la base, así que un valor publicado no sirve como tolerancia.
+
+| Sitio | Esperado (eV) |
+|---|---|
+| NiLR0 | 6.864267700049239 |
+| NiLR1 | 6.864387475210124 |
+
+Estos inputs ya corrieron tres veces en el WSL de Manuel, con el mismo binario SIESTA 5.4.2 y 4 ranks: P5 (2026-09-28), `nio_p5_product_2` y TASK22 (2026-10-03, HubbardFlow `0a8a12f`). El objeto `primary` salió idéntico en las tres, con ΔU = 0 ([`TASK22_REAL_RUN.md`](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/d7e0b77be20f1f7bd67522764db5b366ebc3ab07/docs/fdebq/TASK22_REAL_RUN.md)). Claude no corrió SIESTA en su contenedor: otro build no puede fijar una igualdad bit a bit en el binario de Manuel, y la evidencia del target ya existe.
+
+- **Tolerancia: `|ΔU| ≤ 0.020 eV` por sitio.** Es la `u_precision_tolerance_eV` ya vigente en `precision_policy.json` de Stage U-B y en el `analysis_policy` de este material; no es un número nuevo. Cubre la cota determinista de redondeo de impresión de este mismo dataset, 0.0118 eV.
+- **Lo esperado es ΔU = 0.** Una diferencia distinta de cero dentro de la tolerancia pasa, pero se reporta como observación.
+
+### D.4 Corridas, nodos y puntos de interrupción
+
+Las dos corridas usan campañas nuevas con las mismas entradas. El orden de lanzamiento es el del DAG nativo (`GenericDagExecutor` toma el primer nodo listo en orden): referencia, y luego, para el sitio 0 y después el sitio 1, cada α de −0.06 a +0.06 con BARE antes que SCREENED.
+
+**C0, control sin interrupción.** Una tarea `controller` completa. Prueba el camino fresco y da el valor del código fijado. Se compara con D.3.
+
+**Q, calificación con cancelación y caída.**
+
+| Paso | Acción | Esperado |
+|---|---|---|
+| Q1 | Intento 1. Cuando el libro tiene `LAUNCH_STARTED` de `response:lr_s000_m0p06_screened` (tercer lanzamiento) sin `LAUNCH_FINISHED`, y su `siesta.out` ya tiene al menos una línea `scf:`, se cancela con la **cancelación de la plataforma** (§5: `stop_request` y `SIGTERM` al supervisor) | `LAUNCH_ABANDONED` de esa clave; `controller-closure.json` = `CLOSED`; sello del estado escrito; lease liberado; intento `INTERRUPTED` |
+| Q2 | Intento 2 en un job nuevo | `previous_attempt.closure = CLOSED`; veredicto `CONTINUE / TECHNICAL_CONTINUATION`; ningún `LAUNCH_INTENT` de una clave asentada; `response:lr_s000_m0p06_screened` se relanza |
+| Q3 | Cuando `response:lr_s000_p0p02_screened` está en su SCF (misma condición que Q1), `kill -9` **solo al PID del runtime de QRAFT**. Se guardan `ps -o pid,ppid,sid,stat,cmd` del árbol, `sacct` del job y `scontrol show config` (`ProctrackType`) | El job puede quedar terminal en SLURM; supervisor, controlador o SIESTA pueden seguir vivos (es el riesgo de `proctrack/linuxproc`) |
+| Q4 | Enseguida, en el mismo arranque, se pide el siguiente intento | `BLOCKED` con `CONTROLLER_PREVIOUS_OWNER_ALIVE`; no arranca supervisor ni SIESTA. Un job terminal no libera nada |
+| Q5 | `wsl --shutdown` desde Windows; se reinicia WSL, munge y SLURM; se comprueba que `/proc/sys/kernel/random/boot_id` cambió | — |
+| Q6 | Intento 3 | `previous_attempt.closure = OWNER_DEAD_BY_BOOT_CHANGE`; integridad según D.5; veredicto `CONTINUE`; al menos un `LAUNCH_INTENT`; la campaña termina |
+
+Precondiciones de validez de Q:
+
+- En Q1 ya están asentadas la referencia y `response:lr_s000_m0p06_bare`.
+- En Q6 queda al menos un nodo lanzable sin asentar.
+
+Si alguna falla (por ejemplo, el orden de lanzamiento no es el esperado o el supervisor huérfano terminó la campaña antes de Q5), Q es `INCONCLUSIVE`. Se repite completa con una campaña nueva. **No se elige otro nodo.** Si Q4 consume un intento de `max_attempts`, se detiene y se reporta.
+
+### D.5 Integridad tras caída sin sello (cambia §6; requiere U-Q9b)
+
+**Hueco encontrado.** En QRAFT `c3ecdea`, `previous_controller_owner` exige `controller-state-manifest.json`, el sello que el supervisor escribe **al cerrar**, incluso cuando la prueba es `OWNER_DEAD_BY_BOOT_CHANGE` (`src/qraft/execution/controller_state.py`). Tras una caída real (`wsl --shutdown`, corte de luz u OOM del supervisor) ese sello no existe. La lectura falla y la tarea queda `BLOCKED` con `CONTROLLER_STATE_TAMPERED`. La prueba sintética `test_positive_owner_death_and_sealed_state` escribe el sello antes de simular el cambio de `boot_id`, un estado que una caída real no puede producir. Así, Q6 no podría pasar nunca, y §Consecuencias («retiene recursos y cerrojo hasta reiniciar el host») tampoco se cumpliría.
+
+**Regla.** Con la prueba `OWNER_DEAD_BY_BOOT_CHANGE`, QRAFT decide así:
+
+| Sello `controller-state-manifest.json` | `controller-closure.json` | Decisión |
+|---|---|---|
+| Existe | cualquiera | Se compara como hoy; si difiere, `CONTROLLER_STATE_TAMPERED` |
+| No existe | No existe | **Caída sin sello.** No es manipulación: no hay con qué comparar. QRAFT mide el manifiesto al admitir, lo pone en `previous_attempt.state_manifest_sha256` y lo registra en la evidencia del intento como `state_seal: ABSENT_AFTER_BOOT_CHANGE`. La continuidad descansa en el veredicto nativo de la Adenda 2 |
+| No existe | Existe | `CONTROLLER_STATE_TAMPERED`: el supervisor escribe el sello antes del cierre, así que esa combinación no sale de una caída |
+
+Con la prueba `CLOSED` el sello sigue siendo obligatorio. Sin cambio de `boot_id` y sin cierre, sigue `CONTROLLER_PREVIOUS_OWNER_ALIVE`. No cambia ningún schema: `state_manifest_sha256` ya existe y el marcador va a la evidencia nativa de QRAFT.
+
+**Qué protege entonces.** La línea base `resume-baseline.json`, `check_resume`, la concordancia libro–checkpoint y la revalidación nativa en seco de cada recibo (Adenda 2 §B.2–§B.3) detectan cambios de plan, pseudo, `.DM`, política y evidencia asentada. El nodo que se cortó a mitad de SCF es el caso «nodo interrumpido» que la Adenda 2 ya acepta. Lo que se pierde es detectar una edición manual del estado hecha entre la caída y el reinicio que además pase la revalidación nativa. En un worker local de un solo usuario se acepta; es el precio de poder reanudar tras una caída.
+
+**Pruebas U-Q9b (QRAFT, sintéticas).** Hacen falta cuatro casos:
+
+1. Cambio de `boot_id` sin sello ni cierre: reanuda con el manifiesto medido y el marcador.
+2. Cierre sin sello: `TAMPERED`.
+3. Sello que difiere: `TAMPERED`.
+4. Mismo arranque sin cierre: `PREVIOUS_OWNER_ALIVE`.
+
+La prueba existente con sello y cambio de `boot_id` se conserva.
+
+### D.6 Veredicto de la calificación
+
+| Veredicto | Condición |
+|---|---|
+| `PASS` | C0 y Q terminan; cada paso de D.4 da lo esperado; las reglas de §4 no fallan en ningún libro; C0 y Q cumplen `|U − esperado| ≤ 0.020 eV` y `|U_Q − U_C0| ≤ 0.020 eV` por sitio |
+| `FAIL` | Un relanzamiento de clave asentada, cierre `OPEN`, un proceso ajeno señalado, un paso con un código distinto del esperado o un U fuera de tolerancia |
+| `INCONCLUSIVE` | Falla una precondición de D.4; se repite Q completa |
+
+Con `PASS`, el `CapabilityQualificationRecord` `hubbard_mode: HF-1` puede pasar de `CONTRACT_TESTED`. Con `FAIL` no se ajustan tolerancias ni nodos: se reporta.
+
+**Evidencia por corrida:**
+
+- descriptor, libros, veredictos de reanudación, `controller-closure.json` y sello de cada intento;
+- `boot_id` antes y después de Q5, y salidas de `ps`, `sacct` y `scontrol` de Q3;
+- `lr_u_analysis.v3.json` y `U_scalar_charge` por sitio;
+- duración y CPU.
+
+### D.7 Fuera de alcance
+
+- La cancelación con `scancel` directo. Con `proctrack/linuxproc`, `scancel --batch --signal=TERM` señala a todo el árbol del paso batch, también a `mpirun`, y no solo al runtime. Si se quiere calificar ese camino, va en su propio issue.
+- La prueba `OWNER_DEAD_BY_SCHEDULER_TERMINAL`, que exige `proctrack/cgroup`.
+- Varios hosts.

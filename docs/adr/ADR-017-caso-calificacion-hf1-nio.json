@@ -1,0 +1,174 @@
+{
+  "schema": "dftlab.hf1-qualification-case@1",
+  "case_id": "hf1-qual-nio-afmii-pbe-v1",
+  "status": "PROPOSED_PENDING_APPROVAL",
+  "adr": "docs/adr/ADR-017-tarea-controladora-qraft-hf1.md (Adenda 4)",
+  "issue": "https://github.com/Jairomcarmona/dftlab-suite/issues/70",
+  "source": {
+    "repository": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE",
+    "commit": "d7e0b77be20f1f7bd67522764db5b366ebc3ab07",
+    "material_dir": "benchmarks/lr_u/stage_u_b/materials/NiO",
+    "runtime_dir": "benchmarks/lr_u/stage_u_b/runtime",
+    "prior_approval": "Stage U-B V6 NiO u_qualification=ACCEPTED (docs/history/SCIENTIFIC_BASELINE_V6.md)"
+  },
+  "inputs_sha256": {
+    "reference.fdf": "b4fb34e642d862be6949a5b2033a60c5b9fcae56119879583bb3eaf237620ee7",
+    "material.json": "4d1ee8d43dd10438e1d85f2132a2767242d8d83b1018e65bc6fbf476c2e0cc8d",
+    "pseudopotentials/NiLR0.psml": "192eb05ffb64671715e570e2ca9a99a551cf15544984592082d43004f8554e06",
+    "pseudopotentials/NiLR1.psml": "192eb05ffb64671715e570e2ca9a99a551cf15544984592082d43004f8554e06",
+    "pseudopotentials/O.psml": "224ded5c59176d9bcb76d19b7a4a68a48d5dffabf8b262f64d5760250e87c35e",
+    "runtime/backend_compatibility.json": "5189620dfa1e8b6090cbdbb9c36c412835d16feb5c50bbc82b16c139d3bcff2e",
+    "runtime/siesta_version.txt": "bb5a9b03dfaec9953401a7ef8db045149461047c44f15f9c5bf7758900b5f3ee"
+  },
+  "generated_campaign_sha256": {
+    "resolved_perturbation_plan.json": "bb6f99dba2414e50889a35c5b4f440e63924745b6a9533ce85c296a6f644abd9",
+    "resolved_perturbation_plan_digest": "ce285ffdc500f40204861fb36121d81f3eb246abe15d41632ab793b795f1eb0c",
+    "campaign.lock": "d85cbf053a3a62f2fac2e1bcdb969f8ce28c462fcc582af3e83d55f3a6643226",
+    "path_dependent_not_fixed": [
+      "lr_config.json",
+      "backend_contract.json",
+      "execution_profile.json",
+      "campaign_id",
+      "input_identity"
+    ]
+  },
+  "controller_task": {
+    "kind": "controller",
+    "mpi_processes": 1,
+    "cpus_per_process": 1,
+    "nodes": 0,
+    "reservation": {
+      "nodes": 1,
+      "inner_launcher": "openmpi",
+      "inner_processes_per_node": 4,
+      "inner_cpus_per_process": 1,
+      "max_concurrent_inner_launches": 1
+    },
+    "max_attempts": 3,
+    "execution_profile": "private VALIDATED_RUNTIME profile, 4 CPU, 4 ranks (hf1-controller-profile-v1)"
+  },
+  "expected": {
+    "quantity": "U_scalar_charge",
+    "physical_acceptance": "NOT_ESTABLISHED",
+    "units": "eV",
+    "U_scalar_charge_eV": {
+      "NiLR0": 6.864267700049239,
+      "NiLR1": 6.864387475210124
+    },
+    "tolerance_abs_eV": 0.02,
+    "tolerance_source": "stage_u_b/precision_policy.json u_precision_tolerance_eV (existing)",
+    "expected_delta_eV": 0.0,
+    "evidence": [
+      "P5 2026-09-28",
+      "nio_p5_product_2",
+      "TASK22 2026-10-03 (HubbardFlow 0a8a12f)"
+    ]
+  },
+  "runs": {
+    "C0": {
+      "purpose": "uninterrupted control",
+      "steps": []
+    },
+    "Q": {
+      "purpose": "cancel + crash qualification",
+      "steps": [
+        {
+          "id": "Q1",
+          "attempt": 1,
+          "trigger": {
+            "node_id": "response:lr_s000_m0p06_screened",
+            "ledger": "LAUNCH_STARTED without LAUNCH_FINISHED",
+            "siesta_out": "at least one line containing 'scf:'"
+          },
+          "action": "platform cancel (stop_request + SIGTERM to supervisor)",
+          "expect": {
+            "ledger": "LAUNCH_ABANDONED for trigger key",
+            "closure": "CLOSED",
+            "state_seal": "PRESENT",
+            "lease": "RELEASED",
+            "attempt": "INTERRUPTED"
+          },
+          "precondition": {
+            "settled": [
+              "reference",
+              "response:lr_s000_m0p06_bare"
+            ]
+          }
+        },
+        {
+          "id": "Q2",
+          "attempt": 2,
+          "action": "start next attempt in a new job",
+          "expect": {
+            "previous_attempt.closure": "CLOSED",
+            "resume_verdict": "CONTINUE/TECHNICAL_CONTINUATION",
+            "relaunched": [
+              "response:lr_s000_m0p06_screened"
+            ],
+            "no_settled_relaunch": true
+          }
+        },
+        {
+          "id": "Q3",
+          "attempt": 2,
+          "trigger": {
+            "node_id": "response:lr_s000_p0p02_screened",
+            "ledger": "LAUNCH_STARTED without LAUNCH_FINISHED",
+            "siesta_out": "at least one line containing 'scf:'"
+          },
+          "action": "kill -9 of the QRAFT runtime PID only",
+          "record": [
+            "ps -o pid,ppid,sid,stat,cmd of the tree",
+            "sacct of the job",
+            "scontrol show config ProctrackType"
+          ]
+        },
+        {
+          "id": "Q4",
+          "action": "request next attempt in the same boot, immediately",
+          "expect": {
+            "task": "BLOCKED",
+            "reason": "CONTROLLER_PREVIOUS_OWNER_ALIVE",
+            "supervisor_started": false,
+            "attempt_consumed": false
+          }
+        },
+        {
+          "id": "Q5",
+          "action": "wsl --shutdown from Windows; restart WSL, munge, SLURM",
+          "expect": {
+            "boot_id_changed": true
+          }
+        },
+        {
+          "id": "Q6",
+          "attempt": 3,
+          "action": "start next attempt",
+          "expect": {
+            "previous_attempt.closure": "OWNER_DEAD_BY_BOOT_CHANGE",
+            "state_seal": "PRESENT or ABSENT_AFTER_BOOT_CHANGE (Adenda 4 D.5)",
+            "resume_verdict": "CONTINUE/TECHNICAL_CONTINUATION",
+            "min_launch_intents": 1,
+            "campaign": "COMPLETED"
+          },
+          "precondition": {
+            "unsettled_launchable_nodes_at_start": ">=1"
+          }
+        }
+      ]
+    }
+  },
+  "verdict": {
+    "PASS": "C0 and Q complete; every step as expected; no ledger rule fails; |U - expected| <= 0.020 eV and |U_Q - U_C0| <= 0.020 eV per site",
+    "FAIL": "settled-key relaunch, closure OPEN, foreign process signalled, unexpected code, or U outside tolerance",
+    "INCONCLUSIVE": "a precondition fails; repeat Q with a new campaign; never pick another node"
+  },
+  "requires": [
+    "U-Q9b: Adenda 4 D.5 in QRAFT, pinned"
+  ],
+  "out_of_scope": [
+    "raw scancel cancellation",
+    "OWNER_DEAD_BY_SCHEDULER_TERMINAL",
+    "multi-host"
+  ]
+}
