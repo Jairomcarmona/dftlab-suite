@@ -33,3 +33,7 @@ Los modelos del hilo principal y del validador se fijan en `.codex/config.toml` 
 - Fusionar solo con los cinco checks en verde sobre la punta: `Verify (ubuntu-24.04)`, `Verify (windows-2022)`, `Platform installed wheel` en ambos sistemas y `Regenerate references (ubuntu-24.04)`. Sin autorización de Manuel no se fusiona.
 - Actualizar en `TRASPASO.md` solo la sección propia (rama, SHA, PR, CI, pendientes, siguiente paso) y, si aplica, `REGISTRO_DEUDA.md`. Entradas breves: lo que cambió, no la bitácora completa.
 - Comprobaciones locales: `cd app && npm ci`, luego desde la raíz `node scripts/verify-original-baseline.mjs` y `node scripts/verify.mjs`.
+
+## Pocos PR (regla fija de todo el proyecto)
+
+El avance diario va en comentarios del issue de seguimiento o en notas no versionadas, no en un PR por paso. `docs/reviews/TRASPASO.md` se actualiza una sola vez por etapa cerrada, dentro del PR de código de esa etapa, o en un único PR al cerrar un bloque. Nunca se abre un PR documental solo para registrar que otro PR se fusionó. Los arreglos de código relacionados van agrupados en un solo PR. Detalle en `WORKING_RULES.md`.

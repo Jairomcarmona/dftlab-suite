@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -754,3 +754,50 @@ Codex lo ejecuta una vez, antes de C0, y ejecuta además `controller_profile_fin
 ### F.8 Pruebas
 
 `test_local_wsl_campaign_profile_is_controller_only_and_never_slurm_by_default`, `test_profile_findings_name_every_failure_at_once`, `test_outer_allocation_findings_name_every_failure_at_once` y las del preflight (`test_hf1_preflight.py`). Las pruebas que ya existían del inspector no cambian: seguían exigiendo que `local_wsl` se rechazara con el valor por omisión, y así sigue.
+
+## Adenda 7 (2026-10-12, issue #70): los dos FAIL del preflight, el resto de la calificación recorrido en seco y permiso de arreglar y reintentar
+
+Respuesta a que el preflight de F.6 parara en `HOST_PIDFD_AND_SUBREAPER` y `SLURM_PARTITION_QUEUE_EMPTY`. Alcance: se leyeron `hf1_children.py`, `runtime_probe.py`, `native_worker.py`, `slurm.py` y `hf1_preflight.py` en `main`. Nada de esto cambia lo que se califica: ni fórmulas, gates, tolerancias, contratos, pins, entradas ni el perfil privado.
+
+### G.1 Clasificación de los dos fallos
+
+| Identificador | Clase | Causa | Cierre |
+|---|---|---|---|
+| `HOST_PIDFD_AND_SUBREAPER` (`AttributeError`) | **Defecto del preflight** | El preflight llamaba a `os.pidfd_open`; CPython 3.12.10 de python-build-standalone no lo trae. `OwnedLinuxChildren` ya lo sabe y usa `pidfd_open`/`pidfd_send_signal` de glibc (`hf1_children.py`). El WSL de Manuel no está mal: las pruebas instaladas 27/27, incluidas las de descendientes propios, pasaron ahí | El preflight construye `OwnedLinuxChildren()`, el mismo constructor que usa el worker. Hecho en este PR, con prueba |
+| `SLURM_PARTITION_QUEUE_EMPTY` (7 jobs) | **Precondición más estricta que el código** | Ningún código de `main` exige cola vacía. Lo que exige la sonda de runtime es que el nodo esté `IDLE` y sin CPU ni memoria asignadas (`runtime_probe.py`), y `SLURM_ONE_IDLE_NODE_FITS` ya pasó: con el nodo `IDLE` los 7 jobs están `PENDING`, ninguno corre | Sustituida por `SLURM_PARTITION_ACTIVE_JOBS` (FAIL si algún job de la partición no está `PENDING`) y `SLURM_PARTITION_PENDING_JOBS` (INFO: cuántos, de quién, por qué razón y cuántos serían ejecutables ya). Los jobs ajenos son evidencia: nunca se cancelan, se retienen ni se liberan |
+
+Por qué no cambia lo que se califica: la medición científica (`U_scalar_charge` por sitio) y los escenarios de Q dependen de que el nodo esté `IDLE` al sondear y de que Q tenga sus 4 CPU, que es lo que sigue exigiéndose. Un job `PENDING` que no puede arrancar en el nodo no comparte CPU con SIESTA. Si uno ajeno pasa a ejecutable y ocupa el nodo, eso se ve en la sonda siguiente (G.3).
+
+### G.2 Otros huecos del mismo tipo hallados en seco
+
+| # | Etapa | Hueco | Cierre |
+|---|---|---|---|
+| K1 | Preflight | La sonda de runtime usa un lector de claves estricto (`_fields` rechaza claves repetidas en `scontrol --oneliner`) y exige `State=IDLE`; el preflight usaba otro lector y podía pasar donde la sonda fallara | Nuevo `SLURM_PROBE_SCHEDULER_VIEW`: repite las condiciones de la sonda con el mismo `_fields`. Si falla aquí, la sonda fallaría después |
+| K2 | C0, Q | Antes de cada sonda el nodo puede estar aún en `COMPLETING` o recién ocupado por un job ajeno | Antes de cada sonda, esperar a `State=IDLE` (consulta cada 5 s, hasta 600 s). Sonda y `sbatch` seguidos, sin pasos intermedios |
+| K3 | C0, Q | Si el job propio queda `PENDING` más de 600 s, la sonda (900 s) caduca antes de arrancar | Pasados 600 s `PENDING`, cancelar **solo el job propio** con `scancel <id>` (aún no tiene intento ni descriptor), sonda nueva y reenviar; máximo 2 veces. Una tercera es `INCONCLUSIVE` por precondición de D.4, se reporta |
+| K4 | Q | Un job ajeno ocupa el nodo entre intentos | Es una precondición de D.4 sin cumplir: Q es `INCONCLUSIVE` y se repite completa con campaña nueva. No se elige otro nodo y no se toca el job ajeno |
+| K5 | Q3 | `sacct` puede no funcionar si `AccountingStorageType` es `none` | La evidencia de Q3 es mejor esfuerzo: si `sacct` falla se guarda su error y se usan `scontrol show job`, `ps` y `/proc`. No es parada |
+| K6 | Todas | Reintentos del preflight: F.6 lo limitaba a una ejecución | Una ejecución **por versión corregida del código** (G.4) |
+| K7 | Q5 | Tras `wsl --shutdown` munge y SLURM pueden no levantar solos | Se levantan con el mismo método con el que Codex los dejó funcionando en esta sesión. Si pide una contraseña de `sudo` que no está disponible, es la única parada de Q5 que es de Manuel |
+
+### G.3 Qué hace el arnés con jobs ajenos
+
+Nunca ejecuta `scancel`, `scontrol hold`, `release` ni `update` sobre un job que no creó. Guarda la salida de `squeue` (jobs ajenos) antes y después de cada intento como evidencia. Si no se puede cumplir una precondición de D.4 por un job ajeno, es `INCONCLUSIVE`, no `FAIL`.
+
+### G.4 Permiso de arreglar y reintentar
+
+Para un error nuevo en el preflight, el arnés de operador, la documentación o el empaquetado:
+
+1. **Defecto de código** (el comportamiento no es el que dice el ADR): arreglar con el cambio mínimo, una prueba que lo cubra, un PR a `main` con los cinco checks verdes, reconstruir el wheel y reintentar. Máximo **2 arreglos por identificador de error**. Los arreglos no necesitan permiso adicional.
+2. **Verificación más estricta que el código** (como `QUEUE_EMPTY`): se relaja solo si se puede citar la línea de `main` que gobierna esa condición y se añade una nota de campo a esta adenda en el PR documental. Si no se puede citar, es parada.
+3. **Hecho del entorno de Manuel** (versión, permiso, servicio caído) con arreglo evidente y reversible que no toca datos de otros: se arregla con el método habitual y se anota.
+
+Nunca se arregla ni se ajusta: entradas, perfil privado, fórmulas, gates, tolerancias, contratos, pins, semántica de autoridad, cancelación o propiedad de procesos, ni jobs de otros. Esos casos y el `FAIL`/`INCONCLUSIVE` de D.6 son las únicas paradas, además de lo que decida Manuel en #70.
+
+### G.5 Pruebas
+
+`test_host_check_uses_the_worker_constructor_not_the_os_module`, `test_foreign_pending_jobs_are_evidence_and_running_jobs_are_conflicts` y `test_probe_view_uses_the_runtime_probe_strictness` en `test_hf1_preflight.py`.
+
+### G.6 Pocos PR (sustituye el primer punto de F.7)
+
+El avance vivo va en comentarios de #70, no en un PR por paso. `TRASPASO.md` se actualiza una vez por etapa cerrada dentro del PR de código de esa etapa, o en un único PR documental al final con C0 y Q juntos. Nunca un PR documental solo para anotar la fusión de otro PR. Los arreglos de código relacionados van en un solo PR. La regla general queda también en `docs/development/WORKING_RULES.md`.

@@ -20,6 +20,8 @@ Conservar `baseline-v1` y su manifiesto histórico. Trabajar sobre la copia de e
 
 Usar ramas cortas por cambio y PR contra `main`; explicar problema, resultado, contratos afectados, verificación y límites. Una migración se hace por módulos con equivalencia observable y posibilidad de reversión. No actualizar dependencias o motores indiscriminadamente.
 
+**Pocos PR (regla fija de todo el proyecto).** El avance diario se registra en comentarios del issue de seguimiento o en notas no versionadas, no con un PR por paso. `docs/reviews/TRASPASO.md` se actualiza una vez por etapa cerrada, dentro del PR de código de esa etapa, o en un único PR al cerrar un bloque. Nunca se abre un PR documental solo para anotar que otro PR se fusionó. Los arreglos de código relacionados van en un solo PR.
+
 Para esta base: `cd app && npm ci`, luego desde la raíz `node scripts/verify-original-baseline.mjs` y `node scripts/verify.mjs`. CI verifica Windows y Linux. Agregar pruebas que evalúen fallos reales o requisitos cuando cambie comportamiento; no duplicar la implementación en las pruebas.
 
 Los cálculos HPC, licencias y pruebas de instalación de los motores requieren validación propia; esta CI frontend no los acredita. Identificar claramente comprobaciones pendientes. No enviar trabajos reales al cargar una vista, montar un componente o ejecutar pruebas unitarias.

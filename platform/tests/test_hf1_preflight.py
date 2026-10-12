@@ -31,6 +31,45 @@ class HF1Preflight(unittest.TestCase):
         partition = preflight.keyed_pairs("PartitionName=local AllowGroups=ALL State=UP\n   MaxNodes=UNLIMITED MaxTime=UNLIMITED Nodes=wsl")
         self.assertEqual((partition["State"], partition["MaxTime"], partition["Nodes"]), ("UP", "UNLIMITED", "wsl"))
 
+    def test_foreign_pending_jobs_are_evidence_and_running_jobs_are_conflicts(self):
+        rows = preflight.queue_rows("41|manuel|PENDING|JobHeldUser|old|run\n42|ana|RUNNING|None|scf\n43|ana|PENDING|Priority|next\n\n")
+        self.assertEqual([row["job"] for row in rows], ["41", "42", "43"])
+        self.assertEqual(rows[0]["name"], "old|run")
+        active = [row["job"] for row in rows if row["state"] not in preflight.PENDING_STATES]
+        runnable = [row["job"] for row in rows if row["state"] in preflight.PENDING_STATES and row["reason"] in preflight.RUNNABLE_REASONS]
+        self.assertEqual((active, runnable), (["42"], ["43"]))
+
+    def test_probe_view_uses_the_runtime_probe_strictness(self):
+        outputs = {"partition": "PartitionName=local State=UP Nodes=n1 TRES=cpu=4,mem=8G",
+                   "node": "NodeName=n1 State=IDLE CPUTot=4 CPUAlloc=0 RealMemory=7900 AllocMem=0"}
+        def fake(argv, timeout=20):
+            text = outputs[argv[3]]
+            return type("Done", (), {"returncode": 0})(), text
+        original = preflight._run
+        preflight._run = fake
+        try:
+            self.assertEqual(preflight.probe_mirror_check("scontrol", "local", 4)["status"], "PASS")
+            outputs["node"] = outputs["node"].replace("State=IDLE", "State=MIXED")
+            self.assertEqual(preflight.probe_mirror_check("scontrol", "local", 4)["status"], "FAIL")
+            outputs["node"] = "NodeName=n1 State=IDLE State=IDLE CPUTot=4 CPUAlloc=0 RealMemory=7900 AllocMem=0"
+            self.assertEqual(preflight.probe_mirror_check("scontrol", "local", 4)["status"], "FAIL")
+        finally:
+            preflight._run = original
+
+    def test_host_check_uses_the_worker_constructor_not_the_os_module(self):
+        original = preflight.OwnedLinuxChildren
+        try:
+            preflight.OwnedLinuxChildren = lambda: None
+            statuses = {item["id"]: item["status"] for item in preflight.host_checks(1)}
+            self.assertEqual(statuses["HOST_PIDFD_AND_SUBREAPER"], "PASS")
+            def refuse():
+                raise preflight.Problem("ENGINE_UNAVAILABLE")
+            preflight.OwnedLinuxChildren = refuse
+            statuses = {item["id"]: item["status"] for item in preflight.host_checks(1)}
+            self.assertEqual(statuses["HOST_PIDFD_AND_SUBREAPER"], "FAIL")
+        finally:
+            preflight.OwnedLinuxChildren = original
+
     def test_sinfo_states_lose_their_flags(self):
         nodes = preflight.parse_sinfo_nodes("wsl|idle|4|7800\nwsl2|down*|4|7800\nmalformed\n")
         self.assertEqual([(item["node"], item["state"]) for item in nodes], [("wsl", "idle"), ("wsl2", "down")])
