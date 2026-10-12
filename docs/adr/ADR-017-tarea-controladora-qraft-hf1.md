@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md). La **Adenda 8** (#70, 2026-10-12) registra la receta HF-1 y recorre C0 a Q6 contra `main`. La **Adenda 9** (#70, 2026-10-12) corrige el orden entre la preparación del estado y el dueño de QRAFT (el `FAIL` de C0).
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md). La **Adenda 8** (#70, 2026-10-12) registra la receta HF-1 y recorre C0 a Q6 contra `main`. La **Adenda 9** (#70, 2026-10-12) corrige el orden entre la preparación del estado y el dueño de QRAFT (el `FAIL` de C0). La **Adenda 10** (#70, 2026-10-12) corrige dónde se inicializa la campaña (el segundo `FAIL`, `NO_NUMERICAL_U`).
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -937,3 +937,57 @@ En `test_hf1.py`: `test_fresh_state_is_left_empty_so_qraft_does_not_read_it_as_t
 ### I.7 Si aparece otro defecto del mismo tipo
 
 Se aplica G.4 (arreglo mínimo en este repositorio, una prueba, un PR, máximo dos por identificador). Si la causa está en QRAFT o HubbardFlow y no se puede resolver desde la plataforma (como lo era la opción descartada de I.2), es parada: un solo comentario en #70 con la causa y la línea del código.
+
+## Adenda 10 (2026-10-12, issue #70): C0-r2 dio `NO_NUMERICAL_U`; la campaña se inicializa en su raíz final
+
+### J.1 Causa
+
+`observation_assembly.py:132` falló con «PSML for correlated site NiLR0 is absent from the verified input inventory». No falta ningún dato: el PSML de NiLR0 sí está en el inventario del paquete. Es un defecto de disposición de archivos, no de ciencia: ninguna fórmula, gate, tolerancia, contrato ni pin interviene.
+
+`initialize_campaign` de HubbardFlow escribe en `lr_config.json` rutas **absolutas** de la raíz donde inicializó (`pseudopotentials.*`, `static_artifacts.*`, `compatibility_registry`, `version_text_source`, `planning_reference_*`). Al observar, HubbardFlow convierte cada ruta en relativa a la raíz de la campaña (`campaign_relative_path`) y la busca en el inventario relativo. Si la campaña se inicializó en otra raíz que aquella donde se ejecuta (la plataforma la copia a `controller-state/<tarea>`, cuya ruta depende de un `run_id` que no existe al construir el paquete), la ruta no cuelga de la raíz, queda absoluta y no está en el inventario. D.2 ya decía que `lr_config.json`, `backend_contract.json`, `execution_profile.json`, `campaign_id` y `input_identity` dependen de la ruta o del UUID y no están fijados por hash; lo que faltaba era exigir que la ruta de inicialización fuera la de ejecución.
+
+### J.2 Decisión: la raíz final la elige el arnés, antes de inicializar
+
+La raíz de ejecución no tiene que llamarse `extracted/<run_id>`: es cualquier directorio nuevo que el arnés elija al extraer el paquete. Por tanto, **por cada corrida** (C0-r3 y la de Q) el arnés:
+
+1. Elige la raíz `R` de la corrida (nueva, inexistente, ruta ya resuelta con `realpath`) y calcula `S = R/controller-state/<task_id>` (el `task_id` es el de la receta).
+2. Inicializa la campaña con HubbardFlow **en `S`**: `campaign_root = S.parent`, `name = S.name` (`S.parent` se crea antes; `pointer_path` fuera de `S`). Comprueba que los siete hashes sin ruta de D.2 coinciden con los fijados.
+3. Comprime el contenido de `S` en el ZIP del paquete (`campaign.v2.json` en la raíz del ZIP, sin más archivos que los declarados), calcula `bundle_sha256` y `profile_sha256`, y ejecuta `final_root_findings(bundle, S)` (`dftlab_platform.hf1_bundle`). Debe devolver `[]`.
+4. **Borra `S` completo** (QRAFT exige un estado vacío o inexistente, Adenda 9) y registra los hashes.
+5. Hace autoría y empaquetado con ese ZIP y **extrae el paquete en `R`**, sin mover ni copiar `R` después. La plataforma crea `S` vacío, QRAFT lo reclama, y `dftlab-hf1-controller` deja los archivos del ZIP en `S`, la misma ruta con la que se inicializó.
+
+Los intentos 2 y 3 de Q reutilizan `R` y `S` en sitio (H.4): mover o copiar `R` reabre este defecto.
+
+Cada corrida tiene su propia campaña (`campaign_id` nuevo, hashes de `lr_config.json` y `backend_contract.json` distintos); I.3.1 («mismo paquete ZIP») queda sustituido: se conserva el paquete **científico** (los siete hashes de D.2), no el ZIP.
+
+### J.3 Código
+
+`final_root_findings` (`hf1_bundle.py`) lista las rutas de `lr_config.json` que no son absolutas, no cuelgan de `S` o no están en el inventario. La usan `prepare_task` (si el estado es nuevo, la admisión falla con `PRECONDITION_FAILED` antes de lanzar nada) y `dftlab-hf1-controller` (antes de escribir en el estado, con el motivo en stderr). Un paquete mal inicializado ya no llega a observar ni gasta un job. No toca fórmulas, gates, tolerancias, contratos, pins, QRAFT ni HubbardFlow.
+
+### J.4 El job exterior en `FAILED (1:0)`
+
+El observador privado de la corrida no está en el repositorio y no se pudo revisar. Lo más probable es que su artefacto (`lr_u_analysis.v3.json`) no existiera porque la observación falló con `NO_NUMERICAL_U`, es decir, la misma causa. Se especifica igualmente, para que no oculte evidencia (G.4, defecto de arnés): el guion `sbatch` guarda la evidencia en un `trap EXIT` (incluida la salida del observador y del `siesta.out`), escribe el artefacto de forma incremental, y su código de salida es el del runtime de QRAFT, no el del observador; un fallo del observador se anota como evidencia y no cambia el estado del job. Antes de relanzar, el arnés lee `slurm-<job>.out/.err` de C0-r2 y clasifica la salida 1:0 en el informe.
+
+### J.5 Lecturas previas a observar (verificadas contra la campaña real)
+
+Todo lo que HubbardFlow lee antes de observar está en `lr_config.json` y se cubre con J.3: PSML, artefactos estáticos, registro de compatibilidad, texto de versión y referencias de planificación. `backend_contract.json` y el inventario usan rutas relativas. El perfil de ejecución (ejecutables y `mpirun`) es exterior y lo cubren el preflight y `controller_profile_findings`.
+
+### J.6 Recorrido por etapas
+
+| Etapa | Qué se verificó | Estado |
+|---|---|---|
+| Inicializar campaña | En su raíz final (J.2) | cerrado aquí |
+| Admisión y estado vacío | Adenda 9; más J.3 | cerrado aquí |
+| Entrada tras el reclamo | Comprueba J.3 antes de escribir | cerrado aquí |
+| C0-r3 (SIESTA, observación) | PSML en el inventario con ruta relativa | cerrado aquí |
+| Q1 a Q6 | Una campaña nueva en su raíz final; Q2 y siguientes reanudan en sitio | cerrado aquí |
+| Salida del job exterior | J.4 | cerrado aquí |
+| Veredicto | D.3, D.6 | ok |
+
+### J.7 Pruebas
+
+`test_bundle_initialized_outside_its_final_root_is_refused_before_it_can_hide_a_psml` en `test_hf1.py`.
+
+### J.8 Reintento
+
+C0-r3 es otra corrida nueva (raíz, `run_id`, claves y job nuevos). No se toca `attempt-0001` ni nada de C0-r1 y C0-r2; ambos `FAIL` quedan registrados.

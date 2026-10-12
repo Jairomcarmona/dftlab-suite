@@ -12,7 +12,7 @@ import sys
 
 from .contracts import loads
 from .domain import Problem
-from .hf1_bundle import CONTROLLER_TARGETS, inspect_bundle, stage_bundle, verify_staged
+from .hf1_bundle import CONTROLLER_TARGETS, final_root_findings, inspect_bundle, stage_bundle, verify_staged
 
 STAGE_PLAN = "hf1-stage.json"
 _PLAN_KEYS = {"schema_version", "bundle", "bundle_sha256", "profile_sha256", "reserved_cpus"}
@@ -54,6 +54,11 @@ def stage(root, argv):
         raise Problem("PRECONDITION_FAILED")  # QRAFT must have claimed the directory first
     if {item.name for item in state_dir.iterdir()} - {"owner.json"}:
         return verify_staged(bundle, state_dir)
+    findings = final_root_findings(bundle, state_dir)
+    if findings:
+        print("dftlab-hf1-controller: campaign initialized outside its final root " + str(state_dir)
+              + ": " + ", ".join(findings), file=sys.stderr)
+        raise Problem("PRECONDITION_FAILED")
     return stage_bundle(bundle, state_dir)
 
 
