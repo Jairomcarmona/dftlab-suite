@@ -376,6 +376,7 @@ Añadido el 2026-10-11 tras la [auditoría P5–P10](docs/reviews/2026-10-11-aud
 | T-031 | [Ficha de pseudopotenciales](docs/scientific-protocols/PSEUDOS.md) aceptada y U-Q18 en QRAFT |
 | T-035 | [ADR-018](docs/adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) (aceptado, QRAFT), [WF-EOS](docs/scientific-protocols/WF-EOS.md) aceptada, U-Q10 y U-Q11 |
 | T-036 (gap, fat bands y masas) | [WF-ELECTRONIC](docs/scientific-protocols/WF-ELECTRONIC.md) aceptada, con su política v1, y U-Q13 en QRAFT |
+| T-037 | Usa la convergencia de malla y de malla k de QRAFT fijado, sin reimplementarla; la plataforma guarda regla e informe y registra la aceptación humana ([fichas](docs/scientific-protocols/README.md)) |
 | T-040 | WF-SURFACE aceptada, U-Q12 y DL-02 con el caso de corrección dipolar |
 | T-041 | Criterio de equivalencia HF-1/HF-2 fijado en un ADR antes de U-H5 |
 | T-042 | Utilidades (`vibra`, `fcbuild`, `denchar`) en el lock del worker y en el probe de runtime; para moléculas, las frecuencias salen del `.FC` con proyección de Eckart, no de `vibra` (presets F-3) |
