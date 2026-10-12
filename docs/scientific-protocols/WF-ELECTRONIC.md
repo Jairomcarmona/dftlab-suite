@@ -1,6 +1,6 @@
 # Ficha de entrada: WF-ELECTRONIC fino (T-036: gap, fat bands y masas)
 
-Estado: **lista para aceptar**. Bandas, DOS y PDOS ya existen en QRAFT (protocolo M7, `siestaflow.siesta.band-structure` y `siestaflow.siesta.dos-pdos`). Esta ficha cubre lo que falta: el gap con su alcance, las fat bands y las masas direccionales. Dueño: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md), aceptado), cambio U-Q13. Fuente: [maestro §11.2](../../PROPUESTA_MAESTRA_DFTLAB_V2.md). Evidencia: [corridas de Si](../reviews/evidencia-p5-p10/README.md#estructura-electrónica-t-036).
+Estado: **aceptada** (2026-10-12). Bandas, DOS y PDOS ya existen en QRAFT (protocolo M7, `siestaflow.siesta.band-structure` y `siestaflow.siesta.dos-pdos`). Esta ficha cubre lo que falta: el gap con su alcance, las fat bands y las masas direccionales. Dueño: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md), aceptado), cambio U-Q13. Fuente: [maestro §11.2](../../PROPUESTA_MAESTRA_DFTLAB_V2.md). Evidencia: [corridas de Si](../reviews/evidencia-p5-p10/README.md#estructura-electrónica-t-036).
 
 Esta ficha está escrita para que la implemente quien solo programa: si algo no está aquí, en el oráculo o en los vectores, **se pregunta antes de decidirlo**. Los vectores dicen lo que hicieron SIESTA y `fat`; no se cambian para que una prueba pase.
 
@@ -35,7 +35,7 @@ Esta ficha está escrita para que la implemente quien solo programa: si algo no 
 | B-4 | La masa es `NOT_ESTABLISHED` (sin número) si: otra banda está a `degeneracy_meV` o menos en el extremo (`DEGENERATE_EXTREMUM`); la ventana tiene menos de `min_points_per_side` puntos a un lado (`EXTREMUM_AT_LINE_END`); la curvatura tiene el signo contrario al portador (`CURVATURE_SIGN`); o la línea no es recta dentro de `straightness_invA` (`LINE_NOT_STRAIGHT`). | Un ajuste parabólico sobre bandas cruzadas da números sin sentido (E-8, valencia de Si en Γ). |
 | B-5 | Las energías de bandas, DOS y PDOS conservan E_F de la corrida que las produjo; una alineación con otra corrida se registra como operación. | E-2; [WF-SURFACE](WF-SURFACE.md) S-7: E_F depende de la celda. |
 
-### Política `qraft.electronic.policy@1-draft`
+### Política `qraft.electronic.policy@1` (aprobada por Manuel el 2026-10-12)
 
 | Campo | Valor | Origen |
 |---|---|---|
@@ -64,6 +64,6 @@ Esta ficha está escrita para que la implemente quien solo programa: si algo no 
 2. **Plataforma:** guarda los resultados de QRAFT con su alcance y su política; el frontend los muestra y corrige la calculadora de masas.
 3. Subir el pin de QRAFT cuando U-Q13 entre.
 
-## Decisión pendiente de Manuel
+## Decisiones de Manuel
 
-Aprobar la política `qraft.electronic.policy@1-draft`. U-Q13 ya está aceptado con ADR-018; esta ficha le añade B-0 y la lectura de `BandPoints`.
+Aprobado por Manuel el 2026-10-12: la política v1 y la ampliación de U-Q13 (B-0 y lectura de `BandPoints`), que entra en QRAFT después de U-Q9.

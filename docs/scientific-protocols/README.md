@@ -4,12 +4,12 @@ Una ficha fija las decisiones de un workflow científico **antes** de escribir c
 
 | Ficha | Ticket | Estado |
 |---|---|---|
-| [WF-EOS](WF-EOS.md) | T-035 | Lista para aceptar; 20 vectores en `vectors/`; política v1 pendiente de Manuel |
+| [WF-EOS](WF-EOS.md) | T-035 | Aceptada; 20 vectores en `vectors/`; política v1 aprobada |
 | [Slabs y restricciones](SLABS.md) | T-028 (G-05, G-06) | Lista para aceptar; 19 vectores en `vectors/` |
-| [Presets S-01…S-08](PRESETS.md) | T-029 | Lista para aceptar; 26 vectores en `vectors/`; política v1 y U-Q14…U-Q16 pendientes de Manuel |
-| [Preflight del FDF](PREFLIGHT.md) | T-030 | Lista para aceptar; 22 vectores en `vectors/`; U-Q17 pendiente de Manuel |
-| [Pseudopotenciales y especies](PSEUDOS.md) | T-031 | Lista para aceptar; 20 vectores en `vectors/`; U-Q18 pendiente de Manuel |
-| [WF-ELECTRONIC fino](WF-ELECTRONIC.md) | T-036 | Lista para aceptar; 23 vectores en `vectors/`; política v1 pendiente de Manuel; dueño QRAFT (ADR-018, U-Q13) |
+| [Presets S-01…S-08](PRESETS.md) | T-029 | Aceptada; 26 vectores en `vectors/`; política v1 y U-Q14…U-Q16 aprobados |
+| [Preflight del FDF](PREFLIGHT.md) | T-030 | Aceptada; 22 vectores en `vectors/`; U-Q17 aprobado |
+| [Pseudopotenciales y especies](PSEUDOS.md) | T-031 | Aceptada; 20 vectores en `vectors/`; U-Q18 aprobado; licencia de la biblioteca pendiente |
+| [WF-ELECTRONIC fino](WF-ELECTRONIC.md) | T-036 | Aceptada; 23 vectores en `vectors/`; política v1 aprobada; dueño QRAFT (ADR-018, U-Q13) |
 | [WF-SURFACE](WF-SURFACE.md) | T-040 | Borrador; dueño QRAFT (ADR-018); depende de DL-02 |
 
 T-032 (registro de campañas y calculadoras), T-033 (postprocesador y lectores) y T-034 (comparación y exportación) no introducen física nueva: consumen estas fichas y el inventario T-001, cuyos lectores ya tienen pruebas en `app/tests/`. Sus contratos van por C3, no por una ficha de protocolo.
