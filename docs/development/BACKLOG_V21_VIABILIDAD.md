@@ -59,3 +59,22 @@ Límites estructurales [M]: pseudopotenciales (no hay niveles de core ni densida
 ## 4. Lo que corrijo de mi parte
 - Dije que SIESTA solo entrega ε total: existe `.contrib.EPSIMG` [R].
 - Dije que la idea de clic en el pico necesitaba un cálculo nuevo y caro: con ese archivo podría ser lectura y suma.
+
+## 5. Conexión opcional a Materials Project (idea 22)
+
+Origen: hilo del 2026-10-11 sobre usar la base de Materials Project (MP). Evaluación y diseño; no hay código. En esta sección **[W]** es una fuente externa enlazada, consultada el 2026-10-11, y **[R]** el archivo del repo que se cita.
+
+**Qué aporta.** El constructor de T-028 (G-01…G-09) transforma una estructura que ya existe; no trae un catálogo. Hoy «Estructura y entrada» (grupo Herramientas, `views/registry.js`) ofrece 11 ejemplos fijos y abrir archivo. MP añade búsqueda por fórmula, elementos o grupo espacial, procedencia automática y valores PBE de referencia. Descargar el CIF desde la web de MP y abrirlo ya funciona hoy [R] (el lector CIF acepta sus variantes, `static/js/crystal/README.md`); la conexión ahorra ese paso y registra la procedencia sola.
+
+**Cómo encaja.**
+- Opcional: sin API key la app no cambia, incluido el build portátil sin red. MP no tiene política para incrustar una key en una aplicación y su personal sugiere que cada usuario use la suya [W] ([foro MP](https://matsci.org/t/api-key-for-external-client-application/39379)).
+- La importación produce una `StructureRevision` con transformación `IMPORT`, que ya existe en el contrato [R]; mp-id, versión de la base, fecha, licencia y digest van en `parameters`. Con ADR-002 su `origin` es importación del usuario.
+- Los valores de MP (a, B0, gap) se muestran como referencia externa. Por ADR-018 no certifican nada.
+- Descargar estructuras no exige pymatgen si la conversión se valida (DL-18); la búsqueda avanzada podría usarlo más adelante en el servicio (idea 3).
+
+**Riesgos.**
+- MP calcula con VASP/PAW y mezcla PBE, PBE+U y r2SCAN; frente a SIESTA con PSML la comparación orienta y no valida. Un gap de MP con +U frente a uno propio sin +U es la mezcla que prohíbe la compuerta 5 de §3.
+- Elementos sin pseudo en la biblioteca del usuario (T-031): marcarlos antes de descargar.
+- Licencia CC BY 4.0 con cita de MP y de la versión de la base [W] ([foro MP](https://matsci.org/t/is-it-ok-to-post-snapshots-of-materials-project-structures-on-e-g-figshare-i-e-for-manuscript-reproducibility/45437), [FAQ](https://docs.materialsproject.org/frequently-asked-questions)). El subconjunto GNoME es de uso no comercial [W] ([documentación](https://docs.materialsproject.org/materials-project-data-lakehouse/access-controlled-data)). La página oficial de términos no se pudo leer en esta evaluación: DL-17.
+- Límite de 25 peticiones/s y petición de no repetir consultas: guardar copia local [W] ([documentación](https://docs.materialsproject.org/downloading-data/using-the-api/tips-for-large-downloads)).
+- No se verificó si la API admite CORS: DL-16 decide si la llamada sale del navegador o del servicio local.
