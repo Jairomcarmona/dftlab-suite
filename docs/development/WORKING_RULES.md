@@ -24,6 +24,17 @@ Para esta base: `cd app && npm ci`, luego desde la raíz `node scripts/verify-or
 
 Los cálculos HPC, licencias y pruebas de instalación de los motores requieren validación propia; esta CI frontend no los acredita. Identificar claramente comprobaciones pendientes. No enviar trabajos reales al cargar una vista, montar un componente o ejecutar pruebas unitarias.
 
+## Idioma y textos de la interfaz
+
+El proyecto se escribe en español y se migrará a inglés al cerrar P4 (contratos y ADR congelados). Para que esa migración sea traducir archivos y no reescribir código:
+
+- Todo texto nuevo visible para el usuario (etiquetas, avisos, mensajes de error, texto didáctico) va en un catálogo de cadenas por idioma y se referencia por clave. No se escribe en español dentro de la lógica, de las plantillas HTML ni de las pruebas.
+- Las pruebas comparan claves, códigos de error o datos, nunca la frase en español.
+- Identificadores, nombres de campos, códigos de error y enums van en inglés (`NOT_ESTABLISHED`, `RunIntent`).
+- Los textos existentes se mueven al catálogo cuando se toca su módulo; no se hace una migración masiva previa.
+- Los registros internos (ADR aceptados, `TRASPASO.md`, `REGISTRO_DEUDA.md`, auditorías, fichas científicas) pueden quedar en español.
+- El catálogo y su mecanismo de carga los define un ADR antes del primer uso; hasta entonces, no inventar uno por módulo.
+
 ## Datos y secretos
 
 No versionar claves, tokens, `.env`, credenciales de clúster ni resultados privados. Credenciales fuera de contratos, logs y exportaciones. Mantener datos de prueba pequeños y con procedencia documentada; nuevos resultados voluminosos deben tener una política de almacenamiento y referencias, no incorporarse automáticamente a Git.
