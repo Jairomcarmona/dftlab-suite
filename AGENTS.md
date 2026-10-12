@@ -23,7 +23,9 @@ Parar, dejar el trabajo en commit y escribir en el PR o en un issue qué falta d
 - dependa de una ficha ambigua o incompleta, o de dos documentos que se contradicen: abrir un issue citando ambos (archivo:línea) y no inventar el mapeo;
 - solo podría pasar CI debilitando, saltando o marcando como `xfail` una prueba.
 
-Estas decisiones se validan con un modelo de razonamiento fuerte o con Manuel antes de implementarlas. El modelo de Codex lo elige Manuel a mano; este archivo no lo cambia.
+En esos casos, pedir al subagente `validador_cientifico` (`.codex/agents/validador-cientifico.toml`, solo lectura) una revisión de la pregunta concreta. Si responde APROBADO y el cambio ya está dentro de la ficha, continuar; si responde RECHAZADO, corregir; si responde REQUIERE_DECISIÓN_DE_MANUEL, o el cambio sale de la ficha, detenerse y preguntar a Manuel. El validador no sustituye la aprobación de Manuel para contratos, ADR, tolerancias o pins.
+
+Los modelos del hilo principal y del validador se fijan en `.codex/config.toml` y en el archivo del agente; Codex solo los carga si el proyecto está marcado como confiable.
 
 ## Al cerrar cada PR
 
