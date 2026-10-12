@@ -12,7 +12,7 @@ import sys
 from .checkpoints import checked_path, write_new
 from .contracts import canonical, loads
 from .domain import Problem
-from .hf1_bundle import CONTROLLER_TARGETS, inspect_bundle, materialize_bundle, safe_path
+from .hf1_bundle import CONTROLLER_TARGETS, final_root_findings, inspect_bundle, materialize_bundle, safe_path
 from .hf1_controller_entry import STAGE_PLAN
 from .native_checkpoints import inventory_native
 
@@ -127,6 +127,8 @@ class HubbardFlowCampaignCapability:
                         if path.is_symlink() or not path.is_file() or path.read_bytes() != data:
                             raise Problem("PRECONDITION_FAILED")
             else:
+                if final_root_findings(original, state_dir):
+                    raise Problem("PRECONDITION_FAILED")  # initialized outside its final root (Adenda 10)
                 parent = checked_path(state_dir.parent)
                 parent.mkdir(mode=0o700, parents=True, exist_ok=True)
                 state_dir.mkdir(mode=0o700)

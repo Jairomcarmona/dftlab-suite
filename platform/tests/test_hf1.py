@@ -18,6 +18,7 @@ from zipfile import ZipFile, ZipInfo
 from dftlab_platform.domain import Problem
 from dftlab_platform.hf1_bundle import CONTROLLER_TARGETS, inspect_bundle, materialize_bundle, profile_findings
 from dftlab_platform import hf1_controller_entry
+from dftlab_platform.hf1_bundle import final_root_findings
 from dftlab_platform.hf1_capability import CAPABILITY, CONTROLLER_RESERVATION, HubbardFlowCampaignCapability, controller_profile_findings
 from dftlab_platform.hf1_children import OwnedLinuxChildren
 
@@ -362,6 +363,36 @@ raise SystemExit(module.run(sys.argv[1]))
         (state_dir/"lr.json").write_bytes(b"{}")
         with self.assertRaises(Problem):
             hf1_controller_entry.stage(run, resume_argv)
+
+    def test_bundle_initialized_outside_its_final_root_is_refused_before_it_can_hide_a_psml(self):
+        # ADR-017 Adenda 10: lr_config.json carries absolute paths of the initialization root.
+        elsewhere = self.root/"init"/"campaign"
+        for index, accepted in enumerate((True, False)):
+            run = self.root/f"run{index}"
+            state_dir = run/"controller-state"/"hf1-lru"
+            base = state_dir if accepted else elsewhere
+            with self.subTest(base=str(base)):
+                self.files["pseudopotentials/Ni.psml"] = b"<psml/>"
+                self.files["lr.json"] = json.dumps({"pseudopotentials": {"NiLR0": str(base/"pseudopotentials"/"Ni.psml")},
+                                                    "compatibility_registry": str(base/"pseudopotentials"/"Ni.psml")}).encode()
+                capability = self.controller_capability()
+                bundle = self.inspect(4)
+                self.assertEqual(final_root_findings(bundle, state_dir) == [], accepted)
+                attempt = run/"work"/"hf1-lru"/"attempt-0001"
+                attempt.mkdir(parents=True, exist_ok=True)
+                call = lambda: capability.prepare_task(
+                    bundle, attempt, task_id="hf1-lru", attempt_id="attempt-0001",
+                    inputs={"campaign": self.staged(attempt)}, controller_state_dir=state_dir)
+                if accepted:
+                    call()
+                else:
+                    with self.assertRaises(Problem):
+                        call()
+                    self.assertFalse(state_dir.exists())
+        state_dir = self.root/"run0"/"controller-state"/"hf1-lru"
+        self.files["lr.json"] = json.dumps({"pseudopotentials": {"NiLR0": str(state_dir/"pseudopotentials"/"missing.psml")}}).encode()
+        self.controller_capability()
+        self.assertEqual(final_root_findings(self.inspect(4), state_dir), ["pseudopotentials.NiLR0 (not in inventory)"])
 
     def test_entry_refuses_paths_and_plans_that_do_not_match_the_qraft_layout(self):
         capability = self.controller_capability()

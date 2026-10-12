@@ -151,6 +151,43 @@ def inspect_bundle(path, *, expected_sha256, expected_profile_sha256, reserved_c
         raise Problem("PRECONDITION_FAILED")
     return VerifiedHF1Bundle(raw, expected_sha256, manifest["campaign_id"], tuple(sorted(files.items())), reserved_cpus, profile["target"])
 
+_LR_PATH_FIELDS = ("compatibility_registry", "version_text_source", "planning_reference_output", "planning_reference_dm")
+_LR_PATH_MAPS = ("pseudopotentials", "static_artifacts")
+
+
+def final_root_findings(bundle, state_dir):
+    """Names of lr_config.json paths that do not lie under the final state directory.
+
+    HubbardFlow writes absolute paths of its initialization root into lr_config.json
+    and resolves each against the campaign root when it observes. A bundle
+    initialized anywhere but at the directory it is staged into reads as an input
+    absent from the verified inventory (NO_NUMERICAL_U). The check is read-only and
+    uses the same resolution as HubbardFlow (ADR-017 Adenda 10).
+    """
+    files = dict(bundle.files)
+    manifest = loads(files["campaign.v2.json"])
+    config = loads(files[manifest["lr_config_file"]])
+    if not isinstance(config, dict):
+        return ["lr_config.json"]
+    root, found = Path(state_dir).resolve(), []
+    values = [(name, config.get(name)) for name in _LR_PATH_FIELDS if config.get(name) is not None]
+    for group in _LR_PATH_MAPS:
+        mapping = config.get(group) or {}
+        if not isinstance(mapping, dict):
+            found.append(group)
+            continue
+        values.extend((f"{group}.{key}", value) for key, value in mapping.items())
+    for name, value in values:
+        try:
+            ok = type(value) is str and os.path.isabs(value) and Path(value).resolve().is_relative_to(root)
+        except (OSError, ValueError):
+            ok = False
+        if not ok:
+            found.append(name)
+        elif Path(value).resolve().relative_to(root).as_posix() not in files:
+            found.append(name + " (not in inventory)")
+    return found
+
 
 def _write_files(bundle, destination):
     for name, data in bundle.files:
