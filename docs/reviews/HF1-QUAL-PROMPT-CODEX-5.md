@@ -30,11 +30,11 @@ El `NO_NUMERICAL_U` de C0-r2 no era un dato faltante ni ciencia: el PSML de NiLR
 4. **Antes de relanzar**, lee `slurm-<job>.out/.err` y el stderr del observador de C0-r2 y clasifica la salida `1:0` en el informe. No borres, muevas ni edites nada de C0-r1 ni de C0-r2.
 5. **C0-r3, corrida nueva**: `run_id`, claves, raíz, estado, campaña y job nuevos. Factory con `max_seconds = 1800`, `grace_seconds = 10`; nodo `IDLE` primero, sonda nueva y `sbatch` seguidos; si tu job queda `PENDING` 120 s, cancela solo ese job y repite (máximo 2). Antes de SIESTA guarda como evidencia que `owner.json` existe y que los archivos del paquete tienen `mtime` posterior. Compara `U_scalar_charge` por sitio con D.3 (NiLR0 6.864267700049239, NiLR1 6.864387475210124, tolerancia 0.020 eV).
 6. **Q (opción A de F.4)** con H.4 y H.5: `runtime.pid` antes de `exec`, vigilante por `key.node_id`, `SIGTERM` y `SIGKILL` solo al PID del runtime, copia fresca de `state.sqlite` por intento, `RunInspector().resume(...)` como plan de solo lectura, `sbatch --no-requeue` nuevo con sonda nueva, `wsl --shutdown` y munge/SLURM según F.5. Q parte de otra corrida nueva, con su propia `R` y campaña; los intentos 2 y 3 reutilizan `R` y `S` en sitio.
-7. **Veredicto** de D.6 con la evidencia de H.5.6. **Un solo PR** documental final con C0-r3, Q y `TRASPASO.md`. Si el navegador no deja adjuntar archivos locales, anota la ruta y el SHA-256 del ZIP de evidencia en #70 y #10. Cierra el seguimiento en siestaflow #10 y dftlab-suite #70.
+7. **Veredicto** de D.6 con la evidencia de H.5.6. **Ningún PR documental**: el informe de C0-r3 y de Q va en comentarios de #70 y #10. `TRASPASO.md` se actualiza **una sola vez**, al cerrar HF-1, y solo dentro de un PR de código si G.4 te obliga a abrir uno; si no hay PR de código, deja la nota en #70 y yo la paso. Si el navegador no deja adjuntar archivos locales, anota la ruta y el SHA-256 del ZIP de evidencia en #70 y #10. Cierra el seguimiento en siestaflow #10 y dftlab-suite #70.
 
 ## Regla de PR (de Manuel)
 
-Pocos PR. El avance vivo va en comentarios de #70. Los arreglos de código relacionados van en un solo PR. Nunca un PR documental solo para anotar otro PR.
+Pocos PR, y Manuel ya se quejó de que son demasiados. **No abras ningún PR documental.** El avance vivo va en comentarios de #70. Los arreglos de código relacionados (G.4) van en un solo PR. `TRASPASO.md` solo se toca una vez, en ese PR de código o al cerrar HF-1.
 
 ## Nunca
 
