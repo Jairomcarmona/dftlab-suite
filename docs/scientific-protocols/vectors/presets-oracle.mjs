@@ -137,7 +137,8 @@ export function evaluateRelaxation(run, intent) {
       r.push({ code: 'MESH_CUTOFF_BELOW_REQUEST', severity: 'REJECTED' });
   }
   const f = run.forces.at(-1);
-  if (f && norm3(f.tot) >= intent.max_force_tol_eV_A) r.push({ code: 'NET_FORCE_ABOVE_TOLERANCE', severity: 'REJECTED' });
+  // P-4: con Geometry.Constraints la fuerza neta no se anula (S-04); entonces solo se informa.
+  if (f && !intent.has_constraints && norm3(f.tot) >= intent.max_force_tol_eV_A) r.push({ code: 'NET_FORCE_ABOVE_TOLERANCE', severity: 'REVIEW' });
   return result(r);
 }
 
@@ -240,7 +241,7 @@ export function evaluateVibrations(fcRun, fc, cart, masses, policy) {
   if (!reference || reference.max > policy.max_reference_force_eV_A) r.push({ code: 'GEOMETRY_NOT_RELAXED', severity: 'REJECTED' });
   if (r.some(x => x.code === 'ATOM_MAP_MISMATCH')) return result(r);
   const modes = harmonicModes(fc, cart, masses);
-  if (modes.vibrational_cm1.some(w => w < 0)) r.push({ code: 'IMAGINARY_VIBRATION', severity: 'REVIEW' });
+  if (modes.vibrational_cm1.some(w => w < -policy.imaginary_tol_cm1)) r.push({ code: 'IMAGINARY_VIBRATION', severity: 'REVIEW' });
   return { ...result(r), rigid_modes: modes.rigid_modes, raw_rigid_max_cm1: modes.raw_rigid_max_cm1,
     asr_violation_eV_A2: fc.asr_violation_eV_A2, vibrational_cm1: modes.vibrational_cm1 };
 }

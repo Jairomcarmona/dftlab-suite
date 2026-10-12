@@ -17,7 +17,7 @@ Esta ficha está escrita para que la implemente quien solo programa: si algo no 
 | P-1 | Cada preset produce un `RunIntent` (`contracts/schemas/run-intent.schema.json`) con `protocol.protocol_id` y `protocol.version` de la tabla de presets, `purpose` `EXPLORATORY` por defecto y `numerical_policy_ref` a `qraft.presets.policy@1-draft`. | Maestro §9.2: «todo preset produce un RunIntent». |
 | P-2 | La energía de una corrida es la última `siesta: FreeEng =` (6 decimales), como en [WF-EOS](WF-EOS.md) E-4. | Una sola regla de lectura en toda la plataforma. |
 | P-3 | El FDF usa los nombres no obsoletos de 5.4.2: `FC.Displacement`, `FC.First`, `FC.Last` (no `MD.FCDispl`, que 5.4.2 marca «deprecated») y `Charge.Mulliken end` (no `WriteMullikenPop`). Única excepción: S-05 escribe `MD.NumCGSteps 0` porque QRAFT M6 lo exige; 5.4.2 lo traduce a `MD.Steps` (comprobado con 0 y con 2). | El log `fdf.*.log` de 5.4.2 avisa de los nombres obsoletos. |
-| P-4 | En toda relajación, la fuerza neta de la última geometría cumple \|ΣF\| < `MD.MaxForceTol`; si no, `NET_FORCE_ABOVE_TOLERANCE`. En S-01 la fuerza neta solo se informa. | Por invariancia traslacional ΣF = 0; lo que queda es error de la malla real. En H2O relajada a 200 Ry, \|ΣF\| fue 0.0008 eV/Å; con la misma geometría a 300, 400 y 500 Ry fue 0.092, 0.022 y 0.307 eV/Å, y a 700 Ry 0.0003 eV/Å. Una fuerza neta mayor que la tolerancia hace que «relajada» no signifique nada. |
+| P-4 | En toda relajación, la fuerza neta de la última geometría cumple \|ΣF\| < `MD.MaxForceTol`; si no, `NET_FORCE_ABOVE_TOLERANCE` en **revisión** (no rechazo: es ruido de la malla, no un fallo de la relajación). Solo se aplica sin `Geometry.Constraints`; con átomos fijos la fuerza neta no es cero (S-04) y solo se informa. En S-01 la fuerza neta también solo se informa. | Por invariancia traslacional ΣF = 0; lo que queda es error de la malla real. En H2O relajada a 200 Ry, \|ΣF\| fue 0.0008 eV/Å; con la misma geometría a 300, 400 y 500 Ry fue 0.092, 0.022 y 0.307 eV/Å, y a 700 Ry 0.0003 eV/Å. Una fuerza neta mayor que la tolerancia hace que «relajada» no signifique nada. |
 | P-5 | Los gates son de QRAFT. Los validadores JS del frontend son vista previa y no emiten un veredicto aceptado. | ADR-018 y maestro §10.1. |
 | P-6 | Los defaults del preset entran en el digest del plan y se muestran. Ninguno se presenta como ley universal (`16 Å`, `500 Ry`, Gamma). | Maestro §9.2 y plan T-029. |
 
@@ -84,7 +84,7 @@ M6 sin cambios. El FDF lleva `MD.TypeOfRun CG` y `MD.NumCGSteps 0` (requisito de
 | F-3 | Las frecuencias se calculan desde `<SystemLabel>.FC`, no con `vibra`: diferencia central (promedio de los dos signos), matriz simetrizada, ponderada por masas, **proyección de Eckart** de traslaciones y rotaciones (6 modos, 5 si es lineal, detectados por rango) y diagonalización en el complemento. Funciones: `parseFC` y `harmonicModes`. | Orden del archivo comprobado contra las fuerzas de la salida (átomo i, dirección, signo −/+, átomo j, componente); coincide con el lector existente `app/dftlab/static/js/siesta/fc.js`. Flexión de H2O con `vibra` a 200, 400 y 700 Ry: 1731.8, 1555.1 y 1543.7 cm⁻¹. Con proyección: 1561.4, 1555.6 y 1555.5 cm⁻¹. La malla real mete rotaciones espurias de 200–440 cm⁻¹ que `vibra` mezcla con la flexión. |
 | F-4 | Las masas son las del intent: masas atómicas estándar de una tabla fijada, o isótopos declarados. No se toman del pseudo. | `vibra` no lee las masas del FDF de SIESTA: exige una quinta columna en las coordenadas. |
 | F-5 | El resultado informa, como diagnóstico, el número de modos rígidos, el mayor \|ω\| de los modos rígidos sin proyectar y la violación de la regla de suma acústica (máximo \|Σⱼ K\|, eV/Å²). | A 200 Ry: 443 cm⁻¹ y 13.2 eV/Å²; a 400 Ry: 201 cm⁻¹ y 2.4 eV/Å². |
-| F-6 | Una frecuencia vibracional negativa tras proyectar da `IMAGINARY_VIBRATION` en revisión: punto de silla o geometría no convergida. | — |
+| F-6 | Una frecuencia vibracional por debajo de −`imaginary_tol_cm1` tras proyectar da `IMAGINARY_VIBRATION` en revisión: punto de silla o geometría no convergida. Entre −`imaginary_tol_cm1` y 0 es ruido numérico y solo se informa. | El valor de la tolerancia es una propuesta sin medir en esta auditoría: lo fija Manuel. |
 | F-7 | La convergencia de las frecuencias con la malla es una etapa enlazada del protocolo de convergencia. | De 200 a 400 Ry la flexión cambia 5.8 cm⁻¹; de 400 a 700 Ry, 0.1 cm⁻¹. |
 
 ## S-08: spin y carga
@@ -97,6 +97,7 @@ Ruta M8 de QRAFT sin cambios: `validate_magnetic_input` acepta solo declaracione
 |---|---|---|
 | `max_reference_force_eV_A` | 0.01 | H2O relajada con tolerancias de 0.005 y 0.002 eV/Å dio Max entre 0.0006 y 0.0034 eV/Å al iniciar FC; sin relajar, 2.3 eV/Å |
 | `fc_displacement_A` | 0.02 | F-2 |
+| `imaginary_tol_cm1` | 20 (propuesto, sin evidencia propia) | F-6; Manuel confirma o cambia el valor |
 | `symprec_A` | el de G-02 (T-028) | V-4; se fija con la ficha de T-028 |
 
 Ningún otro gate de esta ficha tiene umbral: se decide con líneas de la salida o con las tolerancias que el propio FDF declara.
