@@ -14,7 +14,7 @@ Continúas HF1-QUAL en la etapa 4. `main` incluye ADR-017 Adendas 1 a 6. La Aden
    Añadir `controller_profile_findings(resources, perfil_exterior, 4)` con el perfil del paso 3. Si hay algún `FAIL`, publica **un solo** comentario en #70 con la lista completa y su valor observado, y para. Si no hay ninguno, sigue. Los `INFO` (`ProctrackType`, `JobRequeue`, ranks sin `--oversubscribe`) se guardan en la evidencia.
 3. **Perfil exterior.** Crear `hf1-controller-outer-slurm-v1` rev. 1 con los valores de F.2 (1 nodo, 4 CPU, 4 tareas, `openmpi`, `max_attempts = 3`, allocation de 3600 s, tarea con `walltime_seconds = 3600`, 2048 MB, entorno de T-023b, sin módulos). Va en el estado privado, no en el repositorio. Calcula `3600 − shutdown_margin_seconds ≥ 1800`; si no, sube a 7200 s si la partición lo permite; si tampoco, publica un comentario en #70 y para.
 4. **Sonda nueva** inmediatamente antes de cada `sbatch` (caduca a los 900 s).
-5. **C0** por la ruta completa de la plataforma: paquete 2.1, `NativeWorker`, puerto SLURM, autoridad. Factory con `max_seconds = 1800`, `grace_seconds = 10`. Comprueba que el directorio del intento no contiene `hf1-request.json` y que el descriptor registra `stop_launching_at`; el descriptor es registro, no puerta. Compara `U_scalar_charge` por sitio con D.3. Guarda la evidencia de D.6. Cuando C0 cierre, abre **un** PR documental con su resultado y fusiónalo con los cinco checks verdes; no detengas Q por eso.
+5. **C0** por la ruta completa de la plataforma: paquete 2.1, `NativeWorker`, puerto SLURM, autoridad. Factory con `max_seconds = 1800`, `grace_seconds = 10`. Comprueba que el directorio del intento no contiene `hf1-request.json` y que el descriptor registra `stop_launching_at`; el descriptor es registro, no puerta. Compara `U_scalar_charge` por sitio con D.3. Guarda la evidencia de D.6. Cuando C0 cierre, registra su resultado en #70 y, si lo prefieres, en el PR documental único del final; no detengas Q por eso.
 6. **Q (opción A de F.4)** salvo que Manuel haya contestado B en #70:
    - Un arnés de operador, un `sbatch` propio por intento con `--no-requeue`, sonda nueva antes de cada uno, nunca dos jobs vivos de Q.
    - Un vigilante de solo lectura que sondea cada 100 ms el libro y `siesta.out` (rutas del descriptor) y dispara exactamente las condiciones de D.4.
@@ -25,7 +25,11 @@ Continúas HF1-QUAL en la etapa 4. `main` incluye ADR-017 Adendas 1 a 6. La Aden
    - **Q5:** el orquestador vive en Windows y ningún proceso de WSL atraviesa `wsl --shutdown`; cada paso se escribe en `state.json` antes de ejecutarse. Anota en el hilo que vas a ejecutarlo (cierra las sesiones WSL de Manuel) y sigue sin esperar. Tras reiniciar WSL, munge y SLURM: `boot_id` cambió, el nodo está `idle` (si está `down`, `scontrol update NodeName=<nodo> State=RESUME`) y no queda ningún job de Q.
    - **Q6:** intento 3 con sonda nueva; esperado `OWNER_DEAD_BY_BOOT_CHANGE`, integridad según D.5, `CONTINUE`, campaña completa.
    - Si una precondición de D.4 no se cumple, Q es `INCONCLUSIVE`: se repite completa con campaña nueva. No elijas otro nodo. Si Q4 consume un intento de `max_attempts`, para y reporta.
-7. **Veredicto** por D.6 con la evidencia que enumera. Abre **un** PR documental con el resultado de Q y fusiónalo con los cinco checks verdes. Cierra el seguimiento en siestaflow #10 y dftlab-suite #70 con enlace a ese PR.
+7. **Veredicto** por D.6 con la evidencia que enumera. Abre un único PR documental con el resultado de C0 y de Q (y TRASPASO) y fusiónalo con los cinco checks verdes. Cierra el seguimiento en siestaflow #10 y dftlab-suite #70 con enlace a ese PR.
+
+## Regla de PR (de Manuel)
+
+Pocos PR. El avance vivo va en comentarios de #70 (o en un archivo local no versionado), no en un PR por paso. `TRASPASO.md` se actualiza una sola vez por etapa cerrada, dentro del PR de código de esa etapa, o en un único PR al final; nunca un PR documental solo para anotar que otro PR se fusionó. Agrupa los arreglos de código relacionados en un solo PR. El único PR documental previsto es uno al final, con C0, Q y TRASPASO juntos.
 
 ## Paradas permitidas (y solo estas)
 

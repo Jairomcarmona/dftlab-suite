@@ -797,3 +797,7 @@ Nunca se arregla ni se ajusta: entradas, perfil privado, fórmulas, gates, toler
 ### G.5 Pruebas
 
 `test_host_check_uses_the_worker_constructor_not_the_os_module`, `test_foreign_pending_jobs_are_evidence_and_running_jobs_are_conflicts` y `test_probe_view_uses_the_runtime_probe_strictness` en `test_hf1_preflight.py`.
+
+### G.6 Pocos PR (sustituye el primer punto de F.7)
+
+El avance vivo va en comentarios de #70, no en un PR por paso. `TRASPASO.md` se actualiza una vez por etapa cerrada dentro del PR de código de esa etapa, o en un único PR documental al final con C0 y Q juntos. Nunca un PR documental solo para anotar la fusión de otro PR. Los arreglos de código relacionados van en un solo PR. La regla general queda también en `docs/development/WORKING_RULES.md`.

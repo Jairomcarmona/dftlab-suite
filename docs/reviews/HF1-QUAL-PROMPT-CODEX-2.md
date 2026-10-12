@@ -22,6 +22,10 @@ Los dos `FAIL` no eran del WSL de Manuel ni de la ciencia. `HOST_PIDFD_AND_SUBRE
    - `sacct` en Q3 es de mejor esfuerzo: si falla, guarda su error y usa `scontrol show job`, `ps` y `/proc`.
    - Tras `wsl --shutdown`, levanta munge y SLURM con el método con el que los dejaste funcionando en esta sesión.
 
+## Regla de PR (de Manuel)
+
+Pocos PR. El avance vivo va en comentarios de #70 (o en un archivo local no versionado), no en un PR por paso. `TRASPASO.md` se actualiza una sola vez por etapa cerrada, dentro del PR de código de esa etapa, o en un único PR al final; nunca un PR documental solo para anotar que otro PR se fusionó. Agrupa los arreglos de código relacionados en un solo PR. El único PR documental previsto es uno al final, con C0, Q y TRASPASO juntos.
+
 ## Nunca
 
 Cancelar, retener, liberar o modificar un job que no creaste. Editar entradas, perfil privado, fórmulas, gates, tolerancias, contratos o pins. Cambiar la semántica de autoridad, cancelación o propiedad de procesos. Declarar `PASS` sin D.6. Relanzar un nodo asentado.
