@@ -45,7 +45,13 @@
       "max_concurrent_inner_launches": 1
     },
     "max_attempts": 3,
-    "execution_profile": "private VALIDATED_RUNTIME profile, 4 CPU, 4 ranks (hf1-controller-profile-v1)"
+    "execution_profile": "private VALIDATED_RUNTIME profile, 4 CPU, 4 ranks (hf1-controller-profile-v1)",
+    "factory": {
+      "max_seconds": 1800,
+      "grace_seconds": 10,
+      "effect_in_controller_mode": "NONE (legacy hf1_worker limits; Adenda 5 E.1)",
+      "min_seconds_to_stop_launching_at": 1800
+    }
   },
   "expected": {
     "quantity": "U_scalar_charge",

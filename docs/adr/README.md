@@ -20,7 +20,7 @@ Cada ADR tiene estado, contexto, decisión, alternativas, consecuencias, contrat
 | [014](ADR-014-python-reference-environment.md) | Entorno aislado para regenerar referencias | Implementado (bloque F) |
 | [015](ADR-015-hubbardflow-capa-bajo-qraft.md) | HubbardFlow como capa obligatoria bajo QRAFT | Aceptado |
 | [016](ADR-016-borradores-comandos-recuperacion.md) | Borradores, comandos tipados, revisión del agregado, recuperación y CSRF tras recarga | Aceptado |
-| [017](ADR-017-tarea-controladora-qraft-hf1.md) | Tarea controladora en QRAFT para HF-1: reserva, lanzamiento directo, cancelación y recuperación | Aceptado con Adendas 1 (#52), 2 (HubbardFlow #43) y 3 (#57, #59); Adenda 4 (#70, caso de calificación real) aceptada; pendiente U-Q9b |
+| [017](ADR-017-tarea-controladora-qraft-hf1.md) | Tarea controladora en QRAFT para HF-1: reserva, lanzamiento directo, cancelación y recuperación | Aceptado con Adendas 1 (#52), 2 (HubbardFlow #43) y 3 (#57, #59); Adenda 4 (#70, caso de calificación real) aceptada; Adenda 5 (#70, límites de la factory en modo controller) aceptada |
 | [018](ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) | Autoridad de los protocolos EOS, electrónica fina y superficie | Aceptado (opción A); fichas pendientes |
 
 Fuente: [propuesta maestra V2.1](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) §19.1. Resumen operativo en [ARQUITECTURA.md](../../ARQUITECTURA.md) §0.
