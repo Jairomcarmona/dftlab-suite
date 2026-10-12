@@ -550,3 +550,21 @@ Los 15 cambios del inventario C2 quedan trazados por grupos coherentes. Los PR u
 - [HubbardFlow PR #44](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/pull/44) quedó fusionado en `codex/hubbardflow-rename` como merge `d7e0b77be20f1f7bd67522764db5b366ebc3ab07` desde `c26426fb091d34b9cee3ed2bf9d8787ce161d0fa`; sus siete checks requeridos estaban SUCCESS antes del merge. La integración preserva el contrato de U-H7 y aplica las Adendas 1–3, incluido el rechazo de identidad vacía antes de checkpoint y la verificación comparativa de runtime vendorizado.
 - La evidencia instalada y de CI es sintética/de contrato; no ejecuta SIESTA ni demuestra aceptación física. HubbardFlow issue #43 se cerró con la resolución normativa y el alcance de PR44. Siestaflow issue #10 sigue abierta como seguimiento de HF-1 real.
 - No se actualizaron pins/distribuciones oficiales ni se habilitó HF-1. El preflight de runtime WSL ahora está verificado y el perfil privado declara `VALIDATED_RUNTIME`; los smoke no sustituyen el RuntimeProbe/contención, el SCF cancelado ni la reanudación exigidos. El caso real pendiente de decisión está registrado en [dftlab-suite #70](https://github.com/Jairomcarmona/dftlab-suite/issues/70). La capacidad sigue como máximo `CONTRACT_TESTED`.
+
+## HF1-QUAL (registro vivo)
+
+- **Rama/carpeta/base:** `codex/hf1-qual`, worktree aislado `dftlab-suite-hf1-qual`, base `origin/main` `bfa832e45cb895c692d062a7d2cb1dd16f10f596`. Hilo de calificación reanudado desde el prompt de larga duración; Adenda 4 y ficha aceptadas en main. U-Q9 PR #11 está fusionado como `c3ecdead`; U-H7 PR #44 está fusionado como `d7e0b77`. No se encontraron cambios locales pendientes en esas ramas. HubbardFlow checkout conserva únicamente residuos de entorno virtual sin seguimiento; se preservan.
+- **Estado WSL al abrir:** `~/.local/state/dftlab-qualification/hf1-qual-v1/state.json` ausente. Hay jobs SLURM antiguos en `PENDING`; se registran como estado preexistente y no se cancelan ni reutilizan. No hay campaña HF1-QUAL asentada identificada todavía.
+- **Reglas vigentes:** seguir ADR-017 Adendas 1–4 y `ADR-017-caso-calificacion-hf1-nio.json`; preservar entradas, fórmulas, gates, tolerancias, contratos y pins oficiales hasta la etapa 2. FAIL se reporta sin reparar; Q INCONCLUSIVE solo se repite completa con campaña nueva según D.4; nunca relanzar nodo asentado.
+
+| Etapa | Estado | Fecha UTC | Commit/PR | Evidencia | Siguiente |
+|---|---|---|---|---|---|
+| 0 Preparación | CERRADA | 2026-10-12 | rama `codex/hf1-qual`, base `bfa832e` | esta sección; `state.json` aún ausente | implementar U-Q9b en QRAFT |
+| 1 U-Q9b | EN CURSO | 2026-10-12 | rama QRAFT `codex/uq9b-hf1`, base `c3ecdea` | pruebas D.5 pendientes | suite U-Q9 instalada, PR y cinco checks |
+| 2 Pins | PENDIENTE | — | — | — | fijar solo commits/wheels calificados |
+| 3 Entradas | PENDIENTE | — | — | ficha NiO en ADR-017 | validar SHA de inputs y campaña generada |
+| 4 C0 | PENDIENTE | — | — | — | control real completo |
+| 5 Q Fase A | PENDIENTE | — | — | — | Q1–Q4 y precondiciones D.4 |
+| 6 Reinicio/Q Fase B | PENDIENTE | — | — | — | cambio de boot_id, Q6 y resume |
+| 7 Veredicto/entrega | PENDIENTE | — | — | issues #10/#70 | aplicar D.6 y publicar evidencia |
+
