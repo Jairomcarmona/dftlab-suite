@@ -152,12 +152,7 @@ def inspect_bundle(path, *, expected_sha256, expected_profile_sha256, reserved_c
     return VerifiedHF1Bundle(raw, expected_sha256, manifest["campaign_id"], tuple(sorted(files.items())), reserved_cpus, profile["target"])
 
 
-def materialize_bundle(bundle, destination):
-    """New owned namespace only. Retain partial staging on failure for audit."""
-    if type(bundle) is not VerifiedHF1Bundle:
-        raise Problem("PRECONDITION_FAILED")
-    destination = checked_path(destination)
-    destination.mkdir(mode=0o700)  # no overlay, mkdir(exist_ok=False)
+def _write_files(bundle, destination):
     for name, data in bundle.files:
         path = destination/safe_path(name)
         path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -169,4 +164,33 @@ def materialize_bundle(bundle, destination):
         sync_directory(directory)
     sync_directory(destination)
     sync_directory(destination.parent)
+    return destination/"campaign.v2.json"
+
+
+def materialize_bundle(bundle, destination):
+    """New owned namespace only. Retain partial staging on failure for audit."""
+    if type(bundle) is not VerifiedHF1Bundle:
+        raise Problem("PRECONDITION_FAILED")
+    destination = checked_path(destination)
+    destination.mkdir(mode=0o700)  # no overlay, mkdir(exist_ok=False)
+    return _write_files(bundle, destination)
+
+
+def stage_bundle(bundle, destination):
+    """Fill a controller state directory that QRAFT has just claimed (owner.json only)."""
+    if type(bundle) is not VerifiedHF1Bundle:
+        raise Problem("PRECONDITION_FAILED")
+    destination = checked_path(destination)
+    if not destination.is_dir() or {item.name for item in destination.iterdir()} - {"owner.json"}:
+        raise Problem("PRECONDITION_FAILED")
+    return _write_files(bundle, destination)
+
+
+def verify_staged(bundle, destination):
+    """Read-only: every bundle file is in place, byte for byte (resume)."""
+    destination = checked_path(destination)
+    for name, data in bundle.files:
+        path = destination/safe_path(name)
+        if path.is_symlink() or not path.is_file() or path.read_bytes() != data:
+            raise Problem("PRECONDITION_FAILED")
     return destination/"campaign.v2.json"

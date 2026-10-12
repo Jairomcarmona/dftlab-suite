@@ -139,7 +139,9 @@ Las pruebas portátiles recorren también las 19 vistas sin servicio ni red.
 API loopback en puerto libre y un procesador durable separado. Admite
 `--base-path /lab` y `start --open`. Los dos entry points explícitos son
 `dftlab-platform-api` y `dftlab-platform-processor`. No ejecutan campañas:
-el procesador no registra todavía handlers científicos.
+el procesador no registra todavía handlers científicos. `dftlab-hf1-controller`
+no es una herramienta de operador: es la entrada que QRAFT lanza en un job HF-1
+(ADR-017 Adenda 9).
 
 El propietario y sus proyectos sobreviven al reinicio en SQLite. Cada arranque
 emite un bootstrap nuevo, de un uso y 120 s, en `access.json` privado; seleccionar

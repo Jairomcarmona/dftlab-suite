@@ -1,6 +1,7 @@
 """HF1 transport/process adversaries; no installed engine, SIESTA or Slurm."""
 import copy
 import hashlib
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -10,11 +11,13 @@ import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
+import unittest.mock
 from unittest.mock import patch
 from zipfile import ZipFile, ZipInfo
 
 from dftlab_platform.domain import Problem
 from dftlab_platform.hf1_bundle import CONTROLLER_TARGETS, inspect_bundle, materialize_bundle, profile_findings
+from dftlab_platform import hf1_controller_entry
 from dftlab_platform.hf1_capability import CAPABILITY, CONTROLLER_RESERVATION, HubbardFlowCampaignCapability, controller_profile_findings
 from dftlab_platform.hf1_children import OwnedLinuxChildren
 
@@ -60,6 +63,12 @@ class HF1(unittest.TestCase):
 
     def inspect(self, reserved_cpus=8):
         return inspect_bundle(self.archive, expected_sha256=self.sha, expected_profile_sha256=self.profile_sha, reserved_cpus=reserved_cpus)
+
+    def staged(self, attempt):
+        # QRAFT copies every declared input into the attempt directory first.
+        target = attempt/"campaign.bundle.zip"
+        target.write_bytes(self.archive.read_bytes())
+        return target
 
     def capability(self):
         return HubbardFlowCampaignCapability(self.engines, self.root, run_id="synthetic-outer", bundle_sha256=self.sha, profile_sha256=self.profile_sha, reserved_cpus=8, max_seconds=60)
@@ -298,26 +307,128 @@ raise SystemExit(module.run(sys.argv[1]))
                 resolved_sources={artifact.artifact_id: self.archive}, profile=profile, protected={},
             )
 
-    def test_controller_attempt_materializes_once_and_resumes_without_mutating_state(self):
+    RESERVATION = "work/hf1-lru/attempt-0001/.qraft/controller-reservation.json"
+    CAMPAIGN = "controller-state/hf1-lru/campaign.v2.json"
+
+    def claimed(self, state_dir):
+        # What QRAFT's supervisor does before it launches the entry: owner.json only.
+        (state_dir/"owner.json").write_text("{}")
+
+    def test_fresh_state_is_left_empty_so_qraft_does_not_read_it_as_tampered(self):
+        # ADR-017 Adenda 9 / C0 FAIL: QRAFT's previous_controller_owner raises
+        # "state without an owner" for a directory with files but no owner.json.
         capability = self.controller_capability()
-        state_dir = self.root/"controller-state"/"hf1-lru"
-        first_attempt = self.root/"attempt-0001"
-        first_attempt.mkdir()
+        state_dir = self.root/"run"/"controller-state"/"hf1-lru"
+        attempt = self.root/"run"/"work"/"hf1-lru"/"attempt-0001"
+        attempt.mkdir(parents=True)
         campaign = capability.prepare_task(
-            self.inspect(4), first_attempt, task_id="hf1-lru", attempt_id="attempt-0001",
-            inputs={"campaign": self.archive}, controller_state_dir=state_dir,
-        )
+            self.inspect(4), attempt, task_id="hf1-lru", attempt_id="attempt-0001",
+            inputs={"campaign": self.staged(attempt)}, controller_state_dir=state_dir)
         self.assertEqual(campaign, state_dir/"campaign.v2.json")
+        self.assertTrue(state_dir.is_dir())
+        self.assertEqual(list(state_dir.iterdir()), [])
+        self.assertFalse((attempt/"hf1-request.json").exists())
+        plan = json.loads((attempt/hf1_controller_entry.STAGE_PLAN).read_text())
+        self.assertEqual(plan["bundle"], "campaign.bundle.zip")
+        self.assertEqual((plan["bundle_sha256"], plan["profile_sha256"], plan["reserved_cpus"]), (self.sha, self.profile_sha, 4))
+
+    def test_entry_stages_after_the_claim_and_resume_never_rewrites_state(self):
+        capability = self.controller_capability()
+        run = self.root/"run"
+        state_dir = run/"controller-state"/"hf1-lru"
+        argv = ["--qraft-reservation", self.RESERVATION, "--campaign", self.CAMPAIGN]
+        first = run/"work"/"hf1-lru"/"attempt-0001"
+        first.mkdir(parents=True)
+        capability.prepare_task(self.inspect(4), first, task_id="hf1-lru", attempt_id="attempt-0001",
+                                inputs={"campaign": self.staged(first)}, controller_state_dir=state_dir)
+        with self.assertRaises(Problem):
+            hf1_controller_entry.stage(run, argv)  # not claimed by QRAFT yet
+        self.assertEqual(list(state_dir.iterdir()), [])
+        self.claimed(state_dir)
+        campaign = hf1_controller_entry.stage(run, argv)
+        self.assertEqual(campaign, state_dir/"campaign.v2.json")
+        self.assertTrue(campaign.is_file())
         before = {path.relative_to(state_dir): path.read_bytes() for path in state_dir.rglob("*") if path.is_file()}
-        second_attempt = self.root/"attempt-0002"
-        second_attempt.mkdir()
-        resumed = capability.prepare_task(
-            self.inspect(4), second_attempt, task_id="hf1-lru", attempt_id="attempt-0002",
-            inputs={"campaign": self.archive}, controller_state_dir=state_dir,
-        )
+        self.assertEqual(sorted(str(name) for name in before), sorted(["owner.json", *self.files, "campaign.v2.json"]))
+        second = run/"work"/"hf1-lru"/"attempt-0002"
+        second.mkdir()
+        resumed = capability.prepare_task(self.inspect(4), second, task_id="hf1-lru", attempt_id="attempt-0002",
+                                          inputs={"campaign": self.staged(second)}, controller_state_dir=state_dir)
         self.assertEqual(resumed, campaign)
+        resume_argv = ["--qraft-reservation", "work/hf1-lru/attempt-0002/.qraft/controller-reservation.json", "--campaign", self.CAMPAIGN]
+        self.assertEqual(hf1_controller_entry.stage(run, resume_argv), campaign)
         after = {path.relative_to(state_dir): path.read_bytes() for path in state_dir.rglob("*") if path.is_file()}
         self.assertEqual(after, before)
+        (state_dir/"lr.json").write_bytes(b"{}")
+        with self.assertRaises(Problem):
+            hf1_controller_entry.stage(run, resume_argv)
+
+    def test_entry_refuses_paths_and_plans_that_do_not_match_the_qraft_layout(self):
+        capability = self.controller_capability()
+        run = self.root/"run"
+        state_dir = run/"controller-state"/"hf1-lru"
+        attempt = run/"work"/"hf1-lru"/"attempt-0001"
+        attempt.mkdir(parents=True)
+        capability.prepare_task(self.inspect(4), attempt, task_id="hf1-lru", attempt_id="attempt-0001",
+                                inputs={"campaign": self.staged(attempt)}, controller_state_dir=state_dir)
+        self.claimed(state_dir)
+        good = ["--qraft-reservation", self.RESERVATION, "--campaign", self.CAMPAIGN]
+        for bad in (["--qraft-reservation", "/abs/controller-reservation.json", "--campaign", self.CAMPAIGN],
+                    ["--qraft-reservation", "work/hf1-lru/attempt-0001/.qraft/other.json", "--campaign", self.CAMPAIGN],
+                    ["--qraft-reservation", self.RESERVATION, "--campaign", "controller-state/other/campaign.v2.json"],
+                    ["--qraft-reservation", self.RESERVATION], [*good, *good]):
+            with self.subTest(argv=bad), self.assertRaises(Problem):
+                hf1_controller_entry.stage(run, bad)
+        plan_path = attempt/hf1_controller_entry.STAGE_PLAN
+        plan = json.loads(plan_path.read_text())
+        for change in ({"bundle_sha256": "0"*64}, {"bundle": "../inputs.zip"}, {"extra": 1}):
+            with self.subTest(change=change):
+                plan_path.write_text(json.dumps({**plan, **change}))
+                with self.assertRaises(Problem):
+                    hf1_controller_entry.stage(run, good)
+                self.assertEqual({item.name for item in state_dir.iterdir()}, {"owner.json"})
+
+    def test_entry_hands_the_same_arguments_to_hubbardflow_only_after_staging(self):
+        capability = self.controller_capability()
+        run = self.root/"run"
+        state_dir = run/"controller-state"/"hf1-lru"
+        attempt = run/"work"/"hf1-lru"/"attempt-0001"
+        attempt.mkdir(parents=True)
+        capability.prepare_task(self.inspect(4), attempt, task_id="hf1-lru", attempt_id="attempt-0001",
+                                inputs={"campaign": self.staged(attempt)}, controller_state_dir=state_dir)
+        argv = ["--qraft-reservation", self.RESERVATION, "--campaign", self.CAMPAIGN]
+        calls = []
+        fake = SimpleNamespace(main=lambda arguments: calls.append((list(arguments), (state_dir/"campaign.v2.json").is_file())) or 7)
+        loader = unittest.mock.Mock(return_value=fake)
+        with patch.object(hf1_controller_entry, "importlib", SimpleNamespace(import_module=loader)), \
+                patch.object(Path, "cwd", return_value=run):
+            self.assertEqual(hf1_controller_entry.main(argv), 2)  # unclaimed: refused, nothing handed over
+            self.assertEqual(calls, [])
+            self.claimed(state_dir)
+            self.assertEqual(hf1_controller_entry.main(argv), 7)
+        loader.assert_called_once_with("hubbardflow.api.controller")
+        self.assertEqual(calls, [(argv, True)])
+
+    def test_capability_names_the_platform_console_script_and_the_wheel_declares_it(self):
+        descriptors = []
+        core = SimpleNamespace(
+            __all__=("CapabilityDescriptor", "CapabilityKind", "PluginDescriptor", "ContractVersion", "EXECUTION_REQUEST", "EXECUTION_EVIDENCE"),
+            CapabilityDescriptor=lambda *args, metadata: descriptors.append(metadata) or SimpleNamespace(),
+            CapabilityKind=SimpleNamespace(ENGINE="engine"), PluginDescriptor=lambda *args: SimpleNamespace(),
+            ContractVersion=lambda *args: None, EXECUTION_REQUEST="request", EXECUTION_EVIDENCE="evidence")
+        capability = self.controller_capability()
+        capability.engines = SimpleNamespace(qraft_contracts=lambda: core)
+        capability.register(SimpleNamespace(register=lambda *args: None))
+        extension = descriptors[0]["qraft.controller"]
+        self.assertEqual((extension["distribution"], extension["entrypoint"]), ("dftlab-platform", "dftlab-hf1-controller"))
+        try:  # installed wheel (tests run outside the source tree) or source tree
+            declared = any(point.group == "console_scripts" and point.name == "dftlab-hf1-controller"
+                           and point.value == "dftlab_platform.hf1_controller_entry:main"
+                           for point in importlib.metadata.distribution("dftlab-platform").entry_points)
+        except importlib.metadata.PackageNotFoundError:
+            pyproject = Path(__file__).resolve().parents[1]/"pyproject.toml"
+            declared = 'dftlab-hf1-controller = "dftlab_platform.hf1_controller_entry:main"' in pyproject.read_text()
+        self.assertTrue(declared)
 
     def test_controller_mode_ignores_legacy_worker_limits(self):
         # ADR-017 Adenda 5: max_seconds/grace_seconds bound only hf1_worker.
@@ -333,7 +444,7 @@ raise SystemExit(module.run(sys.argv[1]))
             attempt.mkdir(parents=True)
             campaign = capability.prepare_task(
                 self.inspect(4), attempt, task_id="hf1-lru", attempt_id="attempt-0001",
-                inputs={"campaign": self.archive}, controller_state_dir=state_dir)
+                inputs={"campaign": self.staged(attempt)}, controller_state_dir=state_dir)
             self.assertFalse((attempt/"hf1-request.json").exists())
             command = capability.build_command(
                 campaign, execution_spec=SimpleNamespace(launcher="controller", mpi_ranks=1, allocated_cpus=1),
@@ -365,7 +476,7 @@ raise SystemExit(module.run(sys.argv[1]))
         attempt = self.root/"attempt-0001"
         attempt.mkdir()
         campaign = capability.prepare_task(inspected, attempt, task_id="hf1-lru", attempt_id="attempt-0001",
-                                           inputs={"campaign": self.archive}, controller_state_dir=state_dir)
+                                           inputs={"campaign": self.staged(attempt)}, controller_state_dir=state_dir)
         self.assertEqual(campaign, state_dir/"campaign.v2.json")
         self.assertFalse((attempt/"hf1-request.json").exists())
         for target in ("ssh", "local", "", None):
@@ -407,7 +518,7 @@ raise SystemExit(module.run(sys.argv[1]))
         attempt = self.root/"attempt-0001"
         attempt.mkdir()
         capability.prepare_task(self.inspect(4), attempt, task_id="hf1-lru", attempt_id="attempt-0001",
-                                inputs={"campaign": self.archive}, controller_state_dir=state_dir)
+                                inputs={"campaign": self.staged(attempt)}, controller_state_dir=state_dir)
         spec = SimpleNamespace(launcher="controller", mpi_ranks=1, allocated_cpus=1)
         command = capability.build_command(
             state_dir/"campaign.v2.json", execution_spec=spec,
