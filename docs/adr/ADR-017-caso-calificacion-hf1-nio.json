@@ -199,5 +199,6 @@
     "note": "Q qualifies the controller; platform authority by generations is pending (Adenda 6 F.4)",
     "decided_by": "default until Manuel answers"
   },
-  "preflight": "python -I -m dftlab_platform.hf1_preflight (Adenda 6 F.6); one report, all failures"
+  "preflight": "python -I -m dftlab_platform.hf1_preflight (Adenda 6 F.6, amended by Adenda 7 G.1); one report, all failures",
+  "operator_fix_policy": "ADR-017 Adenda 7 G.4: fix code defects and retry up to 2 times per error id; never inputs, private profile, formulas, gates, tolerances, contracts, pins or foreign jobs"
 }

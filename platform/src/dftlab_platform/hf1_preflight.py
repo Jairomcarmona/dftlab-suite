@@ -6,7 +6,6 @@ an operator learns the whole list in one pass instead of one blocker per run.
 Run it from the installed wheel: python -I -m dftlab_platform.hf1_preflight ...
 """
 import argparse
-import ctypes
 import hashlib
 import json
 import os
@@ -20,6 +19,8 @@ from zipfile import BadZipFile, ZipFile
 
 from .hf1_bundle import CONTROLLER_TARGETS, inspect_bundle, profile_findings
 from .domain import Problem
+from .hf1_children import OwnedLinuxChildren
+from .runtime_probe import ProbeFailure, _fields
 
 MIN_PARTITION_SECONDS = 2400
 MIN_MEMORY_MB = 2048
@@ -85,6 +86,42 @@ def mount_type(path, mountinfo="/proc/self/mountinfo"):
     return found
 
 
+PENDING_STATES = {"PENDING", "REQUEUED", "REQUEUE_HOLD", "RESV_DEL_HOLD", "SPECIAL_EXIT"}
+RUNNABLE_REASONS = {"None", "Priority", "Resources"}
+
+
+def queue_rows(text):
+    """Parse `squeue -h -o %i|%u|%T|%r|%j`; the job name may itself contain `|`."""
+    rows = []
+    for line in text.splitlines():
+        parts = line.strip().split("|", 4)
+        if len(parts) == 5 and parts[0]:
+            rows.append({"job": parts[0], "user": parts[1], "state": parts[2], "reason": parts[3], "name": parts[4]})
+    return rows
+
+
+def probe_mirror_check(scontrol, partition, reserved_cpus):
+    """Repeat the runtime probe's own scheduler conditions (unique keys, node IDLE, capacity)."""
+    try:
+        done, text = _run([scontrol, "--oneliner", "show", "partition", partition])
+        if done is None or done.returncode != 0:
+            return _check("SLURM_PROBE_SCHEDULER_VIEW", "FAIL", "scontrol show partition unreadable")
+        fields = _fields(text)
+        node_name = fields.get("Nodes", "")
+        done, text = _run([scontrol, "--oneliner", "show", "node", node_name])
+        if done is None or done.returncode != 0:
+            return _check("SLURM_PROBE_SCHEDULER_VIEW", "FAIL", f"scontrol show node {node_name} unreadable")
+        node = _fields(text)
+        free_cpus = int(node["CPUTot"]) - int(node["CPUAlloc"])
+        free_memory = int(node["RealMemory"]) - int(node["AllocMem"])
+    except (ProbeFailure, KeyError, ValueError) as error:
+        return _check("SLURM_PROBE_SCHEDULER_VIEW", "FAIL", f"{type(error).__name__}: {error}")
+    ok = (fields.get("PartitionName") == partition and fields.get("State") == "UP" and node.get("NodeName") == node_name
+          and node.get("State") == "IDLE" and free_cpus >= reserved_cpus and free_memory >= MIN_MEMORY_MB)
+    return _check("SLURM_PROBE_SCHEDULER_VIEW", "PASS" if ok else "FAIL",
+                  f"node={node_name} State={node.get('State')} free_cpus={free_cpus} free_memory_mb={free_memory}")
+
+
 def _run(argv, timeout=20):
     try:
         done = subprocess.run(argv, capture_output=True, text=True, timeout=timeout, stdin=subprocess.DEVNULL,
@@ -112,15 +149,16 @@ def host_checks(reserved_cpus):
         checks.append(_check("HOST_BOOT_ID_READABLE", "PASS", boot))
     except OSError as error:
         checks.append(_check("HOST_BOOT_ID_READABLE", "FAIL", type(error).__name__))
+    # Same constructor the worker uses (glibc pidfd fallback included): standalone
+    # Python builds omit os.pidfd_open, so probing the os module would reject a
+    # host the real worker accepts. Process-local effect only (sets subreaper here).
     try:
-        descriptor = os.pidfd_open(os.getpid())
-        os.close(descriptor)
-        flag = ctypes.c_int(-1)
-        libc = ctypes.CDLL(None, use_errno=True)
-        result = libc.prctl(37, ctypes.byref(flag), 0, 0, 0)  # PR_GET_CHILD_SUBREAPER
-        checks.append(_check("HOST_PIDFD_AND_SUBREAPER", "PASS" if result == 0 else "FAIL", f"prctl={result}"))
-    except (AttributeError, OSError, TypeError) as error:
-        checks.append(_check("HOST_PIDFD_AND_SUBREAPER", "FAIL", type(error).__name__))
+        OwnedLinuxChildren()
+        checks.append(_check("HOST_PIDFD_AND_SUBREAPER", "PASS", "OwnedLinuxChildren constructed, pidfd and subreaper available"))
+    except Problem as error:
+        checks.append(_check("HOST_PIDFD_AND_SUBREAPER", "FAIL", f"{error.code if hasattr(error, 'code') else type(error).__name__}; libc={platform.libc_ver()}"))
+    except (AttributeError, OSError, TypeError, ValueError) as error:
+        checks.append(_check("HOST_PIDFD_AND_SUBREAPER", "FAIL", f"{type(error).__name__}; libc={platform.libc_ver()}"))
     cpus = os.cpu_count() or 0
     checks.append(_check("HOST_CPUS", "PASS" if cpus >= reserved_cpus else "FAIL", f"{cpus} visible, {reserved_cpus} needed"))
     try:
@@ -171,9 +209,20 @@ def slurm_checks(partition, reserved_cpus):
     nodes = parse_sinfo_nodes(text) if done and done.returncode == 0 else []
     fits = len(nodes) == 1 and nodes[0]["state"] == "idle" and nodes[0]["cpus"] >= reserved_cpus and nodes[0]["memory_mb"] >= MIN_MEMORY_MB
     checks.append(_check("SLURM_ONE_IDLE_NODE_FITS", "PASS" if fits else "FAIL", json.dumps(nodes)))
-    done, text = _run([tools["squeue"], "-h", "-p", partition, "-o", "%i|%u|%T|%j"])
-    jobs = [line for line in text.splitlines() if line.strip()] if done and done.returncode == 0 else None
-    checks.append(_check("SLURM_PARTITION_QUEUE_EMPTY", "PASS" if jobs == [] else "FAIL", "unreadable" if jobs is None else f"{len(jobs)} job(s) present, none will be touched"))
+    checks.append(probe_mirror_check(tools["scontrol"], partition, reserved_cpus))
+    done, text = _run([tools["squeue"], "-h", "-p", partition, "-o", "%i|%u|%T|%r|%j"])
+    rows = queue_rows(text) if done and done.returncode == 0 else None
+    if rows is None:
+        checks.append(_check("SLURM_PARTITION_ACTIVE_JOBS", "FAIL", "squeue unreadable"))
+    else:
+        # The qualification needs the node IDLE (the runtime probe requires it), so
+        # a running job is a real conflict. Pending jobs of other people are
+        # recorded as evidence and never cancelled, held or released.
+        active = [row for row in rows if row["state"] not in PENDING_STATES]
+        checks.append(_check("SLURM_PARTITION_ACTIVE_JOBS", "PASS" if not active else "FAIL", json.dumps(active)))
+        pending = [row for row in rows if row["state"] in PENDING_STATES]
+        runnable = [row for row in pending if row["reason"] in RUNNABLE_REASONS]
+        checks.append(_check("SLURM_PARTITION_PENDING_JOBS", "INFO", json.dumps({"count": len(pending), "runnable_now": len(runnable), "jobs": pending})))
     return checks
 
 
