@@ -8,7 +8,7 @@ Una ficha fija las decisiones de un workflow científico **antes** de escribir c
 | [Slabs y restricciones](SLABS.md) | T-028 (G-05, G-06) | Lista para aceptar; 19 vectores en `vectors/` |
 | [Presets S-01…S-08](PRESETS.md) | T-029 | Lista para aceptar; 26 vectores en `vectors/`; política v1 y U-Q14…U-Q16 pendientes de Manuel |
 | [Preflight del FDF](PREFLIGHT.md) | T-030 | Lista para aceptar; 22 vectores en `vectors/`; U-Q17 pendiente de Manuel |
-| [WF-ELECTRONIC fino](WF-ELECTRONIC.md) | T-036 | Borrador; dueño QRAFT (ADR-018) |
+| [WF-ELECTRONIC fino](WF-ELECTRONIC.md) | T-036 | Lista para aceptar; 23 vectores en `vectors/`; política v1 pendiente de Manuel; dueño QRAFT (ADR-018, U-Q13) |
 | [WF-SURFACE](WF-SURFACE.md) | T-040 | Borrador; dueño QRAFT (ADR-018); depende de DL-02 |
 
 WF-HUBBARD no tiene ficha aquí: su protocolo es de HubbardFlow y su ejecución está en [ADR-017](../adr/ADR-017-tarea-controladora-qraft-hf1.md).

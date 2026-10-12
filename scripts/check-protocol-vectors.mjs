@@ -110,6 +110,30 @@ const runners = {
       return [`tipo desconocido ${c.kind}`];
     };
   },
+  async ELECTRONIC(doc) {
+    const o = await import(pathToFileURL(path.join(root, doc.oracle)));
+    // Masas, curvaturas y gaps: relativa; desplazamientos del extremo y direcciones cerca de cero: absoluta.
+    const tol = doc.arithmetic_tolerance;
+    const near = (a, e, w) => {
+      if (typeof e === 'number') return typeof a === 'number' && Math.abs(a - e) <= tol.abs + tol.rel * Math.abs(e) ? [] : [`${w}: ${a} ≠ ${e}`];
+      if (e === null || typeof e !== 'object') return a === e ? [] : [`${w}: ${JSON.stringify(a)} ≠ ${JSON.stringify(e)}`];
+      if (Array.isArray(e)) return Array.isArray(a) && a.length === e.length ? e.flatMap((x, i) => near(a[i], x, `${w}[${i}]`)) : [`${w}: ${JSON.stringify(a)} ≠ ${JSON.stringify(e)}`];
+      if (a === null || typeof a !== 'object') return [`${w}: falta`];
+      return Object.keys(e).flatMap(k => near(a[k], e[k], `${w}.${k}`));
+    };
+    const input = name => doc.inputs[name];
+    return c => {
+      if (c.kind === 'run') return near(o.bandRunCheck(c.stdout, c.bands_written), c.expect, 'corrida');
+      const bands = o.parseBands(input(c.bands));
+      if (c.kind === 'gap') return near(o.bandGap(bands, c.n_occupied), c.expect, 'gap');
+      if (c.kind === 'mass') return near(o.directionalMass(bands, c.line, c.policy), c.expect, 'masa');
+      if (c.kind === 'fat') {
+        const sets = Object.fromEntries(Object.entries(c.eigfat).map(([n, f]) => [n, o.parseEigfat(input(f))]));
+        return near(o.fatPartition(bands, sets, c.policy), c.expect, 'fat');
+      }
+      return [`tipo desconocido ${c.kind}`];
+    };
+  },
 };
 
 for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.cases.json')).sort()) {

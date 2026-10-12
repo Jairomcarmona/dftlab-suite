@@ -72,6 +72,18 @@ Mismo entorno. H2O en caja de 10 Å, base SZ, un paso SCF; cada corrida cambia s
 
 Todas las corridas que abortaron terminaron con código de salida 0, sin `Job completed` ni `0_NORMAL_EXIT`.
 
+## Estructura electrónica (T-036)
+
+Mismo entorno, más `fat` del mismo `siesta-env`. Si diamante, `pbe/Si.psml`, DZP, a = 5.43 Å, malla 8×8×8, 200 Ry, `DM.Tolerance 1e-6`. Los FDF salen de `si_bands_fdf.py`; las corridas de bandas parten del `.DM` de la corrida `path`. Los valores esperados están en [`electronic.cases.json`](../../scientific-protocols/vectors/electronic.cases.json), generado por `build_electronic_cases.py`.
+
+| Corrida | Entrada | Resultado |
+|---|---|---|
+| `pia` | `BandLinesScale pi/a` (o sin la etiqueta), `BandLines` Γ-X | «ERROR: pi/a option should only be used for orthorhombic cells. No calculation performed.»; sin `.bands`; `Job completed` |
+| `coop` | `COOP.Write T`, `ReciprocalLatticeVectors` | `.bands` y `si.fullBZ.WFSX`; no hay `si.bands.WFSX` |
+| `path` | Γ-X-W-L-Γ-K, 541 k, `WFS.Write.For.Bands T` | E_F −4.2128 eV; gap indirecto 0.5562 eV, mínimo de conducción a 0.847 de Γ-X; `fat` con s, p, d y todo: «todo» = 1 en cada estado; pesos s hasta −0.55 en bandas altas |
+| `fat` | El mismo camino con 45 k; `fat -b 1 -B 8` con `fatsi.mpr` (s, p, d) y `fatat.mpr` (átomo 1, átomo 2, átomo 2 sin d) | Gap 0.5684 eV; s+p+d = 1 con error 1·10⁻⁵; átomo 1 + átomo 2 = 1; los 38 estados donde el átomo 1 no pesa 0.5 son degenerados |
+| `mass` | `BandPoints`: cuatro líneas de 49 puntos, paso 0.0025·2π/a: [100] y [010] por (0.847, 0, 0)·2π/a, [100] y [111] por Γ | m_l = 0.925, m_t = 0.194 (ventana ±0.05 Å⁻¹); valencia triple en Γ (separación 0.6 meV) |
+
 ## Límites
 
-No se ejecutaron `fat`, `macroave` ni `fcbuild`; solo se comprobó que están en el entorno. `vibra` y `denchar` se ejecutaron para los presets. El caso de superficie es simétrico, neutro y sin corrección dipolar. Las corridas no se suben a Git; se reproducen con estos scripts.
+No se ejecutaron `macroave` ni `fcbuild`; solo se comprobó que están en el entorno. `vibra` y `denchar` se ejecutaron para los presets y `fat` para T-036. El caso de superficie es simétrico, neutro y sin corrección dipolar. Las corridas no se suben a Git; se reproducen con estos scripts.
