@@ -11,6 +11,12 @@ from dftlab_platform import hf1_preflight as preflight
 
 
 class HF1Preflight(unittest.TestCase):
+    def test_path_check_detail_is_json_serializable(self):
+        path = Path("/opt/siesta/bin/siesta")
+        check = preflight._check("SIESTA_PINNED_SHA256", "PASS", path)
+        self.assertEqual(check["detail"], "/opt/siesta/bin/siesta")
+        self.assertEqual(json.loads(json.dumps(check))["detail"], "/opt/siesta/bin/siesta")
+
     def test_slurm_time_limits(self):
         self.assertIsNone(preflight.slurm_seconds("UNLIMITED"))
         self.assertEqual(preflight.slurm_seconds("01:00:00"), 3600)
