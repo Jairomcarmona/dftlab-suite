@@ -13,6 +13,7 @@ from .checkpoints import checked_path, write_new
 from .contracts import canonical, loads
 from .domain import Problem
 from .hf1_bundle import CONTROLLER_TARGETS, inspect_bundle, materialize_bundle, safe_path
+from .hf1_controller_entry import STAGE_PLAN
 from .native_checkpoints import inventory_native
 
 
@@ -111,26 +112,34 @@ class HubbardFlowCampaignCapability:
             # consumers that have not opted into the native controller.
             campaign_path = materialize_bundle(original, workspace/"hf1")
         else:
-            # QRAFT checks the prior owner and state seal before this method.
-            # On resume, verify the immutable inputs in place and never rewrite
-            # the persistent HubbardFlow checkpoint or controller owner state.
+            # QRAFT's supervisor reads a state directory that holds files but no
+            # owner.json as tampering, so nothing is staged here on a fresh
+            # start: the directory is created empty and dftlab-hf1-controller
+            # stages the bundle after QRAFT claims it (ADR-017 Adenda 9). On
+            # resume the owned state is only verified in place, never rewritten.
             state_dir = checked_path(controller_state_dir)
             if state_dir.exists():
                 if not state_dir.is_dir():
                     raise Problem("PRECONDITION_FAILED")
-                for name, data in original.files:
-                    path = state_dir/safe_path(name)
-                    if path.is_symlink() or not path.is_file() or path.read_bytes() != data:
-                        raise Problem("PRECONDITION_FAILED")
+                if any(state_dir.iterdir()):
+                    for name, data in original.files:
+                        path = state_dir/safe_path(name)
+                        if path.is_symlink() or not path.is_file() or path.read_bytes() != data:
+                            raise Problem("PRECONDITION_FAILED")
             else:
                 parent = checked_path(state_dir.parent)
                 parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+                state_dir.mkdir(mode=0o700)
                 if checked_path(parent) != parent or checked_path(state_dir) != state_dir:
                     raise Problem("PRECONDITION_FAILED")
-                materialize_bundle(original, state_dir)
+            try:
+                bundle_relative = PurePosixPath(checked_path(source).relative_to(workspace).as_posix())
+            except ValueError:
+                raise Problem("PRECONDITION_FAILED") from None
+            write_new(workspace/STAGE_PLAN, canonical({
+                "schema_version": 1, "bundle": bundle_relative.as_posix(), "bundle_sha256": self.bundle_sha256,
+                "profile_sha256": self.profile_sha256, "reserved_cpus": self.reserved_cpus}))
             campaign_path = state_dir/"campaign.v2.json"
-            if not campaign_path.is_file() or campaign_path.is_symlink():
-                raise Problem("PRECONDITION_FAILED")
             self._controller_mode = True
         if self._controller_mode:
             # HubbardFlow's installed entrypoint consumes the native campaign
@@ -241,8 +250,8 @@ class HubbardFlowCampaignCapability:
             (core.EXECUTION_REQUEST,), (core.EXECUTION_EVIDENCE,), metadata={
                 "dftlab.hf1": {"mode": "HF-1", "scope": "one-node"},
                 "qraft.controller": {
-                    "schema_version": "1.0", "distribution": "hubbardflow",
-                    "entrypoint": "hubbardflow-controller",
+                    "schema_version": "1.0", "distribution": "dftlab-platform",
+                    "entrypoint": "dftlab-hf1-controller",
                     "inner_launchers": ["openmpi"], "resume": "NATIVE_VERIFIED",
                 },
             },

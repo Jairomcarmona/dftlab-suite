@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md). La **Adenda 8** (#70, 2026-10-12) registra la receta HF-1 y recorre C0 a Q6 contra `main`.
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md). La **Adenda 8** (#70, 2026-10-12) registra la receta HF-1 y recorre C0 a Q6 contra `main`. La **Adenda 9** (#70, 2026-10-12) corrige el orden entre la preparación del estado y el dueño de QRAFT (el `FAIL` de C0).
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -865,3 +865,75 @@ QRAFT y HubbardFlow se leyeron estáticamente aquí (no se ejecutaron). Lo que s
 ### H.7 Pruebas
 
 `test_hf1_recipe.py` (4) y la nueva de `test_authoring.py`.
+
+## Adenda 9 (2026-10-12, issue #70): C0 falló por «state without an owner»; la plataforma prepara el estado después de que QRAFT lo reclama
+
+Respuesta al `FAIL` de C0 ([comentario en #70](https://github.com/Jairomcarmona/dftlab-suite/issues/70#issuecomment-6132849184)): SLURM #443 terminó bien y QRAFT `attempt-0001` falló con `CONTROLLER_STATE_TAMPERED: state without an owner`, antes de SIESTA (`NOT_EVALUATED`). No cambia entradas, perfil privado, fórmulas, gates, tolerancias, contratos, pins ni el código de QRAFT y HubbardFlow. Se leyó `controller_state.py`, `controller_supervisor.py`, `controller_runtime.py`, `capability_runtime.py`, `controller_entrypoint.py` y `controller_launcher.py` de QRAFT `334df66`, y `api/controller.py` de HubbardFlow.
+
+### I.1 Causa
+
+Orden de los hechos en el primer intento de una tarea controladora:
+
+| # | Quién | Qué | Fuente |
+|---|---|---|---|
+| 1 | Runtime de QRAFT | `previous()` lee `controller-state/<tarea>`: no existe, sin dueño previo, sigue | `capability_runtime.py:1111`, `controller_runtime.py:82` |
+| 2 | **`prepare_task` de la plataforma** | Creaba el directorio y copiaba ahí los siete archivos del paquete | `hf1_capability.py` (antes de esta adenda) |
+| 3 | Supervisor de QRAFT, ya en el job | Vuelve a llamar `previous_controller_owner`: hay archivos y no hay `owner.json`, lo lee como manipulación | `controller_supervisor.py:67`, `controller_state.py:63-66` |
+| 4 | Supervisor | Solo después escribiría `owner.json` | `controller_supervisor.py:77` |
+
+El primer intento de cualquier tarea HF-1 fallaba así, sin importar la ciencia. Nada lo cubría: las pruebas de la plataforma llamaban `prepare_task` sin supervisor, y las de QRAFT y HubbardFlow no escriben en el estado antes del dueño.
+
+### I.2 Decisión: entrada propia de la plataforma
+
+| Opción | Resultado |
+|---|---|
+| Cambiar QRAFT para tolerar estado sin dueño | **Descartada.** Debilita la regla de manipulación de §6 y D.5; el descriptor no admite campos nuevos (`additionalProperties: false` en QRAFT y en la copia de HubbardFlow), así que son dos repositorios, pins y wheels nuevos |
+| Escribir un `owner.json` desde la plataforma | **Descartada.** Es fingir la propiedad que solo el supervisor puede reclamar |
+| Preparar el estado después del dueño con una entrada de la plataforma | **Elegida.** Solo código de este repositorio, sin tocar el contrato con QRAFT |
+
+La capacidad HF-1 ya declara cuál es su entrada de controlador (`qraft.controller`). Ahora declara `dftlab-hf1-controller`, un script de consola de la distribución `dftlab-platform` (`platform/pyproject.toml`), y QRAFT lo resuelve igual que antes (la distribución instalada, su `RECORD`, sin `PATH`).
+
+| Momento | Quién | Qué hace |
+|---|---|---|
+| Preparación (antes del supervisor) | `prepare_task` | Crea `controller-state/<tarea>` **vacío** (0700), verifica y registra el paquete en `work/<tarea>/attempt-N/hf1-stage.json` (ruta relativa, `bundle_sha256`, `profile_sha256`, CPU). **No escribe nada en el estado.** En un reintento con dueño verifica los archivos en su sitio, como antes |
+| Reclamo | Supervisor de QRAFT | Ve el directorio vacío, escribe `owner.json`, lanza la entrada |
+| Entrada (`hf1_controller_entry.py`) | `dftlab-hf1-controller` | Exige `owner.json`; valida que `--qraft-reservation` y `--campaign` tengan la forma de QRAFT; relee el paquete con `inspect_bundle`; en un estado con solo `owner.json` copia los archivos (`xb`, nunca sobrescribe); si ya hay archivos solo los compara. Después llama a `hubbardflow.api.controller.main` con **los mismos argumentos** y en el mismo proceso (la señal `SIGTERM` de Q sigue llegando a su manejador) |
+| Cualquier fallo de la entrada | — | Código 2 y mensaje; HubbardFlow no arranca |
+
+Los argumentos que QRAFT valida (`validate_controller_command`) no cambian: la entrada solo sustituye al ejecutable.
+
+### I.3 Cómo se reintenta C0
+
+El `attempt-0001` de la corrida fallida queda asentado y no se toca: ni su directorio, ni su estado, ni su registro de autoridad ni de envíos (`run_id` es único en ambos, H8). Un `attempt-0002` de la misma corrida tampoco sirve: su estado ya tiene archivos y no tiene dueño.
+
+1. **Corrida nueva** (D.4 ya pide campañas nuevas): `run_id`, claves de idempotencia, raíz, estado y job nuevos. Se reutiliza el mismo paquete ZIP verificado (mismos `bundle_sha256` y `profile_sha256`); si la plataforma exigiera un `campaign_id` distinto, solo ese identificador es nuevo y los archivos científicos conservan sus SHA-256, que se comparan con los de la corrida fallida.
+2. Se registra como **C0, segunda corrida** (`C0-r2`). El `FAIL` de la primera se queda en `TRASPASO.md` y en #70 con su motivo; no se borra. No contradice a D.6: aquel `FAIL` vale para claves asentadas relanzadas, y ningún nodo de la primera corrida llegó a lanzarse.
+3. Evidencia que prueba el arreglo, antes de SIESTA: `controller-state/<tarea>/owner.json` existe, y los archivos del paquete aparecen **después** de él (orden de `mtime`).
+
+### I.4 Resto de la secuencia recorrida en seco
+
+Se siguió C0, Q1 a Q6 y el veredicto contra el código de QRAFT y de HubbardFlow buscando otro orden entre «archivos del estado» y «dueño»:
+
+| Paso | Orden verificado | Resultado |
+|---|---|---|
+| C0 intento 1 | Admisión → preparación (estado vacío) → reclamo → entrada → HubbardFlow | ok con I.2 |
+| Q1 (intento 1 de Q) | Igual que C0 | ok con I.2 |
+| Q2 (reanudar tras `SIGTERM`) | El supervisor anterior sella el estado y escribe el cierre; la admisión compara el manifiesto; `prepare_task` solo lee; la entrada solo compara | ok, ninguna escritura entre admisión y supervisor |
+| Q3, Q4 | `kill -9` deja `owner.json` con el mismo `boot_id` y sin cierre; el siguiente intento da `CONTROLLER_PREVIOUS_OWNER_ALIVE` **antes** de reservar intento | ok, no consume intento |
+| Q5, Q6 | `boot_id` distinto y sin sello → `ABSENT_AFTER_BOOT_CHANGE` (U-Q9b); luego igual que Q2 | ok |
+| Archivos del paquete tras una corrida | HubbardFlow los lee y los resume en la línea base; ninguno se reescribe | ok: la verificación en sitio es válida al reanudar |
+| Ledger y cierre | Escritos por QRAFT y HubbardFlow dentro del estado y del intento | ok |
+
+No se encontró otro caso. Lo que solo se ve con QRAFT y HubbardFlow instalados lo cubren las comprobaciones nuevas del preflight (I.5) y la evidencia de I.3.3.
+
+### I.5 Comprobaciones nuevas del preflight
+
+`HF1_PLATFORM_CONTROLLER_ENTRY`, `HF1_HUBBARDFLOW_CONTROLLER_ENTRY` y `HF1_HUBBARDFLOW_CONTROLLER_MODULE`: repiten la resolución de QRAFT (distribución instalada, script de consola único, anotado en el `RECORD`, ejecutable) y que `hubbardflow.api.controller` se importa. Un wheel viejo falla ahí, no dentro de un job.
+
+### I.6 Pruebas
+
+En `test_hf1.py`: `test_fresh_state_is_left_empty_so_qraft_does_not_read_it_as_tampered` (la regresión del `FAIL`), `test_entry_stages_after_the_claim_and_resume_never_rewrites_state`, `test_entry_refuses_paths_and_plans_that_do_not_match_the_qraft_layout`, `test_entry_hands_the_same_arguments_to_hubbardflow_only_after_staging` y `test_capability_names_the_platform_console_script_and_the_wheel_declares_it`. En `test_hf1_preflight.py`: `test_controller_entry_check_names_a_missing_or_unrecorded_console_script`.
+
+### I.7 Si aparece otro defecto del mismo tipo
+
+Se aplica G.4 (arreglo mínimo en este repositorio, una prueba, un PR, máximo dos por identificador). Si la causa está en QRAFT o HubbardFlow y no se puede resolver desde la plataforma (como lo era la opción descartada de I.2), es parada: un solo comentario en #70 con la causa y la línea del código.

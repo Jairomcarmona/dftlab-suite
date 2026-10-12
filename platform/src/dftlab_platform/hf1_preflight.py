@@ -7,6 +7,8 @@ Run it from the installed wheel: python -I -m dftlab_platform.hf1_preflight ...
 """
 import argparse
 import hashlib
+from importlib import metadata
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -15,6 +17,7 @@ import re
 import shutil
 import subprocess
 import sys
+import sysconfig
 from zipfile import BadZipFile, ZipFile
 
 from .hf1_bundle import CONTROLLER_TARGETS, inspect_bundle, profile_findings
@@ -267,6 +270,31 @@ def bundle_checks(bundle, bundle_sha256, profile_sha256, reserved_cpus):
         return [_check("BUNDLE_CAMPAIGN_PROFILE", "FAIL", "BUNDLE_UNREADABLE")]
 
 
+def entry_check(identifier, distribution, entrypoint):
+    """The same resolution QRAFT's controller admission performs, without importing QRAFT."""
+    try:
+        installed = metadata.distribution(distribution)
+        points = [point for point in installed.entry_points if point.group == "console_scripts" and point.name == entrypoint]
+        executable = (Path(sysconfig.get_path("scripts"))/entrypoint).resolve()
+        recorded = any(Path(installed.locate_file(item)).resolve() == executable for item in (installed.files or ()))
+        if len(points) == 1 and recorded and executable.is_file() and os.access(executable, os.X_OK):
+            return _check(identifier, "PASS", f"{distribution} {installed.version}: {executable}")
+        return _check(identifier, "FAIL", f"{distribution}: console script {entrypoint} not unique, recorded and executable (rebuild and reinstall the wheel)")
+    except (metadata.PackageNotFoundError, OSError, ValueError) as error:
+        return _check(identifier, "FAIL", f"{type(error).__name__}: {distribution}")
+
+
+def entry_checks():
+    checks = [entry_check("HF1_PLATFORM_CONTROLLER_ENTRY", "dftlab-platform", "dftlab-hf1-controller"),
+              entry_check("HF1_HUBBARDFLOW_CONTROLLER_ENTRY", "hubbardflow", "hubbardflow-controller")]
+    try:
+        found = importlib.util.find_spec("hubbardflow.api.controller") is not None
+    except (ImportError, ValueError):
+        found = False
+    checks.append(_check("HF1_HUBBARDFLOW_CONTROLLER_MODULE", "PASS" if found else "FAIL", "hubbardflow.api.controller importable"))
+    return checks
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
@@ -279,7 +307,7 @@ def main(argv=None):
     parser.add_argument("--siesta-sha256")
     parser.add_argument("--output", type=Path, help="new file; never overwritten")
     arguments = parser.parse_args(argv)
-    checks = host_checks(arguments.reserved_cpus) + state_checks(arguments.state_dir)
+    checks = host_checks(arguments.reserved_cpus) + entry_checks() + state_checks(arguments.state_dir)
     checks += slurm_checks(arguments.partition, arguments.reserved_cpus)
     checks += mpi_checks(arguments.siesta, arguments.siesta_sha256, arguments.reserved_cpus)
     if arguments.bundle:

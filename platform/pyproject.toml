@@ -25,6 +25,7 @@ engines = [
 dftlab-platform = "dftlab_platform.launcher:main"
 dftlab-platform-api = "dftlab_platform.launcher:main"
 dftlab-platform-processor = "dftlab_platform.processor:main"
+dftlab-hf1-controller = "dftlab_platform.hf1_controller_entry:main"
 
 [dependency-groups]
 dev = [

@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+import unittest.mock
 
 from dftlab_platform import hf1_preflight as preflight
 
@@ -16,6 +17,23 @@ class HF1Preflight(unittest.TestCase):
         check = preflight._check("SIESTA_PINNED_SHA256", "PASS", path)
         self.assertEqual(check["detail"], "/opt/siesta/bin/siesta")
         self.assertEqual(json.loads(json.dumps(check))["detail"], "/opt/siesta/bin/siesta")
+
+    def test_controller_entry_check_names_a_missing_or_unrecorded_console_script(self):
+        # ADR-017 Adenda 9: the wheel must declare dftlab-hf1-controller, as QRAFT resolves it.
+        missing = preflight.entry_check("X", "dftlab-no-such-distribution", "script")
+        self.assertEqual((missing["id"], missing["status"]), ("X", "FAIL"))
+        class Installed:
+            version = "0"
+            entry_points = [type("Point", (), {"group": "console_scripts", "name": "dftlab-hf1-controller"})()]
+            files = []
+            def locate_file(self, item):
+                return item
+        with unittest.mock.patch.object(preflight.metadata, "distribution", return_value=Installed()):
+            unrecorded = preflight.entry_check("Y", "dftlab-platform", "dftlab-hf1-controller")
+        self.assertEqual(unrecorded["status"], "FAIL")
+        self.assertIn("rebuild and reinstall the wheel", unrecorded["detail"])
+        self.assertEqual({item["id"] for item in preflight.entry_checks()}, {
+            "HF1_PLATFORM_CONTROLLER_ENTRY", "HF1_HUBBARDFLOW_CONTROLLER_ENTRY", "HF1_HUBBARDFLOW_CONTROLLER_MODULE"})
 
     def test_slurm_time_limits(self):
         self.assertIsNone(preflight.slurm_seconds("UNLIMITED"))
