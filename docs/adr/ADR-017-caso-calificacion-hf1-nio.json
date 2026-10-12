@@ -1,7 +1,7 @@
 {
   "schema": "dftlab.hf1-qualification-case@1",
   "case_id": "hf1-qual-nio-afmii-pbe-v1",
-  "status": "PROPOSED_PENDING_APPROVAL",
+  "status": "ACCEPTED_2026-10-12",
   "adr": "docs/adr/ADR-017-tarea-controladora-qraft-hf1.md (Adenda 4)",
   "issue": "https://github.com/Jairomcarmona/dftlab-suite/issues/70",
   "source": {
