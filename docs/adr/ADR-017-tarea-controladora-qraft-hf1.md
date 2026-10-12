@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)) y la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) del mismo día. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -28,7 +28,7 @@ Tres hechos del código condicionan el diseño:
 
 QRAFT añade `kind: controller` al esquema de campaña del paquete. El cambio es aditivo:
 
-- `siesta` y `gate` no cambian, y un paquete sin tareas `controller` se serializa byte a byte igual que hoy.
+- `siesta` y `gate` no cambian. Sin tareas `controller`, los bytes de campaña, entradas científicas, locks y scripts existentes permanecen idénticos. Solo el runtime vendorizado y sus hashes pueden actualizarse; el comparador exacto y la excepción al ZIP completo están en la Adenda 3 §C.1.
 - Un paquete con alguna tarea `controller` declara `schema_version: "2.1"`, así que un QRAFT anterior lo rechaza por la versión en vez de interpretarlo.
 
 Registro de la tarea en `campaign.yaml` (lo emite el `task_adapter` público de U-Q3):
@@ -353,7 +353,7 @@ QRAFT, con consumidor instalado, sin checkout ni `PYTHONPATH`, con fixtures sint
    - Veredicto 75: `BLOCKED`.
    - HubbardFlow (U-H7), con el consumidor instalado: cada caso de `contracts/fixtures/controller-resume-rules/cases.json` produce su veredicto, que valida contra `qraft-controller-resume-verdict.schema.json`. Con campañas sintéticas, al menos: checkpoint validado sin cambios, nodo interrumpido, plan, pseudo, `.DM` y política cambiados, y respuesta sin calificación física (Adenda 2 §B.5).
    - Recibo terminal sin `NODE_SETTLED`: `SETTLEMENT_RECOVERED` y ningún relanzamiento.
-7. **Regresión.** Los paquetes `siesta`/`gate` 2.0 producen los mismos bytes, huellas y comportamiento. Los schemas empaquetados en QRAFT coinciden por SHA-256 con los de este repositorio.
+7. **Regresión.** Los paquetes `siesta`/`gate` 2.0 preservan bytes, huellas de campaña/entradas/workflow y comportamiento existentes con el comparador de Adenda 3 §C.1. No se exige el mismo SHA del ZIP cuando cambia su runtime vendorizado; sus hashes nuevos se verifican, no se omiten. Los schemas empaquetados en QRAFT coinciden por SHA-256 con los de este repositorio.
 
 Calificación de la plataforma, fuera de CI (Ola 3): HF-1 real pequeño en WSL con SLURM 23.11.4 y Open MPI 4.1.6. Incluye el probe de contención y de `ProctrackType`, la cancelación durante un SCF interno (ADR-006 §Pruebas) y una reanudación tras caída.
 
@@ -384,7 +384,7 @@ Codex revisó HubbardFlow en `32ac193` y encontró que §6 pedía «salir con 75
   3. La revalidación nativa, la misma que hace `CampaignRunner._revalidate_reuse` ([`campaign_runner.py:708-770`](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/blob/32ac1936e396e33d7de63421f128b5e1c0641cdd/src/hubbardflow/execution/campaign_runner.py#L708)), conserva cada recibo lanzado. Para `REFERENCE` y `PERTURBATION` eso significa el validador nativo sobre los artefactos y el `.DM` de la referencia.
   4. `check_resume` no encuentra ningún cambio frente a la línea base (§B.2).
 
-Por tanto, `NOT_ESTABLISHED` es **neutral** para la continuidad técnica: no rechaza ni autoriza nada. Solo `IDENTITY_MISMATCH` rechaza. El controlador copia el resultado tal cual en el veredicto, nunca lo convierte en aceptación y declara `scientific_effect: "NONE"`. La calificación científica sigue saliendo solo del análisis nativo.
+Por tanto, `NOT_ESTABLISHED` es **neutral** para la continuidad técnica: no rechaza ni autoriza nada. `IDENTITY_MISMATCH` rechaza por cambios si `changed` no está vacío; si está vacío, es evidencia inconsistente y aplica primero la regla 1 (Adenda 3 §C.2). El controlador copia el resultado tal cual en el veredicto, nunca lo convierte en aceptación y declara `scientific_effect: "NONE"`. La calificación científica sigue saliendo solo del análisis nativo.
 
 ### B.2 Línea base y petición de `check_resume`
 
@@ -403,8 +403,8 @@ Una campaña sin `resolved_perturbation_plan_file` corre en el intento 1, pero n
 
 | # | Condición observada | Decisión | `reason` |
 |---|---|---|---|
-| 1 | Falta la línea base, no es una petición válida, trae `responses` no vacío, o `check_resume` lanza `PublicApiError` | `REFUSE` | `RESUME_EVIDENCE_INVALID` |
-| 2 | `native_status = IDENTITY_MISMATCH` (`assessment = FAIL`); `blocking` = `changed` | `REFUSE` | `RESUME_INPUTS_CHANGED` |
+| 1 | Falta la línea base, no es una petición válida, trae `responses` no vacío, `check_resume` lanza `PublicApiError`, o devuelve `native_status = IDENTITY_MISMATCH` con `changed = []` | `REFUSE` | `RESUME_EVIDENCE_INVALID` |
+| 2 | `native_status = IDENTITY_MISMATCH` (`assessment = FAIL`) con `changed` no vacío; `blocking` = `changed` | `REFUSE` | `RESUME_INPUTS_CHANGED` |
 | 3 | `native_status` distinto de `NOT_ESTABLISHED` (también el histórico `EXACT_MATCH` o uno desconocido), `changed` no vacío, `reusable_response_ids` no vacío o `physical_equivalence ≠ NOT_ESTABLISHED` | `REFUSE` | `RESUME_STATUS_UNRECOGNIZED` |
 | 4 | El checkpoint no carga, o su `campaign_digest` no es la `checkpoint_identity` del libro | `REFUSE` | `CHECKPOINT_IDENTITY_MISMATCH` |
 | 5 | Una clave asentada sin recibo igual (estado y `evidence_digest`), o un recibo de nodo lanzable sin asentar y sin `LAUNCH_FINISHED` | `REFUSE` | `LEDGER_CHECKPOINT_INCONSISTENT` |
@@ -413,6 +413,11 @@ Una campaña sin `resolved_perturbation_plan_file` corre en el intento 1, pero n
 | 8 | Ninguna de las anteriores | `CONTINUE` | `TECHNICAL_CONTINUATION` |
 
 `SETTLEMENT_RECOVERED` se anota después de pasar las reglas 1–5 y antes de la 6.
+
+La excepción de regla 1 conserva literalmente el resultado nativo no nulo,
+con `blocking: []` y `continuation: null`. Tiene precedencia sobre las reglas
+2–8, aunque el checkpoint no cargue. Si el resultado no se obtuvo por falta
+de evidencia o error de petición, `check_resume` sigue siendo `null`.
 
 Con `REFUSE` el controlador sale con 75 sin haber lanzado nada. Con `CONTINUE` ejecuta la reanudación nativa:
 
@@ -430,9 +435,64 @@ Si el intento cae entre el guardado del recibo fallido y su retirada, el intento
 ### B.5 Contrato, vectores y lo que cambia en HubbardFlow
 
 - Schema [`qraft-controller-resume-verdict.schema.json`](../../contracts/schemas/qraft-controller-resume-verdict.schema.json) (`qraft.controller-resume-verdict@1.0`). `CONTINUE` exige `NOT_ESTABLISHED` sin cambios, sin respuestas reutilizables y sin equivalencia física afirmada. `REFUSE` no lleva continuación.
-- [`contracts/fixtures/controller-resume-rules/cases.json`](../../contracts/fixtures/controller-resume-rules/cases.json) trae 21 vectores:
+- [`contracts/fixtures/controller-resume-rules/cases.json`](../../contracts/fixtures/controller-resume-rules/cases.json) trae 23 vectores:
   - aceptados: checkpoint validado sin cambios, nodo interrumpido, nada lanzado todavía, caída entre checkpoint y libro, respuesta sin calificación física y derivado inválido que se recalcula;
-  - rechazados: plan, pseudo, `.DM` de entrada y política cambiados, línea base ausente o con respuestas, estado no reconocido, respuestas reutilizables inesperadas, checkpoint de otro DAG, identidad distinta del libro, inconsistencias del libro, fallo asentado, evidencia que no revalida, digest distinto y referencia inválida que arrastra a sus descendientes.
+  - rechazados: plan, pseudo, `.DM` de entrada y política cambiados, línea base ausente o con respuestas, estado no reconocido, respuestas reutilizables inesperadas, checkpoint de otro DAG, identidad distinta del libro, inconsistencias del libro, fallo asentado, evidencia que no revalida, digest distinto, referencia inválida que arrastra a sus descendientes e `IDENTITY_MISMATCH` sin cambios, también con checkpoint que no carga.
 
   `check-contracts.mjs` los evalúa con `evaluateControllerResume`, y `validate_fixtures.py` valida cada veredicto esperado.
 - En HubbardFlow (U-H7): la comprobación por nodo de `_revalidate_reuse` se separa en una función pura que devuelve conservados, inválidos y avisos sin escribir nada. `resume` nativo la usa y conserva su comportamiento. El controlador decide con ella antes de mutar el checkpoint. `check_resume` se llama como API pública, sin cambios.
+
+## Adenda 3 (2026-10-11, issues #57 y #59)
+
+Autorizada expresamente por el usuario tras reproducir ambas contradicciones.
+No añade campos, no altera la API científica de `check_resume`, fórmulas,
+gates, tolerancias ni las reglas de reutilización científica. Sustituye solo
+la garantía imposible del ZIP completo y fija el rechazo del caso inconsistente.
+
+### C.1 Comparador de regresión de paquetes 2.0
+
+Con la misma campaña/materialización, perfil, package_id y opciones, comparar
+un paquete del pin QRAFT `41043ed` con uno del nuevo motor:
+
+1. El inventario de archivos fuera de `runtime/` debe ser idéntico. Comparar
+   byte a byte cada miembro descomprimido, excepto `manifest.json` y
+   `checksums.sha256`: incluye `campaign.yaml`, entradas científicas, locks,
+   scripts y demás archivos existentes. No normalizar ni reescribir estos bytes.
+2. En `manifest.json`, todos los campos excepto `immutable_files` permanecen
+   iguales. Dentro de `immutable_files`, las entradas fuera de `runtime/`
+   conservan nombres y digests; las entradas de `runtime/` pueden cambiar o
+   añadirse conforme al código instalado. Verificar cada digest contra los
+   bytes presentes en su paquete, incluidos los del runtime. Su inventario
+   cubre todos los archivos salvo el propio manifiesto y `checksums.sha256`.
+3. En `checksums.sha256`, nombres y hashes fuera de `runtime/` y de
+   `manifest.json` son idénticos. La excepción para el manifiesto es únicamente
+   el hash derivado de los cambios admitidos en el paso 2. Verificar cobertura
+   completa (salvo el propio archivo de checksums) y todos los hashes de cada
+   paquete; rechazar faltantes, extras respecto de los archivos del paquete,
+   duplicados, rutas inseguras o hashes incorrectos. No excluir el runtime de
+   la comprobación de integridad.
+4. Cambios de tamaño, CRC, compresión u offsets del ZIP derivados de los bytes
+   permitidos no son cambios científicos. No se exige identidad del contenedor
+   ZIP ni de su SHA-256; conservar metadatos no derivados, como permisos y
+   fechas deterministas. Sí se exige el comparador anterior y las huellas de
+   campaña/entradas/workflow y el comportamiento 2.0 existentes.
+5. Probar el comparador también con alteraciones de una entrada científica,
+   campaña, lock, script o hash: debe rechazarlas. No congelar ni duplicar el
+   runtime antiguo para satisfacer una igualdad del ZIP, y no ocultar cambios
+   del runtime o sus hashes.
+
+### C.2 Resultado nativo inconsistente al reanudar
+
+`native_status = IDENTITY_MISMATCH` con `changed = []` pertenece a la regla 1
+de B.3: `REFUSE / RESUME_EVIDENCE_INVALID`, salida75 y ningún lanzamiento.
+Conservar todos los campos nativos literalmente, incluso `assessment`,
+`reusable_response_ids` y `physical_equivalence`; no sintetizar cambios ni
+promover aceptación. `blocking` es vacío y `continuation` es null. La
+condición se comprueba antes de cargar/admitir el checkpoint y antes de
+recuperar settlements; `checkpoint_identity` es null si no se llegó a cargar.
+
+El schema admite para ese reason un resultado null como antes, o exclusivamente
+la copia nativa de este caso inconsistente. Los vectores nuevos comprueban la
+precedencia y los fixtures inválidos rechazan un resultado neutral ordinario,
+un mismatch con cambios o un blocking fabricado bajo ese reason. La razón,
+la versión del contrato y todos sus campos ya existían.
