@@ -319,6 +319,31 @@ raise SystemExit(module.run(sys.argv[1]))
         after = {path.relative_to(state_dir): path.read_bytes() for path in state_dir.rglob("*") if path.is_file()}
         self.assertEqual(after, before)
 
+    def test_controller_mode_ignores_legacy_worker_limits(self):
+        # ADR-017 Adenda 5: max_seconds/grace_seconds bound only hf1_worker.
+        results = []
+        for index, (max_seconds, grace_seconds) in enumerate(((1800, 10), (1, 1))):
+            self.controller_capability()
+            capability = HubbardFlowCampaignCapability(
+                self.engines, self.root, run_id="synthetic-controller", bundle_sha256=self.sha,
+                profile_sha256=self.profile_sha, reserved_cpus=4,
+                max_seconds=max_seconds, grace_seconds=grace_seconds)
+            state_dir = self.root/f"run-{index}"/"controller-state"/"hf1-lru"
+            attempt = self.root/f"run-{index}"/"attempt-0001"
+            attempt.mkdir(parents=True)
+            campaign = capability.prepare_task(
+                self.inspect(4), attempt, task_id="hf1-lru", attempt_id="attempt-0001",
+                inputs={"campaign": self.archive}, controller_state_dir=state_dir)
+            self.assertFalse((attempt/"hf1-request.json").exists())
+            command = capability.build_command(
+                campaign, execution_spec=SimpleNamespace(launcher="controller", mpi_ranks=1, allocated_cpus=1),
+                controller_entrypoint="/installed/hubbardflow-controller",
+                controller_reservation_path="work/hf1-lru/attempt-0001/.qraft/controller-reservation.json",
+                controller_state_dir=state_dir, controller_prior_ledgers=())
+            files = {path.relative_to(state_dir): path.read_bytes() for path in state_dir.rglob("*") if path.is_file()}
+            results.append((command, files))
+        self.assertEqual(results[0], results[1])
+
     def test_controller_command_uses_only_qraft_bound_paths_and_installed_entrypoint(self):
         capability = self.controller_capability()
         state_dir = self.root/"controller-state"/"hf1-lru"

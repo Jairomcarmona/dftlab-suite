@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -626,3 +626,35 @@ Con `PASS`, el `CapabilityQualificationRecord` `hubbard_mode: HF-1` puede pasar 
 - La cancelación con `scancel` directo. Con `proctrack/linuxproc`, `scancel --batch --signal=TERM` señala a todo el árbol del paso batch, también a `mpirun`, y no solo al runtime. Si se quiere calificar ese camino, va en su propio issue.
 - La prueba `OWNER_DEAD_BY_SCHEDULER_TERMINAL`, que exige `proctrack/cgroup`.
 - Varios hosts.
+
+## Adenda 5 (2026-10-12, issue #70): `max_seconds` y `grace_seconds` de la factory en modo controller
+
+Estado: **aceptada** el 2026-10-12. Responde la [consulta de Codex en #70](https://github.com/Jairomcarmona/dftlab-suite/issues/70#issuecomment-6120356166). No cambia fórmulas, gates, tolerancias, schemas, pins, el perfil privado ni la ficha científica; añade a la ficha solo los dos argumentos del constructor.
+
+### E.1 Qué son esos parámetros
+
+`HubbardFlowCampaignCapability.__init__` exige `max_seconds` (1–3600) y `grace_seconds` (1–10). Los dos son límites del **worker legado** `dftlab_platform.hf1_worker`: solo se escriben en `hf1-request.json`, que `prepare_task` crea cuando no recibe `controller_state_dir`. En modo controller ese archivo no existe, `build_command` no los incluye y ningún proceso los lee (`platform/src/dftlab_platform/hf1_capability.py`, `prepare_task` y `build_command`).
+
+El validador tenía razón: no se derivan del walltime ni del `termination_grace_seconds` del perfil. Hacerlo crearía un segundo reloj sobre el mismo intento, y §2 y ADR-007 piden una sola autoridad. En modo controller los plazos son **solo** de QRAFT:
+
+| Qué | Autoridad en modo controller | Qué pasa al agotarse |
+|---|---|---|
+| Fin de lanzamientos | `deadline.stop_launching_at` del descriptor (walltime restante menos `shutdown_margin_seconds`, §4) | El controlador no abre más `LAUNCH_INTENT`; uno posterior es `INTENT_AFTER_DEADLINE` |
+| Parada | `deadline.hard_stop_at` y la secuencia de §5 | `stop_request` y `SIGTERM` al supervisor; el intento queda `INTERRUPTED` y se reanuda según §6 |
+| Gracia de cierre | `termination_grace_seconds` del perfil (§5, paso 3) | `SIGKILL` por pidfd hasta `ECHILD`; el cierre sigue siendo `CLOSED`, y el nodo cortado es un «nodo interrumpido» que se relanza (Adenda 2) |
+
+### E.2 Valores para la calificación HF-1
+
+La factory del operador para C0 y Q usa **`max_seconds = 1800`** y **`grace_seconds = 10`**, fijos e iguales en todos los intentos.
+
+- Son inertes en modo controller: no acortan ni alargan C0 ni Q, y no se presentan como política de tiempo de la tarea.
+- Se eligen para que, si algún día una tarea HF-1 cayera por error en el camino legado, el límite siga siendo razonable y no un cheque en blanco. 1800 s es unas 3,75 veces la duración más larga esperada de la campaña NiO (8 min, D.1) y queda por debajo del tope de 3600. 10 s es el máximo que admite el constructor y deja tiempo a la parada cooperativa de `mpirun`.
+- No se cambia el constructor en esta adenda. Permitir `None` en modo controller sería más limpio, pero cambia código ya instalado y calificado (wheel de #78) para un parámetro sin efecto. Queda como mejora posible, no como requisito de HF-1.
+
+### E.3 Comprobaciones antes de C0
+
+1. **Inercia.** Una prueba de plataforma fija que dos factories con `max_seconds`/`grace_seconds` distintos preparan la misma campaña y el mismo comando en modo controller, sin crear `hf1-request.json` (`test_controller_mode_ignores_legacy_worker_limits`). En la calificación se comprueba además que el directorio de cada intento no contiene `hf1-request.json`.
+2. **Plazo del perfil.** El perfil privado no se edita: su `profile_sha256` está ligado a la factory. Antes de C0 se lee del descriptor del intento 1 que `stop_launching_at` queda al menos **1800 s** después del arranque. Si no, C0 no se lanza y se pregunta en #70. Así el walltime no corta C0 ni los intentos de Q por una causa que D.4 no prevé.
+3. **Evidencia.** Cada intento registra `stop_launching_at`, `hard_stop_at`, `shutdown_margin_seconds` y `termination_grace_seconds` tal como los usó QRAFT, junto con los dos valores inertes de la factory.
+
+Ninguno de estos valores entra en D.6: el veredicto sigue dependiendo solo de los pasos de D.4, las reglas de §4 y la tolerancia de 0.020 eV.
