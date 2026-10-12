@@ -528,6 +528,13 @@ Los 15 cambios del inventario C2 quedan trazados por grupos coherentes. Los PR u
 - **Pendiente bloque2:** espera P4 cerrado; no iniciado.
 - **Pendiente bloque3:** espera P6 cerrado; no iniciado. Siguiente paso: resolución normativa57/59, aceptación instalada integral, QRAFT runtime y calificación real; las siete campañas sintéticas por CLI ya pasan en WSL y no cierran esas compuertas.
 
+## Cierre U-Q9: integración del coordinador en QRAFT
+
+- **PR upstream:** [siestaflow #11](https://github.com/Jairomcarmona/siestaflow/pull/11), commit `55fcb621f5e8530b9cbdae01117f948ee19e289e`, fusionado el 2026-10-12 03:02 UTC como `c3ecdead645cab840bcd096aba166bfd0c3f173e`. Diez checks PR/push SUCCESS en cabeza: consumidores Windows/Linux y regresión Python 3.11–3.13. La issue siestaflow #10 sigue abierta.
+- **Integración:** U-Q9 ahora conecta preparación 2.1, binding al workflow lock, entrypoint instalado, descriptor/libros y veredicto de reanudación con `CompiledWorkflowRuntime` y el único `ResourceCoordinator`. Si QRAFT cae mientras el supervisor conserva su owner, la nueva invocación recompone el lease del host reservado y bloquea otras tareas hasta probar cierre. La importación de paquetes 2.0 mantiene carga condicional del módulo 2.1.
+- **Verificación:** clone Linux limpio, suite completa `1203 passed, 13 skipped`; wheel aislado WSL con la ruta de caída del padre, retención/reconstrucción del host y reanudación al cerrar el supervisor, `149 passed, 1 skipped`. Las cuatro comprobaciones instaladas Windows pasan y rechazan la ejecución POSIX con `CONTROLLER_REQUIRES_POSIX`. El comparador C.1 conserva bytes fuera de `runtime/` y verifica la cobertura íntegra de hashes. Validador científico: **APROBADO** para este diff de coordinación/recursos.
+- **Límite y siguiente paso:** no hubo cálculo SIESTA ni job SLURM; el WSL disponible no tiene ejecutable SIESTA, perfil HF-1 ni allocation activa. No se actualizan pins/wheels oficiales ni se cierra #10; HF-1 continúa deshabilitado (capability como máximo `CONTRACT_TESTED`). Falta la calificación real con RuntimeProbe fresco, cancelación durante SCF y resume después de caída.
+
 ## Auditoría P5–P10 (Claude)
 
 - **Rama:** `claude/project-thread-15so4f`, desde `main` @ `9710b9e`. Documentos, oráculos de referencia y un comprobador de vectores en `verify.mjs`; sin código de producción, sin tocar QRAFT, HubbardFlow ni ramas de Codex.
