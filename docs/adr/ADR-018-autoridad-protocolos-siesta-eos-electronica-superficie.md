@@ -20,7 +20,7 @@ Sin dueño, Codex tendría que elegir al implementar T-035: o pone la ciencia en
 1. Cada workflow (WF-EOS, WF-ELECTRONIC fino, WF-SURFACE) es un protocolo de QRAFT con capability propia, plan inmutable y digest, igual que M5–M8. Su ficha de entrada vive en `docs/scientific-protocols/` y se acepta **antes** del código (compuerta de diseño, [plan §19](../../PLAN_IMPLEMENTACION_CLAUDE_CODE.md#19-auditoría-p5p10-y-compuerta-de-diseño)).
 2. Los umbrales viven en políticas versionadas del protocolo (ADR-009). La ficha fija qué parámetros declara la política, no sus valores.
 3. Los lectores y vistas de la plataforma (por ejemplo, el ajuste BM de `views/calc.js` o el promedio planar de `views/potential.js`) siguen como herramientas de lectura y aprendizaje; no certifican ni alimentan una campaña.
-4. Cambios upstream: U-Q10…U-Q13, que entran en QRAFT **después** de U-Q9 y no en paralelo, para no competir con HF-1. Mientras tanto se aceptan las fichas y sus vectores. Están en el [inventario de QRAFT](../compatibility/QRAFT_4d996ea.md#5-cambios-upstream-necesarios-ola-1-codex). Cada uno parte de la ficha aceptada y de sus vectores.
+4. Cambios upstream: U-Q10…U-Q13 (y U-Q14…U-Q18 por la [Adenda 1](#adenda-1-presets-preflight-y-pseudos-u-q14u-q18)), que entran en QRAFT **después** de U-Q9 y no en paralelo, para no competir con HF-1. Mientras tanto se aceptan las fichas y sus vectores. Están en el [inventario de QRAFT](../compatibility/QRAFT_4d996ea.md#5-cambios-upstream-necesarios-ola-1-codex). Cada uno parte de la ficha aceptada y de sus vectores.
 
 **Opción B (descartada).** Un paquete de análisis en `dftlab-suite` (por ejemplo `platform/science/`) ajusta y evalúa, y QRAFT solo ejecuta. Reduce cambios en QRAFT al análisis, pero la generación de geometrías y el fan-out siguen necesitando QRAFT (la plataforma no puede crear su propio DAG, ADR-003 regla 1). El resultado es el mismo número de repositorios por workflow y un tercer autor de gates.
 
@@ -55,3 +55,14 @@ Las de cada ficha, en particular:
 ## Migración
 
 No hay nada implementado de estos protocolos. Cambiar de opción exige un ADR nuevo antes de abrir T-035.
+
+## Adenda 1: presets, preflight y pseudos (U-Q14…U-Q18)
+
+Revisión independiente de las fichas del PR #60. Las fichas [PRESETS](../scientific-protocols/PRESETS.md), [PREFLIGHT](../scientific-protocols/PREFLIGHT.md) y [PSEUDOS](../scientific-protocols/PSEUDOS.md) asignan gates a QRAFT, pero la decisión original solo cubre EOS, electrónica fina y superficie. Esta adenda extiende la opción A a esos tres bloques, sin cambiar la decisión de fondo:
+
+- QRAFT es la autoridad de los gates de molécula, relajación y celda variable, vibración molecular (FC), lectura del FDF y verificación de pseudos: **U-Q14…U-Q18** del [inventario](../compatibility/QRAFT_4d996ea.md#5-cambios-upstream-necesarios-ola-1-codex).
+- La plataforma solo elige el preset, construye el `RunIntent` y presenta; el frontend es vista previa.
+- Orden: igual que U-Q10…U-Q13, todos **después** de U-Q9.
+- Los umbrales de presets viven en `qraft.presets.policy@1` (ADR-009) y los aprueba Manuel.
+
+Estado: **aceptada** por Manuel el 2026-10-12 (aprobación de las políticas v1 y de U-Q13…U-Q18).

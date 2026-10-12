@@ -745,7 +745,7 @@
    ],
    "policy": {
     "policy_id": "qraft.presets.policy@1",
-    "max_reference_force_eV_A": 0.01
+    "max_reference_force_eV_A": 0.01, "imaginary_tol_cm1": 20
    },
    "vibra_cm1": [
     -1226.524235,
@@ -803,7 +803,7 @@
    ],
    "policy": {
     "policy_id": "qraft.presets.policy@1",
-    "max_reference_force_eV_A": 0.01
+    "max_reference_force_eV_A": 0.01, "imaginary_tol_cm1": 20
    },
    "vibra_cm1": [
     -339.568409,
@@ -859,7 +859,7 @@
    ],
    "policy": {
     "policy_id": "qraft.presets.policy@1",
-    "max_reference_force_eV_A": 0.01
+    "max_reference_force_eV_A": 0.01, "imaginary_tol_cm1": 20
    },
    "vibra_cm1": [
     -394.235318,
@@ -915,7 +915,7 @@
    ],
    "policy": {
     "policy_id": "qraft.presets.policy@1",
-    "max_reference_force_eV_A": 0.01
+    "max_reference_force_eV_A": 0.01, "imaginary_tol_cm1": 20
    },
    "vibra_cm1": [
     -420.740522,
@@ -965,7 +965,7 @@
    ],
    "policy": {
     "policy_id": "qraft.presets.policy@1",
-    "max_reference_force_eV_A": 0.01
+    "max_reference_force_eV_A": 0.01, "imaginary_tol_cm1": 20
    },
    "expect": {
     "status": "ACCEPTED",
