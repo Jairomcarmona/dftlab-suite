@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md). La **Adenda 8** (#70, 2026-10-12) registra la receta HF-1 y recorre C0 a Q6 contra `main`.
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -690,7 +690,7 @@ En modo controller, HubbardFlow lanza `mpirun` directamente sobre el host reserv
 | `target`, partición, cuenta, qos | `slurm`; los que `sbatch --test-only` ya aceptó (`local`/`default`/`normal`) | Observado en el preflight de runtime |
 | Nodos, CPU, tareas | 1 nodo, `total_cpus = ntasks = processes_per_node = 4`, 1 CPU por tarea | `prepare_controller_task` y D.2 |
 | Lanzador y reintentos | `openmpi`, `max_attempts = 3` | Ídem; `max_attempts` es el de la ficha |
-| **Tiempo de la allocation** | **3600 s** (y `walltime_seconds = 3600` en la tarea) | E.3.2 pide `stop_launching_at` ≥ 1800 s tras el arranque; el perfil de T-023b (600 s) lo incumple. Si el cálculo de E.3.2 (última fila) da menos de 1800 s, subir a 7200 s si la partición lo permite y repetir; si no, parar (F.6) |
+| **Tiempo de la allocation** | **3600 s** (la tarea usa `walltime_seconds = 1800`, corregido en la Adenda 8 H.2) | E.3.2 pide `stop_launching_at` ≥ 1800 s tras el arranque; el perfil de T-023b (600 s) lo incumple. Si el cálculo de E.3.2 (última fila) da menos de 1800 s, subir a 7200 s si la partición lo permite y repetir; si no, parar (F.6) |
 | Memoria | 2048 MB | NiO de 4 átomos, DZP, 200 Ry. P5 y TASK22 corrieron en esta máquina. Los 512 MB de T-023b no son un precedente |
 | Entorno | exactamente `PATH` explícito, `QRAFT_PYTHON` del intérprete instalado, `OMP_NUM_THREADS = OPENBLAS_NUM_THREADS = MKL_NUM_THREADS = 1`; sin módulos | Como T-023b |
 | **Comprobación de E.3.2** | Antes del envío: `tiempo de la allocation − shutdown_margin_seconds` del perfil exterior ≥ 1800 s. Después: el descriptor del intento 1 registra `stop_launching_at` y se compara | Sustituye a la lectura previa del descriptor (H12). El descriptor es registro de lo ocurrido, no una puerta; si contradice el cálculo, se reporta sin detener C0 |
@@ -801,3 +801,67 @@ Nunca se arregla ni se ajusta: entradas, perfil privado, fórmulas, gates, toler
 ### G.6 Pocos PR (sustituye el primer punto de F.7)
 
 El avance vivo va en comentarios de #70, no en un PR por paso. `TRASPASO.md` se actualiza una vez por etapa cerrada dentro del PR de código de esa etapa, o en un único PR documental al final con C0 y Q juntos. Nunca un PR documental solo para anotar la fusión de otro PR. Los arreglos de código relacionados van en un solo PR. La regla general queda también en `docs/development/WORKING_RULES.md`.
+
+## Adenda 8 (2026-10-12, issue #70): receta HF-1 registrada, recorrido completo de C0 a Q6 y arnés especificado
+
+Respuesta a que Codex parara antes de C0: `main` no tenía una receta HF-1 registrada (`RunIntent` y fragmentos). Esta adenda cierra ese hueco y todos los del mismo tipo hallados al recorrer en seco, contra el código de `main`, cada etapa hasta el veredicto. No cambia entradas, perfil privado, fórmulas, gates, tolerancias, contratos ni pins. Decisiones de plataforma tomadas aquí: las que la ciencia no fija (nombres, identificadores, recursos de la tarea) y que se anotan en H.1.
+
+### H.1 La receta (código: `platform/src/dftlab_platform/hf1_recipe.py`)
+
+La cadena de la plataforma es `VALIDATE_INPUT`, `CREATE_CAMPAIGN`, `CREATE_PLAN` y `PREPARE_PACKAGE` (`AuthoringHandlers`), y la receta se resuelve por `(protocol_id, version)` en `QraftArtifactAuthoring(recipes=...)`. El borrador es un **portador descriptivo**: la ciencia vive en el paquete de la campaña ya verificado (D.2), no en la traducción. La receta no elige ningún número que D.2 no fije; cada valor sale de `reference.fdf` y `material.json` fijados.
+
+| Campo | Valor | Origen |
+|---|---|---|
+| `protocol` | `dftlab.hubbardflow.hf1-nio-qualification` `0.1.0` (el `recipe_id` de QRAFT es igual) | decisión de plataforma |
+| `operation` | `dftlab.hubbardflow.hf1-lr-u` | decisión de plataforma |
+| Estructura | celda fcc de 4.17 Å (filas `(0,1,1)`, `(.5,0,.5)`, `(.5,.5,0)`), `NiLR0` `(0,0,0)`, `NiLR1` `(.5,0,0)`, O `(.25,.5,.5)` y `(.75,.5,.5)`, `BULK` | `reference.fdf` |
+| Modelo físico | PBE (GGA), carga 0 e, `COLLINEAR`, `SCALAR`, sin Hubbard impuesto | D.2 |
+| Política numérica | DZP, 0.005 Ry, 200 Ry, MP `[2,4,4]`, sin smearing, `diagon`, DM 1e-5, H 1e-4 eV, objetivo `U_scalar_charge`; la justificación incluye el `sha256` del paquete | D.2 |
+| Fragmento | `hf1-controller`, una tarea `hf1`, capacidad `dftlab.engine.hubbardflow.hf1`, una entrada `campaign` (`application/zip`, contrato `dftlab.hf1.campaign-bundle`), sin salidas declaradas | `prepare_controller_task` |
+| Recursos de la tarea | 1 nodo, 1 rango, 1 proceso por nodo, 1 CPU, **1800 s** | H.2 |
+| Fuente | `campaign.bundle.zip` ligada a la referencia del artefacto y a su `sha256` | D.2 |
+
+El resolutor compara el borrador almacenado con el esperado y rechaza con `PRECONDITION_FAILED` cualquier diferencia de estructura, modelo, política u operación. Un borrador distinto no puede tomar la receta.
+
+**Qué hace Codex.** Construye `QraftArtifactAuthoring` con `recipes=recipe_registry(api, bundle_ref=<ref del ZIP>, bundle_sha256=<sha>, profile_id="hf1-controller-outer-slurm-v1")` y `controller_adapter_factory` como en `qualify_native_handlers.py`, registra el ZIP como artefacto, crea el borrador con `draft_request(sha, idempotency_key=...)`, y recorre la cadena. No inventa nada: si un paso pide un valor, sale de este cuadro o de D.2.
+
+### H.2 Walltime de la tarea: 1800 s (corrige F.2)
+
+F.2 fijó `walltime_seconds = 3600` en la tarea. QRAFT lo rechaza: `_validate_initial_launch_budget` exige estimación menor que la allocation menos el margen de parada, y 3600 no es menor que 3600 menos el margen. Con **1800 s** (el NiO tarda unos 8 min) se cumple en el empaquetado (1800 + 30 < 3540) y en el lanzamiento. La allocation exterior sigue en 3600 s, `max_attempts` en 3. La ficha JSON se corrige a 1800.
+
+### H.3 Validación de un flujo controlador (`qraft_authoring.py`)
+
+`validate()` exigía informes nativos de SIESTA y, sin ellos, devolvía `PRECONDITION_FAILED`: un flujo HF-1 no los tiene. Ahora, si el bloqueo de la compilación contiene un adaptador de tarea de tipo controlador (`prepare_controller_task`), la validación se hace con ese adaptador, y el recibo dice **`CONTROLLER_BUNDLE_TRANSPORT_ONLY`** (`WARNING`, `HEURISTIC`) con decisión `ACCEPTED_WITH_WARNINGS` y alcance «transporte del paquete; la ciencia no se valida aquí». Nunca devuelve `ACCEPTED`. El camino de SIESTA queda igual. Prueba: `test_controller_workflow_without_native_reports_is_transport_only_never_accepted`.
+
+### H.4 Intentos de Q: copia de `state.sqlite` por intento (cierra H8 en la opción A)
+
+`controller_authorities.run_id` es clave primaria y `create` rechaza cualquier registro, y `scheduler_dispatches.run_id` es único. C0 y el intento 1 de Q usan el estado de plataforma normal. Los intentos 2 y 3 de Q **no** pasan por la plataforma (F.4): el arnés copia el paquete ya preparado, comparte el directorio de `authority-locks`, y para cada intento usa **una copia fresca del `state.sqlite` anterior a la presentación**, con su propio `effect-intent` y contexto de worker. No se borra ni edita ningún registro de autoridad del run original. La copia es del arnés, no del producto.
+
+### H.5 Especificación del arnés de Q
+
+1. **PID del runtime.** El guion `sbatch` escribe `echo $$ > runtime.pid` en el directorio del intento antes de `exec python -I -m ...`. Ese es el PID de `SIGTERM` (Q1) y `SIGKILL` (Q3). Nunca se señala otro.
+2. **Vigilante.** Lee el libro JSONL (`qraft.controller-inner-ledger@1.0`): dispara cuando hay `LAUNCH_STARTED` con `key.node_id` igual al nodo de D.4 (por ejemplo `response:lr_s000_m0p06_screened`) y sin `LAUNCH_FINISHED` de ese `trace_id`; y la `siesta.out` del nodo, que se localiza con el `pid` de `LAUNCH_STARTED` (`/proc/<pid>/fd/1` o `cwd`), tiene una línea `scf:`. Sondeo cada 100 ms.
+3. **Plazo en cola.** Si el job propio sigue `PENDING` 120 s, se cancela **solo ese job** (aún sin intento ni descriptor), se espera nodo `IDLE`, sonda nueva y reenvío; máximo 2 veces. Sustituye al límite de 600 s de G.2 K3, porque la sonda caduca a los 900 s y deja tiempo para el arranque.
+4. **Reanudación.** `RunInspector().resume(...)` es un **plan de solo lectura**; el intento real es un `sbatch` nuevo, con sonda nueva. La evidencia terminal sale de `SlurmTerminalCollector` y `LocalTerminalSigner`.
+5. **Primero en seco.** El arnés tiene un modo `--dry-run` que hace autoría, sonda y construye el guion sin enviar nada. Se ejecuta antes de C0 y antes de Q; sus fallos son defectos del arnés (G.4).
+6. **Evidencia.** Un directorio por intento con descriptor, libro, `controller-closure.json`, sello, `squeue` antes y después, `ps`/`sacct`/`scontrol` de Q3, `boot_id` antes y después de Q5, `lr_u_analysis.v3.json` y `U_scalar_charge` por sitio de C0 y de Q.
+
+### H.6 Recorrido por etapas (contra `main`)
+
+| Etapa | Verificado en seco | Estado |
+|---|---|---|
+| Preflight (F.6, G.2) | Pasa en el WSL de Manuel desde Adenda 7 | ok |
+| Receta y borrador | Contratos reales de borrador; resolutor; deriva rechazada (`test_hf1_recipe.py`) | cerrado aquí |
+| Validación | Flujo controlador sin informes nativos | cerrado aquí |
+| Empaquetado | Presupuesto de lanzamiento 1800 + 30 < 3540 | cerrado aquí (H.2) |
+| C0 | `NativeWorker`, puerto SLURM, autoridad: precedente T-023b | ok, se mide en el WSL |
+| Q1 a Q4, Q6 | Autoridad de un solo intento (H8) | cerrado aquí (H.4, H.5) |
+| Q5 | `wsl --shutdown` (F.5, G.2 K7) | ok |
+| D.5 / U-Q9b | En QRAFT `main` (PR #12) | ok |
+| Veredicto y evidencia | D.3, D.6 | ok |
+
+QRAFT y HubbardFlow se leyeron estáticamente aquí (no se ejecutaron). Lo que solo se mide en el WSL (mpirun absoluto en el perfil exterior, ausencia de claves `SLURM_*` en su entorno, alias del nombre del nodo, `SLURM_JOB_CPUS_PER_NODE`) lo cubre `--dry-run` y G.4.
+
+### H.7 Pruebas
+
+`test_hf1_recipe.py` (4) y la nueva de `test_authoring.py`.

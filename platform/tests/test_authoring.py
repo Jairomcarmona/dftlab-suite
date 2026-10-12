@@ -199,7 +199,8 @@ class ArtifactAuthoring(AuthoringFixture):
     """Exercise the concrete byte/provenance boundary with synthetic public ports."""
     def port(self, **kwargs):
         engines = SimpleNamespace(qraft_contracts=lambda: SimpleNamespace(),
-                                  qraft=SimpleNamespace(SiestaContextualValidator=lambda: object()))
+                                  qraft=SimpleNamespace(SiestaContextualValidator=lambda: object(),
+                                                        load_workflow_lock=lambda path: (None, SimpleNamespace(tasks=(SimpleNamespace(capability_id="siestaflow.engine.siesta"),)))))
         return QraftArtifactAuthoring(engines, self.store, {}, {}, self.root/"scratch", **kwargs)
 
     def test_source_paths_limits_and_cross_owner_fail_before_materializing(self):
@@ -283,7 +284,7 @@ class ArtifactAuthoring(AuthoringFixture):
         recipe = AuthoringRecipe(object(), (object(),), {}, "registered")
         for state in (None, "FUTURE_STATUS"):
             with self.subTest(state=state), patch.object(port, "_recipe", return_value=recipe), \
-                 patch.object(port, "_compile", return_value=SimpleNamespace(native_digest="a"*64)), \
+                 patch.object(port, "_compile", return_value=SimpleNamespace(native_digest="a"*64, lock_path=self.root/"lock")), \
                  patch.object(port, "_profile", return_value=self.root/"synthetic-profile"):
                 def prepare(*args, **kwargs):
                     if state:
@@ -291,11 +292,36 @@ class ArtifactAuthoring(AuthoringFixture):
                 with patch.object(port.adapter, "prepare", side_effect=prepare), self.assertRaises(Problem):
                     port.validate(self.owner, self.bundle, {})
         with patch.object(port, "_recipe", return_value=recipe), \
-             patch.object(port, "_compile", return_value=SimpleNamespace(native_digest="a"*64)), \
+             patch.object(port, "_compile", return_value=SimpleNamespace(native_digest="a"*64, lock_path=self.root/"lock")), \
              patch.object(port, "_profile", return_value=self.root/"synthetic-profile"), \
              patch.object(port.adapter, "prepare", side_effect=ValueError("synthetic parser failure")), \
              self.assertRaises(ValueError):
             port.validate(self.owner, self.bundle, {})
+
+    def test_controller_workflow_without_native_reports_is_transport_only_never_accepted(self):
+        capability = "dftlab.engine.hubbardflow.hf1"
+        engines = SimpleNamespace(qraft_contracts=lambda: SimpleNamespace(),
+                                  qraft=SimpleNamespace(SiestaContextualValidator=lambda: object(),
+                                                        load_workflow_lock=lambda path: (None, SimpleNamespace(tasks=(SimpleNamespace(capability_id=capability),)))))
+        seen = []
+        port = QraftArtifactAuthoring(engines, self.store, {}, {}, self.root/"scratch",
+                                      controller_adapter_factory=lambda **kwargs: seen.append(kwargs) or {capability: lambda *args, **kw: {}})
+        recipe = AuthoringRecipe(object(), (object(),), {}, "registered")
+        def prepare(*args, **kwargs):
+            seen.append(kwargs["task_adapters"])
+        with patch.object(port, "_recipe", return_value=recipe), \
+             patch.object(port, "_compile", return_value=SimpleNamespace(native_digest="a"*64, lock_path=self.root/"lock")), \
+             patch.object(port, "_profile", return_value=self.root/"synthetic-profile"), \
+             patch.object(port.adapter, "prepare", side_effect=prepare):
+            snapshot = self.handlers._snapshot(self.owner, self.project, self.bundle, identifier())
+            receipt = port.validate(self.owner, self.bundle, snapshot)
+        payload = receipt["payload"]
+        self.assertEqual(payload["decision"], "ACCEPTED_WITH_WARNINGS")
+        self.assertEqual([item["code"] for item in payload["diagnostics"]], ["CONTROLLER_BUNDLE_TRANSPORT_ONLY"])
+        self.assertIn("sin validación nativa", payload["scope"])
+        self.assertEqual(receipt["native_contract_refs"], [])
+        self.assertEqual(set(seen[-1]), {capability})
+        self.assertEqual(seen[0]["owner"], self.owner)
 
 
 if __name__ == "__main__":

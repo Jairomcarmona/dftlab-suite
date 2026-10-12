@@ -18,6 +18,10 @@ from .engines import NativePlan, QraftAuthoring
 from .local_runtime import private_directory
 
 
+NATIVE_SCOPE = "Preflight nativo de autoría registrada; no acredita admisión, entorno ni validez científica."
+CONTROLLER_SCOPE = "Verificación de transporte del paquete del controlador; sin validación nativa de entradas SIESTA; no acredita admisión, entorno ni validez científica."
+
+
 @dataclass(frozen=True)
 class AuthoringRecipe:
     policy: object
@@ -187,7 +191,7 @@ class QraftArtifactAuthoring:
         project = bundle["draft"]["project_id"]
         recipe = self._recipe(owner, bundle)
         diagnostics, refs, inputs, policies = [], [], [snapshot], []
-        decision = "BLOCKED"
+        decision, scope, controller_only = "BLOCKED", NATIVE_SCOPE, False
         if recipe is None:
             diagnostics.append({"code": "AUTHORING_PROTOCOL_UNAVAILABLE", "severity": "BLOCKING", "rule_kind": "HARD_RULE",
                                 "message": "No hay protocolo registrado para este borrador.", "location": None})
@@ -197,20 +201,36 @@ class QraftArtifactAuthoring:
                 plan = self._compile(owner, bundle, snapshot, recipe, root)
                 profile = self._profile(owner, project, recipe.profile_id, root)
                 capture = CapturingValidator(self.engines.qraft.SiestaContextualValidator())
+                run_id = identifier()
+                # A workflow with a controller capability needs the operator's
+                # adapter here too, or QRAFT rejects the unknown capability.
+                adapters = self._controller_task_adapters(
+                    owner, self.engines.qraft.load_workflow_lock(plan.lock_path)[1], root/"source", profile, run_id)
                 try:
                     self.adapter.prepare(plan, expected_native_digest=plan.native_digest, profile=profile,
-                                         output_root=root/"packages", run_id=identifier(), validator=capture)
+                                         output_root=root/"packages", run_id=run_id, validator=capture,
+                                         task_adapters=adapters)
                 except ValueError:
                     # A captured negative native report is evidence. A parser,
                     # storage or preparation failure without one is uncertainty.
                     if not capture.reports or not any(report.status.value in {"FAIL", "BLOCKED"} for report in capture.reports):
                         raise
-                if not capture.reports:
+                if not capture.reports and adapters is not None:
+                    # Controller bundles carry their FDF inside a ZIP, so QRAFT's
+                    # SIESTA validator never runs. Preparing with the verified
+                    # adapter proved transport only; say so, never ACCEPTED.
+                    controller_only = True
+                    scope = CONTROLLER_SCOPE
+                    diagnostics.append({"code": "CONTROLLER_BUNDLE_TRANSPORT_ONLY", "severity": "WARNING", "rule_kind": "HEURISTIC",
+                                        "message": "El paquete se verificó por el adaptador del controlador; no hay validación nativa de entradas SIESTA.", "location": None})
+                elif not capture.reports:
                     raise Problem("PRECONDITION_FAILED")
                 statuses = [report.status.value for report in capture.reports]
                 if any(state not in {"PASS", "REVIEW", "FAIL", "BLOCKED"} for state in statuses):
                     raise Problem("PRECONDITION_FAILED")
-                decision = "BLOCKED" if any(state in {"FAIL", "BLOCKED"} for state in statuses) else "ACCEPTED_WITH_WARNINGS" if "REVIEW" in statuses else "ACCEPTED"
+                decision = ("ACCEPTED_WITH_WARNINGS" if controller_only
+                            else "BLOCKED" if any(state in {"FAIL", "BLOCKED"} for state in statuses)
+                            else "ACCEPTED_WITH_WARNINGS" if "REVIEW" in statuses else "ACCEPTED")
                 for report in capture.reports:
                     # Public native serializer computes and verifies native
                     # envelope bytes/digest. Platform JCS never replaces it.
@@ -232,7 +252,7 @@ class QraftArtifactAuthoring:
                                             "message": "Diagnóstico de QRAFT; los detalles originales están en el reporte nativo.", "location": None})
         receipt = envelope("validation-receipt", project, {"validator": {"name": "dftlab.qraft-authoring", "version": "0.1.0"},
                            "authority": "AUTHORITATIVE", "input_refs": inputs, "policies": policies, "diagnostics": diagnostics,
-                           "decision": decision, "overrides": [], "scope": "Preflight nativo de autoría registrada; no acredita admisión, entorno ni validez científica."})
+                           "decision": decision, "overrides": [], "scope": scope})
         receipt["native_contract_refs"] = refs
         reseal(receipt)
         return self.contracts.validate("validation-receipt", receipt)
