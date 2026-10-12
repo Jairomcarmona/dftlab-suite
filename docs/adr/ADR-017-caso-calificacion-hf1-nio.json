@@ -51,6 +51,23 @@
       "grace_seconds": 10,
       "effect_in_controller_mode": "NONE (legacy hf1_worker limits; Adenda 5 E.1)",
       "min_seconds_to_stop_launching_at": 1800
+    },
+    "campaign_profile": "unchanged private profile (target local_wsl); sha256 is the factory profile_sha256 (Adenda 6 F.1)",
+    "outer_profile": {
+      "profile_id": "hf1-controller-outer-slurm-v1",
+      "revision": 1,
+      "target": "slurm",
+      "nodes": 1,
+      "total_cpus": 4,
+      "ntasks": 4,
+      "processes_per_node": 4,
+      "launcher": "openmpi",
+      "max_attempts": 3,
+      "allocation_time_seconds": 3600,
+      "task_walltime_seconds": 3600,
+      "memory_mb": 2048,
+      "sbatch_no_requeue_in_q": true,
+      "source": "ADR-017 Adenda 6 F.2"
     }
   },
   "expected": {
@@ -176,5 +193,11 @@
     "raw scancel cancellation",
     "OWNER_DEAD_BY_SCHEDULER_TERMINAL",
     "multi-host"
-  ]
+  ],
+  "qualification_scope": {
+    "option": "A",
+    "note": "Q qualifies the controller; platform authority by generations is pending (Adenda 6 F.4)",
+    "decided_by": "default until Manuel answers"
+  },
+  "preflight": "python -I -m dftlab_platform.hf1_preflight (Adenda 6 F.6); one report, all failures"
 }

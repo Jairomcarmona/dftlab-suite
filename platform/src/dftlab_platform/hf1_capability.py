@@ -12,7 +12,7 @@ import sys
 from .checkpoints import checked_path, write_new
 from .contracts import canonical, loads
 from .domain import Problem
-from .hf1_bundle import inspect_bundle, materialize_bundle, safe_path
+from .hf1_bundle import CONTROLLER_TARGETS, inspect_bundle, materialize_bundle, safe_path
 from .native_checkpoints import inventory_native
 
 
@@ -28,6 +28,29 @@ _TASK_RESOURCE_FIELDS = {
     "nodes", "mpi_processes", "processes_per_node", "cpus_per_process",
     "walltime_seconds",
 }
+
+
+def controller_profile_findings(resources, profile, reserved_cpus):
+    """Every failing outer-allocation condition at once, as stable identifiers.
+
+    resources is the workflow task's declaration; profile is QRAFT's outer
+    execution profile (the SLURM allocation), not the campaign's own profile.
+    """
+    if not isinstance(resources, Mapping) or set(resources) != _TASK_RESOURCE_FIELDS:
+        return ("TASK_RESOURCE_FIELDS",)
+    findings = []
+    for name in ("nodes", "mpi_processes", "processes_per_node", "cpus_per_process"):
+        if type(resources[name]) is not int or resources[name] != 1:
+            findings.append("TASK_" + name.upper())
+    if type(resources["walltime_seconds"]) is not int or resources["walltime_seconds"] < 1:
+        findings.append("TASK_WALLTIME_SECONDS")
+    for name, expected in (("nodes", 1), ("total_cpus", reserved_cpus), ("ntasks", reserved_cpus),
+                           ("processes_per_node", reserved_cpus), ("launcher_kind", "openmpi"), ("max_attempts", 3)):
+        if getattr(profile, name, None) != expected:
+            findings.append("OUTER_" + name.upper())
+    if CONTROLLER_RESERVATION["inner_processes_per_node"] != reserved_cpus:
+        findings.append("RESERVATION_INNER_PROCESSES")
+    return tuple(findings)
 
 
 @dataclass(frozen=True)
@@ -59,7 +82,10 @@ class HubbardFlowCampaignCapability:
         self._controller_mode = False
 
     def inspect_input(self, path):
-        return inspect_bundle(path, expected_sha256=self.bundle_sha256, expected_profile_sha256=self.profile_sha256, reserved_cpus=self.reserved_cpus)
+        # The campaign's own profile may target slurm or local_wsl (controller
+        # launches use mpirun on the reserved host); the legacy worker path in
+        # prepare_task re-requires slurm.
+        return inspect_bundle(path, expected_sha256=self.bundle_sha256, expected_profile_sha256=self.profile_sha256, reserved_cpus=self.reserved_cpus, allowed_targets=CONTROLLER_TARGETS)
 
     def validate_input(self, inspected, **kwargs):
         # Scientific semantics are validated only by the native CLI/engine.
@@ -79,6 +105,8 @@ class HubbardFlowCampaignCapability:
             raise Problem("PRECONDITION_FAILED")
         controller_state_dir = kwargs.get("controller_state_dir")
         if controller_state_dir is None:
+            if original.profile_target != "slurm":
+                raise Problem("PRECONDITION_FAILED")
             # Retain the existing non-controller worker path for installed
             # consumers that have not opted into the native controller.
             campaign_path = materialize_bundle(original, workspace/"hf1")
@@ -233,16 +261,7 @@ class HubbardFlowCampaignCapability:
         # Core Contracts workflow resources are positive. The adapter translates
         # their one-rank calculation declaration to the controller's native
         # outer launch shape (nodes=0, mpi_processes=1, cpus_per_process=1).
-        if (type(resources["nodes"]) is not int or resources["nodes"] != 1
-                or type(resources["mpi_processes"]) is not int or resources["mpi_processes"] != 1
-                or type(resources["cpus_per_process"]) is not int or resources["cpus_per_process"] != 1
-                or type(resources["processes_per_node"]) is not int or resources["processes_per_node"] != 1
-                or type(resources["walltime_seconds"]) is not int or resources["walltime_seconds"] < 1
-                or profile.nodes != 1 or profile.total_cpus != self.reserved_cpus
-                or profile.ntasks != self.reserved_cpus
-                or profile.processes_per_node != self.reserved_cpus
-                or profile.launcher_kind != "openmpi" or profile.max_attempts != 3
-                or CONTROLLER_RESERVATION["inner_processes_per_node"] != self.reserved_cpus):
+        if controller_profile_findings(resources, profile, self.reserved_cpus):
             raise Problem("PRECONDITION_FAILED")
         if len(task.inputs) != 1:
             raise Problem("PRECONDITION_FAILED")

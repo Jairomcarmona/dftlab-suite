@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md).
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -658,3 +658,99 @@ La factory del operador para C0 y Q usa **`max_seconds = 1800`** y **`grace_seco
 3. **Evidencia.** Cada intento registra `stop_launching_at`, `hard_stop_at`, `shutdown_margin_seconds` y `termination_grace_seconds` tal como los usó QRAFT, junto con los dos valores inertes de la factory.
 
 Ninguno de estos valores entra en D.6: el veredicto sigue dependiendo solo de los pasos de D.4, las reglas de §4 y la tolerancia de 0.020 eV.
+
+## Adenda 6 (2026-10-12, issue #70): dos perfiles, huecos de la calificación real y un preflight único
+
+Estado: **aceptada por defecto** el 2026-10-12. Cierra el bloqueo de C0 («el perfil privado declara `target=local_wsl`, el inspector exige `slurm`») y, tras recorrer en seco con el código de `main` todas las etapas restantes de la calificación, los demás huecos de diseño que se habrían descubierto uno por uno. No cambia fórmulas, gates, tolerancias, schemas, pins ni el perfil privado; nada de lo que fija es ciencia. **F.4** es la única decisión que corresponde a Manuel; hasta que responda rige su opción por defecto.
+
+Alcance de la revisión: se leyeron el inspector, la factory, `NativeWorker`, el puerto SLURM, el libro de envíos, la autoridad local, la sonda de runtime y los scripts de calificación de este repositorio. QRAFT, HubbardFlow y el estado privado del WSL de Manuel no están aquí; lo que depende de ellos lo mide el preflight de F.6 y no se afirma.
+
+### F.1 Dos perfiles, dos funciones
+
+| Perfil | Quién lo usa | Contenido | Estado |
+|---|---|---|---|
+| **Campaña** (`execution_profile.json` dentro del paquete) | HubbardFlow, para lanzar sus SIESTA | El privado `VALIDATED_RUNTIME`, `target = local_wsl`, 4 CPU, 4 ranks, `openmpi` | **Intacto.** Su SHA-256 es el `profile_sha256` de la factory |
+| **Exterior** (identidad nueva) | QRAFT y SLURM: sonda, `sbatch`, reserva del controlador | `target = slurm` (F.2) | Se crea para HF-1; no reutiliza el de T-023b |
+
+En modo controller, HubbardFlow lanza `mpirun` directamente sobre el host reservado (§7) y lee hosts, ranks y plazos del descriptor (§4), así que `local_wsl` en la campaña describe exactamente lo que ocurre. La exigencia `target = slurm` de `inspect_bundle` era del worker legado y no tiene razón de ser aquí.
+
+**Cambio de código (mínimo, en este PR):**
+
+- `inspect_bundle` recibe `allowed_targets`. Por omisión sigue siendo `("slurm",)`, de modo que `hf1_worker` no cambia.
+- `HubbardFlowCampaignCapability.inspect_input` pasa `("slurm", "local_wsl")` y el paquete inspeccionado conserva `profile_target`.
+- `prepare_task` vuelve a exigir `slurm` en la ruta legado (sin `controller_state_dir`).
+- Cualquier otro `target` se rechaza en las dos rutas. Las demás condiciones (`nodes = 1`, `max_parallel_steps = 1`, `total_cpus = reserved_cpus`, `openmpi`, `processes_per_node ≤ reserved_cpus`) no cambian.
+- `profile_findings` y `controller_profile_findings` devuelven **todas** las condiciones que fallan, con identificadores estables; `inspect_bundle` y `prepare_controller_task` siguen levantando el mismo `PRECONDITION_FAILED`, ahora sin ocultar cuál era.
+
+### F.2 Perfil exterior de HF-1 (valores fijos)
+
+| Campo | Valor | Por qué |
+|---|---|---|
+| Identidad | `hf1-controller-outer-slurm-v1`, revisión 1 | Nueva; el de T-023b tiene límite de diez minutos |
+| `target`, partición, cuenta, qos | `slurm`; los que `sbatch --test-only` ya aceptó (`local`/`default`/`normal`) | Observado en el preflight de runtime |
+| Nodos, CPU, tareas | 1 nodo, `total_cpus = ntasks = processes_per_node = 4`, 1 CPU por tarea | `prepare_controller_task` y D.2 |
+| Lanzador y reintentos | `openmpi`, `max_attempts = 3` | Ídem; `max_attempts` es el de la ficha |
+| **Tiempo de la allocation** | **3600 s** (y `walltime_seconds = 3600` en la tarea) | E.3.2 pide `stop_launching_at` ≥ 1800 s tras el arranque; el perfil de T-023b (600 s) lo incumple. Si el cálculo de E.3.2 (última fila) da menos de 1800 s, subir a 7200 s si la partición lo permite y repetir; si no, parar (F.6) |
+| Memoria | 2048 MB | NiO de 4 átomos, DZP, 200 Ry. P5 y TASK22 corrieron en esta máquina. Los 512 MB de T-023b no son un precedente |
+| Entorno | exactamente `PATH` explícito, `QRAFT_PYTHON` del intérprete instalado, `OMP_NUM_THREADS = OPENBLAS_NUM_THREADS = MKL_NUM_THREADS = 1`; sin módulos | Como T-023b |
+| **Comprobación de E.3.2** | Antes del envío: `tiempo de la allocation − shutdown_margin_seconds` del perfil exterior ≥ 1800 s. Después: el descriptor del intento 1 registra `stop_launching_at` y se compara | Sustituye a la lectura previa del descriptor (H12). El descriptor es registro de lo ocurrido, no una puerta; si contradice el cálculo, se reporta sin detener C0 |
+| `--no-requeue` | En cada guion `sbatch` de Q | SLURM reencola por defecto un job perdido por reinicio de nodo; un reencolado automático sería un intento sin contar |
+
+### F.3 Huecos hallados
+
+«Verificado» significa leído en `main` de este repositorio; «medir» significa que depende de QRAFT, HubbardFlow o del estado privado y lo comprueba el preflight.
+
+| # | Etapa | Hueco | Evidencia | Cierre |
+|---|---|---|---|---|
+| H1 | C0 | `target` de la campaña (`local_wsl`) rechazado por el inspector | verificado, `hf1_bundle.py` | F.1 |
+| H2 | C0 | El rechazo era opaco y otras condiciones del perfil privado pueden fallar a la vez | verificado | `profile_findings`; el preflight las lista todas |
+| H3 | C0 | El perfil exterior no existe; el único precedente (T-023b) usa 600 s y 512 MB, incompatible con E.3.2 | verificado, `qualify_native_runtime.py` | F.2 |
+| H4 | C0 | `prepare_controller_task` exige perfil exterior con `max_attempts = 3`, 4 CPU y `openmpi` | verificado | F.2 |
+| H5 | C0, Q | La sonda caduca a los 900 s y `NativeWorker` la comprueba al arrancar y antes de crear el controlador | verificado, `runtime_probe.py`, `native_worker.py` | Sonda nueva inmediatamente antes de cada `sbatch` (F.5) |
+| H6 | C0 | `NativeWorker` exige `SLURM_JOB_ID` y `SLURM_SUBMIT_DIR` igual a la raíz del paquete; el puerto usa `--chdir` y exige ruta sin espacios, sistema de archivos local, dueño y modo 0700 | verificado, `slurm.py` | El preflight comprueba sistema de archivos, ruta, dueño y modo |
+| H7 | Q | **No existe cancelación externa hacia `NativeWorker`.** «Cancelación de la plataforma» (D.4 Q1) no tiene disparador | verificado | F.5: `SIGTERM` al PID del runtime |
+| H8 | Q2, Q6 | **Un segundo intento del mismo run es imposible en la plataforma:** `controller_authorities` tiene `run_id` como clave primaria y `create` rechaza cualquier registro previo, incluso retirado; `scheduler_dispatches.run_id` es `UNIQUE`; la reanudación está marcada «todavía pendiente» | verificado, `authority_storage.py`, `submission_storage.py`, `deployment/local/README.md` | **F.4** |
+| H9 | Q5 | `wsl --shutdown` mata también al proceso que orquesta desde WSL, y SLURM puede volver con el nodo en `down` o reencolar el job | razonado; el nodo se mide | F.5 |
+| H10 | Q | El disparador de Q1 y Q3 (libro con `LAUNCH_STARTED` sin `LAUNCH_FINISHED` y `scf:` en `siesta.out`) cae en ventanas de segundos | D.1: referencia 44 s, BARE 6 s, SCREENED 20 a 30 s | Vigilante de sondeo de 100 ms, solo lectura (F.5) |
+| H11 | C0, Q | Open MPI sin `--oversubscribe` rechaza más ranks que ranks disponibles | medir | Preflight `MPI_SLOTS_WITHOUT_OVERSUBSCRIBE` (informativo) |
+| H12 | C0 | **E.3.2 (Adenda 5) no se puede cumplir tal como está escrita:** pide leer `stop_launching_at` del descriptor «antes de C0», pero QRAFT escribe el descriptor al crear el intento, ya dentro del job (§4) | verificado, §4 | Se calcula antes del envío y el descriptor lo confirma después (F.2, última fila) |
+| H13 | Todas | Cada bloqueo anterior costó un PR de registro y una pausa | — | F.7 |
+
+### F.4 Alcance de Q respecto a la plataforma (decisión de Manuel)
+
+D.4 pide tres intentos del mismo run y D.6 no dice si deben pasar por la autoridad y el libro de envíos de la plataforma. H8 muestra que hoy no pueden.
+
+- **Opción A, por defecto.** Q califica el **controlador** (QRAFT U-Q9/U-Q9b y HubbardFlow U-H7), que es lo que D.4 y D.6 comprueban. C0 pasa por la ruta completa de la plataforma (`NativeWorker`, puerto SLURM, autoridad). Q la recorre con un arnés de operador que lanza un `sbatch` propio por intento y reanuda con la API pública de QRAFT, sin tocar el libro de envíos ni la autoridad de la plataforma. El registro de calificación dirá: «controlador HF-1 reanuda tras cancelación y caída; reanudación por la plataforma, no calificada», y se abre un issue para la autoridad por generaciones.
+- **Opción B.** Antes de Q, implementar en la plataforma generaciones de autoridad y reanudación de envíos (migración de dos tablas, ADR nuevo, CI). Q pasaría entonces por la plataforma, a costa de retrasar la calificación.
+
+Esta adenda aplica A. No se mezcla: si Manuel elige B, Q espera a ese ADR.
+
+### F.5 Ceremonias de Q
+
+- **Cancelación de la plataforma (Q1)** = `SIGTERM` enviado **solo** al PID del proceso runtime de QRAFT. Su manejador ejecuta §5 (`stop_request` y `SIGTERM` al supervisor). Nunca `scancel`, nunca a un grupo (D.7). El arnés registra ese PID antes de lanzar.
+- **Kill (Q3)** = `SIGKILL` al mismo PID, tras guardar `ps -o pid,ppid,sid,stat,cmd` del árbol, `sacct` y `scontrol show config` (`ProctrackType`).
+- **Vigilante.** Un proceso de solo lectura sondea cada 100 ms el libro y `siesta.out`, con las rutas del descriptor. Dispara cuando se cumple exactamente la condición de D.4. Si la ventana se pierde, Q es `INCONCLUSIVE` y se repite completa, como dice D.4.
+- **Un `sbatch` por intento**, con `--no-requeue`, sonda nueva justo antes y una sola presentación. Nunca dos jobs vivos de Q.
+- **Orquestación de Q5.** El orquestador de Q vive en Windows. Ningún proceso de WSL atraviesa `wsl --shutdown`; el estado de cada paso se escribe en `state.json` antes de ejecutarlo. Tras reiniciar WSL, munge y SLURM se comprueba que `boot_id` cambió, que `sinfo` muestra el nodo `idle` y que no queda ningún job de Q. Si el nodo vuelve `down` por reinicio inesperado, `scontrol update NodeName=<nodo> State=RESUME` es parte de la ceremonia y no altera jobs.
+- **Aviso.** `wsl --shutdown` cierra todas las sesiones y distros WSL de Manuel. Codex lo anota en el hilo justo antes de ejecutarlo; no espera respuesta, porque la ficha ya lo acepta.
+- **Reanudación (Q2, Q6).** Con la misma llamada pública de QRAFT que usan sus pruebas de consumidor de U-Q9 y U-Q9b. Si esa llamada pide `TerminalSchedulerEvidence`, se obtiene con `SlurmTerminalCollector` y `LocalTerminalSigner` (T-026a, en `main`).
+
+### F.6 Preflight único y regla de parada
+
+`python -I -m dftlab_platform.hf1_preflight` (módulo nuevo, de solo lectura) evalúa de una vez, sin enviar nada, sin crear intento ni descriptor y sin editar perfiles: Python aislado, kernel y `pidfd`/subreaper, `boot_id`, CPU y memoria, sistema de archivos local del estado, herramientas SLURM, `ProctrackType`, `JobRequeue`, partición (`State`, `MaxTime ≥ 2400 s`), un único nodo `idle` con CPU y memoria suficientes, cola vacía, Open MPI 4.1.x y sus ranks, SHA-256 de SIESTA y las condiciones del perfil de la campaña. Imprime **todos** los fallos.
+
+Codex lo ejecuta una vez, antes de C0, y ejecuta además `controller_profile_findings` con su perfil exterior. Si algo falla:
+
+1. Publica **un solo** comentario en #70 con la lista completa de identificadores que fallaron y su valor observado.
+2. Corrige solo lo que esta adenda ya resuelve (F.1, F.2, F.5). Lo demás es hecho del entorno de Manuel y se reporta, no se negocia.
+3. Las únicas paradas permitidas son los `FAIL` del preflight y que el cálculo de E.3.2 de F.2 dé menos de 1800 s después de subir la allocation a 7200 s. Cualquier otra duda de diseño se resuelve con esta adenda; si no la cubre, se anota como defecto de la adenda y se sigue con la opción conservadora.
+
+### F.7 Evidencia, PR y qué no se hace
+
+- Un PR documental al cerrar C0 y otro al cerrar Q (o al declarar `FAIL`), no uno por paso. Nunca se detiene la calificación para registrar.
+- `FAIL` en C0 o en Q se reporta sin reparar (D.6). `INCONCLUSIVE` repite Q completa con campaña nueva.
+- Sin cambios en entradas, perfil privado, fórmulas, gates, tolerancias, pins ni contratos. HF-1 sigue deshabilitado hasta el veredicto.
+
+### F.8 Pruebas
+
+`test_local_wsl_campaign_profile_is_controller_only_and_never_slurm_by_default`, `test_profile_findings_name_every_failure_at_once`, `test_outer_allocation_findings_name_every_failure_at_once` y las del preflight (`test_hf1_preflight.py`). Las pruebas que ya existían del inspector no cambian: seguían exigiendo que `local_wsl` se rechazara con el valor por omisión, y así sigue.

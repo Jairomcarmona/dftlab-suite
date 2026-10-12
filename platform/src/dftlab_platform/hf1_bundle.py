@@ -39,9 +39,45 @@ class VerifiedHF1Bundle:
     campaign_id: str
     files: tuple[tuple[str, bytes], ...]
     reserved_cpus: int
+    profile_target: str = "slurm"
 
 
-def inspect_bundle(path, *, expected_sha256, expected_profile_sha256, reserved_cpus):
+LEGACY_TARGETS = ("slurm",)
+CONTROLLER_TARGETS = ("slurm", "local_wsl")
+
+
+def profile_findings(profile, reserved_cpus, allowed_targets=LEGACY_TARGETS):
+    """Every failing campaign-profile condition at once, as stable identifiers.
+
+    Pure and read-only, so a preflight can report all of them in one pass and
+    inspect_bundle can keep raising the same opaque PRECONDITION_FAILED.
+    """
+    if not isinstance(profile, dict):
+        return ("PROFILE_NOT_OBJECT",)
+    allocation, runtime = profile.get("allocation", {}), profile.get("runtime", {})
+    if not isinstance(allocation, dict) or not isinstance(runtime, dict):
+        return ("PROFILE_SECTION_NOT_OBJECT",)
+    launcher = runtime.get("launcher", {})
+    if not isinstance(launcher, dict):
+        return ("PROFILE_SECTION_NOT_OBJECT",)
+    findings = []
+    if profile.get("target") not in allowed_targets:
+        findings.append("PROFILE_TARGET")
+    if type(allocation.get("nodes")) is not int or allocation["nodes"] != 1:
+        findings.append("PROFILE_NODES")
+    if type(allocation.get("max_parallel_steps")) is not int or allocation["max_parallel_steps"] != 1:
+        findings.append("PROFILE_MAX_PARALLEL_STEPS")
+    if type(allocation.get("total_cpus")) is not int or allocation["total_cpus"] != reserved_cpus:
+        findings.append("PROFILE_TOTAL_CPUS")
+    if launcher.get("kind") != "openmpi":
+        findings.append("PROFILE_LAUNCHER_KIND")
+    per_node = launcher.get("processes_per_node")
+    if type(per_node) is not int or not 1 <= per_node <= reserved_cpus:
+        findings.append("PROFILE_PROCESSES_PER_NODE")
+    return tuple(findings)
+
+
+def inspect_bundle(path, *, expected_sha256, expected_profile_sha256, reserved_cpus, allowed_targets=LEGACY_TARGETS):
     if type(reserved_cpus) is not int or not 1 <= reserved_cpus <= 4096 or any(not isinstance(value, str) or re.fullmatch("[a-f0-9]{64}", value) is None for value in (expected_sha256, expected_profile_sha256)):
         raise Problem("PRECONDITION_FAILED")
     with open_original(checked_path(path)) as stream:
@@ -111,16 +147,9 @@ def inspect_bundle(path, *, expected_sha256, expected_profile_sha256, reserved_c
         # never merely from a uploaded manifest's self-consistent file hashes.
         raise Problem("PRECONDITION_FAILED")
     profile = loads(files[manifest["execution_profile_file"]])
-    if not isinstance(profile, dict):
+    if profile_findings(profile, reserved_cpus, allowed_targets):
         raise Problem("PRECONDITION_FAILED")
-    allocation = profile.get("allocation", {})
-    runtime = profile.get("runtime", {})
-    if not isinstance(allocation, dict) or not isinstance(runtime, dict):
-        raise Problem("PRECONDITION_FAILED")
-    launcher = runtime.get("launcher", {})
-    if not isinstance(launcher, dict) or profile.get("target") != "slurm" or allocation.get("nodes") != 1 or type(allocation.get("nodes")) is not int or allocation.get("max_parallel_steps") != 1 or type(allocation.get("max_parallel_steps")) is not int or allocation.get("total_cpus") != reserved_cpus or type(allocation.get("total_cpus")) is not int or launcher.get("kind") != "openmpi" or type(launcher.get("processes_per_node")) is not int or not 1 <= launcher["processes_per_node"] <= reserved_cpus:
-        raise Problem("PRECONDITION_FAILED")
-    return VerifiedHF1Bundle(raw, expected_sha256, manifest["campaign_id"], tuple(sorted(files.items())), reserved_cpus)
+    return VerifiedHF1Bundle(raw, expected_sha256, manifest["campaign_id"], tuple(sorted(files.items())), reserved_cpus, profile["target"])
 
 
 def materialize_bundle(bundle, destination):

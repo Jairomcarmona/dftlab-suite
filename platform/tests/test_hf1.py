@@ -14,8 +14,8 @@ from unittest.mock import patch
 from zipfile import ZipFile, ZipInfo
 
 from dftlab_platform.domain import Problem
-from dftlab_platform.hf1_bundle import inspect_bundle, materialize_bundle
-from dftlab_platform.hf1_capability import CAPABILITY, CONTROLLER_RESERVATION, HubbardFlowCampaignCapability
+from dftlab_platform.hf1_bundle import CONTROLLER_TARGETS, inspect_bundle, materialize_bundle, profile_findings
+from dftlab_platform.hf1_capability import CAPABILITY, CONTROLLER_RESERVATION, HubbardFlowCampaignCapability, controller_profile_findings
 from dftlab_platform.hf1_children import OwnedLinuxChildren
 
 
@@ -343,6 +343,63 @@ raise SystemExit(module.run(sys.argv[1]))
             files = {path.relative_to(state_dir): path.read_bytes() for path in state_dir.rglob("*") if path.is_file()}
             results.append((command, files))
         self.assertEqual(results[0], results[1])
+
+    def test_local_wsl_campaign_profile_is_controller_only_and_never_slurm_by_default(self):
+        # ADR-017 Adenda 6: the campaign profile keeps its own target; the outer
+        # SLURM allocation is a different profile. Only the controller path may
+        # take a local_wsl campaign profile; the legacy worker still needs slurm.
+        self.profile["target"] = "local_wsl"
+        capability = self.controller_capability()
+        with self.assertRaises(Problem):
+            self.inspect(4)
+        with self.assertRaises(Problem):
+            inspect_bundle(self.archive, expected_sha256=self.sha, expected_profile_sha256=self.profile_sha, reserved_cpus=4, allowed_targets=("slurm",))
+        inspected = capability.inspect_input(self.archive)
+        self.assertEqual(inspected.profile_target, "local_wsl")
+        legacy = self.root/"attempt-legacy"
+        legacy.mkdir()
+        with self.assertRaises(Problem):
+            capability.prepare_task(inspected, legacy, task_id="hf1-lru", attempt_id="attempt-0001", inputs={"campaign": self.archive})
+        self.assertEqual(list(legacy.iterdir()), [])
+        state_dir = self.root/"controller-state"/"hf1-lru"
+        attempt = self.root/"attempt-0001"
+        attempt.mkdir()
+        campaign = capability.prepare_task(inspected, attempt, task_id="hf1-lru", attempt_id="attempt-0001",
+                                           inputs={"campaign": self.archive}, controller_state_dir=state_dir)
+        self.assertEqual(campaign, state_dir/"campaign.v2.json")
+        self.assertFalse((attempt/"hf1-request.json").exists())
+        for target in ("ssh", "local", "", None):
+            with self.subTest(target=target):
+                self.profile["target"] = target
+                self.files["profile.json"] = json.dumps(self.profile).encode()
+                self.write()
+                with self.assertRaises(Problem):
+                    inspect_bundle(self.archive, expected_sha256=self.sha, expected_profile_sha256=self.profile_sha, reserved_cpus=4, allowed_targets=CONTROLLER_TARGETS)
+
+    def test_profile_findings_name_every_failure_at_once(self):
+        good = {"target": "local_wsl", "allocation": {"nodes": 1, "total_cpus": 4, "max_parallel_steps": 1},
+                "runtime": {"launcher": {"kind": "openmpi", "processes_per_node": 4}}}
+        self.assertEqual(profile_findings(good, 4, CONTROLLER_TARGETS), ())
+        self.assertEqual(profile_findings(good, 4), ("PROFILE_TARGET",))
+        bad = {"target": "pbs", "allocation": {"nodes": 2, "total_cpus": 8, "max_parallel_steps": 2},
+               "runtime": {"launcher": {"kind": "hydra", "processes_per_node": 9}}}
+        self.assertEqual(profile_findings(bad, 4, CONTROLLER_TARGETS), (
+            "PROFILE_TARGET", "PROFILE_NODES", "PROFILE_MAX_PARALLEL_STEPS", "PROFILE_TOTAL_CPUS",
+            "PROFILE_LAUNCHER_KIND", "PROFILE_PROCESSES_PER_NODE"))
+        self.assertEqual(profile_findings([], 4), ("PROFILE_NOT_OBJECT",))
+        self.assertEqual(profile_findings({"allocation": [], "runtime": {}}, 4), ("PROFILE_SECTION_NOT_OBJECT",))
+
+    def test_outer_allocation_findings_name_every_failure_at_once(self):
+        resources = {"nodes": 1, "mpi_processes": 1, "processes_per_node": 1, "cpus_per_process": 1, "walltime_seconds": 3600}
+        outer = SimpleNamespace(nodes=1, total_cpus=4, ntasks=4, processes_per_node=4, launcher_kind="openmpi", max_attempts=3)
+        self.assertEqual(controller_profile_findings(resources, outer, 4), ())
+        wrong = SimpleNamespace(nodes=2, total_cpus=8, ntasks=8, processes_per_node=8, launcher_kind="srun", max_attempts=1)
+        self.assertEqual(controller_profile_findings({**resources, "walltime_seconds": 0}, wrong, 4), (
+            "TASK_WALLTIME_SECONDS", "OUTER_NODES", "OUTER_TOTAL_CPUS", "OUTER_NTASKS",
+            "OUTER_PROCESSES_PER_NODE", "OUTER_LAUNCHER_KIND", "OUTER_MAX_ATTEMPTS"))
+        self.assertEqual(controller_profile_findings({"nodes": 1}, outer, 4), ("TASK_RESOURCE_FIELDS",))
+        self.assertIn("RESERVATION_INNER_PROCESSES", controller_profile_findings(resources, SimpleNamespace(
+            nodes=1, total_cpus=2, ntasks=2, processes_per_node=2, launcher_kind="openmpi", max_attempts=3), 2))
 
     def test_controller_command_uses_only_qraft_bound_paths_and_installed_entrypoint(self):
         capability = self.controller_capability()
