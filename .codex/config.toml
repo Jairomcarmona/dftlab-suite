@@ -1,0 +1,9 @@
+# Configuración de Codex para este repositorio. Solo se carga si el proyecto
+# está marcado como confiable en Codex. Fuente:
+# https://learn.chatgpt.com/docs/config-file/config-advanced
+#
+# Hilo principal: implementa tickets con ficha, contrato y vectores aceptados.
+# Verificar el identificador exacto en el selector de modelos de Codex; si el
+# selector muestra otro nombre para Luna, usar ese.
+model = "gpt-6-luna"
+model_reasoning_effort = "max"

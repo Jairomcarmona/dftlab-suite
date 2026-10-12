@@ -28,7 +28,10 @@ venv/
 /runtime/
 /scratch/
 /secrets/
-/.codex/
+/.codex/*
+# Configuración de Codex compartida; el resto de .codex/ sigue privado.
+!/.codex/config.toml
+!/.codex/agents/
 
 # Nested repository metadata and OS files.
 **/.git/
