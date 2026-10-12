@@ -28,6 +28,8 @@ NETWORK_OR_WINDOWS_FILESYSTEMS = {"9p", "drvfs", "cifs", "smb3", "nfs", "nfs4", 
 
 
 def _check(identifier, status, detail):
+    if isinstance(detail, Path):
+        detail = detail.as_posix()
     return {"id": identifier, "status": status, "detail": detail}
 
 
