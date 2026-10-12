@@ -46,11 +46,15 @@ class CapturingValidator:
 
 class QraftArtifactAuthoring:
     def __init__(self, engines, artifacts, recipes: Mapping[tuple[str, str], Callable[[Principal, dict], AuthoringRecipe]],
-                 profiles: Mapping[str, AuthoringProfile], workspace: Path, *, artifact_limit=8*1024**2):
+                 profiles: Mapping[str, AuthoringProfile], workspace: Path, *, artifact_limit=8*1024**2,
+                 controller_adapter_factory=None):
         if type(artifact_limit) is not int or not 1 <= artifact_limit <= 8*1024**2:
             raise ValueError("Invalid authoring artifact limit")
         self.engines, self.artifacts, self.recipes, self.profiles = engines, artifacts, dict(recipes), dict(profiles)
         self.workspace = private_directory(workspace)
+        if controller_adapter_factory is not None and not callable(controller_adapter_factory):
+            raise ValueError("Trusted controller adapter factory required")
+        self.controller_adapter_factory = controller_adapter_factory
         self.limit, self.contracts = artifact_limit, Contracts()
         self.adapter = QraftAuthoring(engines)
         self.core = engines.qraft_contracts()
@@ -129,6 +133,25 @@ class QraftArtifactAuthoring:
         destination = root/"profile.json"
         self._write(destination, data)
         return destination
+
+    def _controller_task_adapters(self, owner, workflow, source_root, profile, run_id, supplied=None):
+        capability = "dftlab.engine.hubbardflow.hf1"
+        controller_tasks = [task for task in workflow.tasks if task.capability_id == capability]
+        if not controller_tasks:
+            return supplied
+        if len(controller_tasks) != 1 or self.controller_adapter_factory is None or supplied is not None:
+            raise Problem("ENGINE_UNAVAILABLE")
+        # This factory is installed by the operator, never supplied by an API
+        # request or native lock. It receives QRAFT's verified workflow and
+        # immutable resolved source paths.
+        adapters = self.controller_adapter_factory(
+            owner=owner, workflow=workflow, source_root=source_root,
+            profile=profile, run_id=run_id,
+        )
+        if (not isinstance(adapters, dict) or set(adapters) != {capability}
+                or any(not callable(adapter) for adapter in adapters.values())):
+            raise Problem("PRECONDITION_FAILED")
+        return adapters
 
     def _recipe(self, owner, bundle):
         if bundle["intent"] is None:
@@ -225,7 +248,7 @@ class QraftArtifactAuthoring:
             return self._native_ref(owner, bundle["draft"]["project_id"], plan.lock_path.read_bytes(),
                                     "siestaflow.workflow-lock@1.0", plan.native_digest, "qraft.workflow-lock")
 
-    def prepare(self, owner, native_plan, profile_id):
+    def prepare(self, owner, native_plan, profile_id, *, task_adapters=None):
         metadata = self.artifacts.metadata(owner, native_plan["artifact"]["artifact_id"])
         project = metadata["project_id"]
         with self._scratch() as root:
@@ -244,8 +267,13 @@ class QraftArtifactAuthoring:
             self._sources(owner, project, source, binding["sources"])
             plan = NativePlan(workflow.workflow_id, project, source, lock, native.content_sha256, hashlib.sha256(data).hexdigest())
             profile = self._profile(owner, project, profile_id, root)
+            run_id = identifier()
+            task_adapters = self._controller_task_adapters(
+                owner, workflow, source, profile, run_id, supplied=task_adapters,
+            )
             prepared, _ = self.adapter.prepare(plan, expected_native_digest=native.content_sha256, profile=profile,
-                                               output_root=root/"packages", run_id=identifier())
+                                               output_root=root/"packages", run_id=run_id,
+                                               task_adapters=task_adapters)
             archive = Path(prepared.zip_path)
             if archive.stat().st_size > self.limit:
                 raise Problem("PAYLOAD_TOO_LARGE")

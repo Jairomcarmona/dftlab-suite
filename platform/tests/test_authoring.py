@@ -245,6 +245,28 @@ class ArtifactAuthoring(AuthoringFixture):
         with port._scratch() as root, self.assertRaises(Problem):
             port._profile(self.owner, self.project, "registered", root)
 
+    def test_controller_task_adapter_comes_only_from_operator_factory_and_exact_lock_capability(self):
+        observed = []
+        adapter = lambda *args, **kwargs: {}
+        def factory(**kwargs):
+            observed.append(kwargs)
+            return {"dftlab.engine.hubbardflow.hf1": adapter}
+        port = self.port(controller_adapter_factory=factory)
+        task = SimpleNamespace(capability_id="dftlab.engine.hubbardflow.hf1")
+        workflow = SimpleNamespace(tasks=(task,))
+        resolved = {"campaign": b"immutable-source"}
+        result = port._controller_task_adapters(self.owner, workflow, resolved, "profile", "run-1")
+        self.assertEqual(result, {"dftlab.engine.hubbardflow.hf1": adapter})
+        self.assertEqual(observed, [{"owner": self.owner, "workflow": workflow,
+                                     "source_root": resolved, "profile": "profile", "run_id": "run-1"}])
+        with self.assertRaises(Problem):
+            port._controller_task_adapters(self.owner, workflow, resolved, "profile", "run-1",
+                                            supplied={"dftlab.engine.hubbardflow.hf1": adapter})
+        with self.assertRaises(Problem):
+            self.port()._controller_task_adapters(self.owner, workflow, resolved, "profile", "run-1")
+        ordinary = SimpleNamespace(tasks=(SimpleNamespace(capability_id="dftlab.engine.other"),))
+        self.assertIsNone(port._controller_task_adapters(self.owner, ordinary, resolved, "profile", "run-1"))
+
     def test_unregistered_protocol_is_blocked_without_engine_work(self):
         port = self.port()
         snapshot = self.handlers._snapshot(self.owner, self.project, self.bundle, identifier())

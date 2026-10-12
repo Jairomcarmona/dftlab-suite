@@ -52,11 +52,19 @@ class NativeWorker:
     trusted SQL writer; authority checks before/after share its transaction.
     Raw native files are not authoritative publication just by existing.
     """
-    def __init__(self, engines, repository, manager, *, lease_seconds=30, heartbeat_seconds=5):
+    def __init__(self, engines, repository, manager, *, lease_seconds=30, heartbeat_seconds=5,
+                 native_extension_capabilities=(), native_extensions_factory=None):
         if type(lease_seconds) is not int or not 1 <= lease_seconds <= 300 or not 0 < heartbeat_seconds < lease_seconds:
             raise ValueError("Bounded lease and heartbeat required")
+        if (not isinstance(native_extension_capabilities, tuple)
+                or any(type(item) is not str or not item or len(item) > 256 for item in native_extension_capabilities)
+                or len(set(native_extension_capabilities)) != len(native_extension_capabilities)
+                or (native_extensions_factory is not None and not callable(native_extensions_factory))):
+            raise ValueError("Operator native extension allowlist required")
         self.engines, self.repository, self.manager = engines, repository, manager
         self.lease_seconds, self.heartbeat_seconds = lease_seconds, heartbeat_seconds
+        self.native_extension_capabilities = native_extension_capabilities
+        self.native_extensions_factory = native_extensions_factory
 
     def verify(self, owner, registered, environment, extensions=None):
         self.repository.project(owner, registered.project_id)
@@ -105,6 +113,27 @@ class NativeWorker:
         registered = RegisteredNativeRun(**{**registered.__dict__, "profile": deepcopy(registered.profile), "probe": deepcopy(registered.probe)})
         root = self.verify(owner, registered, environment, extensions)
         api = self.engines.qraft
+        workflow_envelope, workflow = api.load_workflow_lock(root/"workflow.lock.json")
+        required_bindings = tuple(sorted(
+            (task.task_id, task.capability_id) for task in workflow.tasks
+            if task.capability_id in self.native_extension_capabilities
+        ))
+        if required_bindings:
+            if extensions is None:
+                if self.native_extensions_factory is None:
+                    raise Problem("PRECONDITION_FAILED")
+                # Only operator-installed code can create these callbacks.
+                # The factory is bound to QRAFT's verified lock digest and the
+                # exact task/capability pairs parsed from that lock.
+                extensions = self.native_extensions_factory(
+                    registered=registered, root=root,
+                    workflow_digest=workflow_envelope.content_sha256,
+                    bindings=required_bindings,
+                )
+            if (type(extensions) is not RegisteredNativeExtensions
+                    or extensions.workflow_digest != workflow_envelope.content_sha256
+                    or extensions.bindings != required_bindings):
+                raise Problem("PRECONDITION_FAILED")
         shutdown = api.ShutdownRequest()
         with self.manager.controller(owner, registered.project_id, registered.run_id, registered.attempt_id, seconds=self.lease_seconds) as authority:
             stopped, failures = Event(), []

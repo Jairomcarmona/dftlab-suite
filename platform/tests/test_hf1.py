@@ -15,7 +15,7 @@ from zipfile import ZipFile, ZipInfo
 
 from dftlab_platform.domain import Problem
 from dftlab_platform.hf1_bundle import inspect_bundle, materialize_bundle
-from dftlab_platform.hf1_capability import HubbardFlowCampaignCapability
+from dftlab_platform.hf1_capability import CAPABILITY, CONTROLLER_RESERVATION, HubbardFlowCampaignCapability
 from dftlab_platform.hf1_children import OwnedLinuxChildren
 
 
@@ -58,11 +58,17 @@ class HF1(unittest.TestCase):
         self.sha = hashlib.sha256(self.archive.read_bytes()).hexdigest()
         self.profile_sha = hashlib.sha256(self.files["profile.json"]).hexdigest()
 
-    def inspect(self):
-        return inspect_bundle(self.archive, expected_sha256=self.sha, expected_profile_sha256=self.profile_sha, reserved_cpus=8)
+    def inspect(self, reserved_cpus=8):
+        return inspect_bundle(self.archive, expected_sha256=self.sha, expected_profile_sha256=self.profile_sha, reserved_cpus=reserved_cpus)
 
     def capability(self):
         return HubbardFlowCampaignCapability(self.engines, self.root, run_id="synthetic-outer", bundle_sha256=self.sha, profile_sha256=self.profile_sha, reserved_cpus=8, max_seconds=60)
+
+    def controller_capability(self):
+        self.profile["allocation"]["total_cpus"] = 4
+        self.files["profile.json"] = json.dumps(self.profile).encode()
+        self.write()
+        return HubbardFlowCampaignCapability(self.engines, self.root, run_id="synthetic-controller", bundle_sha256=self.sha, profile_sha256=self.profile_sha, reserved_cpus=4, max_seconds=3600)
 
     def prepared_capability(self):
         capability = self.capability()
@@ -260,16 +266,94 @@ raise SystemExit(module.run(sys.argv[1]))
         with patch("dftlab_platform.hf1_children.sys.flags", SimpleNamespace(isolated=0)), self.assertRaises(Problem):
             OwnedLinuxChildren()
 
-    def test_native_preparer_refuses_unsupported_controller_resource_contract(self):
-        capability = self.capability()
+    def test_native_preparer_emits_the_exact_ad17_controller_task(self):
+        capability = self.controller_capability()
         before = self.archive.read_bytes()
+        binding = SimpleNamespace(name="campaign", external_artifact_id="bundle-artifact", source_task_id=None, destination="campaign.bundle.zip")
+        artifact = SimpleNamespace(artifact_id="bundle-artifact", relative_path="hf1-campaign.zip", sha256=self.sha)
+        resources = {"nodes": 1, "mpi_processes": 1, "processes_per_node": 1, "cpus_per_process": 1, "walltime_seconds": 3600}
+        task = SimpleNamespace(task_id="hf1-lru", kind=SimpleNamespace(value="calculation"), capability_id=CAPABILITY, settings={}, resources=resources,
+                               inputs=(binding,), outputs=(), dependencies=())
+        profile = SimpleNamespace(nodes=1, total_cpus=4, ntasks=4, processes_per_node=4,
+                                  launcher_kind="openmpi", max_attempts=3)
         protected = {}
-        with self.assertRaises(Problem) as failure:
-            capability.prepare_controller_task(object(), protected=protected)
-        self.assertEqual(failure.exception.code, "ENGINE_UNAVAILABLE")
-        self.assertEqual(protected, {})
+        result = capability.prepare_controller_task(
+            task, by_task={task.task_id: task}, artifacts={artifact.artifact_id: artifact},
+            resolved_sources={artifact.artifact_id: self.archive}, profile=profile, protected=protected,
+        )
+        self.assertEqual(result["task_id"], "hf1-lru")
+        self.assertEqual(result["capability_id"], CAPABILITY)
+        self.assertEqual(result["kind"], "controller")
+        self.assertEqual((result["nodes"], result["mpi_processes"], result["cpus_per_process"]), (0, 1, 1))
+        self.assertEqual(result["reservation"], CONTROLLER_RESERVATION)
+        self.assertEqual(result["max_attempts"], 3)
+        self.assertEqual(result["input_hashes"], {result["input"]: self.sha})
+        self.assertEqual(protected, {result["input"]: self.archive})
         self.assertEqual(self.archive.read_bytes(), before)
         self.assertEqual(sorted(path.name for path in self.root.iterdir()), ["inputs.zip"])
+        task.task_id = "../outside"
+        with self.assertRaises(Problem):
+            capability.prepare_controller_task(
+                task, by_task={task.task_id: task}, artifacts={artifact.artifact_id: artifact},
+                resolved_sources={artifact.artifact_id: self.archive}, profile=profile, protected={},
+            )
+
+    def test_controller_attempt_materializes_once_and_resumes_without_mutating_state(self):
+        capability = self.controller_capability()
+        state_dir = self.root/"controller-state"/"hf1-lru"
+        first_attempt = self.root/"attempt-0001"
+        first_attempt.mkdir()
+        campaign = capability.prepare_task(
+            self.inspect(4), first_attempt, task_id="hf1-lru", attempt_id="attempt-0001",
+            inputs={"campaign": self.archive}, controller_state_dir=state_dir,
+        )
+        self.assertEqual(campaign, state_dir/"campaign.v2.json")
+        before = {path.relative_to(state_dir): path.read_bytes() for path in state_dir.rglob("*") if path.is_file()}
+        second_attempt = self.root/"attempt-0002"
+        second_attempt.mkdir()
+        resumed = capability.prepare_task(
+            self.inspect(4), second_attempt, task_id="hf1-lru", attempt_id="attempt-0002",
+            inputs={"campaign": self.archive}, controller_state_dir=state_dir,
+        )
+        self.assertEqual(resumed, campaign)
+        after = {path.relative_to(state_dir): path.read_bytes() for path in state_dir.rglob("*") if path.is_file()}
+        self.assertEqual(after, before)
+
+    def test_controller_command_uses_only_qraft_bound_paths_and_installed_entrypoint(self):
+        capability = self.controller_capability()
+        state_dir = self.root/"controller-state"/"hf1-lru"
+        attempt = self.root/"attempt-0001"
+        attempt.mkdir()
+        capability.prepare_task(self.inspect(4), attempt, task_id="hf1-lru", attempt_id="attempt-0001",
+                                inputs={"campaign": self.archive}, controller_state_dir=state_dir)
+        spec = SimpleNamespace(launcher="controller", mpi_ranks=1, allocated_cpus=1)
+        command = capability.build_command(
+            state_dir/"campaign.v2.json", execution_spec=spec,
+            controller_entrypoint="/installed/hubbardflow-controller",
+            controller_reservation_path="work/hf1-lru/attempt-0001/.qraft/controller-reservation.json",
+            controller_state_dir=state_dir, controller_prior_ledgers=(),
+        )
+        self.assertEqual(command, (
+            "/installed/hubbardflow-controller", "--qraft-reservation",
+            "work/hf1-lru/attempt-0001/.qraft/controller-reservation.json",
+            "--campaign", "controller-state/hf1-lru/campaign.v2.json",
+        ))
+        output = capability.parse_output([], outcome=SimpleNamespace(exit_code=0, terminated_by_controller=False))
+        classified = capability.classify_result(output, outcome=SimpleNamespace(exit_code=0, terminated_by_controller=False))
+        self.assertEqual(classified.status, "PASS")
+        self.assertEqual(classified.scientific_assessment, "NOT_ESTABLISHED")
+        self.assertEqual(classified.quantity_kind, "U_scalar_charge")
+        for bad in (
+            {"controller_reservation_path": "/absolute/controller-reservation.json"},
+            {"controller_reservation_path": "work/hf1-lru/attempt-0001/.qraft/other.json"},
+        ):
+            with self.assertRaises(Problem):
+                capability.build_command(
+                    state_dir/"campaign.v2.json", execution_spec=spec,
+                    controller_entrypoint="/installed/hubbardflow-controller",
+                    controller_reservation_path=bad["controller_reservation_path"],
+                    controller_state_dir=state_dir, controller_prior_ledgers=(),
+                )
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "Real descendant containment is Linux/WSL only")
     def test_owned_descendants_close_without_signalling_foreign_process(self):
