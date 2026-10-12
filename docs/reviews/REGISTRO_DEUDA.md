@@ -335,3 +335,7 @@ Estado verificado, no solo declarado:
 
 - QRAFT siestaflow PR #11 se fusionó en `main` como `c3ecdead645cab840bcd096aba166bfd0c3f173e`; diez checks PR/push SUCCESS. El runtime compilado integra reservation/binding/ledger/veredictos con un único coordinador, y la prueba instalada cubre caída del padre, retención del host y reanudación tras cierre nativo. La issue siestaflow #10 permanece abierta.
 - No se fijan todavía las distribuciones oficiales ni se habilita HF-1: el WSL disponible no tiene SIESTA ni una allocation/perfil de la campaña. Pendiente verificar wheel/pins de ambos motores y calificar con RuntimeProbe fresco, cancelación durante SCF y resume tras caída. Las pruebas instaladas actuales son sintéticas y no prueban resultado científico.
+
+## Estado HF-1 después de U-H7
+
+U-H7 (HubbardFlow PR #44) y U-Q9 (siestaflow PR #11) están integrados en sus ramas upstream después de checks verdes; sus pruebas instaladas y combinadas demuestran el contrato de recuperación, no resultado científico. No se fijaron wheels/pins oficiales. HF-1 permanece deshabilitado y como máximo CONTRACT_TESTED: falta entorno con SIESTA y allocation activa para ejecutar cancelación durante SCF, recuperar tras caída y calificar con RuntimeProbe fresco. La issue siestaflow #10 sigue abierta.
