@@ -117,7 +117,11 @@ class LocalNativeQuiescenceSource:
                 registered = self.registrations[(project, run)]
                 with self.repository._connection() as db:
                     self.repository._project(db, owner, project)
-                    row = db.execute("SELECT owner_id,document FROM controller_authorities WHERE project_id=? AND run_id=?", (project, run)).fetchone()
+                    row = db.execute(
+                        "SELECT owner_id,document FROM controller_authorities "
+                        "WHERE project_id=? AND run_id=? ORDER BY generation DESC LIMIT 1",
+                        (project, run),
+                    ).fetchone()
                     if row is None or row[0] != owner.principal_id:
                         raise Problem("PRECONDITION_FAILED")
                     record = self.repository.contracts.validate("controller-authority-record", loads(row[1]))

@@ -207,6 +207,50 @@ class NativeCheckpoints(unittest.TestCase):
         self.reject(self.create)
         self.assertFalse((self.packet/"checkpoint.json").exists())
 
+    def test_latest_generation_controls_quiescence_not_a_retired_older_row(self):
+        from dftlab_platform.domain import envelope, reseal
+
+        retired = loads(canonical(self.authority))
+        retired["payload"]["lease_expires_at"] = None
+        retired["payload"]["termination_evidence"] = [self.registered.quiescence_evidence[0]]
+        reseal(retired)
+        current = envelope("controller-authority-record", self.project, {
+            "run_id": self.run,
+            "attempt_id": identifier(),
+            "owner_instance_id": identifier(),
+            "generation": 2,
+            "fencing": {"mechanism": "SITE_LOCK", "checked_at": "NONE"},
+            "automatic_takeover": "DISABLED",
+            "site_scope": "fixture",
+            "lease_expires_at": (utcnow()+timedelta(minutes=5)).isoformat().replace("+00:00", "Z"),
+            "validity_evidence": [],
+            "termination_evidence": [],
+        }, contracts=self.repository.contracts)
+        with self.repository.transaction() as db:
+            db.execute(
+                "UPDATE controller_authorities SET document=?,retired=1 WHERE run_id=? AND generation=1",
+                (canonical(retired).decode(), self.run),
+            )
+            db.execute(
+                "INSERT INTO controller_authorities"
+                "(run_id,generation,project_id,owner_id,document,last_observed_at,retired) "
+                "VALUES(?,?,?,?,?,?,0)",
+                (self.run, 2, self.project, self.owner.principal_id, canonical(current).decode(), current["created_at"]),
+            )
+            db.execute(
+                "CREATE TABLE authority_retirements("
+                "run_id TEXT, generation INTEGER, project_id TEXT, owner_id TEXT, request_hash TEXT, "
+                "original_document TEXT, retired_document TEXT, native_proof TEXT, owner_proof TEXT, observed_at TEXT, "
+                "PRIMARY KEY(run_id,generation))"
+            )
+            db.execute(
+                "INSERT INTO authority_retirements VALUES(?,?,?,?,?,?,?,?,?,?)",
+                (self.run, 1, self.project, self.owner.principal_id, "0"*64,
+                 canonical(self.authority).decode(), canonical(retired).decode(), "{}", "CLOSED", utcnow().isoformat()),
+            )
+        self.reject(self.create)
+        self.assertFalse((self.packet/"checkpoint.json").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

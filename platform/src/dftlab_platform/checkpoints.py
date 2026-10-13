@@ -148,7 +148,17 @@ class SQLiteCheckpointStore:
                 if re.fullmatch(r"[a-z_]+", table) is None:
                     raise Problem("PRECONDITION_FAILED")
                 revisions[table] = [row[0] for row in db.execute(f'SELECT version FROM "{table}" ORDER BY version')]
-        if any(versions != [1] for versions in revisions.values()):
+        # Checkpoints retain only revisions for migration states this build
+        # understands. Authority and submission v2 are additive rebuilds.
+        supported_revisions = {
+            "authority_migrations": {(1,), (1, 2)},
+            "authority_retirement_migrations": {(1,), (1, 2)},
+            "submission_migrations": {(1,), (1, 2)},
+        }
+        if any(
+            tuple(versions) not in supported_revisions.get(table, {(1,)})
+            for table, versions in revisions.items()
+        ):
             raise Problem("PRECONDITION_FAILED")
         records = [self.contracts.validate("artifact-record", loads(row[0])) for row in db.execute("SELECT document FROM artifact_records ORDER BY artifact_id")]
         uploads = [loads(row[0]) for row in db.execute("SELECT document FROM uploads ORDER BY upload_id")]

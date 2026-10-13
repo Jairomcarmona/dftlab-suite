@@ -59,7 +59,11 @@ def main():
     original_repo = SQLiteRepository(original_run/"authoring/state.sqlite")
     def authority(repository):
         with repository._connection() as db:
-            row = db.execute("SELECT document FROM controller_authorities WHERE run_id=?", (value["run_id"],)).fetchone()
+            row = db.execute(
+                "SELECT document FROM controller_authorities WHERE project_id=? AND run_id=? "
+                "ORDER BY generation DESC LIMIT 1",
+                (intent["project_id"], value["run_id"]),
+            ).fetchone()
         if row is None:
             raise RuntimeError("Original authority absent")
         return row[0]

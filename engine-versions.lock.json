@@ -9,7 +9,7 @@
     "qraft": {
       "repository": "https://github.com/Jairomcarmona/siestaflow",
       "branch_hint": "main",
-      "commit": "6dec1ba196ff72b53a067153d7c3988c95a95bd3",
+      "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
       "distribution": "qraft-hpc",
       "declared_version": "0.2.0",
       "module": "qraft",
@@ -22,24 +22,30 @@
           "installed_version": "0.2.0",
           "public_import": {
             "exit_code": 0,
-            "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d"
+            "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d",
+            "stdout": "{\"module\": \"qraft\", \"installed_outside_checkout\": true}",
+            "stderr": ""
           },
           "public_api": {
             "exit_code": 0,
-            "log_sha256": "4bd8b7299027658a5a66473b3eb8fa3b88d184b2122b546d161a7fb2033401db"
+            "log_sha256": "4bd8b7299027658a5a66473b3eb8fa3b88d184b2122b546d161a7fb2033401db",
+            "stdout": "{\"module\": \"qraft.api\", \"api_version\": \"1.0\", \"installed_outside_checkout\": true}",
+            "stderr": ""
           },
           "cli_help": {
             "exit_code": 0,
-            "log_sha256": "d8d0d140626edeb330cbc3632eb4f4db2bef07caefa313fbe3b15b1f3137f2bf"
+            "log_sha256": "d8d0d140626edeb330cbc3632eb4f4db2bef07caefa313fbe3b15b1f3137f2bf",
+            "stdout": "QRAFT � run reproducible scientific campaigns\n\nGET STARTED\n  init [PATH]       Create an editable campaign file\n  check TARGET      Check whether a target is ready to run\n  run TARGET        Run a checked campaign or calculation\n\nMONITOR / CONTINUE\n  status [TARGET]   Show progress and the next available action\n  resume [TARGET]   Continue using saved recovery state\n\nRESULTS\n  results [TARGET]  Inventory recorded outputs and route supported exports\n\nLEARN\n  examples [TOPIC]  Show fixture-backed learning topics\n\nComplete workflow:\n  qraft init campaign.yaml\n  # edit campaign.yaml\n  qraft check campaign.yaml\n  qraft run campaign.yaml\n  qraft status\n  qraft results\n\nSetup and diagnostics:\n  qraft setup --help\n  qraft inspect --help\n\nAdvanced workflows and compatibility:\n  qraft advanced --help\n  qraft help migration\n\nUse 'qraft COMMAND --help' for examples and options.",
+            "stderr": ""
           },
           "scientific_qualification": "PENDING",
           "hpc_runtime_qualification": "PENDING",
           "wheel": {
             "file": "qraft_hpc-0.2.0-py3-none-any.whl",
-            "bytes": 551125,
-            "sha256": "e165fe62f39837c66d8c164a0e48be7c7021ce279fa907b7f954440391da7cbd"
+            "bytes": 555223,
+            "sha256": "1e2e634e08b14248f231d56968e0962e54ca2a63b50201cb9253cf4807a6f1f2"
           },
-          "installed_file_manifest_sha256": "a2888a089fe86f2625be4b70269417c81ec079a5184cf1aff58924868da2f91c",
+          "installed_file_manifest_sha256": "7a7cc45dc92c295fc7aa35572e5fafffe77f3d96856fb4b38e4e9f74504b49cc",
           "environment": {
             "os": "Windows",
             "release": "11",
@@ -54,8 +60,8 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/windows_native_x86_64_bloque2_q6.json",
-          "evidence_sha256": "864da778504e8d394ddb80617bf0c839e6fafcacfefecb14770e0214427bc657"
+          "evidence_file": "deployment/local/evidence/windows_native_x86_64_bloque3a_q8.json",
+          "evidence_sha256": "fbad2a9db985ba5292ef905713a70e5b64a5023049f1db12fcb7fa90b4d0f7b3"
         },
         "wsl2_linux_x86_64": {
           "status": "INSTALL_PUBLIC_API_HELP_VERIFIED",
@@ -63,24 +69,30 @@
           "installed_version": "0.2.0",
           "public_import": {
             "exit_code": 0,
-            "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d"
+            "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d",
+            "stdout": "{\"module\": \"qraft\", \"installed_outside_checkout\": true}",
+            "stderr": ""
           },
           "public_api": {
             "exit_code": 0,
-            "log_sha256": "4bd8b7299027658a5a66473b3eb8fa3b88d184b2122b546d161a7fb2033401db"
+            "log_sha256": "4bd8b7299027658a5a66473b3eb8fa3b88d184b2122b546d161a7fb2033401db",
+            "stdout": "{\"module\": \"qraft.api\", \"api_version\": \"1.0\", \"installed_outside_checkout\": true}",
+            "stderr": ""
           },
           "cli_help": {
             "exit_code": 0,
-            "log_sha256": "ca47c191262f0100c391ab68ca348d908d640a8ccca8f0c0c089a780ecf2402e"
+            "log_sha256": "ca47c191262f0100c391ab68ca348d908d640a8ccca8f0c0c089a780ecf2402e",
+            "stdout": "QRAFT — run reproducible scientific campaigns\n\nGET STARTED\n  init [PATH]       Create an editable campaign file\n  check TARGET      Check whether a target is ready to run\n  run TARGET        Run a checked campaign or calculation\n\nMONITOR / CONTINUE\n  status [TARGET]   Show progress and the next available action\n  resume [TARGET]   Continue using saved recovery state\n\nRESULTS\n  results [TARGET]  Inventory recorded outputs and route supported exports\n\nLEARN\n  examples [TOPIC]  Show fixture-backed learning topics\n\nComplete workflow:\n  qraft init campaign.yaml\n  # edit campaign.yaml\n  qraft check campaign.yaml\n  qraft run campaign.yaml\n  qraft status\n  qraft results\n\nSetup and diagnostics:\n  qraft setup --help\n  qraft inspect --help\n\nAdvanced workflows and compatibility:\n  qraft advanced --help\n  qraft help migration\n\nUse 'qraft COMMAND --help' for examples and options.",
+            "stderr": ""
           },
           "scientific_qualification": "PENDING",
           "hpc_runtime_qualification": "PENDING",
           "wheel": {
             "file": "qraft_hpc-0.2.0-py3-none-any.whl",
-            "bytes": 551081,
-            "sha256": "9ed553c56a58a5d4259b84e04f882456e013d104754a0b00f57e5dca4b0c098c"
+            "bytes": 555178,
+            "sha256": "2bc79321c6ab859f6c1ea24dccc2dca8837e8be7a92a36dcee79dcb5f71f88c2"
           },
-          "installed_file_manifest_sha256": "ac4140c973223460866ddc5cebcfa5c5336630281ccf26e0b0aeb32e432d849b",
+          "installed_file_manifest_sha256": "bd96e12c91d8f458b05fc8a0fdb879097cb1f3b5229a45a432b3658fab21b2ff",
           "environment": {
             "os": "Linux",
             "release": "6.18.33.2-microsoft-standard-WSL2",
@@ -95,8 +107,8 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_bloque2_q6.json",
-          "evidence_sha256": "e3147552afe7348e75f1e2608dcd90f6ffa72ae922ac205fd6bcfe223c18e453"
+          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_bloque3a_q8.json",
+          "evidence_sha256": "4b9386b7e296953ae8223779a54d04242415c92f71bf0345a5e74be7e2e4b823"
         }
       },
       "operational_capabilities": {
@@ -104,10 +116,10 @@
         "public_api_consumers": "CI_VERIFIED_WINDOWS_LINUX",
         "reason": "Native API consumers pass; real runtime, remote fencing, scheduler signing trust, scientific qualification and HF-1 integration remain pending."
       },
-      "previous_source_commit": "0acd9a45196f71c80ca9a581eb1d6a481bc604f0",
+      "previous_source_commit": "6dec1ba196ff72b53a067153d7c3988c95a95bd3",
       "previous_evidence_files": [
-        "deployment/local/evidence/windows_native_x86_64_bloque2.json",
-        "deployment/local/evidence/wsl2_linux_x86_64_bloque2.json"
+        "deployment/local/evidence/windows_native_x86_64_bloque2_q6.json",
+        "deployment/local/evidence/wsl2_linux_x86_64_bloque2_q6.json"
       ],
       "public_api": {
         "module": "qraft.api",
@@ -133,18 +145,22 @@
           "scientific_policy_document",
           "scientific_policy_evidence",
           "MeshConvergenceRule",
-          "KGridConvergenceRule"
+          "KGridConvergenceRule",
+          "previous_controller_owner",
+          "SurfaceProtocol"
         ]
       },
       "upstream_delivery": {
         "pull_requests": [
           "https://github.com/Jairomcarmona/siestaflow/pull/16",
           "https://github.com/Jairomcarmona/siestaflow/pull/17",
-          "https://github.com/Jairomcarmona/siestaflow/pull/18"
+          "https://github.com/Jairomcarmona/siestaflow/pull/18",
+          "https://github.com/Jairomcarmona/siestaflow/pull/19",
+          "https://github.com/Jairomcarmona/siestaflow/pull/20"
         ],
-        "merge_commit": "6dec1ba196ff72b53a067153d7c3988c95a95bd3"
+        "merge_commit": "377e4290446609f5bd35e3d41539dc5a39b5e798"
       },
-      "source_archive_sha256": "b54a22bc5c9f98f11534e5ebf46c426ae48e33ffce7c5a63193bf8dd1e183749"
+      "source_archive_sha256": "8cc5c88aae72acfd9834c418aea531079010e9f05467c644fdc48ec35df6ee01"
     },
     "hubbardflow": {
       "repository": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE",

@@ -11,9 +11,22 @@ import hashlib
 import os
 from pathlib import Path
 import re
+from collections.abc import Mapping
 from threading import Event, Thread
 
 from .domain import Problem
+from .hf1_capability import CAPABILITY as HF1_CAPABILITY
+
+
+_QRAFT_RESUME_REFUSALS = {
+    "RESUME_EVIDENCE_INVALID",
+    "RESUME_INPUTS_CHANGED",
+    "RESUME_STATUS_UNRECOGNIZED",
+    "CHECKPOINT_IDENTITY_MISMATCH",
+    "LEDGER_CHECKPOINT_INCONSISTENT",
+    "SETTLED_FAILURE_PRESENT",
+    "SETTLED_EVIDENCE_INVALID",
+}
 
 
 @dataclass(frozen=True)
@@ -30,6 +43,7 @@ class RegisteredNativeRun:
     probe: dict
     verify_package: object  # trusted callback, None or exception
     authorize_allocation: object  # trusted callback, None or exception
+    generation: int = 1
 
 
 @dataclass(frozen=True)
@@ -107,10 +121,57 @@ class NativeWorker:
             raise Problem("PRECONDITION_FAILED")
         return root
 
+    @staticmethod
+    def _controller_resume_verdict(result, required_bindings, registered, result_sha256):
+        """Extract only QRAFT's exact public controller-attempt outcomes.
+
+        Missing or generic BLOCKED results remain unclassified. Admission then
+        fails closed because no durable verdict row exists for that generation.
+        """
+        task_ids = [task_id for task_id, capability in required_bindings
+                    if capability == HF1_CAPABILITY]
+        attempts = getattr(result, "attempts", None)
+        if len(task_ids) != 1 or not isinstance(attempts, Mapping):
+            return None
+        task_id = task_ids[0]
+        attempt = attempts.get(task_id)
+        if attempt is None:
+            return None
+        expected_attempt = f"attempt-{registered.generation:04d}"
+        if (getattr(attempt, "node_id", None) != task_id
+                or getattr(attempt, "attempt_id", None) != expected_attempt):
+            return None
+        node_result = getattr(attempt, "result", None)
+        technical = getattr(node_result, "technical_validation", None)
+        execution_state = getattr(node_result, "execution_state", None)
+        status = getattr(technical, "status", None)
+        classification = getattr(technical, "classification", None)
+        exit_code = getattr(attempt, "exit_code", None)
+        if (exit_code == 75 and execution_state == "BLOCKED" and status == "BLOCKED"
+                and classification in _QRAFT_RESUME_REFUSALS):
+            decision, reason = "REFUSE", classification
+        elif (exit_code == 0 and execution_state == "COMPLETED" and status == "PASS"):
+            decision, reason = "NO_REFUSAL", None
+        elif (exit_code != 75 and execution_state == "INTERRUPTED"
+                and status == "BLOCKED" and classification == "INTERRUPTED"):
+            decision, reason = "NO_REFUSAL", None
+        else:
+            return None
+        return {
+            "run_id": registered.run_id,
+            "generation": registered.generation,
+            "attempt_id": expected_attempt,
+            "decision": decision,
+            "reason": reason,
+            "result_sha256": result_sha256,
+        }
+
     def run(self, owner, registered, *, environment=None, publication, extensions=None):
         environment = dict(os.environ if environment is None else environment)
         # Preserve original caller data; trust boundaries do not accept aliases.
         registered = RegisteredNativeRun(**{**registered.__dict__, "profile": deepcopy(registered.profile), "probe": deepcopy(registered.probe)})
+        if type(registered.generation) is not int or not 1 <= registered.generation <= 3:
+            raise Problem("PRECONDITION_FAILED")
         root = self.verify(owner, registered, environment, extensions)
         api = self.engines.qraft
         workflow_envelope, workflow = api.load_workflow_lock(root/"workflow.lock.json")
@@ -135,7 +196,8 @@ class NativeWorker:
                     or extensions.bindings != required_bindings):
                 raise Problem("PRECONDITION_FAILED")
         shutdown = api.ShutdownRequest()
-        with self.manager.controller(owner, registered.project_id, registered.run_id, registered.attempt_id, seconds=self.lease_seconds) as authority:
+        with self.manager.controller(owner, registered.project_id, registered.run_id, registered.attempt_id,
+                                      generation=registered.generation, seconds=self.lease_seconds) as authority:
             stopped, failures = Event(), []
             def heartbeat():
                 while not stopped.wait(self.heartbeat_seconds):
@@ -160,8 +222,12 @@ class NativeWorker:
                 self.verify(owner, registered, environment, extensions)
                 # The public native serializer preserves every result dimension.
                 original = self.engines.qraft_contracts().canonical_json(controller.result).encode("utf-8")
+                result_sha256 = hashlib.sha256(original).hexdigest()
+                resume_verdict = self._controller_resume_verdict(
+                    controller.result, required_bindings, registered, result_sha256,
+                )
                 native_status = status.value
-                summary = {"native_status": native_status, "runtime_result_bytes_sha256": hashlib.sha256(original).hexdigest(),
+                summary = {"native_status": native_status, "runtime_result_bytes_sha256": result_sha256,
                            "project_id": registered.project_id, "run_id": registered.run_id, "workflow_id": registered.workflow_id,
                            "native_workflow_digest": registered.workflow_digest, "native_run_digest": registered.run_digest,
                            "native_profile_digest": registered.profile_digest, "scientific_assessment": "NOT_ESTABLISHED"}
@@ -170,7 +236,10 @@ class NativeWorker:
                 writer = publication(summary, original)
                 if not callable(writer):
                     raise Problem("PRECONDITION_FAILED")
-                authority.publish(writer)
+                if resume_verdict is None:
+                    authority.publish(writer)
+                else:
+                    authority.publish(writer, resume_verdict=resume_verdict)
                 return summary
             except BaseException:
                 shutdown.request("WORKER_FAILED")

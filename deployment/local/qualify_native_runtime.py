@@ -111,7 +111,8 @@ def worker(root, config, engines):
             raise ValueError("Allocation lacks original durable RPC entry")
     manager = LocalAuthorityManager(SQLiteAuthorityStore(repo), root/"authority-locks", scope="qualified-local-WSL-SLURM")
     registered = RegisteredNativeRun(package, intent["project_id"], value["run_id"], value["workflow_id"], intent["payload"]["attempt_id"], intent["payload"]["profile"],
-                                     value["workflow_digest"], value["run_digest"], value["profile_digest"], loads((root/"runtime-probe-receipt.json").read_bytes()), verify, authorize)
+                                     value["workflow_digest"], value["run_digest"], value["profile_digest"], loads((root/"runtime-probe-receipt.json").read_bytes()), verify, authorize,
+                                     generation=intent["payload"]["authority_generation"])
     def publication(summary, original):
         reference = blob(store, owner, intent["project_id"], original, "qraft.runtime-result-observation", "application/json")
         write(root/"original-runtime-result.json", original)
