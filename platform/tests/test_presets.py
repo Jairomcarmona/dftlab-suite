@@ -39,6 +39,9 @@ class PresetAuthoring(unittest.TestCase):
         single = render_preset(self.structure, 'S-05', {'Si':14})['fdf']
         self.assertIn('MD.NumCGSteps 0', single)
         self.assertNotIn('MD.Steps', single)
+        self.assertIn('0.0 0.0 0.0 1',single)
+        magnetic=render_preset(self.structure,'S-08',{'Si':14},parameters={'spin':'polarized'},initial_spin=[1,-1])['fdf']
+        self.assertIn('1 1.0\n2 -1.0',magnetic)
 
     def test_defaults_are_bound_and_detached_and_periodic_hex_shifts(self):
         first = render_preset(self.structure, 'S-05', {'Si':14})

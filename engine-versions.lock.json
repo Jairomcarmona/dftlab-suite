@@ -9,7 +9,7 @@
     "qraft": {
       "repository": "https://github.com/Jairomcarmona/siestaflow",
       "branch_hint": "main",
-      "commit": "0acd9a45196f71c80ca9a581eb1d6a481bc604f0",
+      "commit": "6dec1ba196ff72b53a067153d7c3988c95a95bd3",
       "distribution": "qraft-hpc",
       "declared_version": "0.2.0",
       "module": "qraft",
@@ -36,10 +36,10 @@
           "hpc_runtime_qualification": "PENDING",
           "wheel": {
             "file": "qraft_hpc-0.2.0-py3-none-any.whl",
-            "bytes": 549842,
-            "sha256": "b121ee6285a64a81b4c912741a804a5f9c98752c872139fa10754e52c718cafe"
+            "bytes": 551125,
+            "sha256": "e165fe62f39837c66d8c164a0e48be7c7021ce279fa907b7f954440391da7cbd"
           },
-          "installed_file_manifest_sha256": "94cf1cc75bb606bd71af94b1921a486d5722e4e5b0fea8e31352c522b1ac43ce",
+          "installed_file_manifest_sha256": "a2888a089fe86f2625be4b70269417c81ec079a5184cf1aff58924868da2f91c",
           "environment": {
             "os": "Windows",
             "release": "11",
@@ -54,8 +54,8 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/windows_native_x86_64_bloque2.json",
-          "evidence_sha256": "1df8a89d9f82618c7b60b2de5a33ff29361501f61a5b8e152a0cbc0cb981c73a"
+          "evidence_file": "deployment/local/evidence/windows_native_x86_64_bloque2_q6.json",
+          "evidence_sha256": "864da778504e8d394ddb80617bf0c839e6fafcacfefecb14770e0214427bc657"
         },
         "wsl2_linux_x86_64": {
           "status": "INSTALL_PUBLIC_API_HELP_VERIFIED",
@@ -77,10 +77,10 @@
           "hpc_runtime_qualification": "PENDING",
           "wheel": {
             "file": "qraft_hpc-0.2.0-py3-none-any.whl",
-            "bytes": 549796,
-            "sha256": "f1d4b7b83233dc3b06fe8d2294eb603826647529941b366d2e71fafac24b34aa"
+            "bytes": 551081,
+            "sha256": "9ed553c56a58a5d4259b84e04f882456e013d104754a0b00f57e5dca4b0c098c"
           },
-          "installed_file_manifest_sha256": "9071ada266a8b105e3cb3b084e5992c87090bd587dd8142c11a3249a9b10a141",
+          "installed_file_manifest_sha256": "ac4140c973223460866ddc5cebcfa5c5336630281ccf26e0b0aeb32e432d849b",
           "environment": {
             "os": "Linux",
             "release": "6.18.33.2-microsoft-standard-WSL2",
@@ -95,8 +95,8 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_bloque2.json",
-          "evidence_sha256": "ec41aeeca72c0dcaaadaec928dd8a4cb86a2e8ed5487f4444547239708a9393a"
+          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_bloque2_q6.json",
+          "evidence_sha256": "e3147552afe7348e75f1e2608dcd90f6ffa72ae922ac205fd6bcfe223c18e453"
         }
       },
       "operational_capabilities": {
@@ -104,10 +104,10 @@
         "public_api_consumers": "CI_VERIFIED_WINDOWS_LINUX",
         "reason": "Native API consumers pass; real runtime, remote fencing, scheduler signing trust, scientific qualification and HF-1 integration remain pending."
       },
-      "previous_source_commit": "334df6603fa739562c2696c7cf4f5f5733eb1a37",
+      "previous_source_commit": "0acd9a45196f71c80ca9a581eb1d6a481bc604f0",
       "previous_evidence_files": [
-        "deployment/local/evidence/windows_native_x86_64_hf1.json",
-        "deployment/local/evidence/wsl2_linux_x86_64_hf1.json"
+        "deployment/local/evidence/windows_native_x86_64_bloque2.json",
+        "deployment/local/evidence/wsl2_linux_x86_64_bloque2.json"
       ],
       "public_api": {
         "module": "qraft.api",
@@ -139,11 +139,12 @@
       "upstream_delivery": {
         "pull_requests": [
           "https://github.com/Jairomcarmona/siestaflow/pull/16",
-          "https://github.com/Jairomcarmona/siestaflow/pull/17"
+          "https://github.com/Jairomcarmona/siestaflow/pull/17",
+          "https://github.com/Jairomcarmona/siestaflow/pull/18"
         ],
-        "merge_commit": "0acd9a45196f71c80ca9a581eb1d6a481bc604f0"
+        "merge_commit": "6dec1ba196ff72b53a067153d7c3988c95a95bd3"
       },
-      "source_archive_sha256": "6437e896ebfbf3137d19ca2611880dd184967bc30192971be7877e39c4a39db8"
+      "source_archive_sha256": "b54a22bc5c9f98f11534e5ebf46c426ae48e33ffce7c5a63193bf8dd1e183749"
     },
     "hubbardflow": {
       "repository": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE",
