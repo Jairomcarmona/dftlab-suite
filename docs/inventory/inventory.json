@@ -11,10 +11,10 @@
     "structureWriterFormats": 6,
     "datasets": 16,
     "datasetBytes": 10678665,
-    "ownJavascriptFiles": 61,
-    "ownJavascriptLines": 11817,
+    "ownJavascriptFiles": 63,
+    "ownJavascriptLines": 12075,
     "exportSourceCalls": 52,
-    "scientificModules": 25
+    "scientificModules": 27
   },
   "views": [
     {
@@ -1163,6 +1163,27 @@
       "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
     },
     {
+      "file": "app/dftlab/static/js/crystal/slabs.js",
+      "sha256": "34d31ea2aeff7e1158eb2192ad192b43e9062c24d229a5d3b2fe4b960ff5aaa2",
+      "exports": [
+        "primitiveMiller",
+        "buildSlab",
+        "facesEquivalent",
+        "slabInvariants",
+        "bottomPlaneAtoms",
+        "renderConstraints"
+      ],
+      "reexports": [],
+      "consumers": [
+        "app/dftlab/static/js/tools/presets.js"
+      ],
+      "tests": [
+        "app/tests/crystal/run_tests.mjs",
+        "app/tests/crystal/browser_smoke.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
       "file": "app/dftlab/static/js/crystal/symmetry.js",
       "sha256": "bdeafab89c0f881703ebe4ef0ff4b6eb42a0d0bff4a3020cc47d2b5413615952",
       "exports": [
@@ -1692,8 +1713,24 @@
       ],
       "reexports": [],
       "consumers": [
+        "app/dftlab/static/js/tools/presets.js",
         "app/dftlab/static/js/views/estructura.js"
       ],
+      "tests": [
+        "app/tests/ui/browser_lifecycle.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/tools/presets.js",
+      "sha256": "583737d82739d0b4d73d695d698577a5543e8dfa73f2e01123b6172ec44d55ff",
+      "exports": [
+        "PRESET_DEFAULTS",
+        "presetRegistry",
+        "presetPreview"
+      ],
+      "reexports": [],
+      "consumers": [],
       "tests": [
         "app/tests/ui/browser_lifecycle.mjs"
       ],
@@ -2408,6 +2445,11 @@
       "sha256": "6b42f2c935af25e0c7472eb3464d7bf53abc2ba3344f818a41f35be02e4654f7"
     },
     {
+      "file": "app/dftlab/static/js/crystal/slabs.js",
+      "bytes": 11567,
+      "sha256": "34d31ea2aeff7e1158eb2192ad192b43e9062c24d229a5d3b2fe4b960ff5aaa2"
+    },
+    {
       "file": "app/dftlab/static/js/crystal/symmetry.js",
       "bytes": 29374,
       "sha256": "bdeafab89c0f881703ebe4ef0ff4b6eb42a0d0bff4a3020cc47d2b5413615952"
@@ -2543,6 +2585,11 @@
       "sha256": "9211f3d912d100527048ce759822b3b8303db0c9a8e833fe87f0328094282e04"
     },
     {
+      "file": "app/dftlab/static/js/tools/presets.js",
+      "bytes": 3421,
+      "sha256": "583737d82739d0b4d73d695d698577a5543e8dfa73f2e01123b6172ec44d55ff"
+    },
+    {
       "file": "app/dftlab/static/js/views/bands.js",
       "bytes": 22962,
       "sha256": "080358a2c64457ae68cd16bd1ea0e32fd75b0eabae7992378ece78191ecad2f2"
@@ -2644,8 +2691,8 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 1792,
-      "sha256": "6f14a77a1943d8041d212a0a6c129b7e0a5e0a829d2f750c75926bad3d164607"
+      "bytes": 1926,
+      "sha256": "1c25e3caa68e33f92351cb37c0cf5c86cd570867f91698a18c32a1d7a7a8be8b"
     },
     {
       "file": "app/scripts/test-browser.mjs",
