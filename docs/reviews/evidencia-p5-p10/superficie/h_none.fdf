@@ -1,0 +1,39 @@
+SystemLabel h_none
+XC.functional LDA
+XC.authors CA
+NumberOfSpecies 2
+NumberOfAtoms 4
+%block ChemicalSpeciesLabel
+ 1 13 Al
+ 2 1 H
+%endblock ChemicalSpeciesLabel
+PAO.BasisSize DZP
+LatticeConstant 1.0 Ang
+%block LatticeVectors
+2.863782 0.000000 0.000000
+-1.431891 2.480108 0.000000
+0.000000 0.000000 22.676537
+%endblock LatticeVectors
+AtomicCoordinatesFormat Ang
+%block AtomicCoordinatesAndAtomicSpecies
+0.000000 0.000000 9.000000 1
+0.000000 1.653406 11.338269 1
+1.431891 0.826703 13.676537 1
+1.431891 0.826703 15.276537 2
+%endblock AtomicCoordinatesAndAtomicSpecies
+MeshCutoff 150 Ry
+%block kgrid_Monkhorst_Pack
+ 8 0 0 0.0
+ 0 8 0 0.0
+ 0 0 1 0.0
+%endblock kgrid_Monkhorst_Pack
+ElectronicTemperature 300 K
+DM.Tolerance 1.e-5
+MaxSCFIterations 300
+SCF.Mixer.Method Pulay
+SCF.Mixer.Weight 0.05
+SCF.Mixer.History 6
+DM.UseSaveDM false
+SaveElectrostaticPotential true
+SaveTotalPotential true
+Slab.DipoleCorrection none

@@ -146,6 +146,38 @@ const runners = {
       return [`tipo desconocido ${c.kind}`];
     };
   },
+  async SURFACE(doc) {
+    const o = await import(pathToFileURL(path.join(root, doc.oracle)));
+    const tol = doc.arithmetic_tolerance;
+    const near = (a, e, w) => {
+      if (typeof e === 'number') return typeof a === 'number' && Math.abs(a - e) <= tol.abs + tol.rel * Math.abs(e) ? [] : [`${w}: ${a} ≠ ${e}`];
+      if (e === null || typeof e !== 'object') return a === e ? [] : [`${w}: ${JSON.stringify(a)} ≠ ${JSON.stringify(e)}`];
+      if (Array.isArray(e)) return Array.isArray(a) && a.length === e.length ? e.flatMap((x, i) => near(a[i], x, `${w}[${i}]`)) : [`${w}: ${JSON.stringify(a)} ≠ ${JSON.stringify(e)}`];
+      if (a === null || typeof a !== 'object') return [`${w}: falta`];
+      return Object.keys(e).flatMap(k => near(a[k], e[k], `${w}.${k}`));
+    };
+    return c => {
+      if (c.kind === 'perpendicular') return near(o.a3Perpendicular(c.cell, c.tol_deg), c.expect, 'a3');
+      if (c.kind === 'run') {
+        const got = o.evaluate(c.run, c.policy);
+        const errors = near(got, c.expect, 'veredicto');
+        if (c.max_rule_phi_eV !== undefined && !(Math.abs(got.faces[1].phi_eV - c.max_rule_phi_eV) > 1)) errors.push('la cara baja coincide con la regla del máximo');
+        return errors;
+      }
+      if (c.kind === 'dipole_label') return near(o.dipoleCorrection(c.fdf), c.expect, 'etiqueta');
+      if (c.kind === 'macro') return near(o.macroscopicAverage(c.profile_eV, c.cell_c_A, c.period_A, c.centers_A), c.expect, 'macroscópico');
+      if (c.kind === 'fermi_comparable') return near(o.fermiComparable(c.cell_a, c.cell_b, c.tol_A), c.expect, 'E_F');
+      if (c.kind === 'convergence') return near(o.phiConvergence(c.points, c.tol_meV), c.expect, 'convergencia');
+      return [`tipo desconocido ${c.kind}`];
+    };
+  },
+  async LRU_VIEW(doc) {
+    const o = await import(pathToFileURL(path.join(root, doc.oracle)));
+    return c => {
+      const got = o.viewModel(c.input);
+      return JSON.stringify(got) === JSON.stringify(c.expect) ? [] : [`vista: ${JSON.stringify(got)} ≠ ${JSON.stringify(c.expect)}`];
+    };
+  },
 };
 
 for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.cases.json')).sort()) {

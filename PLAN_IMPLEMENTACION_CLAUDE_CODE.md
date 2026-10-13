@@ -377,7 +377,9 @@ Añadido el 2026-10-11 tras la [auditoría P5–P10](docs/reviews/2026-10-11-aud
 | T-035 | [ADR-018](docs/adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md) (aceptado, QRAFT), [WF-EOS](docs/scientific-protocols/WF-EOS.md) aceptada, U-Q10 y U-Q11 |
 | T-036 (gap, fat bands y masas) | [WF-ELECTRONIC](docs/scientific-protocols/WF-ELECTRONIC.md) aceptada, con su política v1, y U-Q13 en QRAFT |
 | T-037 | Usa la convergencia de malla y de malla k de QRAFT fijado, sin reimplementarla; la plataforma guarda regla e informe y registra la aceptación humana ([fichas](docs/scientific-protocols/README.md)) |
-| T-040 | WF-SURFACE aceptada, U-Q12 y DL-02 con el caso de corrección dipolar |
+| T-038 | HF-1 reanudable por la plataforma (aceptada el 2026-10-13): [ADR-017 Adenda 12](docs/adr/ADR-017-tarea-controladora-qraft-hf1.md#adenda-12-2026-10-13-issue-93-la-plataforma-reanuda-hf-1-por-generaciones-de-autoridad-y-de-envío) (issue #93), U-Q19 en QRAFT y los 23 vectores de `contracts/fixtures/authority-generations/`. Hasta cerrar #93 y repetir la calificación Q por la plataforma, HF-1 no se ofrece como reanudable |
+| T-039 | [Modelo de vista LR-U](docs/scientific-protocols/LR-U-VISTA.md) aceptado por Manuel el 2026-10-13 (22 vectores); depende de la admisión de generaciones de T-038 |
+| T-040 | [WF-SURFACE](docs/scientific-protocols/WF-SURFACE.md) aceptada por Manuel el 2026-10-13 (33 vectores y corridas reales de SIESTA 5.4.2), U-Q12 en QRAFT y DL-02 con el caso de corrección dipolar (cubierto por la ficha: Al(111)+H con `vacuum` y `charge`) |
 | T-041 | Criterio de equivalencia HF-1/HF-2 fijado en un ADR antes de U-H5 |
 | T-042 | Utilidades (`vibra`, `fcbuild`, `denchar`) en el lock del worker y en el probe de runtime; para moléculas, las frecuencias salen del `.FC` con proyección de Eckart, no de `vibra` (presets F-3) |
 | T-047 | U-Q7 (fencing) en QRAFT |

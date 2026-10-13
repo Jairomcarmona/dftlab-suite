@@ -278,6 +278,43 @@ for (const c of resumeVectors?.cases ?? []) {
   if (JSON.stringify(c.expect.check_resume) !== JSON.stringify(c.check_resume)) fail(`controller-resume-rules ${c.name}: check_resume must be copied literally`);
 }
 
+// ADR-017 Adenda 12 (issue #93): generaciones de autoridad y envíos de una corrida reanudable. La primera regla que aplica decide.
+export function evaluateGenerationAdmission(maxAttempts, c) {
+  const gens = c.generations, disp = c.dispatches, g = c.request.generation;
+  const top = gens.reduce((m, x) => Math.max(m, x.generation), 0);
+  const latest = gens.find((x) => x.generation === top);
+  const phaseOf = (n) => disp.find((x) => x.generation === n)?.phase ?? null;
+  const admit = (reason) => ({ decision: 'ADMIT', reason });
+  const refuse = (reason) => ({ decision: 'REFUSE', reason });
+  if (c.request.kind === 'AUTHORITY_CHECK') {
+    if (g > top) return refuse('UNKNOWN_GENERATION');
+    return g < top ? refuse('SUPERSEDED') : admit('CURRENT_GENERATION');
+  }
+  if (c.request.kind === 'AUTHORITY_CREATE') {
+    if (phaseOf(g) === null || phaseOf(g) === 'RESERVED') return refuse('DISPATCH_NOT_STARTED');
+    if (g !== top + 1) return refuse('GENERATION_NOT_NEXT');
+    if (latest && !latest.retired) return refuse('PREVIOUS_GENERATION_ACTIVE');
+    return admit('NEXT_GENERATION');
+  }
+  if (g === 1) return top > 0 || phaseOf(1) !== null ? refuse('RUN_ALREADY_SUBMITTED') : admit('NEXT_GENERATION');
+  if (g !== top + 1) return refuse('GENERATION_NOT_NEXT');
+  if (g > maxAttempts) return refuse('ATTEMPTS_EXHAUSTED');
+  if (!latest.retired) return refuse('PREVIOUS_GENERATION_ACTIVE');
+  const proof = latest.proof;
+  if (!(proof.sacct_terminal && (proof.owner_proof === 'CLOSED' || proof.owner_proof === 'OWNER_DEAD_BY_BOOT_CHANGE'))) return refuse('PREVIOUS_TERMINATION_NOT_PROVEN');
+  if (phaseOf(top) !== 'ACKNOWLEDGED') return refuse('PREVIOUS_DISPATCH_UNRESOLVED');
+  const plan = c.resume_plan;
+  if (!plan || plan.from_attempt_id !== latest.attempt_id) return refuse('RESUME_PLAN_STALE');
+  if (latest.verdict === 'REFUSE' && plan.plan_revision <= latest.plan_revision) return refuse('RESUME_REFUSED_PLAN_UNCHANGED');
+  return admit('NEXT_GENERATION');
+}
+const generationVectors = doc('fixtures/authority-generations/cases.json');
+if (!generationVectors?.cases?.length) fail('authority-generations: missing conformance vectors');
+for (const c of generationVectors?.cases ?? []) {
+  const got = evaluateGenerationAdmission(generationVectors.max_attempts, c);
+  if (JSON.stringify(got) !== JSON.stringify(c.expect)) fail(`authority-generations ${c.name}: expected ${JSON.stringify(c.expect)}, evaluator gives ${JSON.stringify(got)}`);
+}
+
 for (const f of failures) console.error(`FAIL ${f}`);
 console.log(`contracts: ${schemaFiles.length} schemas, ${manifest.length} fixtures, ${opIds.size} API operations; ${failures.length} failures.`);
 if (failures.length) process.exit(1);

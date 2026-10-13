@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md). La **Adenda 8** (#70, 2026-10-12) registra la receta HF-1 y recorre C0 a Q6 contra `main`. La **Adenda 9** (#70, 2026-10-12) corrige el orden entre la preparación del estado y el dueño de QRAFT (el `FAIL` de C0). La **Adenda 10** (#70, 2026-10-12) corrige dónde se inicializa la campaña (el segundo `FAIL`, `NO_NUMERICAL_U`). La **Adenda 11** (#70, 2026-10-13) corrige J.2 para HubbardFlow 0.1.3 con `local_wsl`.
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 12** ([#93](https://github.com/Jairomcarmona/dftlab-suite/issues/93), 2026-10-13) fija la reanudación por la plataforma con generaciones de autoridad y de envío. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md). La **Adenda 8** (#70, 2026-10-12) registra la receta HF-1 y recorre C0 a Q6 contra `main`. La **Adenda 9** (#70, 2026-10-12) corrige el orden entre la preparación del estado y el dueño de QRAFT (el `FAIL` de C0). La **Adenda 10** (#70, 2026-10-12) corrige dónde se inicializa la campaña (el segundo `FAIL`, `NO_NUMERICAL_U`). La **Adenda 11** (#70, 2026-10-13) corrige J.2 para HubbardFlow 0.1.3 con `local_wsl`.
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -1015,3 +1015,85 @@ Por corrida: `R` nueva; `S = R/controller-state/<task_id>`; copia derivada del p
 ### K.5 Pruebas
 
 `test_local_wsl_profile_workspace_root_must_be_the_state_parent`; `test_local_wsl_campaign_profile_is_controller_only_and_never_slurm_by_default` lleva ahora un bloque `wsl`.
+
+## Adenda 12 (2026-10-13, issue #93): la plataforma reanuda HF-1 por generaciones de autoridad y de envío
+
+Estado: **aceptada** por Manuel el 2026-10-13 (alcance «3A: solo P7»); la opción A de F.4 ya dejó la reanudación por la plataforma como paso siguiente. Cierra H8 para la plataforma. Fuente: lectura de `authority_storage.py`, `submission_storage.py`, `authority.py`, `authority_recovery.py`, `submissions.py` y `storage.py` en `main` (`9378305`), y de `controller_state.py`, `controller_runtime.py` y `api.py` de QRAFT en `6dec1ba`. Vectores ejecutables: `contracts/fixtures/authority-generations/cases.json` (23 casos), evaluados por `evaluateGenerationAdmission` en `contracts/scripts/check-contracts.mjs`.
+
+### L.1 Qué es una generación
+
+Una **generación** es un intento del controlador de una corrida, numerada 1, 2, 3 (`max_attempts = 3`, F.2). Tiene un registro de autoridad `(run_id, generation)`, un envío `(run_id, generation)` con su `attempt_token` propio y un `attempt_id` propio. La generación N + 1 solo existe después de que la N quedó **retirada**. Nunca hay dos generaciones activas de la misma corrida, y nunca se reutiliza ni se edita el registro de una generación anterior.
+
+### L.2 Qué ya hace QRAFT y qué falta de su lado
+
+QRAFT ya decide, dentro del intento N + 1, si el dueño anterior murió: `previous_controller_owner` devuelve `CLOSED` u `OWNER_DEAD_BY_BOOT_CHANGE`, o lanza `CONTROLLER_PREVIOUS_OWNER_ALIVE`, y lo hace antes de lanzar nada. El descriptor ya lleva `authority_generation` y `attempt_number`, y el veredicto de reanudación (`qraft.controller-resume-verdict@1.0`) se escribe antes de cualquier lanzamiento interno. La plataforma **no reimplementa** nada de eso. Lo que falta es que la plataforma pueda **leer la misma prueba** antes de abrir la generación, y para eso QRAFT no exporta nada hoy en `qraft.api`.
+
+**U-Q19 (QRAFT, aditivo).** Exportar en `qraft.api` una función de solo lectura que envuelva `previous_controller_owner` sin cambiar su comportamiento: entrada raíz, `state_dir`, `boot_id` y host actuales; salida `owner_proof ∈ {CLOSED, OWNER_DEAD_BY_BOOT_CHANGE}` o la excepción `CONTROLLER_PREVIOUS_OWNER_ALIVE`/`CONTROLLER_STATE_TAMPERED`. Es un PR pequeño de QRAFT con prueba de importación y línea en `PUBLIC_API.md`. Si al implementarlo el código real contradice lo descrito aquí (por ejemplo, que `attempt_number` no coincide con la generación), parar y comentarlo en #93.
+
+### L.3 Migración v2 de la autoridad (`authority_storage.py`)
+
+Migración explícita, en una sola transacción, idempotente y con prueba de ida y vuelta de datos:
+
+1. Tabla nueva `controller_authorities`: `(run_id, generation INTEGER NOT NULL CHECK(generation >= 1), project_id, owner_id, document, last_observed_at, retired INTEGER NOT NULL DEFAULT 0 CHECK(retired IN (0,1)), PRIMARY KEY(run_id, generation))`.
+2. Copiar cada fila antigua con `generation` = la del documento (hoy siempre 1; si alguna no lo es, abortar) y `retired = 1` si el documento tiene `lease_expires_at = null`.
+3. Índice `UNIQUE (run_id) WHERE retired = 0`: una sola generación activa por corrida.
+4. `authority_migrations` pasa a `[1, 2]`. Un `versions` distinto sigue siendo «migración explícita requerida». Se valida cada documento migrado contra el contrato.
+
+`create` se parte en dos intenciones: **primera generación** (como hoy) y **siguiente generación**. Ambas ocurren en la transacción de `create`, que ya toma el cerrojo del kernel por `[project, run]`; ese cerrojo no cambia de clave entre generaciones, de modo que dos generaciones no corren a la vez en el mismo host.
+
+### L.4 Migración v2 del libro de envíos (`submission_storage.py`)
+
+`scheduler_dispatches` se recrea con `generation INTEGER NOT NULL`, `UNIQUE(run_id, generation)` (sustituye a `UNIQUE(run_id)`) y se mantiene `UNIQUE(attempt_token)`. `generation` se toma de `intent.authority_generation` del intento guardado (hoy 1; si no, abortar). `scheduler_rpc_entries` conserva su clave foránea. Los envíos antiguos migran como generación 1 sin tocar fase ni recibo.
+
+### L.5 Reglas de admisión (ejecutables)
+
+El evaluador de referencia es `evaluateGenerationAdmission`; la primera regla que aplica decide. Las pruebas de la plataforma deben dar el mismo veredicto para cada caso del JSON.
+
+| Petición | Se admite si, en este orden | Si no |
+|---|---|---|
+| `DISPATCH_RESERVE`, generación 1 | no hay generaciones ni envío 1 | `RUN_ALREADY_SUBMITTED` |
+| `DISPATCH_RESERVE`, generación N > 1 | N = máxima + 1; N ≤ 3; la máxima está retirada; su retiro trae `sacct_terminal` **y** `owner_proof ∈ {CLOSED, OWNER_DEAD_BY_BOOT_CHANGE}`; su envío está `ACKNOWLEDGED`; hay un `resume-plan` con `from_attempt_id` igual al `attempt_id` de la máxima; si QRAFT dio `REFUSE` en esa máxima, el plan nuevo tiene `plan_revision` mayor | `GENERATION_NOT_NEXT`, `ATTEMPTS_EXHAUSTED`, `PREVIOUS_GENERATION_ACTIVE`, `PREVIOUS_TERMINATION_NOT_PROVEN`, `PREVIOUS_DISPATCH_UNRESOLVED`, `RESUME_PLAN_STALE`, `RESUME_REFUSED_PLAN_UNCHANGED` |
+| `AUTHORITY_CREATE`, generación N | el envío N existe y pasó de `RESERVED`; N = máxima + 1; la máxima está retirada | `DISPATCH_NOT_STARTED`, `GENERATION_NOT_NEXT`, `PREVIOUS_GENERATION_ACTIVE` |
+| `AUTHORITY_CHECK`, generación N | N es la máxima | `SUPERSEDED` (N menor), `UNKNOWN_GENERATION` |
+
+Se admite `AUTHORITY_CREATE` con el envío en `DISPATCH_STARTED` y no solo en `ACKNOWLEDGED`, porque el trabajo de SLURM puede arrancar antes de que la plataforma guarde el recibo. El `authority_check` de la generación N falla en cuanto exista la N + 1: es la defensa contra un controlador viejo que sigue escribiendo.
+
+### L.6 Flujo de una reanudación
+
+1. El usuario crea el `resume-plan` (`CREATE_RESUME_PLAN`, ya existe) con `from_attempt_id` = intento de la máxima generación.
+2. `EXECUTE_RESUME_PLAN` (ya existe) reserva el envío N + 1 con un `attempt_token` y un `authority_generation = N + 1` nuevos; aplica las reglas de L.5.
+3. Se envía el `sbatch` de ese intento (con `--no-requeue`, F.2). Dentro del job, el worker crea el registro de autoridad N + 1.
+4. QRAFT evalúa `previous_controller_owner` y escribe el veredicto de reanudación antes de lanzar. `REFUSE` deja la corrida `BLOCKED`, consume la generación y exige un `resume-plan` con `plan_revision` mayor para otra. No hay reintento automático nunca.
+5. Las claves del libro interno son estables entre generaciones (§4): la plataforma no las toca.
+
+### L.7 Retiro de la generación N
+
+`SQLiteNativeAuthorityRetirement.retire` mantiene hoy toda su verificación (`sacct` terminal, `active_allocation_absent`, envío acusado, bloqueo del kernel). Cambios:
+
+- el retiro, en la misma transacción, pone `retired = 1` en `(run_id, generation)`;
+- el verificador registrado gana `owner_proof(root) -> "CLOSED" | "OWNER_DEAD_BY_BOOT_CHANGE" | None`, que llama a la función de U-Q19; `None` o una excepción rechazan el retiro con `PRECONDITION_FAILED`. La prueba se guarda en `authority_retirements.owner_proof` (columna nueva; `NULL` en retiros anteriores, que cuentan como `UNPROVEN` para abrir una generación);
+- `sacct` terminal solo **no basta**, tal como pide la Adenda 6 para `proctrack/linuxproc`.
+
+### L.8 Qué no cambia
+
+Contratos y schemas públicos (`generation` ya existe en `controller-authority-record` y `authority_generation` en el intento y el recibo), el cerrojo del kernel, la política de «sin takeover automático», la lectura de las retiradas existentes, el pin de QRAFT salvo el que suba U-Q19, y HubbardFlow. HF-1 sigue sin ofrecerse como reanudable a usuarios hasta cerrar #93 y repetir la calificación Q con la plataforma (L.10).
+
+### L.9 Pruebas
+
+En `platform/tests/test_authority_generations.py` y los existentes:
+
+1. Los 23 casos del JSON dan el mismo veredicto en Python.
+2. Migración: una base v1 con una autoridad activa, una retirada y un envío en cada fase migra sin perder bytes; un documento con `generation != 1` aborta; la segunda ejecución no hace nada.
+3. Concurrencia: dos `create` de la generación 2 a la vez; gana uno y el otro da `PRECONDITION_FAILED` (índice parcial).
+4. Fencing: tras crear la generación 2, `authority_check` y `publish` de la 1 fallan y no escriben.
+5. `sacct` terminal sin `owner_proof` no retira; con `CLOSED` o `OWNER_DEAD_BY_BOOT_CHANGE`, sí.
+6. Un envío 2 en `DISPATCH_STARTED` sin acuse bloquea un intento 3 (`PREVIOUS_DISPATCH_UNRESOLVED`).
+7. Los tests existentes de `test_authority.py`, `test_authority_recovery.py`, `test_submissions.py` y `test_native_worker.py` pasan sin cambiar su intención; los que asumían «un solo registro por corrida» se reescriben para la generación 1 y se listan en el PR.
+
+### L.10 Calificación real (Ola 3)
+
+Repetir la secuencia Q1 a Q6 de H.4 pero con los intentos 2 y 3 **por la plataforma** (sin copia manual de `state.sqlite` ni arnés propio de `sbatch`), en el mismo entorno de C0. Mientras no se haga, el registro dice «reanudación por la plataforma, implementada y probada en CI; no calificada en real». Es una corrida que decide Manuel; no se promueve ninguna capability por este ADR.
+
+### L.11 Código y PR
+
+Dos PR en este orden: **U-Q19** en QRAFT, y después **P-4** en `dftlab-suite` (migraciones, reglas, retiro, pruebas, pin de QRAFT al commit fusionado de U-Q19, una línea en `TRASPASO.md`). Sin PR documental.
