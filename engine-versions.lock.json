@@ -9,7 +9,7 @@
     "qraft": {
       "repository": "https://github.com/Jairomcarmona/siestaflow",
       "branch_hint": "main",
-      "commit": "334df6603fa739562c2696c7cf4f5f5733eb1a37",
+      "commit": "0acd9a45196f71c80ca9a581eb1d6a481bc604f0",
       "distribution": "qraft-hpc",
       "declared_version": "0.2.0",
       "module": "qraft",
@@ -32,6 +32,14 @@
             "exit_code": 0,
             "log_sha256": "d8d0d140626edeb330cbc3632eb4f4db2bef07caefa313fbe3b15b1f3137f2bf"
           },
+          "scientific_qualification": "PENDING",
+          "hpc_runtime_qualification": "PENDING",
+          "wheel": {
+            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
+            "bytes": 549842,
+            "sha256": "b121ee6285a64a81b4c912741a804a5f9c98752c872139fa10754e52c718cafe"
+          },
+          "installed_file_manifest_sha256": "94cf1cc75bb606bd71af94b1921a486d5722e4e5b0fea8e31352c522b1ac43ce",
           "environment": {
             "os": "Windows",
             "release": "11",
@@ -46,16 +54,8 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/windows_native_x86_64_hf1.json",
-          "evidence_sha256": "4b857bb53ea70669bc55b08039ff95c27677856409abd4b36649d28a47c06602",
-          "scientific_qualification": "PENDING",
-          "hpc_runtime_qualification": "PENDING",
-          "wheel": {
-            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
-            "bytes": 513715,
-            "sha256": "67b80b6c67c361adbeda5de146b9024e2150c2bd611382904ae50ae2885ee687"
-          },
-          "installed_file_manifest_sha256": "7aaafbec3641e9e569e65daa16d4b01400378448d16126ce45c6d1a07bd292c6"
+          "evidence_file": "deployment/local/evidence/windows_native_x86_64_bloque2.json",
+          "evidence_sha256": "ec100c7083cc895a608ad137bdaaccf3632daa5a67381109140f793a6f8a5a8f"
         },
         "wsl2_linux_x86_64": {
           "status": "INSTALL_PUBLIC_API_HELP_VERIFIED",
@@ -73,6 +73,14 @@
             "exit_code": 0,
             "log_sha256": "ca47c191262f0100c391ab68ca348d908d640a8ccca8f0c0c089a780ecf2402e"
           },
+          "scientific_qualification": "PENDING",
+          "hpc_runtime_qualification": "PENDING",
+          "wheel": {
+            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
+            "bytes": 549796,
+            "sha256": "f1d4b7b83233dc3b06fe8d2294eb603826647529941b366d2e71fafac24b34aa"
+          },
+          "installed_file_manifest_sha256": "9071ada266a8b105e3cb3b084e5992c87090bd587dd8142c11a3249a9b10a141",
           "environment": {
             "os": "Linux",
             "release": "6.18.33.2-microsoft-standard-WSL2",
@@ -87,16 +95,8 @@
             "jsonschema": "4.23.0"
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
-          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_hf1.json",
-          "evidence_sha256": "8258d48198c1e0b13a0369011ac70f5db3253f4379a1f7cdbc80c7c747ac1831",
-          "scientific_qualification": "PENDING",
-          "hpc_runtime_qualification": "PENDING",
-          "wheel": {
-            "file": "qraft_hpc-0.2.0-py3-none-any.whl",
-            "bytes": 513673,
-            "sha256": "b584244402e846cf5f67cf6953082e370b1db00e9d527abcfa5f8bbcc498df5b"
-          },
-          "installed_file_manifest_sha256": "5949b7ab9ab5847c1105f59d6c890e7d4ba0eef5f3078492ab8f5fe81dc7df84"
+          "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_bloque2.json",
+          "evidence_sha256": "bbbe679c64a1999c81960f04a3da5d4635062b1bd6f983b4899db118c9effc1c"
         }
       },
       "operational_capabilities": {
@@ -104,10 +104,10 @@
         "public_api_consumers": "CI_VERIFIED_WINDOWS_LINUX",
         "reason": "Native API consumers pass; real runtime, remote fencing, scheduler signing trust, scientific qualification and HF-1 integration remain pending."
       },
-      "previous_source_commit": "4d996ea7c580e5638e470bbf32624c88fd762f7d",
+      "previous_source_commit": "334df6603fa739562c2696c7cf4f5f5733eb1a37",
       "previous_evidence_files": [
-        "deployment/local/evidence/windows_native_x86_64.json",
-        "deployment/local/evidence/wsl2_linux_x86_64.json"
+        "deployment/local/evidence/windows_native_x86_64_hf1.json",
+        "deployment/local/evidence/wsl2_linux_x86_64_hf1.json"
       ],
       "public_api": {
         "module": "qraft.api",
@@ -120,14 +120,30 @@
           "CanonicalController",
           "AuthorityBoundary",
           "NativeEventStream",
-          "TerminalSchedulerEvidence"
+          "TerminalSchedulerEvidence",
+          "EosProtocol",
+          "ElectronicAnalysisProtocol",
+          "ElectronicPropertiesProtocol",
+          "ElectronicStateSource",
+          "PreparedElectronicProperties",
+          "BandPathSpec",
+          "DosSpec",
+          "PdosSpec",
+          "PropertySpec",
+          "scientific_policy_document",
+          "scientific_policy_evidence",
+          "MeshConvergenceRule",
+          "KGridConvergenceRule"
         ]
       },
       "upstream_delivery": {
-        "pull_request": "https://github.com/Jairomcarmona/siestaflow/pull/12",
-        "merge_commit": "e4cac1e"
+        "pull_requests": [
+          "https://github.com/Jairomcarmona/siestaflow/pull/16",
+          "https://github.com/Jairomcarmona/siestaflow/pull/17"
+        ],
+        "merge_commit": "0acd9a45196f71c80ca9a581eb1d6a481bc604f0"
       },
-      "source_archive_sha256": "aa488a8e33093c3479df3ad0e0999e985edb5924f9a8c39bb7dcd558912ad007"
+      "source_archive_sha256": "6437e896ebfbf3137d19ca2611880dd184967bc30192971be7877e39c4a39db8"
     },
     "hubbardflow": {
       "repository": "https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE",

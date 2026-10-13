@@ -1,0 +1,86 @@
+{
+  "success": true,
+  "scope": "installed public authoring/compiler/package/inspector only; runtime and science PENDING",
+  "commands": [
+    {
+      "name": "uv-version",
+      "exit_code": 0,
+      "log_sha256": "374a029b7648d9b12f93a912b3e1ba56b93bffdb8d552df57f3b706744588bef"
+    },
+    {
+      "name": "consumer-venv",
+      "exit_code": 0,
+      "log_sha256": "856416f55d609071a14c4b67a00d5eaab81af95031719f81e8098384cce30b35"
+    },
+    {
+      "name": "lock-export",
+      "exit_code": 0,
+      "log_sha256": "e83f53a7248d41a17212314745540d7df04f014031c670a9af1c996212331f06"
+    },
+    {
+      "name": "dependencies",
+      "exit_code": 0,
+      "log_sha256": "4f988c5d57cc6da724ecac51d42ccd32f1b55c4108545c5fd9b7e5faf8c73ae9"
+    },
+    {
+      "name": "platform-install",
+      "exit_code": 0,
+      "log_sha256": "56ff44062017ddb27ae75d1ca929194e722078ce5cce6d9a8521bd4760a18ec7"
+    },
+    {
+      "name": "qraft-install",
+      "exit_code": 0,
+      "log_sha256": "1e554b1f70e49b9806fba996df821a5c8e5ea55bdcbe0866afaa92f69d6b9584"
+    },
+    {
+      "name": "hubbardflow-install",
+      "exit_code": 0,
+      "log_sha256": "b01365c59ed08b5127a2aac4b20b661fd00114e006e1307021e2c02230df2c64"
+    },
+    {
+      "name": "dependency-consistency",
+      "exit_code": 0,
+      "log_sha256": "8fc20519b057f49f59695b9ee852fa4bdda3ed81067b69270e00206f80b9f578"
+    },
+    {
+      "name": "native-authoring",
+      "exit_code": 0,
+      "log_sha256": "47eba2165cc83b8464ab2b336c272500543d65562c0f778e77139f7d57486336"
+    }
+  ],
+  "observation": {
+    "engines": {
+      "qraft": {
+        "commit": "0acd9a45196f71c80ca9a581eb1d6a481bc604f0",
+        "wheel_sha256": "b121ee6285a64a81b4c912741a804a5f9c98752c872139fa10754e52c718cafe",
+        "source_manifest_sha256": "9f8ab179c7900ab6e215f232e7c40c7684d49482ef12bb9bf1efe5ac044b5ee1",
+        "target": "windows_native_x86_64"
+      },
+      "hubbardflow": {
+        "commit": "d7e0b77be20f1f7bd67522764db5b366ebc3ab07",
+        "wheel_sha256": "348435d595e5ae9a27df914caa0208061c6473ea0a0af10c86089d6612801901",
+        "source_manifest_sha256": "171aa99be79fbc9adfb45ce482d3ddfefb538b557e69bc4db34186ed46d9d4d5",
+        "target": "windows_native_x86_64"
+      }
+    },
+    "intent_id": "0c01ca63-5789-4c75-bf89-1bdb4ff1621a",
+    "project_id": "631ea000-1524-4b81-ab04-52bb8ab123e0",
+    "native_workflow_digest": "8ed67650ff2429d5c8d95ecc6ff02ec2edc119b9b8cf17e02284162798180e2e",
+    "workflow_file_sha256": "4ec3d0b3cde9b8ebecbe76b218a26ee7f13d595c9c935967cbac08484ad778bd",
+    "package_sha256": "d92be6c6e7a0be40698b32128565421e9881bd9c4c0b858a5f30cb0a12a47624",
+    "run_lock_sha256": "c627d808bdf08312fe75ef0f4a18d04a1f2220d579a06ce07806916d1630b4ec",
+    "profile_native_digest": "47231a60c8c3cbffb5376c48a3607d291b49cd6a646607a767eea26dbb9bf267",
+    "controller_campaign_sha256": "703e47b0dfae6c6f7fa37d744c8c8eda4fb7691fef8444504b0af2aad9782ce5",
+    "task_count": 2,
+    "inspection_status": "PREPARED_RUN_VERIFIED",
+    "native_validation_status": "REVIEW",
+    "native_validation_review_codes": [
+      "UNDECLARED_GOVERNED_VALUE"
+    ],
+    "pseudo_sha256": "84c9316efac1959ee8c04b8d5a06eec2e069fa19302cb66254f2e4dc455b2044",
+    "scientific_assessment": "NOT_ESTABLISHED",
+    "execution_performed": false
+  },
+  "platform_wheel_sha256": "e937557752075593dadce5de1e081d87ba924099a4c32349352215f72dcbb352",
+  "engine_lock_sha256": "4211edb6c2bd1e8ae056a22c6fd6d6c0f81f068d68efa359ab850f0bf40758a3"
+}
