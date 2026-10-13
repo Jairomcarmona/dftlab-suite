@@ -1,5 +1,13 @@
 # Nota de traspaso: estabilización A, B y E
 
+## Bloque 2 (Codex): P-1
+
+- **Rama / carpeta / PR:** `codex/bloque2-p1`, `dftlab-suite-bloque2-p1`, [#101](https://github.com/Jairomcarmona/dftlab-suite/pull/101). Código/pin probado: `c3face2fd0833ce07de1fd86a61f13392a0d8d91`; la punta final, su CI y fusión se registran en #99. Este es el único cierre TRASPASO de P-1.
+- **Entrega:** T-028 G-05/G-06 y T-029, registro/defaults/FDF/RunIntent con R1 reversible y digest JCS del documento del wheel. Los 26 veredictos quedan en QRAFT. symprec_A=0.01 Å aprobado por Manuel el 2026-10-13, medido en Si; S-01/S-03/S-07 pasan a CONTRACT_TESTED, sin promoción científica/runtime. Coordenadas y DM.InitSpin se escriben con tokens reales de SIESTA, conservando valores.
+- **R12 corregido:** pin al merge Q-6 `6dec1ba196ff72b53a067153d7c3988c95a95bd3`; receipts nuevos `*_bloque2_q6*.json` en `deployment/local/evidence/`. Los cuatro receipts P-2 y el objeto HubbardFlow se conservaron byte a byte/semánticamente, respectivamente. Q-6 fue el noveno y último PR del bloque: trece etiquetas, controles FC y guardas de fuentes incompletas, sin defaults ni modificación de políticas/vectores.
+- **Verificación:** wheel limpio desde git archive c3face2, instalación externa/python -I: 242 pruebas OK (cinco omisiones ambientales existentes Windows), HF-1/authoring incluidos. Ocho presets con RunIntent y validación nativa PASS en Windows y WSL. Consumidores instalados T-030/T-031 conservan hallazgos completos, bytes de alias y privacidad del catálogo en ambos sistemas. Probes y qualify_engines.py Windows/WSL exitosos; Q-6 fusionado instalado: 137 pruebas de los cuatro grupos de vectores/API y registro nuevas PASS. Tres digests JCS y tres nativos de políticas iguales a Q-5. verify.mjs y baseline 480 hashes pasan; APROBADO y cinco checks de la punta final son compuertas de fusión.
+- **Límites / siguiente paso:** sin ciencia nueva ni workflow runtime verificado. EOS real solo Si/PBE/SZP; electrónica es tubería SCF provisional DZP, sin M6 ni electronic-state. T-042 y aceptación humana T-037 siguen fuera. Tras fusionar #101, incorporar main por merge en P-3 y completar su calificación instalada sobre este pin. #99 permanece abierto.
+
 ## Bloque 2 (Codex): P-2
 
 - **Rama / carpeta / PR:** `codex/bloque2-p2`, `dftlab-suite-bloque2-p2`, [#102](https://github.com/Jairomcarmona/dftlab-suite/pull/102). Implementación del pin: `0ba079600e94bfc7386a832aaba9f0fbc491c5ff`; el SHA de cierre y los cinco checks de su punta se registran en #99 antes de fusionar.
