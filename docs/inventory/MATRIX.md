@@ -16,7 +16,7 @@ Generada por `node docs/inventory/audit.mjs --write`. No editar a mano; editar `
 | datasets | 16 |
 | datasetBytes | 10678665 |
 | ownJavascriptFiles | 61 |
-| ownJavascriptLines | 11817 |
+| ownJavascriptLines | 11827 |
 | exportSourceCalls | 52 |
 | scientificModules | 25 |
 
@@ -172,8 +172,8 @@ Los hashes individuales están en `inventory.json`. Procedencia identificada por
 | app/dftlab/static/js/views/beyond.js | 120 | exportBar | #beyond | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |
 | app/dftlab/static/js/views/calc.js | 134 | downloadText | #calc | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |
 | app/dftlab/static/js/views/calc.js | 164 | downloadText | #calc | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |
-| app/dftlab/static/js/views/calc.js | 242 | downloadText | #calc | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |
-| app/dftlab/static/js/views/calc.js | 245 | exportBar | #calc | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |
+| app/dftlab/static/js/views/calc.js | 252 | downloadText | #calc | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |
+| app/dftlab/static/js/views/calc.js | 255 | exportBar | #calc | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |
 | app/dftlab/static/js/views/density.js | 103 | download | #densidad | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |
 | app/dftlab/static/js/views/density.js | 164 | exportBar | #densidad | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |
 | app/dftlab/static/js/views/density.js | 341 | downloadText | #densidad | app/tests/ui/browser_lifecycle.mjs<br>app/tests/ui/browser_resources.mjs | Conservar tipo MIME, nombre, datos, unidades y segmentos. Smoke de vista no verifica cada descarga. |

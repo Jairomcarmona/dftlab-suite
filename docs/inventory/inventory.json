@@ -12,7 +12,7 @@
     "datasets": 16,
     "datasetBytes": 10678665,
     "ownJavascriptFiles": 61,
-    "ownJavascriptLines": 11817,
+    "ownJavascriptLines": 11827,
     "exportSourceCalls": 52,
     "scientificModules": 25
   },
@@ -1847,7 +1847,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/calc.js",
-      "line": 242,
+      "line": 252,
       "function": "downloadText",
       "source": "$('#fAdd',root).onclick=()=>{ F.push({el:'',n:1,mu:''}); fRows(); }; $('#fE',root).oninput=doF; $('#fRep',root).onclick=()=>{ if(fRes) downloadText(fRes,'energia_formacion.txt'); };",
       "consumer": "#calc",
@@ -1859,7 +1859,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/calc.js",
-      "line": 245,
+      "line": 255,
       "function": "exportBar",
       "source": "$$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });",
       "consumer": "#calc",
@@ -2559,8 +2559,8 @@
     },
     {
       "file": "app/dftlab/static/js/views/calc.js",
-      "bytes": 27443,
-      "sha256": "967024648c2c0654d9f6744976f41e66ed31858ba5d8e4523af63529806312f7"
+      "bytes": 28070,
+      "sha256": "031b9fc9f060a3f01a8f3530d314ec26e2c92a4b37eca9a757641cf090e51de7"
     },
     {
       "file": "app/dftlab/static/js/views/density.js",
@@ -2644,8 +2644,8 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 1792,
-      "sha256": "6f14a77a1943d8041d212a0a6c129b7e0a5e0a829d2f750c75926bad3d164607"
+      "bytes": 1840,
+      "sha256": "e55abbd52bb7e2c6c50452f5e06bde5d1fcf3fee05180103e0fd580ac17832d2"
     },
     {
       "file": "app/scripts/test-browser.mjs",
