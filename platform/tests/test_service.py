@@ -22,6 +22,14 @@ from dftlab_platform.service import create_app
 from dftlab_platform.storage import SQLiteRepository
 
 
+class PrivateSettings(unittest.TestCase):
+    def test_platform_resume_is_private_and_disabled_by_default(self):
+        settings = LocalSettings(43210)
+        self.assertFalse(settings.platform_resume_enabled)
+        with self.assertRaises(ValueError):
+            LocalSettings(43210, platform_resume_enabled=1)
+
+
 class HTTPService(unittest.TestCase):
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()

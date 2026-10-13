@@ -20,8 +20,11 @@ class LocalSettings:
     base_path: str = ""
     max_json: int = 1024**2
     max_chunk: int = 8*1024**2
+    platform_resume_enabled: bool = False
 
     def __post_init__(self):
+        if type(self.platform_resume_enabled) is not bool:
+            raise ValueError("Invalid private resume setting")
         if type(self.port) is not int or not 1 <= self.port <= 65535 or self.base_path and (not self.base_path.startswith("/") or self.base_path.endswith("/") or any(part in {"", ".", ".."} for part in self.base_path[1:].split("/"))):
             raise ValueError("Invalid local bind settings")
         if any(c not in "/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_" for c in self.base_path):

@@ -15,8 +15,8 @@ Generada por `node docs/inventory/audit.mjs --write`. No editar a mano; editar `
 | structureWriterFormats | 6 |
 | datasets | 16 |
 | datasetBytes | 10678665 |
-| ownJavascriptFiles | 64 |
-| ownJavascriptLines | 12164 |
+| ownJavascriptFiles | 66 |
+| ownJavascriptLines | 12350 |
 | exportSourceCalls | 52 |
 | scientificModules | 28 |
 
