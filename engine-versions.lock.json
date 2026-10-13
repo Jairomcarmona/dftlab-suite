@@ -55,7 +55,7 @@
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
           "evidence_file": "deployment/local/evidence/windows_native_x86_64_bloque2.json",
-          "evidence_sha256": "ec100c7083cc895a608ad137bdaaccf3632daa5a67381109140f793a6f8a5a8f"
+          "evidence_sha256": "1df8a89d9f82618c7b60b2de5a33ff29361501f61a5b8e152a0cbc0cb981c73a"
         },
         "wsl2_linux_x86_64": {
           "status": "INSTALL_PUBLIC_API_HELP_VERIFIED",
@@ -96,7 +96,7 @@
           },
           "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
           "evidence_file": "deployment/local/evidence/wsl2_linux_x86_64_bloque2.json",
-          "evidence_sha256": "bbbe679c64a1999c81960f04a3da5d4635062b1bd6f983b4899db118c9effc1c"
+          "evidence_sha256": "ec41aeeca72c0dcaaadaec928dd8a4cb86a2e8ed5487f4444547239708a9393a"
         }
       },
       "operational_capabilities": {
