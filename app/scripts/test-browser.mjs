@@ -9,6 +9,7 @@ for (const task of [
   'tests/ui/browser_lifecycle.mjs',
   'tests/ui/browser_scope_store.mjs',
   'tests/ui/browser_import.mjs',
+  'tests/ui/browser_native_results.mjs',
   'tests/ui/browser_bands.mjs',
   'tests/ui/browser_resources.mjs',
   'tests/ui/browser_offline.mjs',

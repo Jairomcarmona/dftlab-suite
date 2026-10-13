@@ -5,16 +5,16 @@
     "views": 19,
     "chapters": 15,
     "toolViews": 2,
-    "siestaDispatchKinds": 23,
+    "siestaDispatchKinds": 24,
     "calculatorPanels": 7,
     "structureReaderFamilies": 6,
     "structureWriterFormats": 6,
     "datasets": 16,
     "datasetBytes": 10678665,
-    "ownJavascriptFiles": 63,
-    "ownJavascriptLines": 12116,
+    "ownJavascriptFiles": 64,
+    "ownJavascriptLines": 12164,
     "exportSourceCalls": 52,
-    "scientificModules": 27
+    "scientificModules": 28
   },
   "views": [
     {
@@ -516,6 +516,18 @@
       "formats": ".FC",
       "tests": [
         "app/tests/siesta/run_fc_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "qraft-native",
+      "file": "app/dftlab/static/js/siesta/native-results.js",
+      "symbol": "parseNativeResult",
+      "formats": ".json with explicit QRAFT policy_id",
+      "tests": [
+        "app/tests/siesta/run_native_result_tests.mjs",
+        "app/tests/ui/browser_native_results.mjs"
       ],
       "consumer": "siesta/index.js → runset.js → postproc.js",
       "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
@@ -1406,7 +1418,7 @@
     },
     {
       "file": "app/dftlab/static/js/siesta/index.js",
-      "sha256": "198283d3b81eecdcf06ddb3cd0850f83d48c87c10bf59468088026a5019b5bc8",
+      "sha256": "4160c979a31647fb96c7d70029f3bea4f32414f53407c75de14222a5b82c65f8",
       "exports": [
         "detectKind",
         "detectAndParse",
@@ -1426,6 +1438,7 @@
         "app/dftlab/static/js/siesta/rho.js",
         "app/dftlab/static/js/siesta/pack.js",
         "app/dftlab/static/js/siesta/fc.js",
+        "app/dftlab/static/js/siesta/native-results.js",
         "app/dftlab/static/js/siesta/util.js"
       ],
       "consumers": [
@@ -1467,6 +1480,24 @@
       "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/native-results.js",
+      "sha256": "fd975b28cf2c79071a616980635a10b2473dbc444457e5fe4421ea14df556f34",
+      "exports": [
+        "parseNativeResult",
+        "nativeResultSummary",
+        "renderNativeResult"
+      ],
+      "reexports": [],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js",
+        "app/dftlab/static/js/views/postproc.js"
       ],
       "tests": [
         "app/tests/siesta/run_tests.mjs"
@@ -1884,7 +1915,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/calc.js",
-      "line": 242,
+      "line": 252,
       "function": "downloadText",
       "source": "$('#fAdd',root).onclick=()=>{ F.push({el:'',n:1,mu:''}); fRows(); }; $('#fE',root).oninput=doF; $('#fRep',root).onclick=()=>{ if(fRes) downloadText(fRes,'energia_formacion.txt'); };",
       "consumer": "#calc",
@@ -1896,7 +1927,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/calc.js",
-      "line": 245,
+      "line": 255,
       "function": "exportBar",
       "source": "$$('canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow')||cv.closest('.panel').querySelector('.ph'); ph.append(exportBar(cv,cv.dataset.export)); });",
       "consumer": "#calc",
@@ -2146,7 +2177,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 88,
+      "line": 89,
       "function": "exportBar",
       "source": "const addExp=()=>$$('#ppOut canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow'); if(!ph.querySelector('.export')) ph.append(exportBar(cv,cv.dataset.export)); });",
       "consumer": "#post",
@@ -2158,7 +2189,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 271,
+      "line": 275,
       "function": "downloadText",
       "source": "try{ downloadText(writeStructure(cell,fm,fm==='fdf'?{systemLabel:'dftlab'}:{}), `${(src.split(' ')[0]||'estructura').replace(/\\.[^.]+$/,'')}.${ext}`); }catch(e){ toast('No se pudo escribir '+fm+': '+e.message); } });",
       "consumer": "#post",
@@ -2170,7 +2201,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 274,
+      "line": 278,
       "function": "download",
       "source": "$('#geoPng',root).onclick=()=>{ const url=V3.snapshot(); fetch(url).then(r=>r.blob()).then(b=>download(b,'estructura.png')); };",
       "consumer": "#post",
@@ -2182,7 +2213,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 294,
+      "line": 298,
       "function": "downloadText",
       "source": "downloadText(t,'informe_dftlab.md','text/markdown');",
       "consumer": "#post",
@@ -2194,7 +2225,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 299,
+      "line": 303,
       "function": "downloadText",
       "source": "$('#repJson',root).onclick=()=>{ const o=F.filter(f=>f.data&&f.kind!=='live').map(f=>({name:f.name, kind:f.kind, sha256:f.hash, ...(f.link?{link:f.link}:{}), data:exportData(f)})); downloadText(JSON.stringify({dftlab:'postproceso', created:new Date().toISOString(), files:o}),'dftlab_postproceso.json','application/json'); };",
       "consumer": "#post",
@@ -2521,8 +2552,8 @@
     },
     {
       "file": "app/dftlab/static/js/siesta/index.js",
-      "bytes": 6177,
-      "sha256": "198283d3b81eecdcf06ddb3cd0850f83d48c87c10bf59468088026a5019b5bc8"
+      "bytes": 6432,
+      "sha256": "4160c979a31647fb96c7d70029f3bea4f32414f53407c75de14222a5b82c65f8"
     },
     {
       "file": "app/dftlab/static/js/siesta/ion.js",
@@ -2533,6 +2564,11 @@
       "file": "app/dftlab/static/js/siesta/mde.js",
       "bytes": 5311,
       "sha256": "1989fd027944d58254cae8b666db910b302f9e0cc31341b9097ae892f50ed351"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/native-results.js",
+      "bytes": 1476,
+      "sha256": "fd975b28cf2c79071a616980635a10b2473dbc444457e5fe4421ea14df556f34"
     },
     {
       "file": "app/dftlab/static/js/siesta/out.js",
@@ -2606,8 +2642,8 @@
     },
     {
       "file": "app/dftlab/static/js/views/calc.js",
-      "bytes": 27443,
-      "sha256": "967024648c2c0654d9f6744976f41e66ed31858ba5d8e4523af63529806312f7"
+      "bytes": 28070,
+      "sha256": "031b9fc9f060a3f01a8f3530d314ec26e2c92a4b37eca9a757641cf090e51de7"
     },
     {
       "file": "app/dftlab/static/js/views/density.js",
@@ -2651,8 +2687,8 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "bytes": 40824,
-      "sha256": "196b7a0b451179a638259e719be035c8acf2a23241e681b2d9e6a30b38f5a1c5"
+      "bytes": 41085,
+      "sha256": "6da044bef4b9f93c99a799c0d2956f2cd8940cc4119c182530d7817429c4b6b8"
     },
     {
       "file": "app/dftlab/static/js/views/potential.js",
@@ -2691,13 +2727,13 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 1927,
-      "sha256": "78ef1adbd48c8e95edaf18d47b60debc32995b0a8eacaa8613b9ecc4e325b4e9"
+      "bytes": 2025,
+      "sha256": "368ef610ea2dca9b2f7d7f3a61573b91bde0e584a16fecab333cbad0ef3c0c35"
     },
     {
       "file": "app/scripts/test-browser.mjs",
-      "bytes": 1137,
-      "sha256": "04935f8a4103bccd2b779314e1c03ea64f7151c62f55840bd1f1189bd342b520"
+      "bytes": 1178,
+      "sha256": "bd957f93540b41ef172e0dc0023e64fcc1e887db53113eb343a0ddb108bf4a51"
     },
     {
       "file": "app/package.json",

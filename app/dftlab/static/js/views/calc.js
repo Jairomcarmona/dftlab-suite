@@ -176,6 +176,16 @@ export function mount(root, view){
   function doMass(){
     $('#mWinO',root).textContent=MS.win.toFixed(3); const {pts,sign,title}=bandPts();
     if(pts.length<3){ $('#mOut',root).textContent='Pega al menos 3 puntos k, E.'; return; }
+    // The supplied Si valence bands meet in the triple extremum at Gamma (B-3).
+    // Retain the observed dispersion; no scalar mass or quadratic fit is established.
+    if(MS.mode==='hh'||MS.mode==='hl'){
+      const energies=pts.map(p=>p[1]), lo=Math.min(...energies), hi=Math.max(...energies), pad=(hi-lo)*0.1;
+      chart($('#cvM',root),{xlim:[pts[0][0],pts[pts.length-1][0]],ylim:[lo-pad,hi+pad],
+        xlabel:'k (Å⁻¹)',ylabel:'E (eV)',legend:true,
+        series:[{d:pts,color:css('--ink'),width:1.6,label:title}]});
+      $('#mOut',root).textContent='NOT_ESTABLISHED · DEGENERATE_EXTREMUM';
+      return;
+    }
     let ext=0;
     if(sign!==0) pts.forEach((p,i)=>{ if(sign>0? p[1]<pts[ext][1] : p[1]>pts[ext][1]) ext=i; });
     else { const c0=polyfit(pts.map(p=>p[0]),pts.map(p=>p[1]),2), kx=-c0[1]/(2*c0[2]); ext=pts.reduce((b,p,i)=>Math.abs(p[0]-kx)<Math.abs(pts[b][0]-kx)?i:b,0); }
