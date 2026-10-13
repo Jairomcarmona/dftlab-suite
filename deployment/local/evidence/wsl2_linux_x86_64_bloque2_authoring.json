@@ -1,0 +1,86 @@
+{
+  "success": true,
+  "scope": "installed public authoring/compiler/package/inspector only; runtime and science PENDING",
+  "commands": [
+    {
+      "name": "uv-version",
+      "exit_code": 0,
+      "log_sha256": "505417591634193da37f0d44ef7f779b5edb184a2027a00a41e65a0e0276589d"
+    },
+    {
+      "name": "consumer-venv",
+      "exit_code": 0,
+      "log_sha256": "eb3148795bef178026aaa74694e2a7b983b01a3cbb633278796d6271e7360f7a"
+    },
+    {
+      "name": "lock-export",
+      "exit_code": 0,
+      "log_sha256": "55900b23cbd31d715b708d040c052add8a6b879679de178d2e6f0489c6c78aad"
+    },
+    {
+      "name": "dependencies",
+      "exit_code": 0,
+      "log_sha256": "4b7d83d9ee7065b215740ac5f7f17a918d394835a06e9da3d1875673759d0bc1"
+    },
+    {
+      "name": "platform-install",
+      "exit_code": 0,
+      "log_sha256": "eb929d7f51d35ec6a55194a3af572e63300b1afb2dea70f363a5e6c688eace52"
+    },
+    {
+      "name": "qraft-install",
+      "exit_code": 0,
+      "log_sha256": "8622df005b90a2e7eecfc04aa8373a2df89b8ec26c1a852839e1acaa26b53871"
+    },
+    {
+      "name": "hubbardflow-install",
+      "exit_code": 0,
+      "log_sha256": "83ec48f40b41277c205345b810ed4ca41880fb78612c112c863c1e4afa57d1cc"
+    },
+    {
+      "name": "dependency-consistency",
+      "exit_code": 0,
+      "log_sha256": "fda4471c7c76f853b015e0285e08249dfc796bbbfea62889380cb76d06280f5c"
+    },
+    {
+      "name": "native-authoring",
+      "exit_code": 0,
+      "log_sha256": "fb2344c829b57088ec615601b1501e1f3754cf8ebdfcd1546ce0691a8f7b3475"
+    }
+  ],
+  "observation": {
+    "engines": {
+      "qraft": {
+        "commit": "0acd9a45196f71c80ca9a581eb1d6a481bc604f0",
+        "wheel_sha256": "f1d4b7b83233dc3b06fe8d2294eb603826647529941b366d2e71fafac24b34aa",
+        "source_manifest_sha256": "9f8ab179c7900ab6e215f232e7c40c7684d49482ef12bb9bf1efe5ac044b5ee1",
+        "target": "wsl2_linux_x86_64"
+      },
+      "hubbardflow": {
+        "commit": "d7e0b77be20f1f7bd67522764db5b366ebc3ab07",
+        "wheel_sha256": "4414ec06fa2c1d36f7703295414f04a545ca5a290e9dd8b14f66ba664576b119",
+        "source_manifest_sha256": "171aa99be79fbc9adfb45ce482d3ddfefb538b557e69bc4db34186ed46d9d4d5",
+        "target": "wsl2_linux_x86_64"
+      }
+    },
+    "intent_id": "93d8d906-3e56-4fbb-817b-c47b923672a5",
+    "project_id": "23776f05-dc18-44ba-b5b6-c2406e497f27",
+    "native_workflow_digest": "64e3bece15bb294696b417979dfae1caa9978af3a39bca770f21f3be90850167",
+    "workflow_file_sha256": "cf8e88fd457e6fefc40af02a74da635bcd771f068bfa826e0926463ab1a94769",
+    "package_sha256": "0507eeb9ab0fe6d2e7617ba2d143cfc9cd5e1e7f7f390e257435497f32218f19",
+    "run_lock_sha256": "18d237b2a39bc45de37f75b727b954b15f2f006d22c671837c1b39f7564273ef",
+    "profile_native_digest": "47231a60c8c3cbffb5376c48a3607d291b49cd6a646607a767eea26dbb9bf267",
+    "controller_campaign_sha256": "f567961cc12045ec67fea196e5f4fbe313fa86164f0fde4ddd64106bb7c59e96",
+    "task_count": 2,
+    "inspection_status": "PREPARED_RUN_VERIFIED",
+    "native_validation_status": "REVIEW",
+    "native_validation_review_codes": [
+      "UNDECLARED_GOVERNED_VALUE"
+    ],
+    "pseudo_sha256": "84c9316efac1959ee8c04b8d5a06eec2e069fa19302cb66254f2e4dc455b2044",
+    "scientific_assessment": "NOT_ESTABLISHED",
+    "execution_performed": false
+  },
+  "platform_wheel_sha256": "3c4511be5b1d8fa43d8134a333a48db42c7ba61e3dddb54825e32e75971e01ce",
+  "engine_lock_sha256": "2365b4897e2a9ad9f06cc23267d57e4fd95bd1b066cf220dfdfd1c734fe5620b"
+}

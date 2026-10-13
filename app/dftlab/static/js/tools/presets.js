@@ -9,7 +9,7 @@ const routes={'S-01':'molecule','S-02':'relaxation','S-03':'variable-cell','S-04
   'S-05':'ground-state','S-06':'ground-state','S-07':'molecular-vibration','S-08':'magnetic-selection'};
 export function presetRegistry(){
   return Object.fromEntries(Object.entries(routes).map(([id,route])=>[id,{protocol_id:`qraft.preset.${id.toLowerCase()}@1`,
-    policy_id:'qraft.presets.policy@1',route,status:['S-01','S-03','S-07'].includes(id)?'DESIGNED':'CONTRACT_TESTED',
+    policy_id:'qraft.presets.policy@1',route,status:'CONTRACT_TESTED',
     defaults:structuredClone(PRESET_DEFAULTS)}]));
 }
 export function presetPreview(cell,id,{parameters={},fixed=[],mesh_sizes=null,initial_spin=null,electrons=null,hexagonal_axes=[]}={}){

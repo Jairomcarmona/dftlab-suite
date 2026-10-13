@@ -12,7 +12,7 @@
     "datasets": 16,
     "datasetBytes": 10678665,
     "ownJavascriptFiles": 63,
-    "ownJavascriptLines": 12075,
+    "ownJavascriptLines": 12111,
     "exportSourceCalls": 52,
     "scientificModules": 27
   },
@@ -1080,7 +1080,7 @@
     },
     {
       "file": "app/dftlab/static/js/crystal/formats.js",
-      "sha256": "93e9b3337ad7e82be7ac50372d59c53fe56301c8ebd85fe23f33af61d457439c",
+      "sha256": "52d67bbcfb5c9d87af5ad845adefd6561248d2f0c5a9d2230c54f69551dc89fc",
       "exports": [
         "BOHR_SIESTA",
         "BOHR",
@@ -1723,7 +1723,7 @@
     },
     {
       "file": "app/dftlab/static/js/tools/presets.js",
-      "sha256": "583737d82739d0b4d73d695d698577a5543e8dfa73f2e01123b6172ec44d55ff",
+      "sha256": "de3dad8c3b1f098a48c0fb63f47a8fd3e933676ca4156f467b5177a4c2ea60eb",
       "exports": [
         "PRESET_DEFAULTS",
         "presetRegistry",
@@ -2436,8 +2436,8 @@
     },
     {
       "file": "app/dftlab/static/js/crystal/formats.js",
-      "bytes": 42918,
-      "sha256": "93e9b3337ad7e82be7ac50372d59c53fe56301c8ebd85fe23f33af61d457439c"
+      "bytes": 44699,
+      "sha256": "52d67bbcfb5c9d87af5ad845adefd6561248d2f0c5a9d2230c54f69551dc89fc"
     },
     {
       "file": "app/dftlab/static/js/crystal/kpath.js",
@@ -2586,8 +2586,8 @@
     },
     {
       "file": "app/dftlab/static/js/tools/presets.js",
-      "bytes": 3421,
-      "sha256": "583737d82739d0b4d73d695d698577a5543e8dfa73f2e01123b6172ec44d55ff"
+      "bytes": 3374,
+      "sha256": "de3dad8c3b1f098a48c0fb63f47a8fd3e933676ca4156f467b5177a4c2ea60eb"
     },
     {
       "file": "app/dftlab/static/js/views/bands.js",
@@ -2691,8 +2691,8 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 1880,
-      "sha256": "1b4d09001d840fcf3c8dfdadfb2378e0be3489a04d5aca36b2fe185524fdbb77"
+      "bytes": 1927,
+      "sha256": "78ef1adbd48c8e95edaf18d47b60debc32995b0a8eacaa8613b9ecc4e325b4e9"
     },
     {
       "file": "app/scripts/test-browser.mjs",

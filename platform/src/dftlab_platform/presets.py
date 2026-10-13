@@ -29,7 +29,7 @@ def preset_registry():
     """IDs and defaults are proposals for authoring, never qualification."""
     return {key: {'protocol_id': 'qraft.preset.'+key.lower()+'@1',
                   'policy_id': 'qraft.presets.policy@1', 'route': route,
-                  'status': 'DESIGNED' if key in ('S-01', 'S-03', 'S-07') else 'CONTRACT_TESTED',
+                  'status': 'CONTRACT_TESTED',
                   'defaults': copy.deepcopy(DEFAULTS)} for key, route in _ROUTES.items()}
 
 

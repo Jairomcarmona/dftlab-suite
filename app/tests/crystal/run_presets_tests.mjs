@@ -13,5 +13,5 @@ for(const [id,preset] of Object.entries(presetRegistry())){
 }
 assert.throws(()=>presetPreview(cell,'S-03'),/MESH_SIZES_REQUIRED/);
 assert.throws(()=>presetPreview(cell,'S-08',{parameters:{spin:'polarized'}}),/SPIN_CONFIGURATION_REQUIRED/);
-assert.equal(presetRegistry()['S-03'].status,'DESIGNED');
+assert.equal(presetRegistry()['S-03'].status,'CONTRACT_TESTED');
 console.log('Preset preview: eight authoring presets, Gamma, modern labels, files and explicit prerequisites passed.');
