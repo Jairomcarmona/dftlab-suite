@@ -39,6 +39,11 @@ def _number(value):
     return format(value, '.16g')
 
 
+def _real_token(value):
+    text=_number(value)
+    return text if '.' in text or 'e' in text.lower() else text+'.0'
+
+
 def render_preset(structure, preset_id, species, *, label='siesta', parameters=None,
                   fixed=(), mesh_sizes=None, initial_spin=None, electrons=None,
                   hexagonal_axes=()):
@@ -91,7 +96,7 @@ def render_preset(structure, preset_id, species, *, label='siesta', parameters=N
     scalar('LatticeConstant', '1 Ang')
     block('LatticeVectors', [' '.join(_number(x) for x in row) for row in geom['cell']['vectors']])
     scalar('AtomicCoordinatesFormat', 'Fractional' if geom['coordinates']['kind'] == 'fractional' else 'Ang')
-    block('AtomicCoordinatesAndAtomicSpecies', [' '.join(_number(x) for x in s['position'])+' '+str(order[s['species_label']]) for s in geom['sites']])
+    block('AtomicCoordinatesAndAtomicSpecies', [' '.join(_real_token(x) for x in s['position'])+' '+str(order[s['species_label']]) for s in geom['sites']])
     scalar('XC.functional', 'GGA' if p['xc'] == 'PBE' else 'LDA')
     scalar('XC.authors', 'PBE' if p['xc'] == 'PBE' else 'CA')
     scalar('PAO.BasisSize', p['basis']); scalar('PAO.EnergyShift', _number(p['energy_shift_meV'])+' meV')
@@ -101,7 +106,7 @@ def render_preset(structure, preset_id, species, *, label='siesta', parameters=N
     if p['spin'] == 'polarized':
         if initial_spin is None or len(initial_spin) != len(geom['sites']):
             raise ValueError('Polarized authoring requires complete explicit DM.InitSpin')
-        block('DM.InitSpin', [str(i+1)+' '+_number(value) for i, value in enumerate(initial_spin)])
+        block('DM.InitSpin', [str(i+1)+' '+_real_token(value) for i, value in enumerate(initial_spin)])
     constraints = render_constraints(len(geom['sites']), fixed)
     if 'error' in constraints:
         raise ValueError(constraints['error'])
@@ -210,7 +215,7 @@ def build_preset_intent(structure, preset_id, species, *, draft_id, physical_mod
     if payload['policy_id']!=policy_literal or literal not in payload.get('protocol_ids',[]) or payload['policy_document']!=document:
         raise ValueError('Native literal protocol/policy IDs are not preserved')
     with tempfile.TemporaryDirectory(prefix='dftlab-preset-validation-') as temporary:
-        path=Path(temporary)/'input.fdf';path.write_text(plan['fdf'],encoding='utf-8')
+        path=Path(temporary)/'input.fdf';path.write_bytes(plan['fdf'].encode('utf-8'))
         report=qraft_api.SiestaContextualValidator().validate_path(path)
         if report.status.value!='PASS':
             raise ValueError('Generated preset FDF did not pass QRAFT validation')
