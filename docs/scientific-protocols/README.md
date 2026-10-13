@@ -5,7 +5,7 @@ Una ficha fija las decisiones de un workflow científico **antes** de escribir c
 | Ficha | Ticket | Estado |
 |---|---|---|
 | [WF-EOS](WF-EOS.md) | T-035 | Aceptada; 20 vectores en `vectors/`; política v1 aprobada |
-| [Slabs y restricciones](SLABS.md) | T-028 (G-05, G-06) | Lista para aceptar; 19 vectores en `vectors/` |
+| [Slabs y restricciones](SLABS.md) | T-028 (G-05, G-06) | Aceptada (2026-10-13); 19 vectores en `vectors/` |
 | [Presets S-01…S-08](PRESETS.md) | T-029 | Aceptada; 26 vectores en `vectors/`; política v1 y U-Q14…U-Q16 aprobados |
 | [Preflight del FDF](PREFLIGHT.md) | T-030 | Aceptada; 22 vectores en `vectors/`; U-Q17 aprobado |
 | [Pseudopotenciales y especies](PSEUDOS.md) | T-031 | Aceptada; 20 vectores en `vectors/`; U-Q18 aprobado; biblioteca propietaria (D-7) |

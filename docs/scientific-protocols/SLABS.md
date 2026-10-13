@@ -1,6 +1,6 @@
 # Ficha de entrada: constructor de slabs y restricciones (T-028, G-05 y G-06)
 
-Estado: **lista para aceptar**. Es una operación de geometría de la plataforma ([ADR-003](../adr/ADR-003-autoridades-qraft-hubbardflow-plataforma.md)): no ejecuta SIESTA ni decide física de un protocolo. Su salida es una `StructureRevision` con `physical_intent: SLAB` y una transformación `SLAB` con atom map. La usan los presets S-04 ([PRESETS](PRESETS.md)) y WF-SURFACE (S-1, S-4). Fuente: [maestro §9.1](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) (G-05, G-06).
+Estado: **aceptada** (2026-10-13, Manuel). Es una operación de geometría de la plataforma ([ADR-003](../adr/ADR-003-autoridades-qraft-hubbardflow-plataforma.md)): no ejecuta SIESTA ni decide física de un protocolo. Su salida es una `StructureRevision` con `physical_intent: SLAB` y una transformación `SLAB` con atom map. La usan los presets S-04 ([PRESETS](PRESETS.md)) y WF-SURFACE (S-1, S-4). Fuente: [maestro §9.1](../../PROPUESTA_MAESTRA_DFTLAB_V2.md) (G-05, G-06).
 
 Esta ficha está escrita para que la implemente quien solo programa: si algo no está aquí, en el oráculo o en los vectores, **se pregunta antes de decidirlo**. No se cambian los vectores para que una prueba pase.
 
