@@ -106,7 +106,7 @@ class ScientificResults:
                 status=raw['authority'];vocabulary='qraft.electronic.authority'
             else:
                 status=raw.get('parent_electronic_state',{}).get('authority')
-                vocabulary='qraft.electronic.parent-authority'
+                vocabulary='qraft.electronic.parent_authority'
             assessment_kind=vocabulary
         return self._save(owner,project,raw,[source_ref],literal=literal,kind='qraft.electronic',status=status,
             scope=scope,subjects=subject_refs,assessment_kind=assessment_kind,vocabulary=vocabulary)
