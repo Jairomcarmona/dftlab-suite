@@ -34,7 +34,7 @@ Cola y cancelación (`lru-queued`, `-prepared`, `-running`, `-cancelling`, `-can
 
 ## Caso real
 
-La corrida real del NiO de ADR-017 Adenda 4 (C0 y Q1 a Q6), cuando Manuel la ejecute, alimenta tres vectores `lru-real-*` con las lecturas reales de la plataforma; hasta entonces T-039 no pasa de `CONTRACT_TESTED`. El módulo se prueba hoy con los 22 vectores sintéticos; no se afirma que la interfaz esté calificada con una corrida real.
+La calificación HF1-QUAL ya produjo corridas reales: C0-r3 (job 446, ruta completa de la plataforma, 25 de 25 nodos) y la corrida de Q (`41c26f9e-3651-490e-986d-054e71b8babf`, intentos 1 a 3 con cancelación y caída; los intentos 2 y 3 los lanzó el arnés de operador, no la plataforma, [TRASPASO](../reviews/TRASPASO.md), «HF1-QUAL»). Con esas corridas T-039 añade en `lru-view-real.cases.json` (archivo nuevo, mismo runner) al menos: `lru-real-c0-completed` (lecturas reales de C0-r3: dimensiones, evaluaciones y política tal como las guardó la plataforma) y `lru-real-q-attempts` (mapa de los tres intentos de Q, con la admisión como `ADMISSION_UNKNOWN` porque no pasaron por la plataforma). Los esperados los calcula un constructor de Python independiente del oráculo, igual que en el resto. No se altera ningún vector de `lru-view.cases.json`. Mientras no exista una reanudación de plataforma calificada (ADR-017 L.10), T-039 no pasa de `CONTRACT_TESTED`.
 
 ## Lo que no hace
 
