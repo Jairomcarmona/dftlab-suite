@@ -22,6 +22,7 @@ const tasks = [
   'app/tests/ui/run_lifecycle_tests.mjs',
   'app/tests/ui/run_resources_tests.mjs',
   'app/tests/ui/run_scope_store_tests.mjs',
+  'app/tests/ui/run_lru_view_tests.mjs',
   'app/scripts/check-contract-validators.mjs',
   'app/tests/ui/run_contract_tests.mjs',
   'app/tests/ui/run_sdk_tests.mjs',

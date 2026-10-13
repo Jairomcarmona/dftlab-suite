@@ -11,8 +11,8 @@
     "structureWriterFormats": 6,
     "datasets": 16,
     "datasetBytes": 10678665,
-    "ownJavascriptFiles": 64,
-    "ownJavascriptLines": 12164,
+    "ownJavascriptFiles": 66,
+    "ownJavascriptLines": 12350,
     "exportSourceCalls": 52,
     "scientificModules": 28
   },
@@ -2411,6 +2411,16 @@
       "sha256": "fc31dc5189ec9ebc10e1948fef026401eea7f73399e1a4d929a3de5072f010bf"
     },
     {
+      "file": "app/dftlab/static/js/application/lru-panel.js",
+      "bytes": 3085,
+      "sha256": "2b2417c55eca716eaad0f1f0903fefd5a6ef2a6a4a44208fc1f2e96c6b05779d"
+    },
+    {
+      "file": "app/dftlab/static/js/application/lru-view.js",
+      "bytes": 5735,
+      "sha256": "d391185591da4b86299a11c91f12da2798cbe0d0124c3badc4ea1bf4a1189bde"
+    },
+    {
       "file": "app/dftlab/static/js/application/operative-shell.js",
       "bytes": 5233,
       "sha256": "fd545efc09c56f87222e082c7cb747b5c365e3f8fde7021abd7117bb8250f8e1"
@@ -2727,8 +2737,8 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 2025,
-      "sha256": "368ef610ea2dca9b2f7d7f3a61573b91bde0e584a16fecab333cbad0ef3c0c35"
+      "bytes": 2066,
+      "sha256": "1b5902c72ef322b5941390d9b205e75ee378798332c3a6ca5c45f59928036738"
     },
     {
       "file": "app/scripts/test-browser.mjs",

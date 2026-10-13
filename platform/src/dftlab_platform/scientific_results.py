@@ -7,13 +7,15 @@ from .contracts import Contracts, canonical, loads, resource_json
 from .domain import envelope, identifier, now, Problem, reseal
 from .policy_refs import policy_reference
 
+_SURFACE_DIPOLE_MODES = frozenset({"true", "false", "charge", "vacuum", "none"})
+
 
 class ScientificResults:
     def __init__(self, engines, artifacts, *, limit=8*1024**2):
         self.engines,self.artifacts,self.limit=engines,artifacts,limit
         self.contracts=Contracts()
         # Only the installed public facade participates in this integration.
-        for name in ('EosProtocol','ElectronicAnalysisProtocol','scientific_policy_document','scientific_policy_evidence'):
+        for name in ('EosProtocol','ElectronicAnalysisProtocol','SurfaceProtocol','scientific_policy_document','scientific_policy_evidence'):
             if not hasattr(engines.qraft,name):
                 raise Problem('ENGINE_UNAVAILABLE')
 
@@ -118,6 +120,41 @@ class ScientificResults:
             raise Problem('PRECONDITION_FAILED')
         return self._save(owner,project,report,[rule_ref,report_ref],literal=rule['rule_id'],kind='qraft.convergence',
             status=report['status'],scope=rule['parameter'],subjects=subject_refs,rule_document=rule)
+
+    def store_surface(self,owner,project,source_ref,*,subject_refs,intent):
+        """Store a QRAFT WF-SURFACE result without rerunning its analysis.
+
+        The private intent must declare the original dipole mode (including
+        null when no label was present). Its original spelling is retained.
+        """
+        if not isinstance(intent,dict) or 'dipole_correction' not in intent:
+            raise Problem('PRECONDITION_FAILED')
+        dipole=intent['dipole_correction']
+        if dipole is not None and (not isinstance(dipole,str) or dipole.casefold() not in _SURFACE_DIPOLE_MODES):
+            raise Problem('PRECONDITION_FAILED')
+        raw=loads(self._read(owner,project,source_ref))
+        literal='qraft.surface.policy@1'
+        # SurfaceProtocol.analyze returns verdict/reasons/faces and leaves the
+        # policy identity to the caller's pinned public policy provider.
+        if raw.get('policy_id') not in (None,literal) or not isinstance(raw.get('verdict'),str) or not raw['verdict']:
+            raise Problem('PRECONDITION_FAILED')
+        if 'dipole_correction' in raw and raw['dipole_correction']!=dipole:
+            raise Problem('PRECONDITION_FAILED')
+        if not isinstance(raw.get('faces'),list) or not isinstance(raw.get('reasons'),list):
+            raise Problem('PRECONDITION_FAILED')
+        scope=json.dumps({'observable':'work_function','dipole_correction':dipole},sort_keys=True,ensure_ascii=False)
+        result=self._save(owner,project,raw,[source_ref],literal=literal,kind='qraft.surface',
+            status=raw['verdict'],scope=scope,subjects=subject_refs,vocabulary='qraft.surface.verdict')
+        result['presentation']={
+            'scope':scope,
+            'native_status':raw['verdict'],
+            'dipole_correction':dipole,
+            'reasons':deepcopy(raw['reasons']),
+            'faces':deepcopy(raw['faces']),
+            'native_result':deepcopy(raw),
+            'capability':'CONTRACT_TESTED',
+        }
+        return result
 
     @staticmethod
     def presentation(raw,*,scope):

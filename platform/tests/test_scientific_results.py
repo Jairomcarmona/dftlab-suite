@@ -3,7 +3,7 @@ from copy import deepcopy
 import hashlib,json
 from types import SimpleNamespace
 import unittest
-from dftlab_platform.contracts import Contracts,loads
+from dftlab_platform.contracts import Contracts,digest,loads
 from dftlab_platform.domain import Problem
 from dftlab_platform.scientific_results import ScientificResults
 
@@ -31,12 +31,17 @@ class MemoryArtifacts:
 class ScientificConsumers(unittest.TestCase):
     def setUp(self):
         self.artifacts=MemoryArtifacts();self.calls=[]
+        surface_policy={'potential':'VH','allow_vt':False,'window_A':1.0,'step_A':.25,
+            'margin_A':4.0,'width_min_A':2.0,'slope_max_eV_per_A':.005,'range_max_meV':5.0,
+            'stability_meV':3.0,'perpendicular_tol_deg':.01,'convergence_meV':10.0}
         def document(literal,*,rule_document=None):
-            self.calls.append(literal);return deepcopy(rule_document if rule_document is not None else {'fixture_policy':literal})
+            self.calls.append(literal)
+            if rule_document is not None:return deepcopy(rule_document)
+            return deepcopy(surface_policy if literal=='qraft.surface.policy@1' else {'fixture_policy':literal})
         def evidence(literal,**options):
             raw={'payload':{'policy_id':literal,'policy_document':document(literal,**options)}}
             return SimpleNamespace(verify=lambda:None,to_dict=lambda:raw,contract='qraft.scientific-artifact@1.0',content_sha256='a'*64)
-        api=SimpleNamespace(EosProtocol=object,ElectronicAnalysisProtocol=object,
+        api=SimpleNamespace(EosProtocol=object,ElectronicAnalysisProtocol=object,SurfaceProtocol=object,
             scientific_policy_document=document,scientific_policy_evidence=evidence)
         engines=SimpleNamespace(qraft=api,lock={'engines':{'qraft':{'distribution':'qraft-hpc','declared_version':'0.2.0','commit':'b'*40}}})
         self.consumer=ScientificResults(engines,self.artifacts)
@@ -116,3 +121,42 @@ class ScientificConsumers(unittest.TestCase):
         self.assertEqual(result['assessment']['payload']['passport_state'],'NOT_ESTABLISHED')
         with self.assertRaises(Problem):self.consumer.store_eos('other','p',ref,subject_refs=['run-1'])
         with self.assertRaises(Problem):self.consumer.store_eos('owner','other',ref,subject_refs=['run-1'])
+
+    def test_surface_preserves_native_qraft_result_and_pinned_policy_and_intent_dipole_mode(self):
+        # SurfaceProtocol.analyze's native shape does not repeat policy_id.
+        raw={'verdict':'ESTABLISHED','reasons':[],
+            'faces':[{'side':'+z','status':'ESTABLISHED','reason':None,'phi_eV':5.5863,
+                'plateau':{'from_A':20.0,'to_A':22.0,'mean_eV':.7393}},
+                {'side':'-z','status':'ESTABLISHED','reason':None,'phi_eV':3.9446,
+                'plateau':{'from_A':2.0,'to_A':4.0,'mean_eV':-.8996}}]}
+        ref,data=self.source(raw)
+        result=self.consumer.store_surface('owner','p',ref,subject_refs=['run-1'],
+            intent={'dipole_correction':'VaCuUm'})
+        self.assertEqual(self.artifacts.files[ref['artifact_id']],data)
+        self.assertEqual(result['presentation']['native_result'],raw)
+        self.assertEqual(result['presentation']['faces'],raw['faces'])
+        self.assertEqual(result['presentation']['dipole_correction'],'VaCuUm')
+        self.assertEqual(result['assessment']['payload']['native_status']['value'],'ESTABLISHED')
+        self.assertEqual(result['assessment']['payload']['native_status']['vocabulary'],'qraft.surface.verdict')
+        self.assertEqual(result['assessment']['payload']['passport_state'],'NOT_ESTABLISHED')
+        self.assertEqual(result['analysis']['payload']['observable_kind'],'qraft.surface')
+        policy=result['analysis']['payload']['algorithm']['policy']
+        self.assertEqual(policy['policy_id'],'qraft.surface.policy')
+        self.assertEqual(policy['version'],'1.0.0')
+        self.assertEqual(policy['digest'],digest(self.consumer.engines.qraft.scientific_policy_document('qraft.surface.policy@1')))
+        self.assertEqual(result['analysis']['payload']['limits'],['CONTRACT_TESTED','PROVISIONAL'])
+        self.assertEqual(result['state'],'PROVISIONAL')
+
+    def test_surface_requires_an_explicit_supported_intent_dipole_mode(self):
+        ref,_=self.source({'policy_id':'qraft.surface.policy@1','verdict':'NOT_ESTABLISHED','reasons':[],
+            'faces':[]})
+        for intent in ({}, {'dipole_correction':'automatic'}, {'dipole_correction':True}):
+            with self.subTest(intent=intent), self.assertRaises(Problem):
+                self.consumer.store_surface('owner','p',ref,subject_refs=['run-1'],intent=intent)
+
+    def test_surface_rejects_a_conflicting_native_policy_id(self):
+        ref,_=self.source({'policy_id':'qraft.surface.policy@2','verdict':'NOT_ESTABLISHED',
+            'reasons':[],'faces':[]})
+        with self.assertRaises(Problem):
+            self.consumer.store_surface('owner','p',ref,subject_refs=['run-1'],
+                intent={'dipole_correction':None})
