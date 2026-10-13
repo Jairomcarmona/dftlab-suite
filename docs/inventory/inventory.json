@@ -12,7 +12,7 @@
     "datasets": 16,
     "datasetBytes": 10678665,
     "ownJavascriptFiles": 64,
-    "ownJavascriptLines": 12159,
+    "ownJavascriptLines": 12164,
     "exportSourceCalls": 52,
     "scientificModules": 28
   },
@@ -1754,7 +1754,7 @@
     },
     {
       "file": "app/dftlab/static/js/tools/presets.js",
-      "sha256": "de3dad8c3b1f098a48c0fb63f47a8fd3e933676ca4156f467b5177a4c2ea60eb",
+      "sha256": "158952488add0a3ee1d8096419a0f3cd441dd3e622138e543b45c8ab1542bf29",
       "exports": [
         "PRESET_DEFAULTS",
         "presetRegistry",
@@ -2622,8 +2622,8 @@
     },
     {
       "file": "app/dftlab/static/js/tools/presets.js",
-      "bytes": 3374,
-      "sha256": "de3dad8c3b1f098a48c0fb63f47a8fd3e933676ca4156f467b5177a4c2ea60eb"
+      "bytes": 3570,
+      "sha256": "158952488add0a3ee1d8096419a0f3cd441dd3e622138e543b45c8ab1542bf29"
     },
     {
       "file": "app/dftlab/static/js/views/bands.js",

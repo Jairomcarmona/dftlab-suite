@@ -13,5 +13,8 @@ for(const [id,preset] of Object.entries(presetRegistry())){
 }
 assert.throws(()=>presetPreview(cell,'S-03'),/MESH_SIZES_REQUIRED/);
 assert.throws(()=>presetPreview(cell,'S-08',{parameters:{spin:'polarized'}}),/SPIN_CONFIGURATION_REQUIRED/);
+const magnetic=presetPreview(cell,'S-08',{parameters:{spin:'polarized'},initial_spin:[1,-1]});
+assert.match(magnetic.fdf,/%block DM.InitSpin\n1 1\.0\n2 -1\.0\n%endblock DM.InitSpin/);
+assert.deepEqual(magnetic.resolved_parameters.spin,'polarized');
 assert.equal(presetRegistry()['S-03'].status,'CONTRACT_TESTED');
 console.log('Preset preview: eight authoring presets, Gamma, modern labels, files and explicit prerequisites passed.');
