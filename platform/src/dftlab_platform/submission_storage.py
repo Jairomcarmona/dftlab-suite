@@ -165,6 +165,7 @@ class SQLiteSubmissionLedger:
                 "WHERE run_id=? ORDER BY generation",
                 (run_id,),
             ).fetchall()
+            latest_generation = max((row[0] for row in rows), default=0)
             for generation, document, retired in rows:
                 record = self.contracts.validate("controller-authority-record", loads(document))
                 if (record["project_id"] != intent["project_id"]
@@ -200,7 +201,10 @@ class SQLiteSubmissionLedger:
                     "retired": bool(retired),
                     "proof": proof,
                     "plan_revision": self._generation_plan_revision(db, run_id, generation),
-                    "verdict": self._generation_verdict(db, run_id, generation),
+                    "verdict": (
+                        self._generation_verdict(db, run_id, generation)
+                        if generation == latest_generation else None
+                    ),
                 })
         dispatches = []
         if "scheduler_dispatches" in tables:

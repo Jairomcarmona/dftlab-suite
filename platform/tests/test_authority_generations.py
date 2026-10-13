@@ -442,10 +442,17 @@ class AuthorityGenerationMigrations(unittest.TestCase):
                 "VALUES(?,2,'attempt-0002','REFUSE','RESUME_INPUTS_CHANGED',?)",
                 (run_id, "b" * 64),
             )
+            # L.5 consults the latest generation only. A migrated historical
+            # generation without a verdict must not hide generation 2's refusal.
+            db.execute("DELETE FROM controller_resume_verdicts WHERE run_id=? AND generation=1", (run_id,))
 
         same_processor, same_operation, same_intent, _ = _resume_operation(
             repository, owner, project, run_id, attempt_2, identifier(), 3, 2,
         )
+        with repository._connection() as db:
+            case = ledger._generation_admission_case(db, same_operation["record_id"], same_intent)
+        self.assertIsNone(case["generations"][0]["verdict"])
+        self.assertEqual(case["generations"][1]["verdict"], "REFUSE")
         with self.assertRaises(Problem):
             ledger.reserve(same_operation["record_id"], same_operation["payload"]["revision"],
                            same_processor, same_intent)
