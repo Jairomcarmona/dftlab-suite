@@ -170,6 +170,14 @@ def final_root_findings(bundle, state_dir):
     if not isinstance(config, dict):
         return ["lr_config.json"]
     root, found = Path(state_dir).resolve(), []
+    # HubbardFlow 0.1.3 ignores campaign_root for target local_wsl and creates the
+    # campaign at wsl.workspace_root/<name> (wsl_campaign_init.py), also the lock root.
+    profile = loads(files[manifest["execution_profile_file"]])
+    if isinstance(profile, dict) and profile.get("target") == "local_wsl":
+        wsl = profile.get("wsl")
+        workspace = wsl.get("workspace_root") if isinstance(wsl, dict) else None
+        if type(workspace) is not str or not os.path.isabs(workspace) or Path(workspace).resolve() != root.parent:
+            found.append("execution_profile.wsl.workspace_root")
     values = [(name, config.get(name)) for name in _LR_PATH_FIELDS if config.get(name) is not None]
     for group in _LR_PATH_MAPS:
         mapping = config.get(group) or {}

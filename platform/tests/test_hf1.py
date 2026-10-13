@@ -394,6 +394,18 @@ raise SystemExit(module.run(sys.argv[1]))
         self.controller_capability()
         self.assertEqual(final_root_findings(self.inspect(4), state_dir), ["pseudopotentials.NiLR0 (not in inventory)"])
 
+    def test_local_wsl_profile_workspace_root_must_be_the_state_parent(self):
+        # HubbardFlow 0.1.3 creates the campaign at wsl.workspace_root/<name> for local_wsl (ADR-017 Adenda 11).
+        state_dir = self.root/"run"/"controller-state"/"hf1-lru"
+        for workspace, expected in ((state_dir.parent, []), (self.root/"elsewhere", ["execution_profile.wsl.workspace_root"])):
+            with self.subTest(workspace=str(workspace)):
+                self.profile["target"] = "local_wsl"
+                self.profile["wsl"] = {"distribution": "d", "python_executable": "/usr/bin/python3", "workspace_root": str(workspace)}
+                self.controller_capability()
+                bundle = inspect_bundle(self.archive, expected_sha256=self.sha, expected_profile_sha256=self.profile_sha,
+                                        reserved_cpus=4, allowed_targets=CONTROLLER_TARGETS)
+                self.assertEqual(final_root_findings(bundle, state_dir), expected)
+
     def test_entry_refuses_paths_and_plans_that_do_not_match_the_qraft_layout(self):
         capability = self.controller_capability()
         run = self.root/"run"
@@ -491,6 +503,7 @@ raise SystemExit(module.run(sys.argv[1]))
         # SLURM allocation is a different profile. Only the controller path may
         # take a local_wsl campaign profile; the legacy worker still needs slurm.
         self.profile["target"] = "local_wsl"
+        self.profile["wsl"] = {"distribution": "d", "python_executable": "/usr/bin/python3", "workspace_root": str(self.root/"controller-state")}
         capability = self.controller_capability()
         with self.assertRaises(Problem):
             self.inspect(4)

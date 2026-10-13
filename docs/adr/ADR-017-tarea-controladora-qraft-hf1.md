@@ -1,6 +1,6 @@
 # ADR-017: tarea controladora en QRAFT para HF-1 (reserva, lanzamiento directo, cancelación y recuperación)
 
-Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md). La **Adenda 8** (#70, 2026-10-12) registra la receta HF-1 y recorre C0 a Q6 contra `main`. La **Adenda 9** (#70, 2026-10-12) corrige el orden entre la preparación del estado y el dueño de QRAFT (el `FAIL` de C0). La **Adenda 10** (#70, 2026-10-12) corrige dónde se inicializa la campaña (el segundo `FAIL`, `NO_NUMERICAL_U`).
+Estado: **aceptado** el 2026-10-11, con la **Adenda 1** ([#52](https://github.com/Jairomcarmona/dftlab-suite/issues/52)), la **Adenda 2** ([HubbardFlow #43](https://github.com/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/issues/43)) y la **Adenda 3** ([#57](https://github.com/Jairomcarmona/dftlab-suite/issues/57), [#59](https://github.com/Jairomcarmona/dftlab-suite/issues/59)) del mismo día. La **Adenda 4** ([#70](https://github.com/Jairomcarmona/dftlab-suite/issues/70), 2026-10-12) fija el caso de calificación real y la integridad tras una caída sin sello; aceptada el 2026-10-12. La **Adenda 5** (#70, 2026-10-12) fija los argumentos `max_seconds`/`grace_seconds` de la factory en modo controller y deja los plazos solo en QRAFT. La **Adenda 6** (#70, 2026-10-12) separa el perfil de la campaña del perfil exterior de SLURM, recoge los huecos de las etapas restantes de la calificación y añade un preflight único. La **Adenda 7** (#70, 2026-10-12) clasifica los dos primeros `FAIL` del preflight, recorre en seco el resto de la calificación y fija el permiso de arreglar y reintentar. Es diseño: la implementación en QRAFT está pendiente ([siestaflow #10](https://github.com/Jairomcarmona/siestaflow/issues/10)). Concreta [ADR-006](ADR-006-hubbard-hf1-hf2.md) §1 y [ADR-015](ADR-015-hubbardflow-capa-bajo-qraft.md) §1; no cambia [ADR-007](ADR-007-controlador-unico-reconciliacion-idempotencia.md). La **Adenda 8** (#70, 2026-10-12) registra la receta HF-1 y recorre C0 a Q6 contra `main`. La **Adenda 9** (#70, 2026-10-12) corrige el orden entre la preparación del estado y el dueño de QRAFT (el `FAIL` de C0). La **Adenda 10** (#70, 2026-10-12) corrige dónde se inicializa la campaña (el segundo `FAIL`, `NO_NUMERICAL_U`). La **Adenda 11** (#70, 2026-10-13) corrige J.2 para HubbardFlow 0.1.3 con `local_wsl`.
 Fecha: 2026-10-11. Cambios upstream: **U-Q9** en [QRAFT](../compatibility/QRAFT_4d996ea.md) y **U-H7** en [HubbardFlow](../compatibility/HUBBARDFLOW_e508f47.md).
 
 El texto de abajo ya integra la Adenda 1, cuya sección [Adenda 1](#adenda-1-2026-10-11-issue-52) explica qué cambió y por qué. La [Adenda 2](#adenda-2-2026-10-11-hubbardflow-43) fija cómo se lee `check_resume` al reanudar y cuándo se asienta un nodo; §4 y §6 la remiten.
@@ -991,3 +991,27 @@ Todo lo que HubbardFlow lee antes de observar está en `lr_config.json` y se cub
 ### J.8 Reintento
 
 C0-r3 es otra corrida nueva (raíz, `run_id`, claves y job nuevos). No se toca `attempt-0001` ni nada de C0-r1 y C0-r2; ambos `FAIL` quedan registrados.
+
+## Adenda 11 (2026-10-13, issue #70): J.2 corregida para `local_wsl` en HubbardFlow 0.1.3
+
+### K.1 Qué estaba mal en J.2
+
+J.2 decía que `initialize_campaign(campaign_root=S.parent, name=S.name)` crea la campaña en `S`. Con `target = local_wsl`, HubbardFlow 0.1.3 **ignora `campaign_root`**: `workspace = Path(profile.wsl.workspace_root)` (`wsl_campaign_init.py:99-105`), y la campaña se crea en `workspace_root/<name>`. El mismo directorio es la raíz del cerrojo de SIESTA (`campaign_runner.py:370`, `workspace_root/.siestaflow/single-siesta.lock`). La Adenda 10 se escribió sin leer esa rama. La causa de `NO_NUMERICAL_U` (J.1) y la comprobación `final_root_findings` (J.3) siguen siendo correctas.
+
+### K.2 Decisión (Manuel, 2026-10-13): copia derivada del perfil por corrida
+
+Para que `workspace_root/<name>` sea `S = R/controller-state/<task_id>`, el perfil de la campaña de **esa corrida** lleva `wsl.workspace_root = R/controller-state`, y `name = <task_id>`. El arnés **deriva una copia** del perfil privado `VALIDATED_RUNTIME` que solo difiere en `wsl.workspace_root`; el archivo privado no se edita y no se toca ningún otro campo, ni el pin, ni el contrato. El `profile_sha256` de la factory es el de la copia de esa corrida (corrige la fila «Intacto» de la tabla de perfiles: lo intacto es todo menos esa ruta, que D.2 ya clasifica como dependiente de la ruta).
+
+El cerrojo queda en `R/controller-state/.siestaflow/`, fuera de `S`; QRAFT solo lee y sella `S` (`controller_state.py`, `controller_runtime.py:83`), de modo que no lo ve. Cada corrida tiene su `R`, así que el cerrojo es por corrida.
+
+### K.3 Código
+
+`final_root_findings` añade `execution_profile.wsl.workspace_root` cuando el perfil es `local_wsl` y `workspace_root` no resuelve a `S.parent`. Un perfil sin esa ruta correcta falla en la admisión, no en SIESTA.
+
+### K.4 Arnés
+
+Por corrida: `R` nueva; `S = R/controller-state/<task_id>`; copia derivada del perfil con `wsl.workspace_root = str(R/controller-state)`; `initialize_campaign(..., profile_path=<copia>, name=<task_id>, pointer_path=<fuera de S>)` (no pasar `campaign_root`: se ignora); **comprobar que la raíz devuelta es `S`** y que `final_root_findings == []`. Lo demás es J.2 pasos 3 a 5. `--dry-run` ejecuta `initialize_campaign` de verdad en una `R` de ensayo y la borra por completo (incluido `.siestaflow`); si la raíz no es `S`, es defecto de arnés (G.4).
+
+### K.5 Pruebas
+
+`test_local_wsl_profile_workspace_root_must_be_the_state_parent`; `test_local_wsl_campaign_profile_is_controller_only_and_never_slurm_by_default` lleva ahora un bloque `wsl`.
