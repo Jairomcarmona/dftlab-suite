@@ -1,6 +1,6 @@
 # Ficha de entrada: WF-SURFACE (T-040, depende de G-05/G-06 de T-028)
 
-Estado: **lista para aceptar** (2026-10-13). Dueño: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md), aceptado). Fuente: [maestro §11.4](../../PROPUESTA_MAESTRA_DFTLAB_V2.md). Evidencia: [auditoría P5–P10](../reviews/2026-10-11-auditoria-p5-p10.md#evidencia-siesta-542) y [corridas de superficie](../reviews/evidencia-p5-p10/superficie/README.md). Vectores: [`surface.cases.json`](vectors/surface.cases.json) (33 casos), oráculo [`surface-oracle.mjs`](vectors/surface-oracle.mjs), constructor independiente [`build_surface_cases.py`](vectors/build/build_surface_cases.py).
+Estado: **aceptada** por Manuel el 2026-10-13. Dueño: QRAFT ([ADR-018](../adr/ADR-018-autoridad-protocolos-siesta-eos-electronica-superficie.md), aceptado). Fuente: [maestro §11.4](../../PROPUESTA_MAESTRA_DFTLAB_V2.md). Evidencia: [auditoría P5–P10](../reviews/2026-10-11-auditoria-p5-p10.md#evidencia-siesta-542) y [corridas de superficie](../reviews/evidencia-p5-p10/superficie/README.md). Vectores: [`surface.cases.json`](vectors/surface.cases.json) (33 casos), oráculo [`surface-oracle.mjs`](vectors/surface-oracle.mjs), constructor independiente [`build_surface_cases.py`](vectors/build/build_surface_cases.py).
 
 ## Decisiones
 

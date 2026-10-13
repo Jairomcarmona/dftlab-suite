@@ -1018,7 +1018,7 @@ Por corrida: `R` nueva; `S = R/controller-state/<task_id>`; copia derivada del p
 
 ## Adenda 12 (2026-10-13, issue #93): la plataforma reanuda HF-1 por generaciones de autoridad y de envío
 
-Estado: **propuesta lista para implementar**; Manuel aprobó el alcance el 2026-10-13 («3A: solo P7») y la opción A de F.4 ya dejó la reanudación por la plataforma como paso siguiente. Cierra H8 para la plataforma. Fuente: lectura de `authority_storage.py`, `submission_storage.py`, `authority.py`, `authority_recovery.py`, `submissions.py` y `storage.py` en `main` (`9378305`), y de `controller_state.py`, `controller_runtime.py` y `api.py` de QRAFT en `6dec1ba`. Vectores ejecutables: `contracts/fixtures/authority-generations/cases.json` (23 casos), evaluados por `evaluateGenerationAdmission` en `contracts/scripts/check-contracts.mjs`.
+Estado: **aceptada** por Manuel el 2026-10-13 (alcance «3A: solo P7»); la opción A de F.4 ya dejó la reanudación por la plataforma como paso siguiente. Cierra H8 para la plataforma. Fuente: lectura de `authority_storage.py`, `submission_storage.py`, `authority.py`, `authority_recovery.py`, `submissions.py` y `storage.py` en `main` (`9378305`), y de `controller_state.py`, `controller_runtime.py` y `api.py` de QRAFT en `6dec1ba`. Vectores ejecutables: `contracts/fixtures/authority-generations/cases.json` (23 casos), evaluados por `evaluateGenerationAdmission` en `contracts/scripts/check-contracts.mjs`.
 
 ### L.1 Qué es una generación
 

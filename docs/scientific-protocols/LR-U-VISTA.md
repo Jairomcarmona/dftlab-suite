@@ -1,6 +1,6 @@
 # Ficha de entrada: modelo de vista de LR-U (T-039, depende de T-038 y de ADR-017 Adenda 12)
 
-Estado: **lista para aceptar** (2026-10-13). Dueño: la plataforma. HubbardFlow y QRAFT siguen siendo dueños de la semántica científica ([ADR-003](../adr/ADR-003-autoridades-qraft-hubbardflow-plataforma.md)); esta ficha fija **qué muestra y qué permite** la interfaz sobre una corrida LR-U sin reinterpretarla. Vectores: [`lru-view.cases.json`](vectors/lru-view.cases.json) (22 casos), oráculo [`lru-view-oracle.mjs`](vectors/lru-view-oracle.mjs), constructor independiente [`build_lru_view_cases.py`](vectors/build/build_lru_view_cases.py).
+Estado: **aceptada** por Manuel el 2026-10-13. Dueño: la plataforma. HubbardFlow y QRAFT siguen siendo dueños de la semántica científica ([ADR-003](../adr/ADR-003-autoridades-qraft-hubbardflow-plataforma.md)); esta ficha fija **qué muestra y qué permite** la interfaz sobre una corrida LR-U sin reinterpretarla. Vectores: [`lru-view.cases.json`](vectors/lru-view.cases.json) (22 casos), oráculo [`lru-view-oracle.mjs`](vectors/lru-view-oracle.mjs), constructor independiente [`build_lru_view_cases.py`](vectors/build/build_lru_view_cases.py).
 
 ## Qué es y dónde vive
 

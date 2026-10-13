@@ -10,8 +10,8 @@ Una ficha fija las decisiones de un workflow científico **antes** de escribir c
 | [Preflight del FDF](PREFLIGHT.md) | T-030 | Aceptada; 22 vectores en `vectors/`; U-Q17 aprobado |
 | [Pseudopotenciales y especies](PSEUDOS.md) | T-031 | Aceptada; 20 vectores en `vectors/`; U-Q18 aprobado; biblioteca propietaria (D-7) |
 | [WF-ELECTRONIC fino](WF-ELECTRONIC.md) | T-036 | Aceptada; 23 vectores en `vectors/`; política v1 aprobada; dueño QRAFT (ADR-018, U-Q13) |
-| [WF-SURFACE](WF-SURFACE.md) | T-040 | Lista para aceptar (2026-10-13); 33 vectores y corridas reales de SIESTA 5.4.2; dueño QRAFT (ADR-018, U-Q12) |
-| [Modelo de vista LR-U](LR-U-VISTA.md) | T-039 | Lista para aceptar (2026-10-13); 22 vectores; dueño la plataforma |
+| [WF-SURFACE](WF-SURFACE.md) | T-040 | Aceptada (2026-10-13); 33 vectores y corridas reales de SIESTA 5.4.2; dueño QRAFT (ADR-018, U-Q12) |
+| [Modelo de vista LR-U](LR-U-VISTA.md) | T-039 | Aceptada (2026-10-13); 22 vectores; dueño la plataforma |
 
 T-032 (registro de campañas y calculadoras), T-033 (postprocesador y lectores) y T-034 (comparación y exportación) no introducen física nueva: consumen estas fichas y el inventario T-001, cuyos lectores ya tienen pruebas en `app/tests/`. Sus contratos van por C3, no por una ficha de protocolo.
 
