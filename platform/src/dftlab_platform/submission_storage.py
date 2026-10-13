@@ -11,6 +11,85 @@ def intent_hash(intent):
     return hashlib.sha256(canonical(intent)).hexdigest()
 
 
+def _create_submission_v2(db, *, table="scheduler_dispatches"):
+    db.execute(
+        f"CREATE TABLE {table}("
+        "operation_id TEXT PRIMARY KEY REFERENCES operations(operation_id), "
+        "run_id TEXT NOT NULL, generation INTEGER NOT NULL CHECK(generation >= 1), "
+        "attempt_token TEXT NOT NULL UNIQUE, intent_hash TEXT NOT NULL, "
+        "phase TEXT NOT NULL CHECK(phase IN ('RESERVED','DISPATCH_STARTED','ACKNOWLEDGED')), receipt TEXT, "
+        "UNIQUE(run_id,generation))"
+    )
+
+
+def migrate_submission_v2(repository):
+    """Explicitly rebuild v1 dispatch rows with a generation key.
+
+    Intents, receipts, and scheduler RPC records are copied byte-for-byte.
+    The generation is read from the stored intent; anything other than 1 is
+    not representable by the legacy unique-per-run table and aborts migration.
+    """
+    with repository.transaction() as db:
+        db.execute("CREATE TABLE IF NOT EXISTS submission_migrations(version INTEGER PRIMARY KEY)")
+        versions = [row[0] for row in db.execute("SELECT version FROM submission_migrations ORDER BY version")]
+        if versions == [1, 2]:
+            return False
+        if versions != [1]:
+            raise ValueError("Explicit submission migration required")
+
+        rpc_versions = [row[0] for row in db.execute("SELECT version FROM scheduler_rpc_migrations ORDER BY version")]
+        if rpc_versions != [1]:
+            raise ValueError("Explicit scheduler RPC migration required")
+        old_rows = db.execute(
+            "SELECT operation_id,run_id,attempt_token,intent_hash,phase,receipt "
+            "FROM scheduler_dispatches ORDER BY operation_id"
+        ).fetchall()
+        migrated = []
+        for operation_id, run_id, attempt_token, stored_hash, phase, receipt_text in old_rows:
+            intent = repository._effect_intent(db, operation_id)
+            if intent is None:
+                raise ValueError("Submission v2 migration requires every dispatch to have its stored effect intent")
+            payload = intent["payload"]
+            generation = payload["authority_generation"]
+            if type(generation) is not int or generation != 1:
+                raise ValueError("Submission v2 migration requires every legacy intent to be generation 1")
+            if (payload["run_id"] != run_id or payload["attempt_token"] != attempt_token
+                    or intent_hash(intent) != stored_hash):
+                raise ValueError("Submission v2 migration found a mismatched legacy intent")
+            receipt = loads(receipt_text) if receipt_text is not None else None
+            if (phase == "ACKNOWLEDGED") != (receipt is not None):
+                raise ValueError("Submission v2 migration found an inconsistent receipt")
+            if receipt is not None:
+                check_receipt(repository.contracts, intent, receipt, {"ACCEPTED", "RECONCILED_FOUND"})
+            migrated.append((operation_id, run_id, generation, attempt_token, stored_hash, phase, receipt_text))
+
+        rpc_rows = db.execute(
+            "SELECT operation_id,intent_hash,entered_at FROM scheduler_rpc_entries ORDER BY operation_id"
+        ).fetchall()
+        for operation_id, rpc_hash, _entered_at in rpc_rows:
+            if not any(row[0] == operation_id and row[4] == rpc_hash for row in migrated):
+                raise ValueError("Submission v2 migration found a mismatched scheduler RPC entry")
+
+        _create_submission_v2(db, table="scheduler_dispatches_v2")
+        db.execute(
+            "CREATE TABLE scheduler_rpc_entries_v2("
+            "operation_id TEXT PRIMARY KEY REFERENCES scheduler_dispatches_v2(operation_id), "
+            "intent_hash TEXT NOT NULL, entered_at TEXT NOT NULL)"
+        )
+        db.executemany(
+            "INSERT INTO scheduler_dispatches_v2"
+            "(operation_id,run_id,generation,attempt_token,intent_hash,phase,receipt) VALUES(?,?,?,?,?,?,?)",
+            migrated,
+        )
+        db.executemany("INSERT INTO scheduler_rpc_entries_v2 VALUES(?,?,?)", rpc_rows)
+        db.execute("DROP TABLE scheduler_rpc_entries")
+        db.execute("DROP TABLE scheduler_dispatches")
+        db.execute("ALTER TABLE scheduler_dispatches_v2 RENAME TO scheduler_dispatches")
+        db.execute("ALTER TABLE scheduler_rpc_entries_v2 RENAME TO scheduler_rpc_entries")
+        db.execute("INSERT INTO submission_migrations(version) VALUES(2)")
+        return True
+
+
 class SQLiteSubmissionLedger:
     def __init__(self, repository):
         self.repository, self.contracts = repository, repository.contracts
@@ -18,9 +97,11 @@ class SQLiteSubmissionLedger:
             db.execute("CREATE TABLE IF NOT EXISTS submission_migrations(version INTEGER PRIMARY KEY)")
             versions = [row[0] for row in db.execute("SELECT version FROM submission_migrations ORDER BY version")]
             if not versions:
-                db.execute("CREATE TABLE scheduler_dispatches(operation_id TEXT PRIMARY KEY REFERENCES operations(operation_id), run_id TEXT NOT NULL UNIQUE, attempt_token TEXT NOT NULL UNIQUE, intent_hash TEXT NOT NULL, phase TEXT NOT NULL CHECK(phase IN ('RESERVED','DISPATCH_STARTED','ACKNOWLEDGED')), receipt TEXT)")
-                db.execute("INSERT INTO submission_migrations VALUES(1)")
-            elif versions != [1]:
+                _create_submission_v2(db)
+                db.executemany("INSERT INTO submission_migrations(version) VALUES(?)", ((1,), (2,)))
+            elif versions == [1]:
+                raise ValueError("Explicit submission migration required")
+            elif versions != [1, 2]:
                 raise ValueError("Explicit submission migration required")
             db.execute("CREATE TABLE IF NOT EXISTS scheduler_rpc_migrations(version INTEGER PRIMARY KEY)")
             rpc_versions = [row[0] for row in db.execute("SELECT version FROM scheduler_rpc_migrations ORDER BY version")]
@@ -54,7 +135,13 @@ class SQLiteSubmissionLedger:
                 self._row(db, stored)
             else:
                 try:
-                    db.execute("INSERT INTO scheduler_dispatches VALUES(?,?,?,?,?,NULL)", (operation_id, stored["payload"]["run_id"], stored["payload"]["attempt_token"], intent_hash(stored), "RESERVED"))
+                    db.execute(
+                        "INSERT INTO scheduler_dispatches"
+                        "(operation_id,run_id,generation,attempt_token,intent_hash,phase,receipt) "
+                        "VALUES(?,?,?,?,?,?,NULL)",
+                        (operation_id, stored["payload"]["run_id"], stored["payload"]["authority_generation"],
+                         stored["payload"]["attempt_token"], intent_hash(stored), "RESERVED"),
+                    )
                 except sqlite3.IntegrityError:
                     raise Problem("PRECONDITION_FAILED") from None
             return stored
