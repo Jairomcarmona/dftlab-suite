@@ -3,6 +3,7 @@ import { $, $$, css, alpha, esc, fmt, download, downloadText, seg, toast } from 
 import { chart, exportBar } from '../core/chart.js';
 import { bandEdges, segmentSeries, segmentIndex, analyzeGap, computeDOS, groupPDOS, sumPDOS, integratePDOS, opticalSpectrum, toPlain, packBands, packDOS, packStructure, packContents, planarAverage, gridIntegral } from '../siesta/index.js';
 import { createFileSet } from '../siesta/runset.js';
+import { renderNativeResult } from '../siesta/native-results.js';
 import { writeStructure } from '../crystal/formats.js';
 import { cartToFrac, formula, analyze, isMoyoReady, initMoyo, cellParameters, volume } from '../crystal/symmetry.js';
 import { atomicNumber, symbolOf } from '../crystal/elements.js';
@@ -66,7 +67,7 @@ export function mount(root, view){
     const pd=get('pdos').length>0;
     switch(f.kind){
       case 'out': return f.name===geoSrc?'resumen, gráficas y geometría':'resumen y gráficas';
-      case 'bands': case 'pdos': case 'epsimg': case 'mde': case 'live': case 'ion-xml': case 'ion': case 'psf': case 'psml': case 'grid': return 'visualizado';
+      case 'qraft-native': case 'bands': case 'pdos': case 'epsimg': case 'mde': case 'live': case 'ion-xml': case 'ion': case 'psf': case 'psml': case 'grid': return 'visualizado';
       case 'eig': return (pd?'leído; la DOS se muestra desde la PDOS':'DOS visualizada')+' · pesos y k: '+(f.link?.kp?f.link.kp:'uniformes (sin .KP)');
       case 'kp': return f.link?.usedBy?.length?'pesos y k para '+f.link.usedBy.join(', '):'sin .EIG con la misma etiqueta';
       case 'fdf': return get('out').some(g=>label(g)===label(f))?'usado en el resumen':'leído; sin gráfica en esta pantalla';
@@ -222,6 +223,8 @@ export function mount(root, view){
     const out=$('#ppOut',root); let h='';
     const outs=get('out'), bands=get('bands'), pd=get('pdos'), eig=get('eig'), eps=get('epsimg'), mde=get('mde'), live=get('live'), ions=[...get('ion-xml'),...get('ion')], pss=[...get('psf'),...get('psml')], grids=get('grid');
     const packs=get('dftlab-pack').map(f=>({f, B:packBands(f.data), D:packDOS(f.data), C:packContents(f.data)}));
+    const native=get('qraft-native');
+    native.forEach((f,i)=>{h+=panel('native'+i,esc(f.name));});
     outs.forEach((f,i)=>{ h+=panel('sum'+i,`Resumen · ${esc(f.data.systemLabel||label(f))}`);
       if(f.data.scf?.length) h+=panel('scf'+i,'Convergencia SCF','',false).replace('<div class="pb"></div>',`<div class="pb"><canvas data-export="${esc(label(f))}_scf" id="cv_scf${i}" style="height:250px"></canvas><div class="readout" id="rd_scf${i}"></div></div>`);
       if((f.data.trajectory||[]).length>1) h+=panel('tr'+i,'Trayectoria de la geometría','',false).replace('<div class="pb"></div>',`<div class="pb"><canvas data-export="${esc(label(f))}_trayectoria" id="cv_tr${i}" style="height:220px"></canvas><canvas data-export="${esc(label(f))}_fuerza" id="cv2_tr${i}" style="height:180px;margin-top:8px"></canvas><div class="readout" id="rd_tr${i}"></div></div>`);
@@ -246,6 +249,7 @@ export function mount(root, view){
     if (geo) h+=panel('geo','Geometría',`<button class="tiny" data-fmt="cif">CIF</button><button class="tiny" data-fmt="xyz">XYZ</button><button class="tiny" data-fmt="extxyz">extXYZ</button><button class="tiny" data-fmt="poscar">POSCAR</button><button class="tiny" data-fmt="fdf">fdf</button><button class="tiny" id="geoPng">imagen</button>`).replace('<div class="pb"></div>',`<div class="pb"><div class="split2"><dl class="kv" id="geoKv"></dl><div class="three" id="geo3" style="height:340px;position:relative"></div></div></div>`);
     if (V3){ V3.destroy(); V3=null; }   // el panel de geometría se reconstruye: liberar el visor anterior
     out.innerHTML=h||(F.length?'<p class="note">Ninguno de los archivos tiene un lector gráfico todavía.</p>':'');
+    native.forEach((f,i)=>renderNativeResult(body('native'+i),f.data));
 
     outs.forEach((f,i)=>{ body('sum'+i).innerHTML=summary(f); if(f.data.scf?.length) drawScf('scf'+i,f.data); if((f.data.trajectory||[]).length>1) drawTraj('tr'+i,f.data); });
     const ef=outs[0]?.data?.fermi;

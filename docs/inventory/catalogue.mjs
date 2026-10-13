@@ -20,6 +20,7 @@ export const catalogue = {
     mde:reader('mde.js: parseMDE','.MDE'), ani:reader('mde.js: parseANI','.ANI / XYZ por sniff'), fa:reader('mde.js: parseFA','.FA/.FAC'), xv:reader('mde.js: parseXV','.XV'), struct:reader('mde.js: parseStructOut','.STRUCT_OUT/.STRUCT_IN/.STRUCT_NEXT_ITER'),
     'dftlab-pack':reader('index.js','.dftlab.json / JSON con clave dftlab; expansión en pack.js/runset.js',[...basic,si+'run_import_tests.mjs',ui+'browser_import.mjs']),
     fc:reader('fc.js: parseFC','.FC',[si+'run_fc_tests.mjs']),
+    'qraft-native':reader('native-results.js: parseNativeResult','.json with explicit QRAFT policy_id',[si+'run_native_result_tests.mjs',ui+'browser_native_results.mjs']),
     grid:reader('rho.js: parseGrid','.RHO/.DRHO/.RHOXC/.BADER/.TOTAL_CHARGE/.VH/.VT/.VNA/.VXC/.LDOS/.IORHO',[si+'run_rho_tests.mjs',si+'run_import_tests.mjs',ui+'browser_import.mjs']),
   },
   calculators: {

@@ -13,6 +13,7 @@ import { parsePSF, parsePSML } from './pseudo.js';
 import { parseMDE, parseANI, parseFA, parseXV, parseStructOut } from './mde.js';
 import { parseGrid, isGridName } from './rho.js';
 import { parseFC } from './fc.js';
+import { parseNativeResult } from './native-results.js';
 
 export * from './out.js';
 export * from './bands.js';
@@ -26,6 +27,7 @@ export * from './mde.js';
 export * from './rho.js';
 export * from './pack.js';
 export * from './fc.js';
+export * from './native-results.js';
 export { toPlain } from './util.js';
 
 const PARSERS = {
@@ -34,6 +36,7 @@ const PARSERS = {
   'ion-xml': parseIonXML, ion: parseIon, psf: parsePSF, psml: parsePSML,
   mde: parseMDE, ani: parseANI, fa: parseFA, xv: parseXV, struct: parseStructOut,
   'dftlab-pack': (t) => JSON.parse(t), fc: (t) => parseFC(t),
+  'qraft-native': parseNativeResult,
 };
 
 /** Guess the file kind from its name and the first few KB of content. */
@@ -43,6 +46,7 @@ export function detectKind(fileName, text) {
   const head = text.slice(0, 4096);
   const ext = (re) => re.test(lower);
 
+  if (lower.endsWith('.json') && /"policy_id"\s*:\s*"qraft\.(electronic|eos)\.policy@1"/.test(head)) return 'qraft-native';
   if (ext(/\.dftlab\.json$/) || (lower.endsWith('.json') && /"dftlab"/.test(head))) return 'dftlab-pack';
   if (ext(/\.ion\.xml$/) || /^\s*<ion[\s>]/.test(head)) return 'ion-xml';
   if (ext(/\.psml$/) || /<psml[\s>]/.test(head)) return 'psml';

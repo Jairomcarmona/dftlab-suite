@@ -5,16 +5,16 @@
     "views": 19,
     "chapters": 15,
     "toolViews": 2,
-    "siestaDispatchKinds": 23,
+    "siestaDispatchKinds": 24,
     "calculatorPanels": 7,
     "structureReaderFamilies": 6,
     "structureWriterFormats": 6,
     "datasets": 16,
     "datasetBytes": 10678665,
-    "ownJavascriptFiles": 61,
-    "ownJavascriptLines": 11827,
+    "ownJavascriptFiles": 62,
+    "ownJavascriptLines": 11865,
     "exportSourceCalls": 52,
-    "scientificModules": 25
+    "scientificModules": 26
   },
   "views": [
     {
@@ -516,6 +516,18 @@
       "formats": ".FC",
       "tests": [
         "app/tests/siesta/run_fc_tests.mjs"
+      ],
+      "consumer": "siesta/index.js → runset.js → postproc.js",
+      "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
+    },
+    {
+      "kind": "qraft-native",
+      "file": "app/dftlab/static/js/siesta/native-results.js",
+      "symbol": "parseNativeResult",
+      "formats": ".json with explicit QRAFT policy_id",
+      "tests": [
+        "app/tests/siesta/run_native_result_tests.mjs",
+        "app/tests/ui/browser_native_results.mjs"
       ],
       "consumer": "siesta/index.js → runset.js → postproc.js",
       "preservation": "Conservar parser, unidades, errores, bytes originales y hash; no convertir binarios en texto."
@@ -1385,7 +1397,7 @@
     },
     {
       "file": "app/dftlab/static/js/siesta/index.js",
-      "sha256": "198283d3b81eecdcf06ddb3cd0850f83d48c87c10bf59468088026a5019b5bc8",
+      "sha256": "8783935c7f8ada2a7f54e600f98de1de91cffb122e139fb86a5a5171462bbc25",
       "exports": [
         "detectKind",
         "detectAndParse",
@@ -1405,6 +1417,7 @@
         "app/dftlab/static/js/siesta/rho.js",
         "app/dftlab/static/js/siesta/pack.js",
         "app/dftlab/static/js/siesta/fc.js",
+        "app/dftlab/static/js/siesta/native-results.js",
         "app/dftlab/static/js/siesta/util.js"
       ],
       "consumers": [
@@ -1446,6 +1459,24 @@
       "reexports": [],
       "consumers": [
         "app/dftlab/static/js/siesta/index.js"
+      ],
+      "tests": [
+        "app/tests/siesta/run_tests.mjs"
+      ],
+      "preservation": "Reutilizar módulo y exports; revisar cobertura por símbolo antes de sustituir. Presencia de suite no acredita cada símbolo."
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/native-results.js",
+      "sha256": "860438acfba1c94fe89672010ed73af27d4b44ac92928db06d0fcffd4cd5951b",
+      "exports": [
+        "parseNativeResult",
+        "nativeResultSummary",
+        "renderNativeResult"
+      ],
+      "reexports": [],
+      "consumers": [
+        "app/dftlab/static/js/siesta/index.js",
+        "app/dftlab/static/js/views/postproc.js"
       ],
       "tests": [
         "app/tests/siesta/run_tests.mjs"
@@ -2109,7 +2140,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 88,
+      "line": 89,
       "function": "exportBar",
       "source": "const addExp=()=>$$('#ppOut canvas[data-export]',root).forEach(cv=>{ const ph=cv.closest('.panel').querySelector('.ph .btnrow'); if(!ph.querySelector('.export')) ph.append(exportBar(cv,cv.dataset.export)); });",
       "consumer": "#post",
@@ -2121,7 +2152,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 271,
+      "line": 275,
       "function": "downloadText",
       "source": "try{ downloadText(writeStructure(cell,fm,fm==='fdf'?{systemLabel:'dftlab'}:{}), `${(src.split(' ')[0]||'estructura').replace(/\\.[^.]+$/,'')}.${ext}`); }catch(e){ toast('No se pudo escribir '+fm+': '+e.message); } });",
       "consumer": "#post",
@@ -2133,7 +2164,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 274,
+      "line": 278,
       "function": "download",
       "source": "$('#geoPng',root).onclick=()=>{ const url=V3.snapshot(); fetch(url).then(r=>r.blob()).then(b=>download(b,'estructura.png')); };",
       "consumer": "#post",
@@ -2145,7 +2176,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 294,
+      "line": 298,
       "function": "downloadText",
       "source": "downloadText(t,'informe_dftlab.md','text/markdown');",
       "consumer": "#post",
@@ -2157,7 +2188,7 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "line": 299,
+      "line": 303,
       "function": "downloadText",
       "source": "$('#repJson',root).onclick=()=>{ const o=F.filter(f=>f.data&&f.kind!=='live').map(f=>({name:f.name, kind:f.kind, sha256:f.hash, ...(f.link?{link:f.link}:{}), data:exportData(f)})); downloadText(JSON.stringify({dftlab:'postproceso', created:new Date().toISOString(), files:o}),'dftlab_postproceso.json','application/json'); };",
       "consumer": "#post",
@@ -2479,8 +2510,8 @@
     },
     {
       "file": "app/dftlab/static/js/siesta/index.js",
-      "bytes": 6177,
-      "sha256": "198283d3b81eecdcf06ddb3cd0850f83d48c87c10bf59468088026a5019b5bc8"
+      "bytes": 6432,
+      "sha256": "8783935c7f8ada2a7f54e600f98de1de91cffb122e139fb86a5a5171462bbc25"
     },
     {
       "file": "app/dftlab/static/js/siesta/ion.js",
@@ -2491,6 +2522,11 @@
       "file": "app/dftlab/static/js/siesta/mde.js",
       "bytes": 5311,
       "sha256": "1989fd027944d58254cae8b666db910b302f9e0cc31341b9097ae892f50ed351"
+    },
+    {
+      "file": "app/dftlab/static/js/siesta/native-results.js",
+      "bytes": 1445,
+      "sha256": "860438acfba1c94fe89672010ed73af27d4b44ac92928db06d0fcffd4cd5951b"
     },
     {
       "file": "app/dftlab/static/js/siesta/out.js",
@@ -2604,8 +2640,8 @@
     },
     {
       "file": "app/dftlab/static/js/views/postproc.js",
-      "bytes": 40824,
-      "sha256": "196b7a0b451179a638259e719be035c8acf2a23241e681b2d9e6a30b38f5a1c5"
+      "bytes": 41085,
+      "sha256": "6da044bef4b9f93c99a799c0d2956f2cd8940cc4119c182530d7817429c4b6b8"
     },
     {
       "file": "app/dftlab/static/js/views/potential.js",
@@ -2644,13 +2680,13 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 1840,
-      "sha256": "e55abbd52bb7e2c6c50452f5e06bde5d1fcf3fee05180103e0fd580ac17832d2"
+      "bytes": 1890,
+      "sha256": "0620403ccbc21cb57c133194a000b3de2c5ccd5d9d0c1a7d66d66fa4712c6f80"
     },
     {
       "file": "app/scripts/test-browser.mjs",
-      "bytes": 1137,
-      "sha256": "04935f8a4103bccd2b779314e1c03ea64f7151c62f55840bd1f1189bd342b520"
+      "bytes": 1178,
+      "sha256": "bd957f93540b41ef172e0dc0023e64fcc1e887db53113eb343a0ddb108bf4a51"
     },
     {
       "file": "app/package.json",
