@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "scope": "installation/public import/API symbols/CLI help only",
+  "probe_script_sha256": "df807624f8c7072bd4590587eae80043c617582752b529300e75d15419a038b5",
+  "target": "wsl2_linux_x86_64",
+  "environment": {
+    "os": "Linux",
+    "release": "6.18.33.2-microsoft-standard-WSL2",
+    "machine": "x86_64",
+    "python": "3.12.10"
+  },
+  "dependency_lock_sha256": "64e2d8648656238084a712e292f225476fe1528dbb3ce87d2bfc64ebd433e99f",
+  "engines": {
+    "qraft": {
+      "source_commit": "6dec1ba196ff72b53a067153d7c3988c95a95bd3",
+      "installed": true,
+      "scientific_qualification": "PENDING",
+      "hpc_runtime_qualification": "PENDING",
+      "source_archive": {
+        "url": "https://api.github.com/repos/Jairomcarmona/siestaflow/tarball/6dec1ba196ff72b53a067153d7c3988c95a95bd3",
+        "file": "qraft-6dec1ba196ff72b53a067153d7c3988c95a95bd3.tar.gz",
+        "bytes": 2144420,
+        "sha256": "b54a22bc5c9f98f11534e5ebf46c426ae48e33ffce7c5a63193bf8dd1e183749"
+      },
+      "extraction_scope": "src/ plus packaging metadata; campaign/results archives excluded, source bytes unmodified",
+      "declared_metadata": {
+        "distribution": "qraft-hpc",
+        "version": "0.2.0",
+        "requires_python": ">=3.11",
+        "dependencies": [
+          "jsonschema>=4.23,<5",
+          "PyYAML>=6.0"
+        ]
+      },
+      "wheel": {
+        "file": "qraft_hpc-0.2.0-py3-none-any.whl",
+        "bytes": 551081,
+        "sha256": "9ed553c56a58a5d4259b84e04f882456e013d104754a0b00f57e5dca4b0c098c"
+      },
+      "installed_distribution": "qraft-hpc",
+      "installed_version": "0.2.0",
+      "installed_file_manifest_sha256": "ac4140c973223460866ddc5cebcfa5c5336630281ccf26e0b0aeb32e432d849b",
+      "entrypoints": {
+        "qraft": "qraft.cli:main"
+      },
+      "public_import": {
+        "exit_code": 0,
+        "log_sha256": "cd4a730589b260023724433d1f31889e56d99c6b563be21dc2db2a975b01906d"
+      },
+      "public_api": {
+        "exit_code": 0,
+        "log_sha256": "4bd8b7299027658a5a66473b3eb8fa3b88d184b2122b546d161a7fb2033401db"
+      },
+      "cli_help": {
+        "exit_code": 0,
+        "log_sha256": "ca47c191262f0100c391ab68ca348d908d640a8ccca8f0c0c089a780ecf2402e"
+      },
+      "status": "INSTALL_PUBLIC_API_HELP_VERIFIED"
+    },
+    "hubbardflow": {
+      "source_commit": "d7e0b77be20f1f7bd67522764db5b366ebc3ab07",
+      "installed": true,
+      "scientific_qualification": "PENDING",
+      "hpc_runtime_qualification": "PENDING",
+      "source_archive": {
+        "url": "https://api.github.com/repos/Jairomcarmona/SIESTAFLOW_HUBBARD_RESPONSE_BACKBONE/tarball/d7e0b77be20f1f7bd67522764db5b366ebc3ab07",
+        "file": "hubbardflow-d7e0b77be20f1f7bd67522764db5b366ebc3ab07.tar.gz",
+        "bytes": 91004422,
+        "sha256": "6eaa8ec8cdca49dec60c94146072ae65a773e11f3de6ffc5325ce89ea01638cb"
+      },
+      "extraction_scope": "src/ plus packaging metadata; campaign/results archives excluded, source bytes unmodified",
+      "declared_metadata": {
+        "distribution": "hubbardflow",
+        "version": "0.1.3",
+        "requires_python": ">=3.12,<3.13",
+        "dependencies": [
+          "numpy>=1.26.4,<2.0.0",
+          "jsonschema>=4.0.0,<5.0.0",
+          "referencing>=0.28.4,<0.38.0"
+        ]
+      },
+      "wheel": {
+        "file": "hubbardflow-0.1.3-py3-none-any.whl",
+        "bytes": 563136,
+        "sha256": "4414ec06fa2c1d36f7703295414f04a545ca5a290e9dd8b14f66ba664576b119"
+      },
+      "installed_distribution": "hubbardflow",
+      "installed_version": "0.1.3",
+      "installed_file_manifest_sha256": "7e56aa38e9974f77157c4e81073de14a325b07ef86430d544d188778df8342ad",
+      "entrypoints": {
+        "hubbardflow": "hubbardflow.cli:main",
+        "hubbardflow-controller": "hubbardflow.api.controller:main"
+      },
+      "public_import": {
+        "exit_code": 0,
+        "log_sha256": "f0cf375f900b931628cc95974e769cf8b63c4e9424d66016c0e3fe6c68f56d2c"
+      },
+      "public_api": {
+        "exit_code": 0,
+        "log_sha256": "5e2007c3a07f69a46ac251bee71d3a5a241be0762a7e82c9937ffecf9e27480e"
+      },
+      "cli_help": {
+        "exit_code": 0,
+        "log_sha256": "ac6c7964ab7ed44651252df2988078dd57d7f1e31a01a52f2efa6fb05a7778d2"
+      },
+      "status": "INSTALL_PUBLIC_API_HELP_VERIFIED"
+    }
+  },
+  "dependency_versions": {
+    "setuptools": "80.9.0",
+    "wheel": "0.45.1",
+    "PyYAML": "6.0.2",
+    "numpy": "1.26.4",
+    "jsonschema": "4.23.0"
+  }
+}
