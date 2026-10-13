@@ -7,6 +7,11 @@ export const PRESET_DEFAULTS = Object.freeze({xc:'PBE',basis:'DZP',energy_shift_
   max_force_eV_A:.02,steps:200,max_stress_GPa:.1,fc_displacement_A:.02});
 const routes={'S-01':'molecule','S-02':'relaxation','S-03':'variable-cell','S-04':'relaxation',
   'S-05':'ground-state','S-06':'ground-state','S-07':'molecular-vibration','S-08':'magnetic-selection'};
+// FDF distinguishes integer and real tokens when reading DM.InitSpin.
+const realToken = value => {
+  const token=String(value);
+  return /[.eE]/.test(token) ? token : `${token}.0`;
+};
 export function presetRegistry(){
   return Object.fromEntries(Object.entries(routes).map(([id,route])=>[id,{protocol_id:`qraft.preset.${id.toLowerCase()}@1`,
     policy_id:'qraft.presets.policy@1',route,status:'CONTRACT_TESTED',
@@ -26,7 +31,7 @@ export function presetPreview(cell,id,{parameters={},fixed=[],mesh_sizes=null,in
   const tail=[`NetCharge ${p.charge}`,'Charge.Mulliken end'];
   if(p.spin==='polarized'){
     if(!initial_spin || initial_spin.length!==cell.numbers.length)throw new Error('SPIN_CONFIGURATION_REQUIRED');
-    tail.push('%block DM.InitSpin',...initial_spin.map((s,i)=>`${i+1} ${s}`),'%endblock DM.InitSpin');
+    tail.push('%block DM.InitSpin',...initial_spin.map((s,i)=>`${i+1} ${realToken(s)}`),'%endblock DM.InitSpin');
   }
   if(['S-02','S-03','S-04'].includes(id)){
     tail.push('MD.TypeOfRun CG',`MD.Steps ${p.steps}`,`MD.MaxForceTol ${p.max_force_eV_A} eV/Ang`);
