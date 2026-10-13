@@ -104,7 +104,7 @@ class ScientificConsumers(unittest.TestCase):
         with self.assertRaises(Problem):self.consumer.store_electronic('owner','p',ref,subject_refs=['run-1'],scope='POINTS')
         raw['parent_electronic_state']={'authority':'PROVISIONAL'};ref,_=self.source(raw)
         result=self.consumer.store_electronic('owner','p',ref,subject_refs=['run-1'],scope='POINTS')
-        self.assertEqual(result['assessment']['payload']['native_status']['vocabulary'],'qraft.electronic.parent_authority')
+        self.assertEqual(result['assessment']['payload']['native_status']['vocabulary'],'qraft.electronic.parent.authority')
         self.assertEqual(result['presentation']['authority'],'PROVISIONAL')
 
     def test_unknown_native_status_never_grants_pass_and_owner_project_are_checked(self):
