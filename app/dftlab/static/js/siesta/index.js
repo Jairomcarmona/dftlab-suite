@@ -46,7 +46,7 @@ export function detectKind(fileName, text) {
   const head = text.slice(0, 4096);
   const ext = (re) => re.test(lower);
 
-  if (lower.endsWith('.json') && /"policy_id"\s*:\s*"qraft\.(electronic|eos)\.policy@1"/.test(head)) return 'qraft-native';
+  if (lower.endsWith('.json') && /"policy_id"\s*:\s*"qraft\.(electronic|eos)\.policy@1"/.test(text)) return 'qraft-native';
   if (ext(/\.dftlab\.json$/) || (lower.endsWith('.json') && /"dftlab"/.test(head))) return 'dftlab-pack';
   if (ext(/\.ion\.xml$/) || /^\s*<ion[\s>]/.test(head)) return 'ion-xml';
   if (ext(/\.psml$/) || /<psml[\s>]/.test(head)) return 'psml';

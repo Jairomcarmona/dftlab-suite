@@ -58,6 +58,7 @@ class ScientificConsumers(unittest.TestCase):
         saved=loads(self.artifacts.files[result['assessment_artifact']['artifact_id']]);self.assertEqual(saved,result['assessment'])
         Contracts().validate('analysis-result',result['analysis'])
         self.assertEqual(result['presentation']['capability'],'CONTRACT_TESTED')
+        self.assertEqual(result['presentation']['native_result']['fit'],{'B0_GPa':80.0})
 
     def test_electronic_scope_lock_and_group_only_weights_are_preserved(self):
         raw={'policy_id':'qraft.electronic.policy@1','authority':'NUMERICAL_CANDIDATE',
@@ -69,6 +70,8 @@ class ScientificConsumers(unittest.TestCase):
         self.assertEqual(result['presentation']['groups'],raw['groups'])
         self.assertEqual(result['presentation']['worker_environment_sha256'],'c'*64)
         self.assertEqual(result['presentation']['authority'],'NUMERICAL_CANDIDATE')
+        self.assertEqual(result['assessment']['payload']['native_status']['value'],'GAP')
+        self.assertEqual(result['assessment']['payload']['native_status']['vocabulary'],'qraft.electronic.policy')
         self.assertEqual(self.artifacts.files[ref['artifact_id']],data)
         with self.assertRaises(Problem):self.consumer.store_electronic('owner','p',ref,subject_refs=['run-1'],scope='POINTS')
 

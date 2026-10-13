@@ -1397,7 +1397,7 @@
     },
     {
       "file": "app/dftlab/static/js/siesta/index.js",
-      "sha256": "8783935c7f8ada2a7f54e600f98de1de91cffb122e139fb86a5a5171462bbc25",
+      "sha256": "4160c979a31647fb96c7d70029f3bea4f32414f53407c75de14222a5b82c65f8",
       "exports": [
         "detectKind",
         "detectAndParse",
@@ -2511,7 +2511,7 @@
     {
       "file": "app/dftlab/static/js/siesta/index.js",
       "bytes": 6432,
-      "sha256": "8783935c7f8ada2a7f54e600f98de1de91cffb122e139fb86a5a5171462bbc25"
+      "sha256": "4160c979a31647fb96c7d70029f3bea4f32414f53407c75de14222a5b82c65f8"
     },
     {
       "file": "app/dftlab/static/js/siesta/ion.js",

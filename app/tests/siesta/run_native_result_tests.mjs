@@ -18,4 +18,5 @@ assert.equal(parsed.kind,'qraft-native');assert.deepEqual(parsed.data,raw);
 assert.equal(detectAndParse('electronic.json',JSON.stringify({...raw,groups:[{bands:[1,2],size:2,individual_weights:[1,1]}]})).data,null);
 const eos={policy_id:'qraft.eos.policy@1',status:'ESTABLISHED',quantity:'FreeEnergy',natoms:2,points:[{volume:40,energy:-200}]};
 assert.deepEqual(nativeResultSummary(detectAndParse('eos.json',JSON.stringify(eos)).data).native_result,eos);
-console.log('Native result import and presentation: 12 assertions PASS');
+assert.equal(detectAndParse('fat.json',JSON.stringify({groups:[],padding:'x'.repeat(5000),policy_id:raw.policy_id})).kind,'qraft-native');
+console.log('Native result import and presentation: 13 assertions PASS');
