@@ -31,7 +31,21 @@ class Retirement(unittest.TestCase):
         self.fixture.process()
         self.intent = next(iter(self.fixture.intents.values()))
         self.run, self.attempt = [self.intent["payload"][key] for key in ("run_id", "attempt_id")]
-        self.api = SimpleNamespace(TerminalSchedulerEvidence=terminal.NativeEvidence)
+        self.owner_proof_value = {"attempt_id": self.attempt, "closure": "CLOSED", "state_manifest_sha256": "a" * 64}
+        self.owner_proof_calls = 0
+        def previous_controller_owner(root, state_dir, *, current_boot_id, current_host):
+            self.owner_proof_calls += 1
+            self.assertEqual(root, self.package)
+            self.assertEqual(state_dir, self.package/"state")
+            self.assertEqual(current_boot_id, "synthetic-boot-id")
+            self.assertEqual(current_host, "synthetic-host")
+            if isinstance(self.owner_proof_value, Exception):
+                raise self.owner_proof_value
+            return self.owner_proof_value
+        self.api = SimpleNamespace(
+            TerminalSchedulerEvidence=terminal.NativeEvidence,
+            previous_controller_owner=previous_controller_owner,
+        )
         workflow = SimpleNamespace(workflow_id="fixture-workflow", project_id=self.project)
         run = SimpleNamespace(run_id=self.run, project_id=self.project, workflow_id=workflow.workflow_id, workflow_lock_sha256="1"*64)
         self.api.load_run_lock = lambda path: (SimpleNamespace(content_sha256="2"*64), run)
@@ -58,7 +72,10 @@ class Retirement(unittest.TestCase):
             self.calls += 1
             if not self.good:
                 raise Problem("PRECONDITION_FAILED")
-        self.registration = RegisteredAuthorityRetirement(self.package, self.intent["payload"]["operation_id"], verify)
+        self.registration = RegisteredAuthorityRetirement(
+            self.package, self.intent["payload"]["operation_id"], verify,
+            self.package/"state", "synthetic-boot-id", "synthetic-host",
+        )
         self.port = SQLiteNativeAuthorityRetirement(self.engines, self.repo, self.artifacts, self.ledger, self.directory, self.signer.verify, clock=lambda: self.now)
 
     def tearDown(self):
@@ -90,10 +107,11 @@ class Retirement(unittest.TestCase):
         self.assertEqual(retired["payload"]["termination_evidence"], [self.proof, *self.observations])
         self.assertEqual(retired["payload"]["automatic_takeover"], "DISABLED")
         with self.repo._connection() as db:
-            original, current, proof = db.execute("SELECT original_document,retired_document,native_proof FROM authority_retirements").fetchone()
+            original, current, proof, owner_proof = db.execute("SELECT original_document,retired_document,native_proof,owner_proof FROM authority_retirements").fetchone()
             self.assertEqual(loads(original), self.record)
             self.assertEqual(loads(current), retired)
             self.assertEqual(proof, self.engines.qraft_contracts().canonical_json(self.native))
+            self.assertEqual(owner_proof, "CLOSED")
         self.reject(self.authority_store.create, self.owner, self.project, self.run, identifier(), identifier(), "fixture", self.now, self.now+timedelta(seconds=30))
         self.reject(self.authority_store.renew, self.owner, self.record, self.now, self.now+timedelta(seconds=30))
         self.reject(self.authority_store.publish, self.owner, self.record, lambda: self.now, lambda db: self.fail("old owner published"))
@@ -133,6 +151,73 @@ class Retirement(unittest.TestCase):
         self.now += timedelta(seconds=30)
         self.reject(self.retire)
         self.untouched()
+
+    def test_none_owner_proof_is_unproven_and_never_retires(self):
+        self.owner_proof_value = None
+        self.reject(self.retire)
+        self.untouched()
+        self.assertEqual(self.owner_proof_calls, 1)
+
+    def test_malformed_owner_proof_is_unproven_and_never_retires(self):
+        self.owner_proof_value = {"attempt_id": self.attempt, "closure": []}
+        self.reject(self.retire)
+        self.untouched()
+
+    def test_owner_proof_uses_only_positive_qraft_results_and_propagates_failures_as_refusal(self):
+        self.owner_proof_value = {
+            "attempt_id": self.attempt,
+            "closure": "OWNER_DEAD_BY_BOOT_CHANGE",
+            "state_manifest_sha256": "b" * 64,
+            "state_seal": "ABSENT_AFTER_BOOT_CHANGE",
+        }
+        retired = self.retire()
+        with self.repo._connection() as db:
+            self.assertEqual(db.execute("SELECT owner_proof FROM authority_retirements").fetchone()[0], "OWNER_DEAD_BY_BOOT_CHANGE")
+        self.assertIsNone(retired["payload"]["lease_expires_at"])
+
+    def test_owner_proof_exception_is_a_refusal(self):
+        self.owner_proof_value = RuntimeError("CONTROLLER_STATE_TAMPERED")
+        self.reject(self.retire)
+        self.untouched()
+
+    def test_retirement_history_v1_migrates_with_unproven_null_and_is_idempotent(self):
+        with self.repo.transaction() as db:
+            db.execute("DROP TABLE authority_retirements")
+            db.execute("DROP TABLE authority_retirement_migrations")
+            db.execute("CREATE TABLE authority_retirement_migrations(version INTEGER PRIMARY KEY)")
+            db.execute("INSERT INTO authority_retirement_migrations VALUES(1)")
+            db.execute(
+                "CREATE TABLE authority_retirements("
+                "run_id TEXT NOT NULL, generation INTEGER NOT NULL, "
+                "project_id TEXT NOT NULL REFERENCES projects(project_id), "
+                "owner_id TEXT NOT NULL REFERENCES principals(principal_id), "
+                "request_hash TEXT NOT NULL, original_document TEXT NOT NULL, "
+                "retired_document TEXT NOT NULL, native_proof TEXT NOT NULL, "
+                "observed_at TEXT NOT NULL, PRIMARY KEY(run_id,generation))"
+            )
+            db.execute(
+                "INSERT INTO authority_retirements VALUES(?,?,?,?,?,?,?,?,?)",
+                (self.run, 1, self.project, self.owner.principal_id, "hash", "original", "retired", "native", "observed"),
+            )
+
+        self.port = SQLiteNativeAuthorityRetirement(
+            self.engines, self.repo, self.artifacts, self.ledger, self.directory,
+            self.signer.verify, clock=lambda: self.now,
+        )
+        self.port = SQLiteNativeAuthorityRetirement(
+            self.engines, self.repo, self.artifacts, self.ledger, self.directory,
+            self.signer.verify, clock=lambda: self.now,
+        )
+        with self.repo._connection() as db:
+            versions = [row[0] for row in db.execute(
+                "SELECT version FROM authority_retirement_migrations ORDER BY version"
+            )]
+            row = db.execute(
+                "SELECT native_proof,owner_proof FROM authority_retirements WHERE run_id=?",
+                (self.run,),
+            ).fetchone()
+        self.assertEqual(versions, [1, 2])
+        self.assertEqual(row, ("native", None))
 
     def test_cas_old_generation_owner_and_corrupt_proof_refuse(self):
         self.reject(self.port.retire, self.other, self.registration, self.record, self.native, self.proof, self.observations)

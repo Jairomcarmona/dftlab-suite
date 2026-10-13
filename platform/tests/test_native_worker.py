@@ -1,6 +1,8 @@
 """Registered worker boundaries with fake public motor; no jobs or engines."""
 from dataclasses import replace
 from datetime import datetime, timedelta, timezone
+from contextlib import contextmanager
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -41,6 +43,7 @@ class Worker(unittest.TestCase):
         self.calls, self.controllers, self.published = [], [], []
         self.shutdown_observed = Event()
         self.hook = lambda controller: None
+        self.result_override = None
         outer = self
         class Shutdown:
             def request(self, reason):
@@ -59,7 +62,7 @@ class Worker(unittest.TestCase):
                 for action in ("initialize", "launch_attempt"):
                     outer.assertTrue(callback(SimpleNamespace(action=action, generation=self.kwargs["authority_generation"], runtime_fingerprint="d"*64)))
                 outer.hook(self)
-                self.result = {"status": "COMPLETED", "node_results": {"single": {"execution_state": "COMPLETED", "technical_validation": "PASS", "scientific_decision": "NOT_ESTABLISHED"}}}
+                self.result = outer.result_override or {"status": "COMPLETED", "node_results": {"single": {"execution_state": "COMPLETED", "technical_validation": "PASS", "scientific_decision": "NOT_ESTABLISHED"}}}
                 return SimpleNamespace(value="COMPLETED")
         api = SimpleNamespace(RunInspector=lambda: SimpleNamespace(inspect=lambda root: SimpleNamespace(status="PREPARED_RUN_VERIFIED")),
                               load_run_lock=lambda path: (SimpleNamespace(content_sha256=self.reg.run_digest), self.run_lock),
@@ -93,6 +96,109 @@ class Worker(unittest.TestCase):
         # A finished invocation does not establish terminal scheduler evidence.
         with self.assertRaises((OSError, Problem)):
             self.execute()
+
+    def test_worker_passes_registered_generation_to_authority_and_qraft(self):
+        captured = []
+        outer = self
+
+        class Authority:
+            record = {"payload": {"generation": 2}}
+
+            @staticmethod
+            def authority_check(event):
+                return True
+
+            @staticmethod
+            def renew(seconds):
+                return None
+
+            @staticmethod
+            def publish(writer):
+                with outer.repo.transaction() as db:
+                    return writer(db)
+
+        class Manager:
+            @contextmanager
+            def controller(_self, owner, project, run, attempt, *, generation, seconds):
+                captured.append((owner, project, run, attempt, generation, seconds))
+                yield Authority()
+
+        worker = NativeWorker(self.engines, self.repo, Manager())
+        result = worker.run(
+            self.owner, replace(self.reg, generation=2), environment=self.environment,
+            publication=self.publication,
+        )
+        self.assertEqual(result["native_status"], "COMPLETED")
+        self.assertEqual(captured[0][4], 2)
+        self.assertEqual(self.controllers[0].kwargs["authority_generation"], "2")
+
+    def test_qraft_resume_refusal_requires_exact_public_attempt_identity_and_reason(self):
+        capability = "dftlab.engine.hubbardflow.hf1"
+        bindings = (("hf1-lru", capability),)
+        registered = replace(self.reg, generation=2)
+        refusal = SimpleNamespace(
+            node_id="hf1-lru",
+            attempt_id="attempt-0002",
+            exit_code=75,
+            result=SimpleNamespace(
+                execution_state="BLOCKED",
+                technical_validation=SimpleNamespace(
+                    status="BLOCKED", classification="RESUME_INPUTS_CHANGED",
+                ),
+            ),
+        )
+        result = SimpleNamespace(attempts={"hf1-lru": refusal})
+        verdict = NativeWorker._controller_resume_verdict(result, bindings, registered, "d" * 64)
+        self.assertEqual(verdict, {
+            "run_id": self.reg.run_id,
+            "generation": 2,
+            "attempt_id": "attempt-0002",
+            "decision": "REFUSE",
+            "reason": "RESUME_INPUTS_CHANGED",
+            "result_sha256": "d" * 64,
+        })
+
+        refusal.result.technical_validation.classification = "GENERIC_BLOCKED"
+        self.assertIsNone(NativeWorker._controller_resume_verdict(result, bindings, registered, "d" * 64))
+        refusal.result.technical_validation.classification = "RESUME_INPUTS_CHANGED"
+        refusal.attempt_id = "attempt-0001"
+        self.assertIsNone(NativeWorker._controller_resume_verdict(result, bindings, registered, "d" * 64))
+
+    def test_worker_persists_classified_controller_result_with_native_result_hash(self):
+        capability = "dftlab.engine.hubbardflow.hf1"
+        task_id = "hf1-lru"
+        self.workflow.tasks = (SimpleNamespace(task_id=task_id, capability_id=capability),)
+        self.worker = NativeWorker(self.engines, self.repo, self.manager,
+                                  native_extension_capabilities=(capability,))
+        self.result_override = SimpleNamespace(attempts={task_id: SimpleNamespace(
+            node_id=task_id,
+            attempt_id="attempt-0001",
+            exit_code=0,
+            result=SimpleNamespace(execution_state="COMPLETED", technical_validation=SimpleNamespace(
+                status="PASS", classification="CONTROLLER_CONTINUATION",
+            )),
+        )})
+        native_bytes = b'{"public":"qraft-result"}'
+        self.engines.qraft_contracts = lambda: SimpleNamespace(
+            canonical_json=lambda _value: native_bytes.decode("utf-8"),
+        )
+        extensions = RegisteredNativeExtensions(
+            self.reg.workflow_digest, ((task_id, capability),), lambda _registry: None, lambda: None,
+        )
+        self.worker.run(
+            self.owner, self.reg, environment=self.environment,
+            publication=self.publication, extensions=extensions,
+        )
+        with self.repo._connection() as db:
+            row = db.execute(
+                "SELECT attempt_id,decision,reason,result_sha256 FROM controller_resume_verdicts "
+                "WHERE run_id=? AND generation=1",
+                (self.reg.run_id,),
+            ).fetchone()
+        self.assertEqual(row, (
+            "attempt-0001", "NO_REFUSAL", None,
+            hashlib.sha256(native_bytes).hexdigest(),
+        ))
 
     def test_second_controller_rejected_while_native_invocation_holds_lock(self):
         def second(controller):

@@ -54,7 +54,7 @@ class DurableSubmissions:
         this gateway is allowed to call the non-idempotent scheduler port.
         """
         self.contracts.validate("effect-intent", intent)
-        if intent["payload"]["action"] != "SUBMIT_RUN" or intent["payload"]["scheduler"] != "SLURM" or intent["integrity"]["status"] != "VERIFIED":
+        if intent["payload"]["action"] not in {"SUBMIT_RUN", "EXECUTE_RESUME_PLAN"} or intent["payload"]["scheduler"] != "SLURM" or intent["integrity"]["status"] != "VERIFIED":
             raise Problem("PRECONDITION_FAILED")
         payload = operation["payload"]
         frozen = self.ledger.reserve(payload["operation_id"], payload["revision"], processor_id, deepcopy(intent))
@@ -72,7 +72,7 @@ class DurableSubmissions:
 
     def reconcile(self, owner, operation_id):
         operation = self.repository.operation(owner, operation_id)
-        if operation["payload"]["state"] != "OUTCOME_UNKNOWN" or operation["payload"]["action"] != "SUBMIT_RUN":
+        if operation["payload"]["state"] != "OUTCOME_UNKNOWN" or operation["payload"]["action"] not in {"SUBMIT_RUN", "EXECUTE_RESUME_PLAN"}:
             raise Problem("PRECONDITION_FAILED")
         intent, phase, saved = self.ledger.snapshot(owner, operation_id)
         if phase == "RESERVED":

@@ -38,9 +38,11 @@ class AuthorityStore(Protocol):
     """Private application port; publish and fencing must share one transaction."""
     def create(self, owner: Principal, project: str, run: str, attempt: str, instance: str,
                scope: str, observed: datetime, expires: datetime) -> dict: ...
+    def create_generation(self, owner: Principal, project: str, run: str, attempt: str, instance: str,
+                          scope: str, observed: datetime, expires: datetime, generation: int) -> dict: ...
     def renew(self, owner: Principal, record: dict, observed: datetime, expires: datetime) -> dict: ...
     def check(self, owner: Principal, record: dict, observed: datetime) -> None: ...
-    def publish(self, owner: Principal, record: dict, clock, writer): ...
+    def publish(self, owner: Principal, record: dict, clock, writer, *, resume_verdict=None): ...
 
 
 def synchronized(method):
@@ -116,7 +118,7 @@ class LocalAuthority:
             return False
 
     @synchronized
-    def publish(self, writer):
+    def publish(self, writer, *, resume_verdict=None):
         """Trusted repository writer only, not an arbitrary user callback.
 
         SQL mutations and the generation/expiry guard use the same transaction.
@@ -127,7 +129,10 @@ class LocalAuthority:
             self._current()
             def observed():
                 return self._current()
-            return self.store.publish(self.owner, self.record, observed, writer)
+            if resume_verdict is None:
+                return self.store.publish(self.owner, self.record, observed, writer)
+            return self.store.publish(self.owner, self.record, observed, writer,
+                                      resume_verdict=resume_verdict)
         except BaseException:
             self.lost = True
             raise
@@ -145,16 +150,23 @@ class LocalAuthorityManager:
         self.clock, self.monotonic = clock, monotonic
 
     @contextmanager
-    def controller(self, owner, project, run, attempt, *, seconds=30):
+    def controller(self, owner, project, run, attempt, *, generation=1, seconds=30):
         if type(seconds) is not int or not 1 <= seconds <= 300:
             raise ValueError("Lease TTL must be between 1 and 300 seconds")
+        if type(generation) is not int or generation < 1:
+            raise ValueError("Authority generation must be a positive integer")
         # Managed kernel locks are keyed by DB/run. Callers must share this
         # directory for the same local store; it is never a client host path.
         key = hashlib.sha256(canonical([project, run])).hexdigest()
         with local_lock(self.directory/(key+".lock")):
             observed = self.clock()
             stamp(observed)
-            record = self.store.create(owner, project, run, attempt, identifier(), self.scope, observed, observed+timedelta(seconds=seconds))
+            arguments = (owner, project, run, attempt, identifier(), self.scope, observed, observed+timedelta(seconds=seconds))
+            record = (
+                self.store.create(*arguments)
+                if generation == 1
+                else self.store.create_generation(*arguments, generation)
+            )
             authority = LocalAuthority(self.store, owner, record, self.clock, self.monotonic, self.monotonic()+seconds)
             try:
                 yield authority

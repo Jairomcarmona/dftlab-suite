@@ -152,6 +152,7 @@ class SQLiteCheckpointStore:
         # understands. Authority and submission v2 are additive rebuilds.
         supported_revisions = {
             "authority_migrations": {(1,), (1, 2)},
+            "authority_retirement_migrations": {(1,), (1, 2)},
             "submission_migrations": {(1,), (1, 2)},
         }
         if any(
