@@ -2691,8 +2691,8 @@
     },
     {
       "file": "scripts/verify.mjs",
-      "bytes": 1926,
-      "sha256": "1c25e3caa68e33f92351cb37c0cf5c86cd570867f91698a18c32a1d7a7a8be8b"
+      "bytes": 1880,
+      "sha256": "1b4d09001d840fcf3c8dfdadfb2378e0be3489a04d5aca36b2fe185524fdbb77"
     },
     {
       "file": "app/scripts/test-browser.mjs",
