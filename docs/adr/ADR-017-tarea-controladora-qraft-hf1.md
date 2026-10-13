@@ -1028,7 +1028,7 @@ Una **generación** es un intento del controlador de una corrida, numerada 1, 2,
 
 QRAFT ya decide, dentro del intento N + 1, si el dueño anterior murió: `previous_controller_owner` devuelve `CLOSED` u `OWNER_DEAD_BY_BOOT_CHANGE`, o lanza `CONTROLLER_PREVIOUS_OWNER_ALIVE`, y lo hace antes de lanzar nada. El descriptor ya lleva `authority_generation` y `attempt_number`, y el veredicto de reanudación (`qraft.controller-resume-verdict@1.0`) se escribe antes de cualquier lanzamiento interno. La plataforma **no reimplementa** nada de eso. Lo que falta es que la plataforma pueda **leer la misma prueba** antes de abrir la generación, y para eso QRAFT no exporta nada hoy en `qraft.api`.
 
-**U-Q13 (QRAFT, aditivo).** Exportar en `qraft.api` una función de solo lectura que envuelva `previous_controller_owner` sin cambiar su comportamiento: entrada raíz, `state_dir`, `boot_id` y host actuales; salida `owner_proof ∈ {CLOSED, OWNER_DEAD_BY_BOOT_CHANGE}` o la excepción `CONTROLLER_PREVIOUS_OWNER_ALIVE`/`CONTROLLER_STATE_TAMPERED`. Es un PR pequeño de QRAFT con prueba de importación y línea en `PUBLIC_API.md`. Si al implementarlo el código real contradice lo descrito aquí (por ejemplo, que `attempt_number` no coincide con la generación), parar y comentarlo en #93.
+**U-Q19 (QRAFT, aditivo).** Exportar en `qraft.api` una función de solo lectura que envuelva `previous_controller_owner` sin cambiar su comportamiento: entrada raíz, `state_dir`, `boot_id` y host actuales; salida `owner_proof ∈ {CLOSED, OWNER_DEAD_BY_BOOT_CHANGE}` o la excepción `CONTROLLER_PREVIOUS_OWNER_ALIVE`/`CONTROLLER_STATE_TAMPERED`. Es un PR pequeño de QRAFT con prueba de importación y línea en `PUBLIC_API.md`. Si al implementarlo el código real contradice lo descrito aquí (por ejemplo, que `attempt_number` no coincide con la generación), parar y comentarlo en #93.
 
 ### L.3 Migración v2 de la autoridad (`authority_storage.py`)
 
@@ -1071,12 +1071,12 @@ Se admite `AUTHORITY_CREATE` con el envío en `DISPATCH_STARTED` y no solo en `A
 `SQLiteNativeAuthorityRetirement.retire` mantiene hoy toda su verificación (`sacct` terminal, `active_allocation_absent`, envío acusado, bloqueo del kernel). Cambios:
 
 - el retiro, en la misma transacción, pone `retired = 1` en `(run_id, generation)`;
-- el verificador registrado gana `owner_proof(root) -> "CLOSED" | "OWNER_DEAD_BY_BOOT_CHANGE" | None`, que llama a la función de U-Q13; `None` o una excepción rechazan el retiro con `PRECONDITION_FAILED`. La prueba se guarda en `authority_retirements.owner_proof` (columna nueva; `NULL` en retiros anteriores, que cuentan como `UNPROVEN` para abrir una generación);
+- el verificador registrado gana `owner_proof(root) -> "CLOSED" | "OWNER_DEAD_BY_BOOT_CHANGE" | None`, que llama a la función de U-Q19; `None` o una excepción rechazan el retiro con `PRECONDITION_FAILED`. La prueba se guarda en `authority_retirements.owner_proof` (columna nueva; `NULL` en retiros anteriores, que cuentan como `UNPROVEN` para abrir una generación);
 - `sacct` terminal solo **no basta**, tal como pide la Adenda 6 para `proctrack/linuxproc`.
 
 ### L.8 Qué no cambia
 
-Contratos y schemas públicos (`generation` ya existe en `controller-authority-record` y `authority_generation` en el intento y el recibo), el cerrojo del kernel, la política de «sin takeover automático», la lectura de las retiradas existentes, el pin de QRAFT salvo el que suba U-Q13, y HubbardFlow. HF-1 sigue sin ofrecerse como reanudable a usuarios hasta cerrar #93 y repetir la calificación Q con la plataforma (L.10).
+Contratos y schemas públicos (`generation` ya existe en `controller-authority-record` y `authority_generation` en el intento y el recibo), el cerrojo del kernel, la política de «sin takeover automático», la lectura de las retiradas existentes, el pin de QRAFT salvo el que suba U-Q19, y HubbardFlow. HF-1 sigue sin ofrecerse como reanudable a usuarios hasta cerrar #93 y repetir la calificación Q con la plataforma (L.10).
 
 ### L.9 Pruebas
 
@@ -1096,4 +1096,4 @@ Repetir la secuencia Q1 a Q6 de H.4 pero con los intentos 2 y 3 **por la platafo
 
 ### L.11 Código y PR
 
-Dos PR en este orden: **U-Q13** en QRAFT, y después **P-4** en `dftlab-suite` (migraciones, reglas, retiro, pruebas, pin de QRAFT al commit fusionado de U-Q13, una línea en `TRASPASO.md`). Sin PR documental.
+Dos PR en este orden: **U-Q19** en QRAFT, y después **P-4** en `dftlab-suite` (migraciones, reglas, retiro, pruebas, pin de QRAFT al commit fusionado de U-Q19, una línea en `TRASPASO.md`). Sin PR documental.

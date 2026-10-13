@@ -1,0 +1,2089 @@
+{
+ "schema": "dftlab.protocol-vectors@1",
+ "protocol": "LRU_VIEW",
+ "ficha": "docs/scientific-protocols/LR-U-VISTA.md",
+ "oracle": "docs/scientific-protocols/vectors/lru-view-oracle.mjs",
+ "engine": "reglas puras (sin motor)",
+ "arithmetic_tolerance": {
+  "rel": 0,
+  "abs": 0
+ },
+ "cases": [
+  {
+   "id": "lru-queued",
+   "title": "En cola: se puede cancelar, nada que reanudar",
+   "input": {
+    "projection": {
+     "scheduler": "PENDING",
+     "execution": "SUBMITTED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "QUEUED",
+    "tone": "neutral",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": true,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-prepared",
+   "title": "Preparado sin enviar: no hay nada que cancelar",
+   "input": {
+    "projection": {
+     "scheduler": "NOT_SUBMITTED",
+     "execution": "PREPARED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "QUEUED",
+    "tone": "neutral",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-running",
+   "title": "Corriendo: cancelar disponible; la ciencia aún sin establecer",
+   "input": {
+    "projection": {
+     "scheduler": "RUNNING",
+     "execution": "RUNNING",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "RUNNING",
+    "tone": "progress",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": true,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-cancelling",
+   "title": "Cancelación pedida durante actividad interna: CANCELLING hasta que haya evidencia del motor",
+   "input": {
+    "projection": {
+     "scheduler": "RUNNING",
+     "execution": "RUNNING",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": true,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "CANCELLING",
+    "tone": "progress",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-cancel-evidence-pending",
+   "title": "El scheduler dice CANCELLED pero el controlador aún no cerró: sigue CANCELLING con aviso",
+   "input": {
+    "projection": {
+     "scheduler": "CANCELLED",
+     "execution": "RUNNING",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": true,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "CANCELLING",
+    "tone": "progress",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": [
+     "EVIDENCE_PENDING"
+    ]
+   }
+  },
+  {
+   "id": "lru-cancelled-resumable",
+   "title": "Cancelado con plan, política igual y admisión ADMIT: reanudar disponible",
+   "input": {
+    "projection": {
+     "scheduler": "CANCELLED",
+     "execution": "CANCELLED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": {
+     "decision": "ADMIT",
+     "reason": "NEXT_GENERATION"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "expired": false,
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "nodes": {
+      "reuse": [
+       "reference",
+       "pert-1"
+      ],
+      "invalid": [],
+      "pending": [
+       "pert-2",
+       "pert-3"
+      ],
+      "seed_candidates": [
+       {
+        "node_id": "pert-2",
+        "kind": "DM"
+       }
+      ]
+     }
+    },
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "CANCELLED",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "CANCELLED",
+    "tone": "neutral",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": true,
+     "use_result": false,
+     "resume_reason": null
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "reuse_count": 2,
+     "pending_count": 2,
+     "invalid": [],
+     "seeds": [
+      {
+       "node_id": "pert-2",
+       "kind": "DM"
+      }
+     ]
+    },
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "CANCELLED",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-interrupted-resumable",
+   "title": "Interrumpido: plan con nodos reutilizados, inválidos y semillas",
+   "input": {
+    "projection": {
+     "scheduler": "NODE_FAIL",
+     "execution": "INTERRUPTED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": {
+     "decision": "ADMIT",
+     "reason": "NEXT_GENERATION"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "expired": false,
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "nodes": {
+      "reuse": [
+       "reference"
+      ],
+      "invalid": [
+       {
+        "node_id": "pert-1",
+        "reason": "pseudo cambiado"
+       }
+      ],
+      "pending": [
+       "pert-2"
+      ],
+      "seed_candidates": [
+       {
+        "node_id": "pert-2",
+        "kind": "DM"
+       }
+      ]
+     }
+    },
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": null
+     },
+     {
+      "attempt_id": "attempt-0002",
+      "generation": 2,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": "attempt-0001"
+     }
+    ]
+   },
+   "expect": {
+    "headline": "INTERRUPTED",
+    "tone": "warn",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": true,
+     "use_result": false,
+     "resume_reason": null
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "reuse_count": 1,
+     "pending_count": 1,
+     "invalid": [
+      {
+       "node_id": "pert-1",
+       "reason": "pseudo cambiado"
+      }
+     ],
+     "seeds": [
+      {
+       "node_id": "pert-2",
+       "kind": "DM"
+      }
+     ]
+    },
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": null,
+      "current": false
+     },
+     {
+      "attempt_id": "attempt-0002",
+      "generation": 2,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": "attempt-0001",
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-resume-not-qualified",
+   "title": "Reanudación por la plataforma no calificada (#93): nunca se ofrece",
+   "input": {
+    "projection": {
+     "scheduler": "RUNNING",
+     "execution": "INTERRUPTED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": false,
+    "admission": {
+     "decision": "ADMIT",
+     "reason": "NEXT_GENERATION"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "expired": false,
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "nodes": {
+      "reuse": [
+       "reference",
+       "pert-1"
+      ],
+      "invalid": [],
+      "pending": [
+       "pert-2",
+       "pert-3"
+      ],
+      "seed_candidates": [
+       {
+        "node_id": "pert-2",
+        "kind": "DM"
+       }
+      ]
+     }
+    },
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "INTERRUPTED",
+    "tone": "warn",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "PLATFORM_RESUME_NOT_QUALIFIED"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "reuse_count": 2,
+     "pending_count": 2,
+     "invalid": [],
+     "seeds": [
+      {
+       "node_id": "pert-2",
+       "kind": "DM"
+      }
+     ]
+    },
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-resume-no-plan",
+   "title": "Interrumpido sin plan de reanudación",
+   "input": {
+    "projection": {
+     "scheduler": "RUNNING",
+     "execution": "INTERRUPTED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "INTERRUPTED",
+    "tone": "warn",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NO_RESUME_PLAN"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-resume-expired",
+   "title": "Plan caducado",
+   "input": {
+    "projection": {
+     "scheduler": "RUNNING",
+     "execution": "CANCELLED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": {
+     "decision": "ADMIT",
+     "reason": "NEXT_GENERATION"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "expired": true,
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "nodes": {
+      "reuse": [
+       "reference",
+       "pert-1"
+      ],
+      "invalid": [],
+      "pending": [
+       "pert-2",
+       "pert-3"
+      ],
+      "seed_candidates": [
+       {
+        "node_id": "pert-2",
+        "kind": "DM"
+       }
+      ]
+     }
+    },
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "CANCELLED",
+    "tone": "neutral",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "RESUME_PLAN_EXPIRED"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "reuse_count": 2,
+     "pending_count": 2,
+     "invalid": [],
+     "seeds": [
+      {
+       "node_id": "pert-2",
+       "kind": "DM"
+      }
+     ]
+    },
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-resume-policy-changed",
+   "title": "La política del plan no es la del run: se muestra el cambio y no se reanuda",
+   "input": {
+    "projection": {
+     "scheduler": "RUNNING",
+     "execution": "INTERRUPTED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": {
+     "decision": "ADMIT",
+     "reason": "NEXT_GENERATION"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "expired": false,
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+     ],
+     "nodes": {
+      "reuse": [
+       "reference",
+       "pert-1"
+      ],
+      "invalid": [],
+      "pending": [
+       "pert-2",
+       "pert-3"
+      ],
+      "seed_candidates": [
+       {
+        "node_id": "pert-2",
+        "kind": "DM"
+       }
+      ]
+     }
+    },
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "INTERRUPTED",
+    "tone": "warn",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "POLICY_CHANGED"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "reuse_count": 2,
+     "pending_count": 2,
+     "invalid": [],
+     "seeds": [
+      {
+       "node_id": "pert-2",
+       "kind": "DM"
+      }
+     ]
+    },
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": [
+     "POLICY_CHANGED"
+    ]
+   }
+  },
+  {
+   "id": "lru-resume-refused",
+   "title": "La plataforma rechaza la generación: se muestra su motivo",
+   "input": {
+    "projection": {
+     "scheduler": "RUNNING",
+     "execution": "INTERRUPTED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": {
+     "decision": "REFUSE",
+     "reason": "PREVIOUS_TERMINATION_NOT_PROVEN"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "expired": false,
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "nodes": {
+      "reuse": [
+       "reference",
+       "pert-1"
+      ],
+      "invalid": [],
+      "pending": [
+       "pert-2",
+       "pert-3"
+      ],
+      "seed_candidates": [
+       {
+        "node_id": "pert-2",
+        "kind": "DM"
+       }
+      ]
+     }
+    },
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "INTERRUPTED",
+    "tone": "warn",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "PREVIOUS_TERMINATION_NOT_PROVEN"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "reuse_count": 2,
+     "pending_count": 2,
+     "invalid": [],
+     "seeds": [
+      {
+       "node_id": "pert-2",
+       "kind": "DM"
+      }
+     ]
+    },
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-failed",
+   "title": "Ejecución fallida: no se ofrece reanudar",
+   "input": {
+    "projection": {
+     "scheduler": "FAILED",
+     "execution": "FAILED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": {
+     "decision": "ADMIT",
+     "reason": "NEXT_GENERATION"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "expired": false,
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "nodes": {
+      "reuse": [
+       "reference",
+       "pert-1"
+      ],
+      "invalid": [],
+      "pending": [
+       "pert-2",
+       "pert-3"
+      ],
+      "seed_candidates": [
+       {
+        "node_id": "pert-2",
+        "kind": "DM"
+       }
+      ]
+     }
+    },
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "FAILED",
+    "tone": "error",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "EXECUTION_FAILED"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "reuse_count": 2,
+     "pending_count": 2,
+     "invalid": [],
+     "seeds": [
+      {
+       "node_id": "pert-2",
+       "kind": "DM"
+      }
+     ]
+    },
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-completed-exit0-not-established",
+   "title": "Terminó con código 0 pero la ciencia no está establecida: nunca verde, no se puede usar",
+   "input": {
+    "projection": {
+     "scheduler": "COMPLETED",
+     "execution": "COMPLETED",
+     "integrity": "VERIFIED",
+     "science": "NOT_ESTABLISHED"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [
+     {
+      "kind": "bare",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "NOT_ESTABLISHED"
+      },
+      "passport_state": "NOT_ESTABLISHED",
+      "dm_reference": null,
+      "precision": "float64"
+     },
+     {
+      "kind": "screened",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "NOT_ESTABLISHED"
+      },
+      "passport_state": "NOT_ESTABLISHED",
+      "dm_reference": "dm-ref-0001",
+      "precision": "float64"
+     }
+    ],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "COMPLETED_SCIENCE_NOT_ESTABLISHED",
+    "tone": "warn",
+    "science": {
+     "state": "NOT_ESTABLISHED",
+     "basis": "AUTHORITY_ASSESSMENT"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": [
+      {
+       "kind": "bare",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "NOT_ESTABLISHED"
+       },
+       "passport_state": "NOT_ESTABLISHED",
+       "dm_reference": null,
+       "precision": "float64"
+      },
+      {
+       "kind": "screened",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "NOT_ESTABLISHED"
+       },
+       "passport_state": "NOT_ESTABLISHED",
+       "dm_reference": "dm-ref-0001",
+       "precision": "float64"
+      }
+     ]
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-completed-pass",
+   "title": "Completado, ciencia PASS, íntegro: se puede usar y se conservan bare/screened, referencia DM y precisión",
+   "input": {
+    "projection": {
+     "scheduler": "COMPLETED",
+     "execution": "COMPLETED",
+     "integrity": "VERIFIED",
+     "science": "PASS"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [
+     {
+      "kind": "bare",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "VALIDATED"
+      },
+      "passport_state": "PASS",
+      "dm_reference": null,
+      "precision": "float64"
+     },
+     {
+      "kind": "screened",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "VALIDATED"
+      },
+      "passport_state": "PASS",
+      "dm_reference": "dm-ref-0001",
+      "precision": "float64"
+     }
+    ],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "COMPLETED_SCIENCE_PASS",
+    "tone": "ok",
+    "science": {
+     "state": "PASS",
+     "basis": "AUTHORITY_ASSESSMENT"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": true,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": [
+      {
+       "kind": "bare",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "VALIDATED"
+       },
+       "passport_state": "PASS",
+       "dm_reference": null,
+       "precision": "float64"
+      },
+      {
+       "kind": "screened",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "VALIDATED"
+       },
+       "passport_state": "PASS",
+       "dm_reference": "dm-ref-0001",
+       "precision": "float64"
+      }
+     ]
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-completed-pass-altered",
+   "title": "Ciencia PASS pero integridad ALTERED: problema de integridad",
+   "input": {
+    "projection": {
+     "scheduler": "COMPLETED",
+     "execution": "COMPLETED",
+     "integrity": "ALTERED",
+     "science": "PASS"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [
+     {
+      "kind": "bare",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "VALIDATED"
+      },
+      "passport_state": "PASS",
+      "dm_reference": null,
+      "precision": "float64"
+     },
+     {
+      "kind": "screened",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "VALIDATED"
+      },
+      "passport_state": "PASS",
+      "dm_reference": "dm-ref-0001",
+      "precision": "float64"
+     }
+    ],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "INTEGRITY_PROBLEM",
+    "tone": "error",
+    "science": {
+     "state": "PASS",
+     "basis": "AUTHORITY_ASSESSMENT"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": [
+      {
+       "kind": "bare",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "VALIDATED"
+       },
+       "passport_state": "PASS",
+       "dm_reference": null,
+       "precision": "float64"
+      },
+      {
+       "kind": "screened",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "VALIDATED"
+       },
+       "passport_state": "PASS",
+       "dm_reference": "dm-ref-0001",
+       "precision": "float64"
+      }
+     ]
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-completed-pass-inconsistent",
+   "title": "La proyección dice PASS y una respuesta no: se cae a NOT_ESTABLISHED con aviso",
+   "input": {
+    "projection": {
+     "scheduler": "COMPLETED",
+     "execution": "COMPLETED",
+     "integrity": "VERIFIED",
+     "science": "PASS"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [
+     {
+      "kind": "bare",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "VALIDATED"
+      },
+      "passport_state": "PASS",
+      "dm_reference": null,
+      "precision": "float64"
+     },
+     {
+      "kind": "screened",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "NOT_ESTABLISHED"
+      },
+      "passport_state": "NOT_ESTABLISHED",
+      "dm_reference": "dm-ref-0001",
+      "precision": "float64"
+     }
+    ],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "COMPLETED_SCIENCE_NOT_ESTABLISHED",
+    "tone": "warn",
+    "science": {
+     "state": "NOT_ESTABLISHED",
+     "basis": "AUTHORITY_ASSESSMENT"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": [
+      {
+       "kind": "bare",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "VALIDATED"
+       },
+       "passport_state": "PASS",
+       "dm_reference": null,
+       "precision": "float64"
+      },
+      {
+       "kind": "screened",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "NOT_ESTABLISHED"
+       },
+       "passport_state": "NOT_ESTABLISHED",
+       "dm_reference": "dm-ref-0001",
+       "precision": "float64"
+      }
+     ]
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": [
+     "SCIENCE_PROJECTION_INCONSISTENT"
+    ]
+   }
+  },
+  {
+   "id": "lru-completed-pass-no-dm",
+   "title": "Respuesta screened sin referencia de DM: no se acepta como PASS",
+   "input": {
+    "projection": {
+     "scheduler": "COMPLETED",
+     "execution": "COMPLETED",
+     "integrity": "VERIFIED",
+     "science": "PASS"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [
+     {
+      "kind": "bare",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "VALIDATED"
+      },
+      "passport_state": "PASS",
+      "dm_reference": null,
+      "precision": "float64"
+     },
+     {
+      "kind": "screened",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "VALIDATED"
+      },
+      "passport_state": "PASS",
+      "dm_reference": null,
+      "precision": "float64"
+     }
+    ],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "COMPLETED_SCIENCE_NOT_ESTABLISHED",
+    "tone": "warn",
+    "science": {
+     "state": "PASS",
+     "basis": "AUTHORITY_ASSESSMENT"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": [
+      {
+       "kind": "bare",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "VALIDATED"
+       },
+       "passport_state": "PASS",
+       "dm_reference": null,
+       "precision": "float64"
+      },
+      {
+       "kind": "screened",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "VALIDATED"
+       },
+       "passport_state": "PASS",
+       "dm_reference": null,
+       "precision": "float64"
+      }
+     ]
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": [
+     "DM_REFERENCE_MISSING"
+    ]
+   }
+  },
+  {
+   "id": "lru-completed-fail",
+   "title": "Ciencia FAIL",
+   "input": {
+    "projection": {
+     "scheduler": "COMPLETED",
+     "execution": "COMPLETED",
+     "integrity": "VERIFIED",
+     "science": "FAIL"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [
+     {
+      "kind": "screened",
+      "native_status": {
+       "authority": "hubbardflow",
+       "vocabulary": "hubbardflow.NodeState",
+       "value": "REJECTED"
+      },
+      "passport_state": "FAIL",
+      "dm_reference": "dm-ref-0001",
+      "precision": "float64"
+     }
+    ],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "COMPLETED_SCIENCE_FAIL",
+    "tone": "error",
+    "science": {
+     "state": "FAIL",
+     "basis": "AUTHORITY_ASSESSMENT"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": [
+      {
+       "kind": "screened",
+       "native_status": {
+        "authority": "hubbardflow",
+        "vocabulary": "hubbardflow.NodeState",
+        "value": "REJECTED"
+       },
+       "passport_state": "FAIL",
+       "dm_reference": "dm-ref-0001",
+       "precision": "float64"
+      }
+     ]
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  },
+  {
+   "id": "lru-unknown",
+   "title": "Envío sin resultado conocido: reconciliar, sin acciones",
+   "input": {
+    "projection": {
+     "scheduler": "SUBMISSION_UNKNOWN",
+     "execution": "UNKNOWN",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null
+     }
+    ]
+   },
+   "expect": {
+    "headline": "OUTCOME_UNKNOWN",
+    "tone": "warn",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "RUNNING",
+      "previous_attempt_id": null,
+      "current": true
+     }
+    ],
+    "banners": [
+     "RECONCILE_REQUIRED"
+    ]
+   }
+  },
+  {
+   "id": "lru-attempt-chain-broken",
+   "title": "Cadena de intentos rota: se avisa y se conservan todos",
+   "input": {
+    "projection": {
+     "scheduler": "RUNNING",
+     "execution": "INTERRUPTED",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": {
+     "decision": "ADMIT",
+     "reason": "NEXT_GENERATION"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "expired": false,
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "nodes": {
+      "reuse": [
+       "reference",
+       "pert-1"
+      ],
+      "invalid": [],
+      "pending": [
+       "pert-2",
+       "pert-3"
+      ],
+      "seed_candidates": [
+       {
+        "node_id": "pert-2",
+        "kind": "DM"
+       }
+      ]
+     }
+    },
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": null
+     },
+     {
+      "attempt_id": "attempt-0003",
+      "generation": 3,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": "attempt-0002"
+     }
+    ]
+   },
+   "expect": {
+    "headline": "INTERRUPTED",
+    "tone": "warn",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": false,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "ATTEMPT_CHAIN_BROKEN"
+    },
+    "resume_plan": {
+     "plan_revision": 2,
+     "from_attempt_id": "attempt-0001",
+     "reuse_count": 2,
+     "pending_count": 2,
+     "invalid": [],
+     "seeds": [
+      {
+       "node_id": "pert-2",
+       "kind": "DM"
+      }
+     ]
+    },
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": null,
+      "current": false
+     },
+     {
+      "attempt_id": "attempt-0003",
+      "generation": 3,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": "attempt-0002",
+      "current": false
+     }
+    ],
+    "banners": [
+     "ATTEMPT_CHAIN_BROKEN"
+    ]
+   }
+  },
+  {
+   "id": "lru-three-attempts",
+   "title": "Tres intentos: mapa completo, el último es el actual",
+   "input": {
+    "projection": {
+     "scheduler": "RUNNING",
+     "execution": "RUNNING",
+     "integrity": "VERIFIED",
+     "science": "UNKNOWN"
+    },
+    "cancel_requested": false,
+    "platform_resume_enabled": true,
+    "admission": null,
+    "resume_plan": null,
+    "run": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ]
+    },
+    "responses": [],
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": null
+     },
+     {
+      "attempt_id": "attempt-0002",
+      "generation": 2,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": "attempt-0001"
+     },
+     {
+      "attempt_id": "attempt-0003",
+      "generation": 3,
+      "state": "RUNNING",
+      "previous_attempt_id": "attempt-0002"
+     }
+    ]
+   },
+   "expect": {
+    "headline": "RUNNING",
+    "tone": "progress",
+    "science": {
+     "state": "UNKNOWN",
+     "basis": "NONE"
+    },
+    "actions": {
+     "cancel": true,
+     "resume": false,
+     "use_result": false,
+     "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+     "plan_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "policy_digests": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+     ],
+     "responses": []
+    },
+    "attempts": [
+     {
+      "attempt_id": "attempt-0001",
+      "generation": 1,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": null,
+      "current": false
+     },
+     {
+      "attempt_id": "attempt-0002",
+      "generation": 2,
+      "state": "INTERRUPTED",
+      "previous_attempt_id": "attempt-0001",
+      "current": false
+     },
+     {
+      "attempt_id": "attempt-0003",
+      "generation": 3,
+      "state": "RUNNING",
+      "previous_attempt_id": "attempt-0002",
+      "current": true
+     }
+    ],
+    "banners": []
+   }
+  }
+ ]
+}
