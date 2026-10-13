@@ -5,6 +5,7 @@ from types import SimpleNamespace
 import unittest
 from dftlab_platform.contracts import Contracts,digest,loads
 from dftlab_platform.domain import Problem
+from dftlab_platform.policy_refs import policy_reference
 from dftlab_platform.scientific_results import ScientificResults
 
 
@@ -49,6 +50,10 @@ class ScientificConsumers(unittest.TestCase):
     def source(self,value):
         data=('  '+json.dumps(value,indent=2)+'\n').encode()
         return self.artifacts.add(data),data
+
+    def surface_intent(self,dipole):
+        policy,_=policy_reference(self.consumer.engines.qraft,'qraft.surface.policy@1')
+        return {'dipole_correction':dipole,'policy_ref':policy}
 
     def test_eos_keeps_native_status_and_original_bytes_without_pass(self):
         ref,data=self.source({'policy_id':'qraft.eos.policy@1','status':'ESTABLISHED','reasons':[],
@@ -131,7 +136,7 @@ class ScientificConsumers(unittest.TestCase):
                 'plateau':{'from_A':2.0,'to_A':4.0,'mean_eV':-.8996}}]}
         ref,data=self.source(raw)
         result=self.consumer.store_surface('owner','p',ref,subject_refs=['run-1'],
-            intent={'dipole_correction':'VaCuUm'})
+            intent=self.surface_intent('VaCuUm'))
         self.assertEqual(self.artifacts.files[ref['artifact_id']],data)
         self.assertEqual(result['presentation']['native_result'],raw)
         self.assertEqual(result['presentation']['faces'],raw['faces'])
@@ -147,10 +152,14 @@ class ScientificConsumers(unittest.TestCase):
         self.assertEqual(result['analysis']['payload']['limits'],['CONTRACT_TESTED','PROVISIONAL'])
         self.assertEqual(result['state'],'PROVISIONAL')
 
-    def test_surface_requires_an_explicit_supported_intent_dipole_mode(self):
+    def test_surface_requires_supported_intent_and_exact_pinned_policy_ref(self):
         ref,_=self.source({'policy_id':'qraft.surface.policy@1','verdict':'NOT_ESTABLISHED','reasons':[],
             'faces':[]})
-        for intent in ({}, {'dipole_correction':'automatic'}, {'dipole_correction':True}):
+        policy=policy_reference(self.consumer.engines.qraft,'qraft.surface.policy@1')[0]
+        for intent in ({}, {'dipole_correction':'automatic','policy_ref':policy},
+                       {'dipole_correction':True,'policy_ref':policy},
+                       {'dipole_correction':None},
+                       {'dipole_correction':None,'policy_ref':{**policy,'digest':'0'*64}}):
             with self.subTest(intent=intent), self.assertRaises(Problem):
                 self.consumer.store_surface('owner','p',ref,subject_refs=['run-1'],intent=intent)
 
@@ -159,4 +168,4 @@ class ScientificConsumers(unittest.TestCase):
             'reasons':[],'faces':[]})
         with self.assertRaises(Problem):
             self.consumer.store_surface('owner','p',ref,subject_refs=['run-1'],
-                intent={'dipole_correction':None})
+                intent=self.surface_intent(None))

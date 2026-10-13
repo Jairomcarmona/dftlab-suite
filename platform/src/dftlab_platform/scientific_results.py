@@ -124,8 +124,9 @@ class ScientificResults:
     def store_surface(self,owner,project,source_ref,*,subject_refs,intent):
         """Store a QRAFT WF-SURFACE result without rerunning its analysis.
 
-        The private intent must declare the original dipole mode (including
-        null when no label was present). Its original spelling is retained.
+        The private intent must bind the exact pinned wheel policy reference
+        and declare the original dipole mode (including null when no label
+        was present). Its original spelling is retained.
         """
         if not isinstance(intent,dict) or 'dipole_correction' not in intent:
             raise Problem('PRECONDITION_FAILED')
@@ -134,8 +135,12 @@ class ScientificResults:
             raise Problem('PRECONDITION_FAILED')
         raw=loads(self._read(owner,project,source_ref))
         literal='qraft.surface.policy@1'
-        # SurfaceProtocol.analyze returns verdict/reasons/faces and leaves the
-        # policy identity to the caller's pinned public policy provider.
+        # SurfaceProtocol.analyze returns verdict/reasons/faces. Bind it to the
+        # exact policy delivered by the pinned public wheel; never infer policy
+        # identity from the result shape or a caller-supplied label alone.
+        expected_policy,_=policy_reference(self.engines.qraft,literal)
+        if intent.get('policy_ref')!=expected_policy:
+            raise Problem('PRECONDITION_FAILED')
         if raw.get('policy_id') not in (None,literal) or not isinstance(raw.get('verdict'),str) or not raw['verdict']:
             raise Problem('PRECONDITION_FAILED')
         if 'dipole_correction' in raw and raw['dipole_correction']!=dipole:
