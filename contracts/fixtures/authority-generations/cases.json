@@ -1,0 +1,820 @@
+{
+  "description": "Vectores de conformidad de las reglas de generaciones de autoridad y envíos (ADR-017 Adenda 12, issue #93). check-contracts.mjs los evalúa con el evaluador de referencia; las pruebas de la plataforma (test_authority_generations.py) deben dar el mismo veredicto para cada caso. La primera regla que aplica decide. max_attempts = 3 (ADR-017 F.2).",
+  "max_attempts": 3,
+  "cases": [
+    {
+      "name": "primer-envio-sin-historia",
+      "generations": [],
+      "dispatches": [],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 1
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "ADMIT",
+        "reason": "NEXT_GENERATION"
+      }
+    },
+    {
+      "name": "primer-envio-repetido",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": false,
+          "proof": null,
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "RESERVED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 1
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "RUN_ALREADY_SUBMITTED"
+      }
+    },
+    {
+      "name": "reanudar-tras-cierre-limpio",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 2
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0001",
+        "plan_revision": 2
+      },
+      "expect": {
+        "decision": "ADMIT",
+        "reason": "NEXT_GENERATION"
+      }
+    },
+    {
+      "name": "reanudar-tras-cambio-de-arranque",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "OWNER_DEAD_BY_BOOT_CHANGE"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 2
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0001",
+        "plan_revision": 2
+      },
+      "expect": {
+        "decision": "ADMIT",
+        "reason": "NEXT_GENERATION"
+      }
+    },
+    {
+      "name": "generacion-anterior-activa",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": false,
+          "proof": null,
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 2
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0001",
+        "plan_revision": 2
+      },
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "PREVIOUS_GENERATION_ACTIVE"
+      }
+    },
+    {
+      "name": "solo-sacct-terminal-no-basta",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "UNPROVEN"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 2
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0001",
+        "plan_revision": 2
+      },
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "PREVIOUS_TERMINATION_NOT_PROVEN"
+      }
+    },
+    {
+      "name": "cierre-sin-evidencia-de-sacct",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": false,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 2
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0001",
+        "plan_revision": 2
+      },
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "PREVIOUS_TERMINATION_NOT_PROVEN"
+      }
+    },
+    {
+      "name": "envio-anterior-sin-acuse",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "DISPATCH_STARTED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 2
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0001",
+        "plan_revision": 2
+      },
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "PREVIOUS_DISPATCH_UNRESOLVED"
+      }
+    },
+    {
+      "name": "generacion-saltada",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 3
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0001",
+        "plan_revision": 2
+      },
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "GENERATION_NOT_NEXT"
+      }
+    },
+    {
+      "name": "intentos-agotados",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        },
+        {
+          "generation": 2,
+          "attempt_id": "attempt-0002",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 2,
+          "verdict": null
+        },
+        {
+          "generation": 3,
+          "attempt_id": "attempt-0003",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 3,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 3,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 4
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0003",
+        "plan_revision": 4
+      },
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "ATTEMPTS_EXHAUSTED"
+      }
+    },
+    {
+      "name": "tercer-intento-permitido",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        },
+        {
+          "generation": 2,
+          "attempt_id": "attempt-0002",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 2,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 3
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0002",
+        "plan_revision": 3
+      },
+      "expect": {
+        "decision": "ADMIT",
+        "reason": "NEXT_GENERATION"
+      }
+    },
+    {
+      "name": "plan-de-otro-intento",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        },
+        {
+          "generation": 2,
+          "attempt_id": "attempt-0002",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 2,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 3
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0001",
+        "plan_revision": 3
+      },
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "RESUME_PLAN_STALE"
+      }
+    },
+    {
+      "name": "sin-plan-de-reanudacion",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 2
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "RESUME_PLAN_STALE"
+      }
+    },
+    {
+      "name": "negativa-de-qraft-con-el-mismo-plan",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        },
+        {
+          "generation": 2,
+          "attempt_id": "attempt-0002",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 2,
+          "verdict": "REFUSE"
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 3
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0002",
+        "plan_revision": 2
+      },
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "RESUME_REFUSED_PLAN_UNCHANGED"
+      }
+    },
+    {
+      "name": "negativa-de-qraft-con-plan-nuevo",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        },
+        {
+          "generation": 2,
+          "attempt_id": "attempt-0002",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 2,
+          "verdict": "REFUSE"
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "DISPATCH_RESERVE",
+        "generation": 3
+      },
+      "resume_plan": {
+        "from_attempt_id": "attempt-0002",
+        "plan_revision": 3
+      },
+      "expect": {
+        "decision": "ADMIT",
+        "reason": "NEXT_GENERATION"
+      }
+    },
+    {
+      "name": "autoridad-primera-generacion",
+      "generations": [],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "DISPATCH_STARTED"
+        }
+      ],
+      "request": {
+        "kind": "AUTHORITY_CREATE",
+        "generation": 1
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "ADMIT",
+        "reason": "NEXT_GENERATION"
+      }
+    },
+    {
+      "name": "autoridad-sin-envio-reservado",
+      "generations": [],
+      "dispatches": [],
+      "request": {
+        "kind": "AUTHORITY_CREATE",
+        "generation": 1
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "DISPATCH_NOT_STARTED"
+      }
+    },
+    {
+      "name": "autoridad-con-envio-solo-reservado",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "RESERVED"
+        }
+      ],
+      "request": {
+        "kind": "AUTHORITY_CREATE",
+        "generation": 2
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "DISPATCH_NOT_STARTED"
+      }
+    },
+    {
+      "name": "autoridad-segunda-generacion",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "DISPATCH_STARTED"
+        }
+      ],
+      "request": {
+        "kind": "AUTHORITY_CREATE",
+        "generation": 2
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "ADMIT",
+        "reason": "NEXT_GENERATION"
+      }
+    },
+    {
+      "name": "autoridad-duplicada-misma-generacion",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": false,
+          "proof": null,
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "AUTHORITY_CREATE",
+        "generation": 1
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "GENERATION_NOT_NEXT"
+      }
+    },
+    {
+      "name": "autoridad-con-anterior-activa",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": false,
+          "proof": null,
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "DISPATCH_STARTED"
+        }
+      ],
+      "request": {
+        "kind": "AUTHORITY_CREATE",
+        "generation": 2
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "PREVIOUS_GENERATION_ACTIVE"
+      }
+    },
+    {
+      "name": "comprobacion-de-generacion-vigente",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": true,
+          "proof": {
+            "sacct_terminal": true,
+            "owner_proof": "CLOSED"
+          },
+          "plan_revision": 1,
+          "verdict": null
+        },
+        {
+          "generation": 2,
+          "attempt_id": "attempt-0002",
+          "retired": false,
+          "proof": null,
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "AUTHORITY_CHECK",
+        "generation": 2
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "ADMIT",
+        "reason": "CURRENT_GENERATION"
+      }
+    },
+    {
+      "name": "comprobacion-de-generacion-desplazada",
+      "generations": [
+        {
+          "generation": 1,
+          "attempt_id": "attempt-0001",
+          "retired": false,
+          "proof": null,
+          "plan_revision": 1,
+          "verdict": null
+        },
+        {
+          "generation": 2,
+          "attempt_id": "attempt-0002",
+          "retired": false,
+          "proof": null,
+          "plan_revision": 1,
+          "verdict": null
+        }
+      ],
+      "dispatches": [
+        {
+          "generation": 1,
+          "phase": "ACKNOWLEDGED"
+        },
+        {
+          "generation": 2,
+          "phase": "ACKNOWLEDGED"
+        }
+      ],
+      "request": {
+        "kind": "AUTHORITY_CHECK",
+        "generation": 1
+      },
+      "resume_plan": null,
+      "expect": {
+        "decision": "REFUSE",
+        "reason": "SUPERSEDED"
+      }
+    }
+  ]
+}
