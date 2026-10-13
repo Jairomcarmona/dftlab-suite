@@ -7,13 +7,20 @@ from pathlib import Path
 import unittest
 
 from dftlab_platform.contracts import resource_json
-from dftlab_platform.pseudo_catalog import catalogue_psml, species_bundle
+from dftlab_platform.pseudo_catalog import catalogue_psml, species_bundle, catalogue_announcement
 
 
 FIXTURE = Path(__file__).parent/'fixtures/pseudos.cases.json'
 
 
 class PseudoCatalogue(unittest.TestCase):
+    def test_announcement_is_structured_and_detached(self):
+        value = catalogue_announcement()
+        self.assertEqual(value, {'key':'pseudos.catalog.announcement',
+            'parameters':{'elements':30,'functionals':['LDA_CA_PZ','GGA_PBE']}})
+        value['parameters']['functionals'].append('other')
+        self.assertEqual(len(catalogue_announcement()['parameters']['functionals']),2)
+
     def setUp(self):
         self.cases = json.loads(FIXTURE.read_bytes())['cases']
 

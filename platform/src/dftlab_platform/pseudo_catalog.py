@@ -13,6 +13,12 @@ from xml.etree import ElementTree as ET
 from .contracts import Contracts
 
 
+def catalogue_announcement():
+    """Approved own-library announcement data; rendering belongs to the UI."""
+    return {'key': 'pseudos.catalog.announcement',
+            'parameters': {'elements': 30, 'functionals': ['LDA_CA_PZ', 'GGA_PBE']}}
+
+
 @dataclass(frozen=True)
 class CataloguePseudo:
     element: str
