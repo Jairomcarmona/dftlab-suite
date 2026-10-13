@@ -56,5 +56,5 @@ class PresetAuthoring(unittest.TestCase):
             render_preset(self.structure, 'S-08', {'Si':14}, parameters={'spin':'polarized'})
         with self.assertRaises(ValueError):
             render_preset(self.structure, 'S-04', {'Si':14})
-        with self.assertRaisesRegex(ValueError, 'issue #99'):
+        with self.assertRaises(TypeError):
             build_preset_intent()
