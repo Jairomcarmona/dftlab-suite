@@ -1,17 +1,18 @@
 """Immutable authorized application flow; synthetic adapter, no engine imports."""
 import copy
 import hashlib
+import json
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from dftlab_platform.artifact_storage import SQLiteArtifactIndex
 from dftlab_platform.artifacts import LocalArtifactStore
 from dftlab_platform.authoring import AuthoringHandlers
 from dftlab_platform.contracts import canonical, resource_json
-from dftlab_platform.domain import Processor, Problem, envelope, identifier
+from dftlab_platform.domain import Processor, Problem, envelope, identifier, reseal
 from dftlab_platform.draft_storage import SQLiteDraftRepository
 from dftlab_platform.engines import engine_lock
 from dftlab_platform.qraft_authoring import AuthoringProfile, AuthoringRecipe, QraftArtifactAuthoring
@@ -202,6 +203,41 @@ class ArtifactAuthoring(AuthoringFixture):
                                   qraft=SimpleNamespace(SiestaContextualValidator=lambda: object(),
                                                         load_workflow_lock=lambda path: (None, SimpleNamespace(tasks=(SimpleNamespace(capability_id="siestaflow.engine.siesta"),)))))
         return QraftArtifactAuthoring(engines, self.store, {}, {}, self.root/"scratch", **kwargs)
+
+    def test_audit_is_lossless_native_findings_with_pin_digest_and_owner_binding(self):
+        port = self.port()
+        port.engines.lock = engine_lock()
+        findings = [{"rule_id": "native.rule", "code": "INPUT_LABEL_UNUSED", "status": status,
+            "message": "native fixture", "evidence_class": "HEURISTIC_REVIEW", "scope": "native scope",
+            "subject_id": "input", "location": {"line": 7}, "hint": "MeshCutoff",
+            "evidence": [{"sha256": "a"*64}], "data": {"label": "MeshCutof", "raw": [1, 2]}}
+            for status in ('PASS', 'REVIEW', 'FAIL', 'BLOCKED')]
+        native = SimpleNamespace(payload={"findings": findings}, content_sha256="1"*64, verify=Mock())
+        # Synthetic public serialization port: tests delegation/byte provenance,
+        # never QRAFT scientific validation or a replacement hash algorithm.
+        port.core = SimpleNamespace(VALIDATION_REPORT='siestaflow.validation-report@1.0',
+            ContractEnvelope=SimpleNamespace(from_dict=Mock(return_value=native)),
+            canonical_json=lambda value: json.dumps(value, sort_keys=True))
+        raw = json.dumps({"findings": findings}).encode()
+        ref = port._native_ref(self.owner, self.project, raw,
+            str(port.core.VALIDATION_REPORT), native.content_sha256, 'qraft.validation-report')
+        receipt = self.native.validate(self.owner, self.bundle, ref['artifact'])
+        receipt['native_contract_refs'] = [ref]
+        reseal(receipt)
+        before = copy.deepcopy(receipt)
+        exported = port.audit_warnings(self.owner, receipt)
+        self.assertEqual([json.loads(line) for line in exported.splitlines()], findings[1:])
+        self.assertEqual(receipt, before)
+        native.verify.assert_called_once_with()
+        port.core.ContractEnvelope.from_dict.assert_called_once_with(json.loads(raw), required_contract=port.core.VALIDATION_REPORT)
+        with self.assertRaises(Problem):
+            port.audit_warnings(self.other, receipt)
+        for field, value in (('commit', '0'*40), ('digest', {'algorithm': ref['digest']['algorithm'], 'value': '2'*64})):
+            changed = copy.deepcopy(receipt)
+            changed['native_contract_refs'][0][field] = value
+            reseal(changed)
+            with self.assertRaises(Problem):
+                port.audit_warnings(self.owner, changed)
 
     def test_source_paths_limits_and_cross_owner_fail_before_materializing(self):
         port = self.port(artifact_limit=16)

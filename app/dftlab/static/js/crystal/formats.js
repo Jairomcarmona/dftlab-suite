@@ -677,31 +677,62 @@ const fdfKey = (s) => s.toLowerCase().replace(/[-_.]/g, '');
 const LENGTH_UNITS = { ang: 1, angstrom: 1, bohr: BOHR_SIESTA, au: BOHR_SIESTA, nm: 10, m: 1e10, cm: 1e8 };
 
 /** Parse fdf text into {values: {key: string}, blocks: {key: [lines]}} (keys normalised as in fdf). */
-export function parseFDF(text) {
-  const values = {}, blocks = {}, warnings = [];
-  const lines = text.replace(/\r\n?/g, '\n').split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].replace(/[#!;].*$/, '').trim();
-    if (!line) continue;
-    const m = /^%block\s+(\S+)(.*)$/i.exec(line);
-    if (m) {
-      const key = fdfKey(m[1]);
-      if (/</.test(m[2])) warnings.push(`block ${m[1]} read from an external file is not supported`);
-      const body = [];
-      i++;
-      while (i < lines.length && !/^\s*%endblock/i.test(lines[i])) {
-        const l = lines[i].replace(/[#!;].*$/, '').trim();
-        if (l) body.push(l);
-        i++;
+export function parseFDF(text, { files = {}, root = 'input.fdf', maxDepth = 16 } = {}) {
+  // Preview only: this never replaces the authoritative QRAFT validation report.
+  const inputs = { ...files, [root]: text };
+  const clean = line => line.replace(/[#!;].*$/, '').trim();
+  const read = name => {
+    if (!Object.hasOwn(inputs, name)) throw { error: 'INCLUDE_NOT_FOUND', file: name };
+    return inputs[name].replace(/\r\n?/g, '\n').split('\n');
+  };
+  function collect(name, depth, ancestors, result) {
+    if (depth > maxDepth || ancestors.includes(name)) throw { error: 'CYCLIC_INCLUDE', file: name };
+    const stack = [...ancestors, name], lines = read(name);
+    const first = (label, value) => {
+      const key = fdfKey(label);
+      if (!result.has(key)) result.set(key, value);
+    };
+    for (let i = 0; i < lines.length; i++) {
+      const tokens = clean(lines[i]).split(/\s+/);
+      if (!tokens[0]) continue;
+      const directive = tokens[0].toLowerCase();
+      if (directive === '%include') {
+        collect(tokens[1], depth + 1, stack, result);
+      } else if (directive === '%block') {
+        const rows = [];
+        if (tokens[2] === '<') rows.push(...read(tokens[3]).map(clean).filter(Boolean));
+        else {
+          while (++i < lines.length && !/^\s*%endblock/i.test(lines[i])) {
+            const row = clean(lines[i]);
+            if (row) rows.push(row);
+          }
+        }
+        first(tokens[1], { kind: 'block', rows });
+      } else if (!directive.startsWith('%')) {
+        if (tokens[1] === '<') {
+          const redirected = new Map();
+          collect(tokens[2], depth + 1, stack, redirected);
+          const hit = redirected.get(fdfKey(tokens[0]));
+          if (!hit || hit.kind !== 'scalar') throw { error: 'REDIRECT_LABEL_NOT_FOUND', file: tokens[2] };
+          first(tokens[0], hit);
+        } else first(tokens[0], { kind: 'scalar', text: tokens.slice(1).join(' ') });
       }
-      blocks[key] = body;
-      continue;
     }
-    if (/^%include/i.test(line)) { warnings.push(`'${line}' not supported`); continue; }
-    const t = line.split(/\s+/);
-    values[fdfKey(t[0])] = t.slice(1).join(' ');
   }
-  return { values, blocks, warnings };
+  const found = new Map(), values = {}, blocks = {}, warnings = [];
+  let failure;
+  try { collect(root, 0, [], found); } catch (error) {
+    if (!error?.error) throw error;
+    failure = error;
+    warnings.push(error.error);
+  }
+  for (const [key, value] of found) {
+    if (value.kind === 'block') blocks[key] = value.rows;
+    else values[key] = value.text;
+  }
+  return { values, blocks, warnings, ...(failure && {
+    status: failure.error === 'INCLUDE_NOT_FOUND' ? 'NOT_CHECKED' : 'FAIL', ...failure,
+  }) };
 }
 
 function fdfLength(str, def = 'bohr') {
@@ -718,8 +749,13 @@ function fdfLength(str, def = 'bohr') {
  * ChemicalSpeciesLabel, AtomicCoordinatesFormat (Ang, Bohr, NotScaledCartesian*, ScaledCartesian,
  * Fractional/ScaledByLatticeVectors) and AtomicCoordinatesAndAtomicSpecies (+ numeric AtomicCoordinatesOrigin).
  */
-export function readFDF(text) {
-  const { values, blocks, warnings } = parseFDF(text);
+export function readFDF(text, options = {}) {
+  const parsed = parseFDF(text, options);
+  if (parsed.status) {
+    // Do not produce a partial/fallback structure from unresolved effective FDF.
+    throw Object.assign(new Error(parsed.status), { code: parsed.status, cause: parsed });
+  }
+  const { values, blocks, warnings } = parsed;
   if (blocks.zmatrix) throw new Error('fdf: Zmatrix geometry is not supported');
   const species = {};
   for (const l of blocks.chemicalspecieslabel || []) {
@@ -914,7 +950,7 @@ export function readStructure(text, { format = null, filename = '', ...opts } = 
     case 'poscar': case 'vasp': case 'contcar': return readPOSCAR(text, opts);
     case 'xv': return readXV(text, opts);
     case 'struct': case 'struct_out': case 'struct_in': return readStructOut(text);
-    case 'fdf': return readFDF(text);
+    case 'fdf': return readFDF(text, opts);
     default: throw new Error(`unknown format ${fm}`);
   }
 }

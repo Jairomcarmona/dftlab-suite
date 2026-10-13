@@ -257,6 +257,35 @@ class QraftArtifactAuthoring:
         reseal(receipt)
         return self.contracts.validate("validation-receipt", receipt)
 
+    def audit_warnings(self, owner, receipt):
+        """Export findings from the stored native reports, without revalidation.
+
+        Operator port: the caller resolves its immutable validation receipt.
+        The existing ArtifactStore enforces owner/project access. No REVIEW
+        acceptance, status conversion or FAIL override occurs in this export.
+        """
+        self.contracts.validate('validation-receipt', receipt)
+        pin = self.engines.lock['engines']['qraft']
+        rows = []
+        for ref in receipt['native_contract_refs']:
+            if ref['contract'] != str(self.core.VALIDATION_REPORT):
+                continue
+            if any(ref[field] != expected for field, expected in (
+                ('engine', 'qraft'), ('distribution', pin['distribution']),
+                ('version', pin['declared_version']), ('commit', pin['commit']))):
+                raise Problem('PRECONDITION_FAILED')
+            data = self._data(owner, receipt['project_id'], ref['artifact'])
+            native = self.core.ContractEnvelope.from_dict(loads(data), required_contract=self.core.VALIDATION_REPORT)
+            native.verify()
+            if ref['digest']['algorithm'] != 'qraft.content-sha256-v1' or native.content_sha256 != ref['digest']['value']:
+                raise Problem('PRECONDITION_FAILED')
+            for finding in native.payload['findings']:
+                if finding['status'] not in {'PASS', 'REVIEW', 'FAIL', 'BLOCKED'}:
+                    raise Problem('PRECONDITION_FAILED')
+                if finding['status'] != 'PASS':
+                    rows.append(self.core.canonical_json(finding))
+        return ('\n'.join(rows)+ ('\n' if rows else '')).encode('utf-8')
+
     def compile(self, owner, bundle, receipt, snapshot):
         recipe = self._recipe(owner, bundle)
         if recipe is None:
