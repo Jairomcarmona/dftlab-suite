@@ -89,6 +89,24 @@ class ScientificConsumers(unittest.TestCase):
         bad,_=self.source({'rule_id':rule['rule_id'],'rule_sha256':'d'*64,'status':'READY_FOR_HUMAN_REVIEW'})
         with self.assertRaises(Problem):self.consumer.store_convergence('owner','p',rule_ref,bad,subject_refs=['run-1'])
 
+    def test_mass_collection_authority_is_not_an_aggregate_verdict(self):
+        raw={'policy_id':'qraft.electronic.policy@1','authority':'NUMERICAL_CANDIDATE',
+            'longitudinal':{'status':'NUMERICAL_CANDIDATE','mass_me':.93},
+            'transverse':[{'status':'NOT_ESTABLISHED','reasons':['DEGENERATE_EXTREMUM']}]}
+        ref,_=self.source(raw)
+        result=self.consumer.store_electronic('owner','p',ref,subject_refs=['run-1'],scope='POINTS')
+        native=result['assessment']['payload']['native_status']
+        self.assertEqual(native['vocabulary'],'qraft.electronic.authority')
+        self.assertEqual(native['value'],'NUMERICAL_CANDIDATE')
+        self.assertEqual(result['analysis']['payload']['observable_kind'],'qraft.electronic')
+        self.assertEqual(result['presentation']['native_result'],raw)
+        del raw['authority'];ref,_=self.source(raw)
+        with self.assertRaises(Problem):self.consumer.store_electronic('owner','p',ref,subject_refs=['run-1'],scope='POINTS')
+        raw['parent_electronic_state']={'authority':'PROVISIONAL'};ref,_=self.source(raw)
+        result=self.consumer.store_electronic('owner','p',ref,subject_refs=['run-1'],scope='POINTS')
+        self.assertEqual(result['assessment']['payload']['native_status']['vocabulary'],'qraft.electronic.parent-authority')
+        self.assertEqual(result['presentation']['authority'],'PROVISIONAL')
+
     def test_unknown_native_status_never_grants_pass_and_owner_project_are_checked(self):
         ref,_=self.source({'policy_id':'qraft.eos.policy@1','status':'FUTURE_STATUS_V999','reasons':['native-code'],
             'quantity':'free_energy','n_atoms':2,'points':[{'relaxation_mode':'fixed-fractional'}]})

@@ -56,7 +56,7 @@ class ScientificResults:
         self.contracts.validate('native-contract-ref',ref)
         return policy,ref
 
-    def _save(self,owner,project,raw,source_refs,*,literal,kind,status,scope,subjects,rule_document=None):
+    def _save(self,owner,project,raw,source_refs,*,literal,kind,status,scope,subjects,rule_document=None,assessment_kind=None,vocabulary=None):
         if not isinstance(status,str) or not status:
             raise Problem('PRECONDITION_FAILED')
         policy,native=self._policy(owner,project,literal,rule_document=rule_document)
@@ -66,8 +66,8 @@ class ScientificResults:
         # unknown protocol vocabularies; numeric merit never grants PASS.
         projection=resource_json('vocabularies/native-status-projection.json')['default_projection']
         assessment=envelope('assessment-record',project,{'assessment_id':assessment_id,'subject_refs':list(subjects),
-            'assessment_type':kind,'protocol':policy,'rule':literal,
-            'native_status':{'authority':'qraft','vocabulary':policy['policy_id'],'value':status},
+            'assessment_type':assessment_kind or kind,'protocol':policy,'rule':literal,
+            'native_status':{'authority':'qraft','vocabulary':vocabulary or policy['policy_id'],'value':status},
             'passport_state':projection,'reasons':deepcopy(reasons),'evidence':[native,*deepcopy(source_refs)],
             'scope':scope,'supersedes':None},record_id=assessment_id)
         assessment['native_contract_refs']=[native];reseal(assessment)
@@ -100,7 +100,16 @@ class ScientificResults:
         if raw.get('policy_id')!=literal or scope not in ('PATH','POINTS') or raw.get('gap',{}).get('scope',scope)!=scope:
             raise Problem('PRECONDITION_FAILED')
         status=raw.get('status',raw.get('gap',{}).get('status',raw.get('partition',{}).get('status')))
-        return self._save(owner,project,raw,[source_ref],literal=literal,kind='qraft.electronic',status=status,scope=scope,subjects=subject_refs)
+        assessment_kind=vocabulary=None
+        if status is None:
+            if 'authority' in raw:
+                status=raw['authority'];vocabulary='qraft.electronic.authority'
+            else:
+                status=raw.get('parent_electronic_state',{}).get('authority')
+                vocabulary='qraft.electronic.parent-authority'
+            assessment_kind=vocabulary
+        return self._save(owner,project,raw,[source_ref],literal=literal,kind='qraft.electronic',status=status,
+            scope=scope,subjects=subject_refs,assessment_kind=assessment_kind,vocabulary=vocabulary)
 
     def store_convergence(self,owner,project,rule_ref,report_ref,*,subject_refs):
         rule_bytes=self._read(owner,project,rule_ref)
@@ -117,7 +126,7 @@ class ScientificResults:
             if group['size']!=len(group['bands']) or group['size']<1 or 'individual_weights' in group:
                 raise ValueError('Only complete native group weights may be presented')
         return {'scope':scope,'native_status':raw.get('status',raw.get('gap',{}).get('status',raw.get('partition',{}).get('status'))),
-            'authority':raw.get('authority','PROVISIONAL'),'origin':raw.get('origin'),
+            'authority':raw.get('authority',raw.get('parent_electronic_state',{}).get('authority')),'origin':raw.get('origin'),
             'worker_environment_sha256':raw.get('worker_environment_sha256'),
             'gap':deepcopy(raw.get('gap')),'longitudinal':deepcopy(raw.get('longitudinal')),
             'transverse':deepcopy(raw.get('transverse',[])),'partition':deepcopy(raw.get('partition')),

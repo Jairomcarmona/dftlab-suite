@@ -1467,7 +1467,7 @@
     },
     {
       "file": "app/dftlab/static/js/siesta/native-results.js",
-      "sha256": "860438acfba1c94fe89672010ed73af27d4b44ac92928db06d0fcffd4cd5951b",
+      "sha256": "fd975b28cf2c79071a616980635a10b2473dbc444457e5fe4421ea14df556f34",
       "exports": [
         "parseNativeResult",
         "nativeResultSummary",
@@ -2525,8 +2525,8 @@
     },
     {
       "file": "app/dftlab/static/js/siesta/native-results.js",
-      "bytes": 1445,
-      "sha256": "860438acfba1c94fe89672010ed73af27d4b44ac92928db06d0fcffd4cd5951b"
+      "bytes": 1476,
+      "sha256": "fd975b28cf2c79071a616980635a10b2473dbc444457e5fe4421ea14df556f34"
     },
     {
       "file": "app/dftlab/static/js/siesta/out.js",

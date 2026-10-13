@@ -14,7 +14,7 @@ export function nativeResultSummary(raw) {
       throw new Error('INVALID_NATIVE_GROUP_PRESENTATION');
   }
   return {policy_id:raw.policy_id, status:raw.status??null, reasons:structuredClone(raw.reasons??[]),
-    scope:raw.gap?.scope??raw.scope??null, authority:raw.authority??'PROVISIONAL',
+    scope:raw.gap?.scope??raw.scope??null, authority:raw.authority??raw.parent_electronic_state?.authority??null,
     origin:raw.origin??null, worker_environment_sha256:raw.worker_environment_sha256??null,
     gap:structuredClone(raw.gap??null), longitudinal:structuredClone(raw.longitudinal??null),
     transverse:structuredClone(raw.transverse??[]), partition:structuredClone(raw.partition??null),
