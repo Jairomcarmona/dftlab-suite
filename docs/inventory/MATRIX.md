@@ -16,7 +16,7 @@ Generada por `node docs/inventory/audit.mjs --write`. No editar a mano; editar `
 | datasets | 16 |
 | datasetBytes | 10678665 |
 | ownJavascriptFiles | 62 |
-| ownJavascriptLines | 11865 |
+| ownJavascriptLines | 11901 |
 | exportSourceCalls | 52 |
 | scientificModules | 26 |
 

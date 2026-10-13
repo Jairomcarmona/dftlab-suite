@@ -1,5 +1,12 @@
 # Nota de traspaso: estabilización A, B y E
 
+## Bloque 2 (Codex): P-2
+
+- **Rama / carpeta / PR:** `codex/bloque2-p2`, `dftlab-suite-bloque2-p2`, [#102](https://github.com/Jairomcarmona/dftlab-suite/pull/102). Implementación del pin: `0ba079600e94bfc7386a832aaba9f0fbc491c5ff`; el SHA de cierre y los cinco checks de su punta se registran en #99 antes de fusionar.
+- **Entrega:** T-030 guarda hallazgos originales del validador QRAFT; T-031 conserva catálogo propietario y anuncio estructurado R7. D-1 explicita `SCIENTIFIC_INPUT_INCOMPLETE` para XC incompleto. Pin único QRAFT al merge Q-5 `0acd9a45196f71c80ca9a581eb1d6a481bc604f0`, con Q-4 incorporado; HubbardFlow conserva su pin y metadata.
+- **Verificación:** cuatro suites de vectores y API desde el wheel Q-5 fusionado: 120 PASS. Probes de instalación/API/CLI y `qualify_engines.py` Windows/WSL exitosos, receipts en `deployment/local/evidence/*_bloque2*.json`. Wheel de plataforma desde `git archive` limpio de `0ba0796`, consumidor externo con `python -I`: 227 pruebas OK (cinco omisiones ambientales existentes en Windows); incluye HF-1, authoring y nuevas pruebas. `verify.mjs` y los 480 hashes históricos pasan. CI de la punta final y APROBADO del validador son compuertas de fusión.
+- **Límites / siguiente paso:** sin promoción de ciencia/HPC. Electrónica real es tubería SCF provisional con `fat` oficial conda-forge 5.4.2; T-042 fuera. Tras fusionar #102, incorporar main por merge en P-1 y quitar `DESIGNED` de S-01/S-03/S-07; después P-3. #99 permanece abierto.
+
 Fecha: 2026-10-11. Escrita para quien continúe (otro agente o persona) sin acceso a la conversación.
 
 ## Estado de ramas y PR
