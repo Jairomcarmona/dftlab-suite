@@ -132,7 +132,7 @@
               "type": "null"
             }
           ],
-          "description": "Producto tipado por acción (ADR-019 §1): LOCAL_ATOMIC → {products:[{kind,id,revision}]} con un producto que se lee por su GET; SUBMIT_RUN → {run_id, submission_receipt_id}. Otras acciones: null o el objeto de su tabla de transiciones."
+          "description": "Producto tipado por acción (ADR-019 §1): LOCAL_ATOMIC → {product_refs:[{kind,id,revision}]} con un producto que se lee por su GET; SUBMIT_RUN → {run_id, submission_receipt_id}. Otras acciones: null o el objeto de su tabla de transiciones."
         },
         "error": {
           "anyOf": [
@@ -254,10 +254,10 @@
               "result": {
                 "type": "object",
                 "required": [
-                  "products"
+                  "product_refs"
                 ],
                 "properties": {
-                  "products": {
+                  "product_refs": {
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -304,10 +304,10 @@
               "result": {
                 "type": "object",
                 "required": [
-                  "products"
+                  "product_refs"
                 ],
                 "properties": {
-                  "products": {
+                  "product_refs": {
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -354,10 +354,10 @@
               "result": {
                 "type": "object",
                 "required": [
-                  "products"
+                  "product_refs"
                 ],
                 "properties": {
-                  "products": {
+                  "product_refs": {
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -404,10 +404,10 @@
               "result": {
                 "type": "object",
                 "required": [
-                  "products"
+                  "product_refs"
                 ],
                 "properties": {
-                  "products": {
+                  "product_refs": {
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -454,10 +454,10 @@
               "result": {
                 "type": "object",
                 "required": [
-                  "products"
+                  "product_refs"
                 ],
                 "properties": {
-                  "products": {
+                  "product_refs": {
                     "type": "array",
                     "items": {
                       "type": "object",

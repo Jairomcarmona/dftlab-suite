@@ -32,7 +32,7 @@
       }
     ],
     "result": {
-      "products": [
+      "product_refs": [
         {
           "kind": "PLAN",
           "id": "pln-1",

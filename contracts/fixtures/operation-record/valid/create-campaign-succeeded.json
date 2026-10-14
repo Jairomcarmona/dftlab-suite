@@ -32,7 +32,7 @@
       }
     ],
     "result": {
-      "products": [
+      "product_refs": [
         {
           "kind": "CAMPAIGN",
           "id": "cmp-1",

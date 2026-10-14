@@ -2532,8 +2532,8 @@
     },
     {
       "file": "app/dftlab/static/js/sdk/validators.generated.js",
-      "bytes": 1747081,
-      "sha256": "f5988e76134280068a2888d52a7771523870c0fb5a53c63589e8ef1a3c8cc940"
+      "bytes": 1748285,
+      "sha256": "a9beb970a3a849cd7d5181ff4ce66213d53d710e6809e04ba70d443572a0d247"
     },
     {
       "file": "app/dftlab/static/js/siesta/bands.js",
