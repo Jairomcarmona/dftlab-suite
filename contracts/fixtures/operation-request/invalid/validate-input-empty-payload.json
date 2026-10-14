@@ -1,0 +1,11 @@
+{
+  "action": "VALIDATE_INPUT",
+  "project_id": "prj-demo",
+  "target": {
+    "kind": "PROJECT",
+    "id": "prj-demo",
+    "expected_revision": 2
+  },
+  "payload": {},
+  "idempotency_key": "validate-key-000001"
+}

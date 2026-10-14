@@ -208,6 +208,8 @@ HF-2 requiere releases de motores/adaptador específicas; no convertir campañas
 
 No implementar SOC/no colineal/híbridos/GW por inferencia del capítulo educativo. Cualquier nueva familia solicita un protocolo, capability, schemas y caso calificado. Las tres extensiones T-042…044 sí son parte del destino previsto y no se eliminan del backlog por ser posteriores al primer release.
 
+> **Nota 2026-10-14 (decisión de Manuel):** P8, P9 y P10 quedan congelados hasta cerrar el corte vertical (un cálculo real de Si lanzado desde la plataforma; [prompt](docs/reviews/CORTE-VERTICAL-PROMPT-CODEX.md), [#110](https://github.com/Jairomcarmona/dftlab-suite/issues/110)). Los tickets no cambian de ID ni de alcance.
+
 ## 12. P9: web multiusuario y escalado controlado
 
 **Depende de:** ruta P4 calificada y controles base T-055…T-062. La operación de cada workflow web requiere su gate P6/P7/P8; construir infraestructura web no requiere completar todas esas funciones. No necesita esperar HF-2. **Cubre:** R-29/30/35/37/39/40/42.

@@ -69,7 +69,8 @@
         {
           "type": "null"
         }
-      ]
+      ],
+      "description": "Id opaco de una cuenta de presupuesto privada registrada por el operador (ADR-019 §3). El cliente no crea presupuestos. SUBMIT_RUN y EXECUTE_RESUME_PLAN sin presupuesto resuelto se rechazan en la admisión."
     },
     "profile_ref": {
       "anyOf": [
@@ -440,12 +441,28 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "VALIDATE_INPUT"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/validate_input_payload"
+          }
+        }
+      }
     }
   ],
   "$defs": {
     "validate_input_payload": {
       "type": "object",
-      "description": "Preflight autoritativo de un borrador; produce un ValidationReceipt. Normativo para clientes; el servidor lo exige desde la migración de ADR-016 §2.",
+      "description": "Preflight autoritativo de un borrador; produce un ValidationReceipt. Obligatorio desde ADR-019 §2.",
       "required": [
         "draft"
       ],

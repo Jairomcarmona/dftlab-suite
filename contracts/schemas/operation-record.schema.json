@@ -131,7 +131,8 @@
             {
               "type": "null"
             }
-          ]
+          ],
+          "description": "Producto tipado por acción (ADR-019 §1). Las acciones LOCAL_ATOMIC terminadas llevan {product_refs:[{kind,id,revision}]} si se confirmaron directamente, o {receipt} (OperationResolutionReceipt con payload.product_refs) si salieron de OUTCOME_UNKNOWN. Un cliente lee la referencia del producto de cualquiera de las dos formas y luego usa su GET."
         },
         "error": {
           "anyOf": [
@@ -233,6 +234,336 @@
                     "type": "null"
                   }
                 }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "VALIDATE_INPUT"
+              },
+              "state": {
+                "const": "SUCCEEDED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "VALIDATION_RECEIPT"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "CREATE_CAMPAIGN"
+              },
+              "state": {
+                "const": "SUCCEEDED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "CAMPAIGN"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "CREATE_PLAN"
+              },
+              "state": {
+                "const": "SUCCEEDED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "PLAN"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "PREPARE_PACKAGE"
+              },
+              "state": {
+                "const": "SUCCEEDED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "PACKAGE"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "CREATE_RESUME_PLAN"
+              },
+              "state": {
+                "const": "SUCCEEDED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "RESUME_PLAN"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
               }
             }
           }

@@ -932,6 +932,132 @@
       "schema": "qraft-controller-resume-verdict.schema.json",
       "expect": "invalid",
       "rule": "No se fabrica blocking para reparar un changed vacío."
+    },
+    {
+      "path": "fixtures/campaign/valid/one-draft.json",
+      "schema": "campaign.schema.json",
+      "expect": "valid",
+      "rule": "Campaña con una revisión de borrador."
+    },
+    {
+      "path": "fixtures/campaign/invalid/no-drafts.json",
+      "schema": "campaign.schema.json",
+      "expect": "invalid",
+      "rule": "Una campaña sin borradores no existe (1–256)."
+    },
+    {
+      "path": "fixtures/campaign/invalid/extra-field.json",
+      "schema": "campaign.schema.json",
+      "expect": "invalid",
+      "rule": "Campos desconocidos se rechazan; la campaña no lleva digests nativos."
+    },
+    {
+      "path": "fixtures/plan/valid/locked.json",
+      "schema": "plan.schema.json",
+      "expect": "valid",
+      "rule": "El plan lleva su lock nativo VERIFIED como único NativeContractRef."
+    },
+    {
+      "path": "fixtures/plan/invalid/no-native-ref.json",
+      "schema": "plan.schema.json",
+      "expect": "invalid",
+      "rule": "Un plan sin lock nativo no se puede empaquetar ni comparar su digest."
+    },
+    {
+      "path": "fixtures/plan/invalid/two-native-refs.json",
+      "schema": "plan.schema.json",
+      "expect": "invalid",
+      "rule": "Exactamente un NativeContractRef: el del lock del plan."
+    },
+    {
+      "path": "fixtures/operation-record/valid/create-campaign-succeeded.json",
+      "schema": "operation-record.schema.json",
+      "expect": "valid",
+      "rule": "CREATE_CAMPAIGN terminada: result lleva un producto CAMPAIGN que se lee con getCampaign."
+    },
+    {
+      "path": "fixtures/operation-record/valid/create-plan-succeeded.json",
+      "schema": "operation-record.schema.json",
+      "expect": "valid",
+      "rule": "CREATE_PLAN terminada: producto PLAN."
+    },
+    {
+      "path": "fixtures/operation-record/invalid/create-plan-without-product.json",
+      "schema": "operation-record.schema.json",
+      "expect": "invalid",
+      "rule": "Una acción LOCAL_ATOMIC SUCCEEDED sin producto es un estado imposible de reconstruir."
+    },
+    {
+      "path": "fixtures/operation-record/invalid/campaign-wrong-kind.json",
+      "schema": "operation-record.schema.json",
+      "expect": "invalid",
+      "rule": "El tipo del producto está fijado por acción: CREATE_CAMPAIGN no produce PLAN."
+    },
+    {
+      "path": "fixtures/operation-request/invalid/validate-input-empty-payload.json",
+      "schema": "operation-request.schema.json",
+      "expect": "invalid",
+      "rule": "VALIDATE_INPUT exige {draft:{draft_id,revision}} (ADR-019 §2)."
+    },
+    {
+      "path": "fixtures/operation-request/invalid/validate-input-without-revision.json",
+      "schema": "operation-request.schema.json",
+      "expect": "invalid",
+      "rule": "Sin revisión del borrador no hay entrada inmutable que validar."
+    },
+    {
+      "path": "fixtures/admission-receipt/valid/rejected-before-reservation.json",
+      "schema": "admission-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Rechazo previo a reserva y probe: ambos null y motivos (ADR-019 §3)."
+    },
+    {
+      "path": "fixtures/admission-receipt/invalid/admitted-without-reservation.json",
+      "schema": "admission-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Un ADMITTED exige reserva real."
+    },
+    {
+      "path": "fixtures/admission-receipt/invalid/admitted-without-probe.json",
+      "schema": "admission-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Un ADMITTED exige un RuntimeProbeReceipt."
+    },
+    {
+      "path": "fixtures/admission-receipt/invalid/rejected-without-reasons.json",
+      "schema": "admission-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Un rechazo sin motivos no es accionable."
+    },
+    {
+      "path": "fixtures/admission-receipt/invalid/reservation-wrong-unit.json",
+      "schema": "admission-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "La reserva se expresa en segundos de CPU asignadas (allocated_cpu_second), no en horas ni rangos MPI."
+    },
+    {
+      "path": "fixtures/finalization-receipt/valid/interrupted-unproduced.json",
+      "schema": "finalization-receipt.schema.json",
+      "expect": "valid",
+      "rule": "Interrumpido antes de producir salidas: se registran como unproduced_outputs, sin SHA inventado (ADR-019 §4)."
+    },
+    {
+      "path": "fixtures/finalization-receipt/invalid/published-with-unproduced.json",
+      "schema": "finalization-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "No se publica un conjunto al que le faltan salidas requeridas."
+    },
+    {
+      "path": "fixtures/finalization-receipt/invalid/nothing-expected.json",
+      "schema": "finalization-receipt.schema.json",
+      "expect": "invalid",
+      "rule": "Finalizar exige algo esperado: artefactos con hash o salidas no producidas."
+    },
+    {
+      "path": "fixtures/operation-record/valid/create-plan-recovered.json",
+      "schema": "operation-record.schema.json",
+      "expect": "valid",
+      "rule": "Tras OUTCOME_UNKNOWN el producto se descubre en result.receipt.payload.product_refs (ADR-016 §4, ADR-019 §1)."
     }
   ]
 }

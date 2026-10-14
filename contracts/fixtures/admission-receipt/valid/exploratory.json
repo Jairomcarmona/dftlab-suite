@@ -26,8 +26,8 @@
       "reservation_id": "res-1",
       "budget_ref": "bud-1",
       "amount": {
-        "value": 64,
-        "unit": "core-hour"
+        "value": 28800,
+        "unit": "allocated_cpu_second"
       }
     },
     "decision": "ADMITTED",
