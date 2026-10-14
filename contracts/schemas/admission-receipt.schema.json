@@ -114,10 +114,10 @@
                   "$ref": "defs.schema.json#/$defs/quantity",
                   "properties": {
                     "unit": {
-                      "const": "cpu-hour"
+                      "const": "allocated_cpu_second"
                     }
                   },
-                  "description": "CPU cargadas de la asignación (AllocTRES cpu) por el límite de tiempo, en horas. No son rangos MPI ni horas de facturación."
+                  "description": "Segundos de CPU asignadas (AllocTRES cpu × tiempo), enteros. No son rangos MPI, horas de facturación ni moneda; no se convierten entre sí."
                 }
               },
               "additionalProperties": false
@@ -219,10 +219,10 @@
                     "$ref": "defs.schema.json#/$defs/quantity",
                     "properties": {
                       "unit": {
-                        "const": "cpu-hour"
+                        "const": "allocated_cpu_second"
                       }
                     },
-                    "description": "CPU cargadas de la asignación (AllocTRES cpu) por el límite de tiempo, en horas. No son rangos MPI ni horas de facturación."
+                    "description": "Segundos de CPU asignadas (AllocTRES cpu × tiempo), enteros. No son rangos MPI, horas de facturación ni moneda; no se convierten entre sí."
                   }
                 },
                 "additionalProperties": false

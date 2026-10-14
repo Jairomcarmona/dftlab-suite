@@ -132,7 +132,7 @@
               "type": "null"
             }
           ],
-          "description": "Producto tipado por acción (ADR-019 §1): las acciones LOCAL_ATOMIC terminadas llevan {product_refs:[{kind,id,revision}]} con un producto que se lee por su GET. El resto de acciones conserva el objeto de su tabla de transiciones."
+          "description": "Producto tipado por acción (ADR-019 §1). Las acciones LOCAL_ATOMIC terminadas llevan {product_refs:[{kind,id,revision}]} si se confirmaron directamente, o {receipt} (OperationResolutionReceipt con payload.product_refs) si salieron de OUTCOME_UNKNOWN. Un cliente lee la referencia del producto de cualquiera de las dos formas y luego usa su GET."
         },
         "error": {
           "anyOf": [
@@ -252,38 +252,54 @@
           "then": {
             "properties": {
               "result": {
-                "type": "object",
-                "required": [
-                  "product_refs"
-                ],
-                "properties": {
-                  "product_refs": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "kind",
-                        "id",
-                        "revision"
-                      ],
-                      "properties": {
-                        "kind": {
-                          "const": "VALIDATION_RECEIPT"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "VALIDATION_RECEIPT"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
                         },
-                        "id": {
-                          "$ref": "defs.schema.json#/$defs/id"
-                        },
-                        "revision": {
-                          "$ref": "defs.schema.json#/$defs/revision"
-                        }
-                      },
-                      "additionalProperties": false
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
                     },
-                    "minItems": 1,
-                    "maxItems": 1
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
                   }
-                },
-                "additionalProperties": false
+                ]
               }
             }
           }
@@ -302,38 +318,54 @@
           "then": {
             "properties": {
               "result": {
-                "type": "object",
-                "required": [
-                  "product_refs"
-                ],
-                "properties": {
-                  "product_refs": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "kind",
-                        "id",
-                        "revision"
-                      ],
-                      "properties": {
-                        "kind": {
-                          "const": "CAMPAIGN"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "CAMPAIGN"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
                         },
-                        "id": {
-                          "$ref": "defs.schema.json#/$defs/id"
-                        },
-                        "revision": {
-                          "$ref": "defs.schema.json#/$defs/revision"
-                        }
-                      },
-                      "additionalProperties": false
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
                     },
-                    "minItems": 1,
-                    "maxItems": 1
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
                   }
-                },
-                "additionalProperties": false
+                ]
               }
             }
           }
@@ -352,38 +384,54 @@
           "then": {
             "properties": {
               "result": {
-                "type": "object",
-                "required": [
-                  "product_refs"
-                ],
-                "properties": {
-                  "product_refs": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "kind",
-                        "id",
-                        "revision"
-                      ],
-                      "properties": {
-                        "kind": {
-                          "const": "PLAN"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "PLAN"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
                         },
-                        "id": {
-                          "$ref": "defs.schema.json#/$defs/id"
-                        },
-                        "revision": {
-                          "$ref": "defs.schema.json#/$defs/revision"
-                        }
-                      },
-                      "additionalProperties": false
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
                     },
-                    "minItems": 1,
-                    "maxItems": 1
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
                   }
-                },
-                "additionalProperties": false
+                ]
               }
             }
           }
@@ -402,38 +450,54 @@
           "then": {
             "properties": {
               "result": {
-                "type": "object",
-                "required": [
-                  "product_refs"
-                ],
-                "properties": {
-                  "product_refs": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "kind",
-                        "id",
-                        "revision"
-                      ],
-                      "properties": {
-                        "kind": {
-                          "const": "PACKAGE"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "PACKAGE"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
                         },
-                        "id": {
-                          "$ref": "defs.schema.json#/$defs/id"
-                        },
-                        "revision": {
-                          "$ref": "defs.schema.json#/$defs/revision"
-                        }
-                      },
-                      "additionalProperties": false
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
                     },
-                    "minItems": 1,
-                    "maxItems": 1
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
                   }
-                },
-                "additionalProperties": false
+                ]
               }
             }
           }
@@ -452,38 +516,54 @@
           "then": {
             "properties": {
               "result": {
-                "type": "object",
-                "required": [
-                  "product_refs"
-                ],
-                "properties": {
-                  "product_refs": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "kind",
-                        "id",
-                        "revision"
-                      ],
-                      "properties": {
-                        "kind": {
-                          "const": "RESUME_PLAN"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "product_refs"
+                    ],
+                    "properties": {
+                      "product_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "revision"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "const": "RESUME_PLAN"
+                            },
+                            "id": {
+                              "$ref": "defs.schema.json#/$defs/id"
+                            },
+                            "revision": {
+                              "$ref": "defs.schema.json#/$defs/revision"
+                            }
+                          },
+                          "additionalProperties": false
                         },
-                        "id": {
-                          "$ref": "defs.schema.json#/$defs/id"
-                        },
-                        "revision": {
-                          "$ref": "defs.schema.json#/$defs/revision"
-                        }
-                      },
-                      "additionalProperties": false
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
                     },
-                    "minItems": 1,
-                    "maxItems": 1
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "receipt"
+                    ],
+                    "properties": {
+                      "receipt": {
+                        "$ref": "operation-resolution-receipt.schema.json"
+                      }
+                    },
+                    "additionalProperties": false
                   }
-                },
-                "additionalProperties": false
+                ]
               }
             }
           }

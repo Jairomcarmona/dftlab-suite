@@ -62,8 +62,15 @@
       "pattern": "^[A-Za-z0-9_-]{16,128}$"
     },
     "budget_ref": {
-      "type": "null",
-      "description": "En 0.1 el cliente no elige presupuesto: es configuración privada del operador, ligada al perfil (ADR-019 §3). Debe ir null."
+      "anyOf": [
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Id opaco de una cuenta de presupuesto privada registrada por el operador (ADR-019 §3). El cliente no crea presupuestos. SUBMIT_RUN y EXECUTE_RESUME_PLAN sin presupuesto resuelto se rechazan en la admisión."
     },
     "profile_ref": {
       "anyOf": [

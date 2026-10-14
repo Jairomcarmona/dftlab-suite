@@ -1006,12 +1006,6 @@
       "rule": "Sin revisión del borrador no hay entrada inmutable que validar."
     },
     {
-      "path": "fixtures/operation-request/invalid/client-sets-budget.json",
-      "schema": "operation-request.schema.json",
-      "expect": "invalid",
-      "rule": "El cliente no elige presupuesto en 0.1: budget_ref debe ir null (ADR-019 §3)."
-    },
-    {
       "path": "fixtures/admission-receipt/valid/rejected-before-reservation.json",
       "schema": "admission-receipt.schema.json",
       "expect": "valid",
@@ -1039,7 +1033,7 @@
       "path": "fixtures/admission-receipt/invalid/reservation-wrong-unit.json",
       "schema": "admission-receipt.schema.json",
       "expect": "invalid",
-      "rule": "La reserva se expresa en cpu-hour de CPU cargadas, no en horas de facturación ni en rangos MPI."
+      "rule": "La reserva se expresa en segundos de CPU asignadas (allocated_cpu_second), no en horas ni rangos MPI."
     },
     {
       "path": "fixtures/finalization-receipt/valid/interrupted-unproduced.json",
@@ -1058,6 +1052,12 @@
       "schema": "finalization-receipt.schema.json",
       "expect": "invalid",
       "rule": "Finalizar exige algo esperado: artefactos con hash o salidas no producidas."
+    },
+    {
+      "path": "fixtures/operation-record/valid/create-plan-recovered.json",
+      "schema": "operation-record.schema.json",
+      "expect": "valid",
+      "rule": "Tras OUTCOME_UNKNOWN el producto se descubre en result.receipt.payload.product_refs (ADR-016 §4, ADR-019 §1)."
     }
   ]
 }
