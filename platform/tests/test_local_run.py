@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 from pathlib import Path
+from pathlib import PurePosixPath
 import sqlite3
 import tempfile
 import time
@@ -18,9 +19,10 @@ from dftlab_platform.local_run import (LocalRunApplication, PROFILE_ID, PROTOCOL
                                        _extract_archive, _extract_package_for_operation,
                                        _normalized_profile_matches, _siesta_recipe)
 from dftlab_platform.domain import Problem
-from dftlab_platform.runtime_probe import ProbeFailure
+from dftlab_platform.runtime_probe import Binary, Observation, ProbeFailure
 from dftlab_platform.slurm import SlurmJobObservation
 from dftlab_platform.terminal_evidence import SlurmTerminalCollector
+from dftlab_platform.wsl_sacct import SACCT_PATH, SACCT_SHA256
 
 
 def archive(entries):
@@ -155,6 +157,7 @@ class LocalRunTests(unittest.TestCase):
             profile_id="wsl-slurm-openmpi-installed-qualification",
             profile={"allocation": {"nodes": 1, "total_cpus": 4, "walltime": "00:10:00"}},
         )
+        runtime._terminal_history_route_available = Mock(return_value=True)
         runtime._plan_package = lambda *_args: (
             {"project_id": "project-001"}, {"digest": {"value": "a"*64}},
             {"payload": {"sha256": "b"*64}},
@@ -180,6 +183,56 @@ class LocalRunTests(unittest.TestCase):
         self.assertIsNone(payload["runtime_probe_ref"])
         self.assertIsNone(payload["reservation"])
         self.assertEqual(runtime.budgets.admit_calls, [])
+
+    def test_unavailable_terminal_history_rejects_before_probe_or_reservation(self):
+        runtime, operation, request = self._admission_case()
+        runtime._terminal_history_route_available.return_value = False
+        probe = SimpleNamespace(observe=Mock(side_effect=AssertionError("probe must not run")))
+        with patch("dftlab_platform.local_run.SlurmRuntimeProbe", return_value=probe):
+            receipt = runtime.admission_preflight(operation, request)
+        payload = receipt["payload"]
+        self.assertEqual(payload["decision"], "REJECTED")
+        self.assertEqual(payload["purpose"], "EXPLORATORY")
+        self.assertEqual(payload["reasons"], ["ruta de evidencia terminal no disponible"])
+        self.assertIsNone(payload["runtime_probe_ref"])
+        self.assertIsNone(payload["reservation"])
+        runtime._terminal_history_route_available.assert_called_once_with()
+        self.assertEqual(runtime.budgets.admit_calls, [])
+
+    def test_terminal_history_preflight_checks_only_the_known_440_row(self):
+        runtime = object.__new__(LocalRunApplication)
+        runtime.state = Path("/tmp/local-run-state")
+        runtime.settings = SimpleNamespace(
+            sacct=SimpleNamespace(verified=Mock(return_value=PurePosixPath("/usr/bin/sacct"))),
+            site={"cluster": "qualified-cluster", "remote_user": "jmc", "uid": 1000},
+        )
+        history = SimpleNamespace(run=Mock(return_value=Observation(
+            "440|jmc(1000)|unknown|COMPLETED|2026-10-11T09:00:14|2026-10-11T09:00:21\n", 0)))
+        runtime.history_commands = history
+        self.assertTrue(runtime._terminal_history_route_available())
+        history.run.assert_called_once_with(
+            ("/usr/bin/sacct", "--completion", "--jobs=440", "--noheader", "--parsable2",
+             "--format=JobID,User,Cluster,State,Start,End"),
+            cwd=runtime.state,
+            environment={"PATH": "/usr/bin:/bin", "LC_ALL": "C", "LANG": "C", "TZ": "UTC"},
+        )
+
+    def test_terminal_history_preflight_rejects_missing_or_wrong_440_row(self):
+        runtime = object.__new__(LocalRunApplication)
+        runtime.state = Path("/tmp/local-run-state")
+        runtime.settings = SimpleNamespace(
+            sacct=SimpleNamespace(verified=Mock(return_value=PurePosixPath("/usr/bin/sacct"))),
+            site={"cluster": "qualified-cluster", "remote_user": "jmc", "uid": 1000},
+        )
+        for observation in (
+            Observation("", 1),
+            Observation("", 0),
+            Observation("441|jmc(1000)|unknown|COMPLETED|2026-10-11T09:00:14|2026-10-11T09:00:21\n", 0),
+            Observation("440|other(1000)|unknown|COMPLETED|2026-10-11T09:00:14|2026-10-11T09:00:21\n", 0),
+        ):
+            with self.subTest(output=observation.output, returncode=observation.returncode):
+                runtime.history_commands = SimpleNamespace(run=Mock(return_value=observation))
+                self.assertFalse(runtime._terminal_history_route_available())
 
     def test_unreachable_probe_returns_a_rejection_without_reservation(self):
         runtime, operation, request = self._admission_case()
@@ -354,6 +407,7 @@ class LocalRunTests(unittest.TestCase):
         )))
         runtime._scheduler = lambda _context: scheduler
         runtime.settings = SimpleNamespace(sacct=object())
+        runtime.history_commands = SimpleNamespace(name="history-bridge")
         runtime.engines = SimpleNamespace()
         runtime.signer = SimpleNamespace(verify=Mock(return_value=True))
         runtime.completion_timezone = timezone.utc
@@ -378,11 +432,12 @@ class LocalRunTests(unittest.TestCase):
 
         native = Native("COMPLETED", "2026-10-14T00:00:00Z")
         collected = SimpleNamespace(native=native)
-        with patch.object(SlurmTerminalCollector, "__init__", return_value=None), \
+        with patch.object(SlurmTerminalCollector, "__init__", return_value=None) as collector_init, \
              patch.object(SlurmTerminalCollector, "observe", return_value=collected) as collect:
             runtime.poll()
 
         scheduler.observe_job_state.assert_called_once_with(intent, "457")
+        self.assertIs(collector_init.call_args.kwargs["history_commands"], runtime.history_commands)
         collect.assert_called_once_with(intent, "457")
         runtime._finalize.assert_called_once()
         self.assertEqual(runtime._finalize.call_args.args[0]["run_id"], "run-001")

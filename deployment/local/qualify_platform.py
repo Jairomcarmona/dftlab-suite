@@ -63,7 +63,13 @@ def main() -> int:
             report["source_commit"] = run("source-commit", ["git", "rev-parse", "HEAD"])
             report["source_identity_origin"] = "git_worktree"
             report["source_tree_dirty"] = bool(run("source-status", ["git", "status", "--porcelain"]))
-        source_paths = [p for p in (ROOT / "platform").rglob("*") if p.is_file() and ".venv" not in p.parts and "__pycache__" not in p.parts]
+        def raise_walk_error(error):
+            raise error
+
+        source_paths = []
+        for directory, child_directories, filenames in (ROOT / "platform").walk(on_error=raise_walk_error):
+            child_directories[:] = [name for name in child_directories if name not in {".venv", "__pycache__"}]
+            source_paths.extend(directory / name for name in filenames)
         before = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in source_paths}
         report["source_sha256"] = before
         build = output / "artifacts"

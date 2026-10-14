@@ -39,6 +39,7 @@ from .slurm import ManagedSlurmPackage, SlurmSchedulerPort, SlurmSite
 from .submission_storage import SQLiteSubmissionLedger
 from .submissions import DurableSubmissions
 from .terminal_evidence import LocalTerminalSigner, SlurmTerminalCollector
+from .wsl_sacct import HISTORY_ENVIRONMENT, SACCT_PATH, SACCT_SHA256, WslSacctBridge
 
 
 PROFILE_ID = "wsl-slurm-openmpi-installed-qualification"
@@ -261,9 +262,9 @@ class LocalRunSettings:
             raise Problem("ENGINE_UNAVAILABLE") from None
         # sacct is a readonly system observation binary, never a submission
         # path. Pin its exact bytes for the lifetime of this local instance.
-        sacct_path = Path("/usr/bin/sacct")
+        sacct_path = SACCT_PATH
         try:
-            sacct = Binary(sacct_path, _file_sha256(sacct_path))
+            sacct = Binary(sacct_path, SACCT_SHA256)
             sacct.verified()
         except (OSError, ProbeFailure):
             raise Problem("ENGINE_UNAVAILABLE") from None
@@ -441,6 +442,7 @@ class LocalRunApplication:
         self.state = private_directory(state)
         self.repository, self.artifacts, self.readmodels, self.drafts = repository, artifacts, readmodels, drafts
         self.settings = LocalRunSettings.load(options)
+        self.history_commands = WslSacctBridge(self.settings.sacct)
         self.options = {key: str(value) for key, value in options.items()}
         self.engines = PinnedEngines(self.settings.wheelhouse)
         self.owner = repository.ensure_principal("local")
@@ -589,6 +591,9 @@ class LocalRunApplication:
                 or datetime.now(timezone.utc) >= datetime.fromisoformat(account.expires_at.replace("Z", "+00:00"))
                 or held+quantity > account.capacity):
             return self._rejected(operation, request, plan, native_plan, package, "BUDGET_EXHAUSTED")
+        if not self._terminal_history_route_available():
+            return self._rejected(operation, request, plan, native_plan, package,
+                                  "ruta de evidencia terminal no disponible")
         try:
             probe = SlurmRuntimeProbe().observe(request["project_id"], self._probe_settings(request["project_id"]))
         except (ProbeFailure, Problem, OSError, ValueError):
@@ -606,6 +611,30 @@ class LocalRunApplication:
             # A concurrent reservation may consume the last capacity after the
             # readonly estimate. Reject without exposing a stale probe/reserve.
             return self._rejected(operation, request, plan, native_plan, package, "BUDGET_EXHAUSTED")
+
+    def _terminal_history_route_available(self):
+        """Fail closed before budget admission if trusted completion history is unreachable."""
+        try:
+            executable = self.settings.sacct.verified()
+            argv = (str(executable), "--completion", "--jobs=440", "--noheader", "--parsable2",
+                    "--format=JobID,User,Cluster,State,Start,End")
+            observation = self.history_commands.run(
+                argv, cwd=self.state, environment=dict(HISTORY_ENVIRONMENT))
+            if observation.returncode != 0:
+                return False
+            rows = [line.strip().split("|") for line in observation.output.splitlines() if line.strip()]
+            if len(rows) != 1 or len(rows[0]) != 6:
+                return False
+            row = rows[0]
+            site = self.settings.site
+            expected_user = f"{site['remote_user']}({site['uid']})"
+            return (row[0] == "440" and row[1] == expected_user
+                    and row[2] in {site["cluster"], "unknown"}
+                    and row[3] in SlurmTerminalCollector.TERMINAL
+                    and re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", row[4]) is not None
+                    and re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", row[5]) is not None)
+        except (ProbeFailure, Problem, OSError, ValueError):
+            return False
 
     def _artifact_bytes(self, owner, project_id, reference, *, limit=_MAX_PACKAGE_BYTES):
         self.repository.contracts.validate("artifact-ref", reference)
@@ -1219,6 +1248,7 @@ class LocalRunApplication:
                 try:
                     collected = SlurmTerminalCollector(
                         self.engines, scheduler, self.settings.sacct, self.signer,
+                        history_commands=self.history_commands,
                         completion_timezone=self.completion_timezone, allow_unknown_cluster=True,
                     ).observe(intent, job_id)
                 except (ProbeFailure, Problem, OSError, ValueError):
