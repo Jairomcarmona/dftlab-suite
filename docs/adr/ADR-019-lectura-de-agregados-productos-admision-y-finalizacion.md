@@ -1,6 +1,6 @@
 # ADR-019: lectura de campañas, planes, runs y operaciones; productos tipados; admisión sin reserva; salidas no producidas
 
-Estado: **propuesto** el 2026-10-14 por Claude, pendiente de aceptación de Manuel. Resuelve [#35](https://github.com/Jairomcarmona/dftlab-suite/issues/35), [#31](https://github.com/Jairomcarmona/dftlab-suite/issues/31), [#47](https://github.com/Jairomcarmona/dftlab-suite/issues/47) y [#44](https://github.com/Jairomcarmona/dftlab-suite/issues/44). Amplía [ADR-016](ADR-016-borradores-comandos-recuperacion.md) y la admisión de ADR-010. No resuelve [#30](https://github.com/Jairomcarmona/dftlab-suite/issues/30) (protocolo del WebSocket de terminal): no está en el camino del primer cálculo real de la plataforma.
+Estado: **aceptado** por Manuel el 2026-10-14 (propuesto el mismo día por Claude). Resuelve [#35](https://github.com/Jairomcarmona/dftlab-suite/issues/35), [#31](https://github.com/Jairomcarmona/dftlab-suite/issues/31), [#47](https://github.com/Jairomcarmona/dftlab-suite/issues/47) y [#44](https://github.com/Jairomcarmona/dftlab-suite/issues/44). Amplía [ADR-016](ADR-016-borradores-comandos-recuperacion.md) y la admisión de ADR-010. No resuelve [#30](https://github.com/Jairomcarmona/dftlab-suite/issues/30) (protocolo del WebSocket de terminal): no está en el camino del primer cálculo real de la plataforma.
 
 ## Contexto
 
