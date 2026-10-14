@@ -27,7 +27,7 @@
       "budget_ref": "bud-1",
       "amount": {
         "value": 64,
-        "unit": "core-hour"
+        "unit": "cpu-hour"
       }
     },
     "decision": "ADMITTED",

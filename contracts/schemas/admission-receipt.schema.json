@@ -85,27 +85,47 @@
           }
         },
         "runtime_probe_ref": {
-          "$ref": "defs.schema.json#/$defs/id"
+          "anyOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "reservation": {
-          "type": "object",
-          "required": [
-            "reservation_id",
-            "budget_ref",
-            "amount"
-          ],
-          "properties": {
-            "reservation_id": {
-              "$ref": "defs.schema.json#/$defs/id"
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "reservation_id",
+                "budget_ref",
+                "amount"
+              ],
+              "properties": {
+                "reservation_id": {
+                  "$ref": "defs.schema.json#/$defs/id"
+                },
+                "budget_ref": {
+                  "$ref": "defs.schema.json#/$defs/id"
+                },
+                "amount": {
+                  "$ref": "defs.schema.json#/$defs/quantity",
+                  "properties": {
+                    "unit": {
+                      "const": "cpu-hour"
+                    }
+                  },
+                  "description": "CPU cargadas de la asignación (AllocTRES cpu) por el límite de tiempo, en horas. No son rangos MPI ni horas de facturación."
+                }
+              },
+              "additionalProperties": false
             },
-            "budget_ref": {
-              "$ref": "defs.schema.json#/$defs/id"
-            },
-            "amount": {
-              "$ref": "defs.schema.json#/$defs/quantity"
+            {
+              "type": "null"
             }
-          },
-          "additionalProperties": false
+          ]
         },
         "decision": {
           "enum": [
@@ -167,9 +187,68 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "ADMITTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtime_probe_ref": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "reservation": {
+                "type": "object",
+                "required": [
+                  "reservation_id",
+                  "budget_ref",
+                  "amount"
+                ],
+                "properties": {
+                  "reservation_id": {
+                    "$ref": "defs.schema.json#/$defs/id"
+                  },
+                  "budget_ref": {
+                    "$ref": "defs.schema.json#/$defs/id"
+                  },
+                  "amount": {
+                    "$ref": "defs.schema.json#/$defs/quantity",
+                    "properties": {
+                      "unit": {
+                        "const": "cpu-hour"
+                      }
+                    },
+                    "description": "CPU cargadas de la asignación (AllocTRES cpu) por el límite de tiempo, en horas. No son rangos MPI ni horas de facturación."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "REJECTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reasons": {
+                "minItems": 1
+              }
+            }
+          }
         }
       ],
-      "title": "payload"
+      "title": "payload",
+      "description": "Un REJECTED puede no tener probe ni reserva (ADR-019 §3): se rechaza antes de reservar. Un ADMITTED exige ambos."
     }
   }
 }

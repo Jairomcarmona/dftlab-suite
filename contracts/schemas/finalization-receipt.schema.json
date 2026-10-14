@@ -26,6 +26,7 @@
         "expected_artifacts",
         "verified_artifacts",
         "missing",
+        "unproduced_outputs",
         "validation_refs",
         "assessment_refs",
         "authority_generation",
@@ -55,7 +56,7 @@
           "items": {
             "$ref": "artifact-ref.schema.json"
           },
-          "minItems": 1
+          "minItems": 0
         },
         "verified_artifacts": {
           "type": "array",
@@ -68,6 +69,44 @@
           "items": {
             "$ref": "artifact-ref.schema.json"
           }
+        },
+        "unproduced_outputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "port",
+              "reason",
+              "native_ref"
+            ],
+            "properties": {
+              "port": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256,
+                "description": "Puerto lógico de salida declarado por el productor nativo (por ejemplo `siesta.out`)."
+              },
+              "reason": {
+                "enum": [
+                  "NEVER_PRODUCED",
+                  "INTERRUPTED_BEFORE_WRITE",
+                  "PRODUCER_REPORTED_ABSENT"
+                ]
+              },
+              "native_ref": {
+                "anyOf": [
+                  {
+                    "$ref": "native-contract-ref.schema.json"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Salidas requeridas que nunca existieron: no llevan SHA ni ArtifactRef inventados (ADR-019 §4)."
         },
         "validation_refs": {
           "type": "array",
@@ -106,9 +145,30 @@
             "properties": {
               "missing": {
                 "maxItems": 0
+              },
+              "unproduced_outputs": {
+                "maxItems": 0
               }
             }
           }
+        },
+        {
+          "anyOf": [
+            {
+              "properties": {
+                "expected_artifacts": {
+                  "minItems": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "unproduced_outputs": {
+                  "minItems": 1
+                }
+              }
+            }
+          ]
         }
       ],
       "title": "payload"

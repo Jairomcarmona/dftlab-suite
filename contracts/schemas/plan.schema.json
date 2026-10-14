@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/plan.schema.json",
+  "title": "Plan",
+  "description": "Plan de una campaña (ADR-019 §1). Producto de CREATE_PLAN. La identidad nativa y el digest del lock viven en el único NativeContractRef del envelope, sin reescribirlos ni recalcularlos; `expected_plan_digest` de PREPARE_PACKAGE sale de ese ref.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.plan"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    },
+    "native_contract_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "title": "payload",
+      "required": [
+        "plan_id",
+        "campaign_id",
+        "revision",
+        "draft",
+        "intent_id",
+        "validation_receipt_id"
+      ],
+      "properties": {
+        "plan_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "campaign_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "revision": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "draft": {
+          "type": "object",
+          "required": [
+            "draft_id",
+            "revision"
+          ],
+          "properties": {
+            "draft_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "revision": {
+              "$ref": "defs.schema.json#/$defs/revision"
+            }
+          },
+          "additionalProperties": false
+        },
+        "intent_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "validation_receipt_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "action": "VALIDATE_INPUT",
+  "project_id": "prj-demo",
+  "target": {
+    "kind": "PROJECT",
+    "id": "prj-demo",
+    "expected_revision": 2
+  },
+  "payload": {
+    "draft": {
+      "draft_id": "drf-1",
+      "revision": 2
+    }
+  },
+  "idempotency_key": "validate-key-000001",
+  "budget_ref": "bud-1"
+}

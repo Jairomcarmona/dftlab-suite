@@ -62,7 +62,8 @@
       "as-1"
     ],
     "authority_generation": 1,
-    "state": "PUBLISHED"
+    "state": "PUBLISHED",
+    "unproduced_outputs": []
   },
   "native_contract_refs": [],
   "integrity": {

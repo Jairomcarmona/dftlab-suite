@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dftlab.invalid/contracts/schemas/campaign.schema.json",
+  "title": "Campaign",
+  "description": "Campaña del proyecto (ADR-019 §1): agrupa revisiones de borradores. Producto de CREATE_CAMPAIGN; es un registro inmutable por revisión y no contiene física ni digests nativos.",
+  "$ref": "envelope.schema.json",
+  "properties": {
+    "schema_id": {
+      "const": "dftlab.campaign"
+    },
+    "schema_version": {
+      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+    },
+    "payload": {
+      "$ref": "#/$defs/payload"
+    }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "title": "payload",
+      "required": [
+        "campaign_id",
+        "revision",
+        "name",
+        "drafts"
+      ],
+      "properties": {
+        "campaign_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "revision": {
+          "$ref": "defs.schema.json#/$defs/revision"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "drafts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "draft_id",
+              "revision"
+            ],
+            "properties": {
+              "draft_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "revision": {
+                "$ref": "defs.schema.json#/$defs/revision"
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 256
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

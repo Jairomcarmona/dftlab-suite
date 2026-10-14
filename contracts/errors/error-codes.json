@@ -15,7 +15,7 @@
     "CAPABILITY_NOT_ADMITTED": {"status": 409, "meaning": "La capability no está admitida para esa finalidad (ADR-012)."},
     "OPERATION_INTERRUPTED": {"status": 409, "meaning": "El procesador se detuvo antes de confirmar un efecto que la recuperación demostró ausente o idempotente (OperationResolutionReceipt). Repetir con una clave nueva es seguro."},
     "ENGINE_UNAVAILABLE": {"status": 503, "meaning": "El motor o la capa requerida no está instalado o no responde; no implica fallo del run."},
-    "CURSOR_EXPIRED": {"status": 410, "meaning": "El historial de eventos ya no cubre el cursor; consultar el snapshot y reanudar desde su cursor."},
+    "CURSOR_EXPIRED": {"status": 410, "meaning": "El historial de eventos o la lista ya no cubre el cursor; consultar el snapshot o empezar la lista de nuevo (ADR-019 §1)."},
     "PAYLOAD_TOO_LARGE": {"status": 413, "meaning": "Supera el límite declarado del endpoint."},
     "RANGE_NOT_SATISFIABLE": {"status": 416, "meaning": "Rango de transferencia inválido para la identidad del origen."},
     "RATE_LIMITED": {"status": 429, "meaning": "Límite de solicitudes; retryable."},

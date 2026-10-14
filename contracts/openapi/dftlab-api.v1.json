@@ -669,17 +669,10 @@
       }
     },
     "/api/v1/projects/{project_id}/campaigns": {
-      "post": {
-        "operationId": "createCampaign",
-        "summary": "Diseñar campaña (borrador versionado)",
-        "x-dftlab-action": "CREATE_CAMPAIGN",
-        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. ",
-        "security": [
-          {
-            "session": [],
-            "csrf": []
-          }
-        ],
+      "get": {
+        "operationId": "listCampaigns",
+        "summary": "Campañas del proyecto",
+        "description": "Solo el owner del proyecto; un recurso ajeno responde 404 igual que uno inexistente (sin oráculo), como getRun. Tras un 202/200 de la operación que lo crea y con la operación en SUCCEEDED, la lectura lo devuelve (ADR-019 §1).",
         "parameters": [
           {
             "name": "project_id",
@@ -689,40 +682,38 @@
               "$ref": "../schemas/defs.schema.json#/$defs/id"
             },
             "description": "Proyecto"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            },
+            "description": "Elementos por página."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "description": "Cursor opaco de `next_cursor`. Inválido: 422. Fuera de retención: 410 CURSOR_EXPIRED."
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "../schemas/operation-request.schema.json"
-              }
-            }
-          }
-        },
         "responses": {
-          "202": {
-            "description": "Intención persistida.",
-            "headers": {
-              "Location": {
-                "$ref": "#/components/headers/OperationLocation"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "../schemas/operation-record.schema.json"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "Repetición idempotente: la operación ya existente.",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "../schemas/operation-record.schema.json"
+                  "$ref": "#/components/schemas/CampaignPage"
                 }
               }
             }
@@ -736,33 +727,20 @@
           "404": {
             "$ref": "#/components/responses/P404"
           },
-          "409": {
-            "$ref": "#/components/responses/P409"
-          },
-          "412": {
-            "$ref": "#/components/responses/P412"
+          "410": {
+            "$ref": "#/components/responses/P410"
           },
           "422": {
             "$ref": "#/components/responses/P422"
-          },
-          "503": {
-            "$ref": "#/components/responses/P503"
           }
         }
       }
     },
     "/api/v1/campaigns/{campaign_id}/plans": {
-      "post": {
-        "operationId": "createPlan",
-        "summary": "Planificar/compilar mediante QRAFT y la capa Hubbard",
-        "x-dftlab-action": "CREATE_PLAN",
-        "description": "Mutación durable: persiste la intención y devuelve 202 con la OperationRecord. Repetir la misma idempotency_key con el mismo cuerpo devuelve 200 con la misma operación; con otro cuerpo, 409 IDEMPOTENCY_KEY_REUSED. Devuelve refs a locks nativos; los defaults resueltos quedan en el plan.",
-        "security": [
-          {
-            "session": [],
-            "csrf": []
-          }
-        ],
+      "get": {
+        "operationId": "listPlans",
+        "summary": "Planes de una campaña",
+        "description": "Solo el owner del proyecto; un recurso ajeno responde 404 igual que uno inexistente (sin oráculo), como getRun. Tras un 202/200 de la operación que lo crea y con la operación en SUCCEEDED, la lectura lo devuelve (ADR-019 §1).",
         "parameters": [
           {
             "name": "campaign_id",
@@ -772,40 +750,38 @@
               "$ref": "../schemas/defs.schema.json#/$defs/id"
             },
             "description": "Campaña"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            },
+            "description": "Elementos por página."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "description": "Cursor opaco de `next_cursor`. Inválido: 422. Fuera de retención: 410 CURSOR_EXPIRED."
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "../schemas/operation-request.schema.json"
-              }
-            }
-          }
-        },
         "responses": {
-          "202": {
-            "description": "Intención persistida.",
-            "headers": {
-              "Location": {
-                "$ref": "#/components/headers/OperationLocation"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "../schemas/operation-record.schema.json"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "Repetición idempotente: la operación ya existente.",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "../schemas/operation-record.schema.json"
+                  "$ref": "#/components/schemas/PlanPage"
                 }
               }
             }
@@ -819,17 +795,11 @@
           "404": {
             "$ref": "#/components/responses/P404"
           },
-          "409": {
-            "$ref": "#/components/responses/P409"
-          },
-          "412": {
-            "$ref": "#/components/responses/P412"
+          "410": {
+            "$ref": "#/components/responses/P410"
           },
           "422": {
             "$ref": "#/components/responses/P422"
-          },
-          "503": {
-            "$ref": "#/components/responses/P503"
           }
         }
       }
@@ -1928,6 +1898,277 @@
           }
         }
       }
+    },
+    "/api/v1/campaigns/{campaign_id}": {
+      "get": {
+        "operationId": "getCampaign",
+        "summary": "Campaña con su revisión autoritativa",
+        "description": "Solo el owner del proyecto; un recurso ajeno responde 404 igual que uno inexistente (sin oráculo), como getRun. Tras un 202/200 de la operación que lo crea y con la operación en SUCCEEDED, la lectura lo devuelve (ADR-019 §1).",
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Campaña"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/campaign.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/plans/{plan_id}": {
+      "get": {
+        "operationId": "getPlan",
+        "summary": "Plan con su NativeContractRef",
+        "description": "Solo el owner del proyecto; un recurso ajeno responde 404 igual que uno inexistente (sin oráculo), como getRun. Tras un 202/200 de la operación que lo crea y con la operación en SUCCEEDED, la lectura lo devuelve (ADR-019 §1).",
+        "parameters": [
+          {
+            "name": "plan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Plan"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/plan.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/runs": {
+      "get": {
+        "operationId": "listRuns",
+        "summary": "Runs del proyecto",
+        "description": "Solo el owner del proyecto; un recurso ajeno responde 404 igual que uno inexistente (sin oráculo), como getRun. Tras un 202/200 de la operación que lo crea y con la operación en SUCCEEDED, la lectura lo devuelve (ADR-019 §1).",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Proyecto"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            },
+            "description": "Elementos por página."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "description": "Cursor opaco de `next_cursor`. Inválido: 422. Fuera de retención: 410 CURSOR_EXPIRED."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "410": {
+            "$ref": "#/components/responses/P410"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/operations": {
+      "get": {
+        "operationId": "listOperations",
+        "summary": "Operaciones del proyecto",
+        "description": "Solo el owner del proyecto; un recurso ajeno responde 404 igual que uno inexistente (sin oráculo), como getRun. Tras un 202/200 de la operación que lo crea y con la operación en SUCCEEDED, la lectura lo devuelve (ADR-019 §1).",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Proyecto"
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "../schemas/operation-record.schema.json#/$defs/payload/properties/action"
+            },
+            "description": "Filtra por acción."
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "../schemas/operation-record.schema.json#/$defs/payload/properties/state"
+            },
+            "description": "Filtra por estado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            },
+            "description": "Elementos por página."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "description": "Cursor opaco de `next_cursor`. Inválido: 422. Fuera de retención: 410 CURSOR_EXPIRED."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          },
+          "410": {
+            "$ref": "#/components/responses/P410"
+          },
+          "422": {
+            "$ref": "#/components/responses/P422"
+          }
+        }
+      }
+    },
+    "/api/v1/validation-receipts/{record_id}": {
+      "get": {
+        "operationId": "getValidationReceipt",
+        "summary": "ValidationReceipt",
+        "description": "Solo el owner del proyecto; un recurso ajeno responde 404 igual que uno inexistente (sin oráculo), como getRun. Tras un 202/200 de la operación que lo crea y con la operación en SUCCEEDED, la lectura lo devuelve (ADR-019 §1).",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Recibo de validación (record_id)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/validation-receipt.schema.json"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/P401"
+          },
+          "403": {
+            "$ref": "#/components/responses/P403"
+          },
+          "404": {
+            "$ref": "#/components/responses/P404"
+          }
+        }
+      }
     }
   },
   "x-dftlab-websockets": {
@@ -2112,6 +2353,126 @@
             ]
           }
         }
+      },
+      "CampaignPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/campaign.schema.json"
+            },
+            "maxItems": 200
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "description": "Página en orden estable de creación ascendente (created_at, id). Sin duplicados ni saltos entre páginas; next_cursor null en la última."
+      },
+      "PlanPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/plan.schema.json"
+            },
+            "maxItems": 200
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "description": "Página en orden estable de creación ascendente (created_at, id). Sin duplicados ni saltos entre páginas; next_cursor null en la última."
+      },
+      "RunPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/run-projection.schema.json"
+            },
+            "maxItems": 200
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "description": "Página en orden estable de creación ascendente (created_at, id). Sin duplicados ni saltos entre páginas; next_cursor null en la última."
+      },
+      "OperationPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/operation-record.schema.json"
+            },
+            "maxItems": 200
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "description": "Página en orden estable de creación ascendente (created_at, id). Sin duplicados ni saltos entre páginas; next_cursor null en la última."
       }
     },
     "responses": {
