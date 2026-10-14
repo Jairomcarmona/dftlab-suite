@@ -132,7 +132,7 @@
               "type": "null"
             }
           ],
-          "description": "Producto tipado por acción (ADR-019 §1): LOCAL_ATOMIC → {product_refs:[{kind,id,revision}]} con un producto que se lee por su GET; SUBMIT_RUN → {run_id, submission_receipt_id}. Otras acciones: null o el objeto de su tabla de transiciones."
+          "description": "Producto tipado por acción (ADR-019 §1): las acciones LOCAL_ATOMIC terminadas llevan {product_refs:[{kind,id,revision}]} con un producto que se lee por su GET. El resto de acciones conserva el objeto de su tabla de transiciones."
         },
         "error": {
           "anyOf": [
@@ -481,41 +481,6 @@
                     },
                     "minItems": 1,
                     "maxItems": 1
-                  }
-                },
-                "additionalProperties": false
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "action": {
-                "const": "SUBMIT_RUN"
-              },
-              "state": {
-                "enum": [
-                  "SUCCEEDED",
-                  "OUTCOME_UNKNOWN"
-                ]
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "result": {
-                "type": "object",
-                "required": [
-                  "run_id",
-                  "submission_receipt_id"
-                ],
-                "properties": {
-                  "run_id": {
-                    "$ref": "defs.schema.json#/$defs/id"
-                  },
-                  "submission_receipt_id": {
-                    "$ref": "defs.schema.json#/$defs/id"
                   }
                 },
                 "additionalProperties": false

@@ -994,12 +994,6 @@
       "rule": "El tipo del producto está fijado por acción: CREATE_CAMPAIGN no produce PLAN."
     },
     {
-      "path": "fixtures/operation-record/invalid/submit-succeeded-without-run.json",
-      "schema": "operation-record.schema.json",
-      "expect": "invalid",
-      "rule": "SUBMIT_RUN SUCCEEDED exige run_id y submission_receipt_id."
-    },
-    {
       "path": "fixtures/operation-request/invalid/validate-input-empty-payload.json",
       "schema": "operation-request.schema.json",
       "expect": "invalid",
