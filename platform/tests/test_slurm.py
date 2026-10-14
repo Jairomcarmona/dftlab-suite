@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 import hashlib
 import os
 from pathlib import Path
-import re
 import tempfile
 import unittest
 
@@ -18,7 +17,6 @@ class Commands:
     def __init__(self, root, script, token):
         self.root, self.script, self.token = root, script, token
         self.calls, self.queue, self.patch = [], "", lambda output: output
-        self.last_job_output = None
         self.ack, self.code = "123;synthetic-cluster\n", 0
         self.config = "ClusterName = synthetic-cluster\nMinJobAge = 300 sec\n"
 
@@ -32,9 +30,7 @@ class Commands:
             return Observation(self.queue, 0)
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
         output = f"JobId=123 JobName=dftlab-{self.token} UserId=fixture(1000) Comment=dftlab:{self.token} SubmitTime={timestamp} WorkDir={self.root} Command={self.script} JobState=RUNNING EndTime=Unknown\n"
-        output = self.patch(output)
-        self.last_job_output = output
-        return Observation(output, 0)
+        return Observation(self.patch(output), 0)
 
 
 class Slurm(unittest.TestCase):
@@ -111,24 +107,11 @@ class Slurm(unittest.TestCase):
     def test_job_state_observation_exposes_min_job_age_but_is_not_a_terminal_receipt(self):
         port = self.prepare_identity()
         end_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
-        self.commands.patch = lambda output: output.replace("JobState=RUNNING EndTime=Unknown",
-                                                             "JobState=COMPLETED EndTime="+end_time)
+        identity_patch = self.commands.patch
+        self.commands.patch = lambda output: identity_patch(output).replace(
+            "JobState=RUNNING EndTime=Unknown", "JobState=COMPLETED EndTime="+end_time)
 
-        try:
-            observed = port.observe_job_state(self.intent, "123")
-        except Problem:
-            output = self.commands.last_job_output
-            pairs = re.findall(r"(?:^|\s)(JobId|JobName|UserId|Comment|SubmitTime|WorkDir|Command)=(\S+)", output or "")
-            actual = dict(pairs)
-            expected = {
-                "JobId": "123",
-                "JobName": "dftlab-"+self.intent["payload"]["attempt_token"],
-                "UserId": f"{self.site.remote_user}({self.site.uid})",
-                "Comment": "dftlab:"+self.intent["payload"]["attempt_token"],
-                "WorkDir": str(self.root),
-                "Command": str(self.script.absolute()),
-            }
-            self.fail(f"observe_job_state rejected job binding: expected={expected!r}; actual={actual!r}; output={output!r}")
+        observed = port.observe_job_state(self.intent, "123")
 
         self.assertEqual((observed.job_id, observed.state), ("123", "COMPLETED"))
         self.assertEqual(observed.end_time, end_time)
