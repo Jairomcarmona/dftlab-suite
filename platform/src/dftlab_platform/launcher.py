@@ -97,7 +97,7 @@ def _wait_stopped(state: Path, instance: str) -> bool:
     return False
 
 
-def _start(state: Path, base_path="") -> tuple[dict, int]:
+def _start(state: Path, base_path="", local_run_options=None) -> tuple[dict, int]:
     from .local_runtime import private_directory
     state = private_directory(state)
     instance = str(uuid.uuid4())
@@ -112,8 +112,14 @@ def _start(state: Path, base_path="") -> tuple[dict, int]:
     environment.pop("PYTHONPATH", None)
     kwargs = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {"start_new_session": True}
     try:
+        command = [sys.executable, "-I", "-m", "dftlab_platform.launcher", "_run", "--state-dir", str(state), "--instance-id", instance, "--base-path", base_path]
+        if local_run_options is not None:
+            command.append("--local-run")
+            for option, key in (("--site-config", "site_config"), ("--profile", "profile"),
+                                ("--pseudo", "pseudo"), ("--wheelhouse", "wheelhouse")):
+                command.extend((option, str(local_run_options[key])))
         child = subprocess.Popen(
-            [sys.executable, "-I", "-m", "dftlab_platform.launcher", "_run", "--state-dir", str(state), "--instance-id", instance, "--base-path", base_path],
+            command,
             cwd=state.parent, env=environment, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             **kwargs,
         )
@@ -169,9 +175,9 @@ def _stop(state: Path) -> tuple[dict, int]:
             kernel.CloseHandle(handle)
 
 
-def _run(state: Path, instance: str, base_path="") -> int:
+def _run(state: Path, instance: str, base_path="", local_run_options=None) -> int:
     from .runtime import serve
-    code = serve(state, instance, base_path)
+    code = serve(state, instance, base_path, local_run_options=local_run_options)
     if code == 0:
         # Only release the lease still owned by this child. No PID based kills.
         if _owned(state, instance):
@@ -199,22 +205,39 @@ def _recover_local(state: Path):
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="DFT Lab local API and durable processor")
-    parser.add_argument("command", choices=["start", "status", "stop", "recover-local", "_run"])
+    parser.add_argument("command", choices=["start", "status", "stop", "recover-local", "budget", "_run"])
+    parser.add_argument("budget_command", nargs="?", choices=["add"])
     parser.add_argument("--state-dir", type=Path, default=_default_state())
     parser.add_argument("--instance-id", help=argparse.SUPPRESS)
     parser.add_argument("--base-path", default="")
     parser.add_argument("--open", action="store_true", help="Open the operative distribution in the browser")
+    parser.add_argument("--local-run", action="store_true", help="Enable the explicit exploratory WSL/SLURM Si recipe")
+    parser.add_argument("--site-config", type=Path)
+    parser.add_argument("--profile", type=Path)
+    parser.add_argument("--pseudo", type=Path)
+    parser.add_argument("--wheelhouse", type=Path)
+    parser.add_argument("--project")
+    parser.add_argument("--cpu-seconds", type=int)
+    parser.add_argument("--expires-hours", type=int, default=24)
     args = parser.parse_args()
     state = args.state_dir.expanduser().absolute()
     try:
         if args.command == "_run":
             if not args.instance_id:
                 raise ValueError("Missing instance ownership identifier")
-            return _run(state, str(uuid.UUID(args.instance_id)), args.base_path)
+            options = _local_run_options(args, parser)
+            return _run(state, str(uuid.UUID(args.instance_id)), args.base_path, options)
         if args.command == "start":
-            result, code = _start(state, args.base_path)
+            options = _local_run_options(args, parser)
+            result, code = _start(state, args.base_path, options)
             if code == 0 and args.open:
                 webbrowser.open(result["url"])
+        elif args.command == "budget":
+            if args.budget_command != "add" or not args.project or args.cpu_seconds is None:
+                parser.error("budget add requires --project and --cpu-seconds")
+            if args.local_run or any((args.site_config, args.profile, args.pseudo, args.wheelhouse)):
+                parser.error("runtime options are only valid with start")
+            result, code = _budget_add(state, args.project, args.cpu_seconds, args.expires_hours)
         elif args.command == "stop":
             result, code = _stop(state)
         elif args.command == "recover-local":
@@ -226,6 +249,37 @@ def main() -> int:
     except (OSError, ValueError, KeyError, TypeError, RuntimeError):
         print(json.dumps({"status": "unknown", "error": "LAUNCHER_ERROR"}), file=sys.stderr)
         return 2
+
+
+def _local_run_options(args, parser):
+    supplied = (args.site_config, args.profile, args.pseudo, args.wheelhouse)
+    if not args.local_run:
+        if any(supplied):
+            parser.error("--site-config, --profile, --pseudo and --wheelhouse require --local-run")
+        return None
+    if args.command not in {"start", "_run"} or any(value is None for value in supplied):
+        parser.error("--local-run requires --site-config, --profile, --pseudo and --wheelhouse")
+    return {"site_config": args.site_config.expanduser().absolute(),
+            "profile": args.profile.expanduser().absolute(),
+            "pseudo": args.pseudo.expanduser().absolute(),
+            "wheelhouse": args.wheelhouse.expanduser().absolute()}
+
+
+def _budget_add(state: Path, project_id: str, cpu_seconds: int, expires_hours: int):
+    from datetime import datetime, timedelta, timezone
+    from .budgets import SQLiteBudgetHolds
+    from .local_runtime import private_directory
+    from .storage import SQLiteRepository
+    if type(cpu_seconds) is not int or cpu_seconds < 1 or type(expires_hours) is not int or not 1 <= expires_hours <= 720:
+        raise ValueError("Invalid budget bounds")
+    state = private_directory(state)
+    repository = SQLiteRepository(state / "state.sqlite")
+    owner = repository.ensure_principal("local")
+    expires_at = datetime.now(timezone.utc) + timedelta(hours=expires_hours)
+    account = SQLiteBudgetHolds(repository).register(owner, project_id, cpu_seconds, expires_at)
+    return {"budget_id": account.budget_id, "project_id": account.project_id,
+            "unit": account.unit, "cpu_seconds": account.capacity,
+            "expires_at": account.expires_at}, 0
 
 
 if __name__ == "__main__":

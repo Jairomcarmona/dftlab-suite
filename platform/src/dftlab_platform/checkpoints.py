@@ -154,6 +154,7 @@ class SQLiteCheckpointStore:
             "authority_migrations": {(1,), (1, 2)},
             "authority_retirement_migrations": {(1,), (1, 2)},
             "submission_migrations": {(1,), (1, 2)},
+            "budget_migrations": {(1,), (1, 2)},
         }
         if any(
             tuple(versions) not in supported_revisions.get(table, {(1,)})

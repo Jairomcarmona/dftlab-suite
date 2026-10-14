@@ -14,7 +14,7 @@ from .domain import Operations, Problem
 from .security import LocalSettings, Sessions, SecurityMiddleware, PrivateErrors, session_cookie, single_header
 
 
-def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessions: Sessions | None = None, drafts=None):
+def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessions: Sessions | None = None, drafts=None, runtime=None):
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
     sessions = sessions or Sessions()
     contracts = Contracts()
@@ -72,6 +72,18 @@ def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessi
         contracts.validate_ref(contracts.api_ref(operation, status=status), document)
         return Response(canonical(document), status, headers=headers, media_type="application/json")
 
+    def page_parameters(request, filters=()):
+        pairs = request.query_params.multi_items()
+        allowed = {"limit", "cursor", *filters}
+        names = [key for key, _value in pairs]
+        if set(names)-allowed or len(names) != len(set(names)):
+            raise Problem("VALIDATION_FAILED")
+        try:
+            limit = int(request.query_params.get("limit", "50"))
+        except (TypeError, ValueError):
+            raise Problem("VALIDATION_FAILED") from None
+        return limit, request.query_params.get("cursor"), {name: request.query_params.get(name) for name in filters}
+
     action_routes = {"validateInput": ("VALIDATE_INPUT", "PROJECT", "project_id"), "createCampaign": ("CREATE_CAMPAIGN", "PROJECT", "project_id"), "createPlan": ("CREATE_PLAN", "CAMPAIGN", "campaign_id"), "preparePackage": ("PREPARE_PACKAGE", "PLAN", "plan_id"), "submitRun": ("SUBMIT_RUN", "PLAN", "plan_id"), "cancelRun": ("CANCEL_RUN", "RUN", "run_id"), "reconcileRun": ("RECONCILE_RUN", "RUN", "run_id"), "createResumePlan": ("CREATE_RESUME_PLAN", "RUN", "run_id"), "executeResumePlan": ("EXECUTE_RESUME_PLAN", "RESUME_PLAN", "resume_plan_id")}
 
     def endpoint(operation):
@@ -119,6 +131,28 @@ def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessi
                 return json_response(operation, 200, await run_in_threadpool(repository.project, owner, params["project_id"]))
             if operation == "getOperation":
                 return json_response(operation, 200, await run_in_threadpool(repository.operation, owner, params["operation_id"]))
+            if operation == "listCampaigns":
+                limit, cursor, _filters = page_parameters(request)
+                result = await run_in_threadpool(readmodels.list, owner, "CAMPAIGN", params["project_id"], limit=limit, cursor=cursor)
+                return json_response(operation, 200, result)
+            if operation == "getCampaign":
+                return json_response(operation, 200, await run_in_threadpool(readmodels.get, owner, "CAMPAIGN", params["campaign_id"]))
+            if operation == "listPlans":
+                limit, cursor, _filters = page_parameters(request)
+                result = await run_in_threadpool(readmodels.list, owner, "PLAN", params["campaign_id"], limit=limit, cursor=cursor)
+                return json_response(operation, 200, result)
+            if operation == "getPlan":
+                return json_response(operation, 200, await run_in_threadpool(readmodels.get, owner, "PLAN", params["plan_id"]))
+            if operation == "listRuns":
+                limit, cursor, _filters = page_parameters(request)
+                result = await run_in_threadpool(readmodels.list, owner, "RUN", params["project_id"], limit=limit, cursor=cursor)
+                return json_response(operation, 200, result)
+            if operation == "listOperations":
+                limit, cursor, filters = page_parameters(request, ("action", "state"))
+                result = await run_in_threadpool(readmodels.list, owner, "OPERATION", params["project_id"], limit=limit, cursor=cursor, **filters)
+                return json_response(operation, 200, result)
+            if operation == "getValidationReceipt":
+                return json_response(operation, 200, await run_in_threadpool(readmodels.get, owner, "VALIDATION_RECEIPT", params["record_id"]))
             if operation in action_routes:
                 document = await body(request, operation)
                 action, kind, name = action_routes[operation]
@@ -129,9 +163,20 @@ def create_app(repository, artifacts, readmodels, settings: LocalSettings, sessi
                 target = await run_in_threadpool(readmodels.target, owner, kind, params[name])
                 if document["project_id"] != target["project_id"]:
                     raise Problem("NOT_FOUND")
-                # A typed command is not execution admission. Until Ola 3
-                # adapters qualify this scope, do not accept an effect.
-                raise Problem("ENGINE_UNAVAILABLE")
+                if runtime is None or not callable(getattr(runtime, "process", None)):
+                    # A typed command alone never activates an engine or admission.
+                    raise Problem("ENGINE_UNAVAILABLE")
+                accepted, created = await run_in_threadpool(repository.accept, owner, document)
+                operation_id = accepted["payload"]["operation_id"]
+                if created or accepted["payload"]["state"] == "PENDING":
+                    await run_in_threadpool(runtime.process, owner, operation_id)
+                    accepted = await run_in_threadpool(repository.operation, owner, operation_id)
+                if accepted["payload"]["state"] == "REJECTED":
+                    error = accepted["payload"]["error"] or {}
+                    code = error.get("code", "ADMISSION_REJECTED")
+                    raise Problem(code, operation_id=operation_id)
+                location = settings.base_path+"/api/v1/operations/"+operation_id
+                return json_response(operation, 202 if created else 200, accepted, headers={"Location": location})
             if operation in {"getRun", "getResumePlan"}:
                 kind, key = ("RUN", "run_id") if operation == "getRun" else ("RESUME_PLAN", "resume_plan_id")
                 return json_response(operation, 200, await run_in_threadpool(readmodels.get, owner, kind, params[key]))

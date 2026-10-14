@@ -115,10 +115,13 @@ class Authoring(AuthoringFixture):
     def test_four_handlers_confirm_products_without_scientific_or_submit_claim(self):
         receipt, campaign = self.validated_campaign()
         plan = self.product(self.execute(self.plan_request(receipt, campaign)))
+        native_ref = plan.document["native_contract_refs"][0]
         package = self.product(self.execute(self.request("PREPARE_PACKAGE", target={"kind": "PLAN", "id": plan.product_id, "expected_revision": 1},
-                                                        payload={"expected_plan_digest": plan.document["digest"]}, profile="profile-fixture")))
+                                                        payload={"expected_plan_digest": native_ref["digest"]}, profile="profile-fixture")))
         self.assertEqual(package.document, self.store.metadata(self.owner, package.product_id))
-        self.assertEqual(plan.document["digest"]["value"], "a"*64)
+        self.assertEqual(native_ref["digest"]["value"], "a"*64)
+        self.assertEqual(campaign.document["payload"]["campaign_id"], campaign.product_id)
+        self.assertEqual(plan.document["payload"]["campaign_id"], campaign.product_id)
         self.assertEqual([step[0] for step in self.native.seen], ["validate", "compile", "prepare"])
         self.assertEqual(self.bundle["draft"]["payload"]["scientific_assessment"], "NOT_EVALUATED")
         self.assertIsNone(self.repo.claim("another-processor"))

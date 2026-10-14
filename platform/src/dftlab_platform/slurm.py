@@ -49,6 +49,14 @@ class ManagedSlurmPackage:
     verify: Callable[[], None]
 
 
+@dataclass(frozen=True)
+class SlurmJobObservation:
+    job_id: str
+    state: str
+    end_time: str | None
+    min_job_age_seconds: int
+
+
 class SlurmSchedulerPort:
     def __init__(self, site: SlurmSite, packages: Mapping[str, ManagedSlurmPackage], evidence_writer, authorize_dispatch,
                  *, commands=None, identity=local_identity):
@@ -100,33 +108,40 @@ class SlurmSchedulerPort:
             raise Problem("PRECONDITION_FAILED")
         return package, root, script
 
-    def _command(self, intent, binary, arguments, root, label):
+    def _command(self, intent, binary, arguments, root, label, *, record=True):
         executable = binary.verified()
         observation = self.commands.run((str(executable), *arguments), cwd=root, environment=self.environment)
         binary.verified()
-        document = {"command": label, "argv": [str(executable), *arguments], "output": observation.output,
-                    "returncode": observation.returncode, "observed_at": now()}
-        reference = self.evidence_writer(intent, document)
-        self.contracts.validate("artifact-ref", reference)
-        if reference["media_type"] != "application/json" or reference["sha256"] != hashlib.sha256(canonical(document)).hexdigest():
-            raise Problem("PRECONDITION_FAILED")
+        if record:
+            document = {"command": label, "argv": [str(executable), *arguments], "output": observation.output,
+                        "returncode": observation.returncode, "observed_at": now()}
+            reference = self.evidence_writer(intent, document)
+            self.contracts.validate("artifact-ref", reference)
+            if reference["media_type"] != "application/json" or reference["sha256"] != hashlib.sha256(canonical(document)).hexdigest():
+                raise Problem("PRECONDITION_FAILED")
+        else:
+            reference = None
         if observation.returncode != 0:
             # Nonzero sbatch may be a lost RPC ack, not a proven rejection.
             raise ProbeFailure("Scheduler command did not confirm its outcome")
         return observation.output, reference
 
-    def _site(self, intent, root, evidence):
-        output, reference = self._command(intent, self.site.scontrol, ("show", "config"), root, "site-context")
-        evidence.append(reference)
-        matches = re.findall(r"(?m)^\s*ClusterName\s*=\s*(\S+)\s*$", output)
-        if matches != [self.site.cluster]:
+    def _site(self, intent, root, evidence, *, record=True):
+        output, reference = self._command(intent, self.site.scontrol, ("show", "config"), root, "site-context", record=record)
+        if record:
+            evidence.append(reference)
+        clusters = re.findall(r"(?m)^\s*ClusterName\s*=\s*(\S+)\s*$", output)
+        ages = re.findall(r"(?m)^\s*MinJobAge\s*=\s*([0-9]+)\s+sec\s*$", output)
+        if clusters != [self.site.cluster] or len(ages) != 1 or int(ages[0]) > 31536000:
             raise Problem("PRECONDITION_FAILED")
+        return int(ages[0])
 
-    def _job_context(self, intent, job_id, root, evidence):
+    def _job_context(self, intent, job_id, root, evidence, *, record=True):
         if re.fullmatch(r"[1-9][0-9]*", job_id) is None:
             raise Problem("PRECONDITION_FAILED")
-        output, reference = self._command(intent, self.site.scontrol, ("--oneliner", "show", "job", job_id), root, "job-context")
-        evidence.append(reference)
+        output, reference = self._command(intent, self.site.scontrol, ("--oneliner", "show", "job", job_id), root, "job-context", record=record)
+        if record:
+            evidence.append(reference)
         pairs = re.findall(r"(?:^|\s)(JobId|JobName|UserId|Comment|SubmitTime|WorkDir|Command)=(\S+)", output)
         fields = dict(pairs)
         if len(pairs) != len(fields) or set(fields) != {"JobId", "JobName", "UserId", "Comment", "SubmitTime", "WorkDir", "Command"}:
@@ -145,6 +160,23 @@ class SlurmSchedulerPort:
             raise Problem("PRECONDITION_FAILED")
         return {"job_id": job_id, "cluster": self.site.cluster, "remote_user": self.site.remote_user,
                 "submitted_at": submitted.isoformat().replace("+00:00", "Z")}, output
+
+    def observe_job_state(self, intent, job_id):
+        """Read the owned job promptly; this is a trigger, never terminal proof."""
+        _package, root, _script = self._package(intent)
+        evidence = []
+        min_job_age = self._site(intent, root, evidence, record=False)
+        job, output = self._job_context(intent, job_id, root, evidence, record=False)
+        states = re.findall(r"(?:^|\s)JobState=(\S+)", output)
+        end_times = re.findall(r"(?:^|\s)EndTime=(\S+)", output)
+        if len(states) != 1 or len(end_times) != 1 or re.fullmatch(r"[A-Z_]+", states[0]) is None:
+            raise ProbeFailure("Scheduler job state is absent or ambiguous")
+        end_time = end_times[0]
+        if end_time != "Unknown" and re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", end_time) is None:
+            raise ProbeFailure("Scheduler job end time is ambiguous")
+        self._package(intent)
+        return SlurmJobObservation(job["job_id"], states[0], None if end_time == "Unknown" else end_time,
+                                   min_job_age)
 
     def _job(self, intent, job_id, root, evidence):
         return self._job_context(intent, job_id, root, evidence)[0]

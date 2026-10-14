@@ -45,9 +45,15 @@ class LocalProducts(unittest.TestCase):
             op = self.repo.claim("worker-fixture")
         product_id = identifier()
         if action == "CREATE_CAMPAIGN":
-            product = LocalProduct("CAMPAIGN", product_id, 1, {"campaign_id": product_id, "project_id": self.project, "revision": 1, **request["payload"]})
+            document = envelope("campaign", self.project, {"campaign_id": product_id, "revision": 1, **request["payload"]}, record_id=product_id)
+            product = LocalProduct("CAMPAIGN", product_id, 1, document)
         elif action == "CREATE_PLAN":
-            product = LocalProduct("PLAN", product_id, 1, resource_json("fixtures/native-contract-ref/valid/qraft-workflow-lock.json"))
+            native_ref = resource_json("fixtures/native-contract-ref/valid/qraft-workflow-lock.json")
+            document = envelope("plan", self.project, {"plan_id": product_id, "campaign_id": "campaign-fixture", "revision": 1,
+                                "draft": {"draft_id": "draft-fixture", "revision": 1}, "intent_id": "intent-fixture",
+                                "validation_receipt_id": "validation-fixture"}, record_id=product_id,
+                                native_contract_refs=[native_ref])
+            product = LocalProduct("PLAN", product_id, 1, document)
         else:
             schema, path, kind = {
                 "VALIDATE_INPUT": ("validation-receipt", "validation-receipt/valid/heuristic-override", "VALIDATION_RECEIPT"),
@@ -162,17 +168,18 @@ os._exit(74)
         with self.repo.transaction() as db:
             db.execute("UPDATE resources SET revision=revision+1 WHERE resource_id=?", (product.product_id,))
         self.assertEqual(self.repo.local_products(self.owner, op["record_id"]), (product,))
-        self.assertEqual(product.document["digest"]["algorithm"], "qraft.content-sha256-v1")
+        native_ref = product.document["native_contract_refs"][0]
+        self.assertEqual(native_ref["digest"]["algorithm"], "qraft.content-sha256-v1")
         self.assertEqual(self.repo.complete_local(op["record_id"], 2, "worker-fixture", (product,))["payload"]["state"], "SUCCEEDED")
         changed = copy.deepcopy(product.document)
-        changed["digest"]["value"] = "0"*64
+        changed["native_contract_refs"][0]["digest"]["value"] = "0"*64
         self.assertProblem("PRECONDITION_FAILED", self.repo.complete_local, op["record_id"], 2, "worker-fixture", (replace(product, document=changed),))
 
     def test_product_corruption_is_detected(self):
         op, _, product = self.prepare("CREATE_CAMPAIGN")
         self.repo.complete_local(op["record_id"], 2, "worker-fixture", (product,))
         changed = copy.deepcopy(product.document)
-        changed["name"] = "damaged"
+        changed["payload"]["name"] = "damaged"
         with self.repo.transaction() as db:
             db.execute("UPDATE operation_products SET document=? WHERE operation_id=?", (json.dumps(changed), op["record_id"]))
         self.assertProblem("PRECONDITION_FAILED", self.repo.local_products, self.owner, op["record_id"])

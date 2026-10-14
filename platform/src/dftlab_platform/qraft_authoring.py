@@ -51,7 +51,7 @@ class CapturingValidator:
 class QraftArtifactAuthoring:
     def __init__(self, engines, artifacts, recipes: Mapping[tuple[str, str], Callable[[Principal, dict], AuthoringRecipe]],
                  profiles: Mapping[str, AuthoringProfile], workspace: Path, *, artifact_limit=8*1024**2,
-                 controller_adapter_factory=None):
+                 controller_adapter_factory=None, profile_resolver=None):
         if type(artifact_limit) is not int or not 1 <= artifact_limit <= 8*1024**2:
             raise ValueError("Invalid authoring artifact limit")
         self.engines, self.artifacts, self.recipes, self.profiles = engines, artifacts, dict(recipes), dict(profiles)
@@ -59,6 +59,9 @@ class QraftArtifactAuthoring:
         if controller_adapter_factory is not None and not callable(controller_adapter_factory):
             raise ValueError("Trusted controller adapter factory required")
         self.controller_adapter_factory = controller_adapter_factory
+        if profile_resolver is not None and not callable(profile_resolver):
+            raise ValueError("Trusted profile artifact resolver required")
+        self.profile_resolver = profile_resolver
         self.limit, self.contracts = artifact_limit, Contracts()
         self.adapter = QraftAuthoring(engines)
         self.core = engines.qraft_contracts()
@@ -129,7 +132,8 @@ class QraftArtifactAuthoring:
         profile = self.profiles.get(profile_id)
         if profile is None or profile.profile_id != profile_id or type(profile.revision) is not int or profile.revision < 1:
             raise Problem("ENGINE_UNAVAILABLE")
-        data = self._data(owner, project, profile.artifact)
+        reference = profile.artifact if self.profile_resolver is None else self.profile_resolver(owner, project, profile_id)
+        data = self._data(owner, project, reference)
         # Identity binding only; grammar and native digest belong to RunPreparer.
         document = loads(data)
         if not isinstance(document, dict) or document.get("profile_id") != profile_id:

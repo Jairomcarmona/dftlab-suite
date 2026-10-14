@@ -20,11 +20,38 @@ export function createClient({baseUrl=new URL('./api/v1/',location.href),fetcher
     const document=response.status===204?null:await response.json();
     if(!response.ok){
       validate('problem',document);
-      const error=new Error(document.code);error.code=document.code;error.status=response.status;throw error;
+      const error=new Error(document.code);error.code=document.code;error.status=response.status;error.operationId=document.operation_id??null;error.document=document;throw error;
     }
     return document;
   }
   const envelope=async(name,value)=>{validate(name,value);await verifyEnvelope(name,value);return value;};
+  async function allPages(path,operation,filters={},options={}){
+    const items=[],seen=new Set();let cursor=null,last=null;
+    for(let page=0;page<1000;page++){
+      const query=new URLSearchParams({limit:'200',...filters});
+      if(cursor)query.set('cursor',cursor);
+      last=validateApi(operation,200,await request(`${path}?${query}`,options));
+      items.push(...last.items);
+      cursor=last.next_cursor;
+      if(!cursor)return {...last,items};
+      if(seen.has(cursor))throw new Error('API pagination cursor repeated');
+      seen.add(cursor);
+    }
+    throw new Error('API pagination exceeded the local page limit');
+  }
+  async function allEventPages(runId,options={}){
+    const events=[],seen=new Set();let cursor=null,last=null;
+    for(let page=0;page<1000;page++){
+      const query=new URLSearchParams({limit:'500'});if(cursor)query.set('after',cursor);
+      last=validateApi('listRunEvents',200,await request(`runs/${encodeURIComponent(runId)}/events?${query}`,options));
+      events.push(...last.events);
+      if(!last.events.length||last.next_cursor===cursor)return {...last,events};
+      cursor=last.next_cursor;
+      if(!cursor||seen.has(cursor))throw new Error('API event cursor repeated');
+      seen.add(cursor);
+    }
+    throw new Error('API event pagination exceeded the local page limit');
+  }
   return Object.freeze({
     get principalId(){return principal;},get canEdit(){return csrf!==null;},
     async session(options){
@@ -50,8 +77,32 @@ export function createClient({baseUrl=new URL('./api/v1/',location.href),fetcher
       return Object.freeze({apiVersion:health.api_version,capabilities});
     },
     async projects(options){return validateApi('listProjects',200,await request('projects',options));},
+    async project(id,options){return validateApi('getProject',200,await request('projects/'+encodeURIComponent(id),options));},
     async createProject(name,key,options={}){const body=validateApi('createProject','request',{name,idempotency_key:key});return validateApi('createProject',201,await request('projects',{...options,method:'POST',body}));},
     async operation(id,options){return envelope('operation-record',await request('operations/'+encodeURIComponent(id),options));},
+    async action(name,path,body,options={}){
+      validateApi(name,'request',body);
+      const value=await request(path,{...options,method:'POST',body});
+      let failure;
+      for(const status of [202,200])try{return await envelope('operation-record',validateApi(name,status,value));}catch(error){failure=error;}
+      throw failure;
+    },
+    async campaigns(projectId,options){return allPages('projects/'+encodeURIComponent(projectId)+'/campaigns','listCampaigns',{},options);},
+    async campaign(id,options){return envelope('campaign',validateApi('getCampaign',200,await request('campaigns/'+encodeURIComponent(id),options)));},
+    async plans(campaignId,options){return allPages('campaigns/'+encodeURIComponent(campaignId)+'/plans','listPlans',{},options);},
+    async plan(id,options){return envelope('plan',validateApi('getPlan',200,await request('plans/'+encodeURIComponent(id),options)));},
+    async validationReceipt(id,options){return envelope('validation-receipt',validateApi('getValidationReceipt',200,await request('validation-receipts/'+encodeURIComponent(id),options)));},
+    async runs(projectId,options){return allPages('projects/'+encodeURIComponent(projectId)+'/runs','listRuns',{},options);},
+    async run(id,options){return envelope('run-projection',validateApi('getRun',200,await request('runs/'+encodeURIComponent(id),options)));},
+    async runEvents(id,options){return allEventPages(id,options);},
+    async operations(projectId,filters={},options={}){return allPages('projects/'+encodeURIComponent(projectId)+'/operations','listOperations',filters,options);},
+    async artifact(id,options){return envelope('artifact-record',validateApi('getArtifact',200,await request('artifacts/'+encodeURIComponent(id),options)));},
+    async artifactContent(id,options={}){
+      const target=new URL('artifacts/'+encodeURIComponent(id)+'/content',base);
+      const response=await fetcher(target,{signal:options.signal,headers:{Accept:'application/octet-stream'},credentials:'same-origin',cache:'no-store',redirect:'error'});
+      if(!response.ok){const document=await response.json();validate('problem',document);const error=new Error(document.code);error.code=document.code;error.status=response.status;throw error;}
+      return new Uint8Array(await response.arrayBuffer());
+    },
     async drafts(projectId,options){
       const values=validateApi('listDrafts',200,await request('projects/'+encodeURIComponent(projectId)+'/drafts',options));
       for(const item of values)await envelope('draft',item);return values;

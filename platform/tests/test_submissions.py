@@ -112,6 +112,25 @@ class Submissions(unittest.TestCase):
         with self.assertRaises(Problem):
             self.ledger.snapshot(self.other, pending["record_id"])
 
+    def test_admission_rejection_is_durable_before_any_effect_and_links_problem(self):
+        pending = self.accept()
+        receipt = resource_json("fixtures/admission-receipt/valid/rejected-before-reservation.json")
+        receipt["project_id"] = self.project
+        receipt["payload"]["principal_id"] = self.owner.principal_id
+        self.repo.contracts.validate("admission-receipt", receipt)
+        processor = Processor(self.repo, preflights={"SUBMIT_RUN": lambda operation, request: receipt})
+        self.assertTrue(processor.once(pending["record_id"]))
+        rejected = self.repo.operation(self.owner, pending["record_id"])
+        self.assertEqual(rejected["payload"]["state"], "REJECTED")
+        self.assertEqual(rejected["payload"]["result"]["receipt"], receipt)
+        self.assertEqual(rejected["payload"]["error"]["code"], "ADMISSION_REJECTED")
+        self.assertEqual(rejected["payload"]["error"]["operation_id"], pending["record_id"])
+        self.repo.contracts.validate("problem", rejected["payload"]["error"])
+        with self.repo._connection() as db:
+            self.assertIsNone(self.repo._effect_intent(db, pending["record_id"]))
+            self.assertIsNone(db.execute("SELECT 1 FROM outbox WHERE operation_id=?", (pending["record_id"],)).fetchone())
+            self.assertIsNone(db.execute("SELECT 1 FROM scheduler_dispatches WHERE operation_id=?", (pending["record_id"],)).fetchone())
+
     def test_lost_ack_empty_query_stays_unknown_then_found_resolves_without_resubmit(self):
         pending = self.accept()
         self.scheduler.lose_ack = True

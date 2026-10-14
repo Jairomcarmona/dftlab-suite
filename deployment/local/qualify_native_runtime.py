@@ -210,7 +210,7 @@ def main():
                    "contract": str(run_envelope.contract), "digest": {"algorithm": "qraft.content-sha256-v1", "value": run_envelope.content_sha256},
                    "artifact": run_artifact, "verification": {"status": "VERIFIED", "verified_at": now()}}
         repo.contracts.validate("native-contract-ref", run_ref)
-        intent["native_contract_refs"] = [plan.document, run_ref]
+        intent["native_contract_refs"] = [plan.document["native_contract_refs"][0], run_ref]
         reseal(intent)
         write(root/"effect-intent.json", canonical(intent))
         value = {"owner": owner.principal_id, "processor": processor, "run_id": run_id, "workflow_id": native.workflow_id,

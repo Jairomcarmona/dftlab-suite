@@ -138,8 +138,9 @@ MD.NumCGsteps 0
     campaign = execute("CREATE_CAMPAIGN", {"name": "Explicit local Si authoring", "drafts": [draft_ref]})
     plan = execute("CREATE_PLAN", {"draft": draft_ref, "intent_id": bundle["intent"]["run_intent"]["payload"]["intent_id"], "validation_receipt_id": validation.product_id},
                    {"kind": "CAMPAIGN", "id": campaign.product_id, "expected_revision": 1})
-    package = execute("PREPARE_PACKAGE", {"expected_plan_digest": plan.document["digest"]}, {"kind": "PLAN", "id": plan.product_id, "expected_revision": 1}, profile_id)
-    lock_bytes = b"".join(store.stream(owner, plan.document["artifact"]["artifact_id"]))
+    native_plan = plan.document["native_contract_refs"][0]
+    package = execute("PREPARE_PACKAGE", {"expected_plan_digest": native_plan["digest"]}, {"kind": "PLAN", "id": plan.product_id, "expected_revision": 1}, profile_id)
+    lock_bytes = b"".join(store.stream(owner, native_plan["artifact"]["artifact_id"]))
     archive_bytes = b"".join(store.stream(owner, package.product_id))
     (root/"workflow.lock.json").write_bytes(lock_bytes)
     (root/"packages").mkdir()
@@ -150,14 +151,14 @@ MD.NumCGsteps 0
         (root/"run.lock.json").write_bytes(packed.read(run_path))
     run_native, run = api.load_run_lock(root/"run.lock.json")
     assert run.project_id == project and run.workflow_id == bundle["intent"]["run_intent"]["payload"]["intent_id"]
-    assert run.workflow_lock_sha256 == plan.document["digest"]["value"]
+    assert run.workflow_lock_sha256 == native_plan["digest"]["value"]
     evidence = root/"evidence"
     evidence.mkdir()
     (evidence/"draft-bundle.json").write_bytes(canonical(bundle))
     (evidence/"validation-receipt.json").write_bytes(canonical(validation.document))
     (evidence/"operations.json").write_bytes(canonical(operations))
     exported = {}
-    references = [profile.artifact, *sources.values(), *validation.document["payload"]["input_refs"], plan.document["artifact"]]
+    references = [profile.artifact, *sources.values(), *validation.document["payload"]["input_refs"], native_plan["artifact"]]
     for reference in references:
         if reference["artifact_id"] not in exported:
             data = b"".join(store.stream(owner, reference["artifact_id"]))
@@ -168,7 +169,7 @@ MD.NumCGsteps 0
     print(json.dumps({"engines": engines.evidence, "project_id": project, "draft_id": draft_ref["draft_id"], "intent_id": run.workflow_id,
                       "run_id": run.run_id, "operation_ids": [value["payload"]["operation_id"] for value in operations], "states": [value["payload"]["state"] for value in operations],
                       "validation_decision": validation.document["payload"]["decision"], "validation_native_refs": validation.document["native_contract_refs"],
-                      "native_workflow_digest": plan.document["digest"]["value"], "workflow_file_sha256": plan.document["artifact"]["sha256"],
+                      "native_workflow_digest": native_plan["digest"]["value"], "workflow_file_sha256": native_plan["artifact"]["sha256"],
                       "package_sha256": package.document["payload"]["sha256"], "run_lock_sha256": run_native.content_sha256,
                       "pseudo_sha256": sources["Si.psml"]["sha256"], "scientific_assessment": "NOT_ESTABLISHED", "execution_performed": False}))
 

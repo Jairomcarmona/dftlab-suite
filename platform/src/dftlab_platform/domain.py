@@ -26,17 +26,21 @@ class Principal:
 
 
 class Problem(Exception):
-    def __init__(self, code: str):
+    def __init__(self, code: str, *, operation_id: str | None = None):
         self.code = code
+        self.operation_id = operation_id
         self.status = resource_json("errors/error-codes.json")["codes"][code]["status"]
         super().__init__(code)
 
     def document(self, request_id: str | None = None) -> dict:
-        return {"type": "urn:dftlab:problem:" + self.code.lower().replace("_", "-"), "title": self.code.replace("_", " "), "status": self.status, "code": self.code, "request_id": request_id or identifier()}
+        document = {"type": "urn:dftlab:problem:" + self.code.lower().replace("_", "-"), "title": self.code.replace("_", " "), "status": self.status, "code": self.code, "request_id": request_id or identifier()}
+        if self.operation_id is not None:
+            document["operation_id"] = self.operation_id
+        return document
 
 
-def envelope(schema: str, project: str, payload: dict, *, record_id: str | None = None, contracts: Contracts | None = None) -> dict:
-    value = {"schema_id": "dftlab." + schema, "schema_version": "0.1.0", "record_id": record_id or identifier(), "project_id": project, "producer": {"package": "dftlab-platform", "version": __version__.replace(".dev", "-dev."), "commit": None, "algorithm": None}, "created_at": now(), "payload": payload, "native_contract_refs": []}
+def envelope(schema: str, project: str, payload: dict, *, record_id: str | None = None, contracts: Contracts | None = None, native_contract_refs: list | None = None) -> dict:
+    value = {"schema_id": "dftlab." + schema, "schema_version": "0.1.0", "record_id": record_id or identifier(), "project_id": project, "producer": {"package": "dftlab-platform", "version": __version__.replace(".dev", "-dev."), "commit": None, "algorithm": None}, "created_at": now(), "payload": payload, "native_contract_refs": [] if native_contract_refs is None else native_contract_refs}
     value["integrity"] = {"status": "VERIFIED", "canonicalization": "jcs-rfc8785", "algorithm": "sha-256", "digest": digest(value)}
     (contracts or Contracts()).validate(schema, value)
     return value
@@ -139,13 +143,29 @@ class Processor:
 Unknown effects never retry automatically. Default has no scientific handlers;
 registration of engine operations waits for the contracts/adapters of Ola 3.
 """
-    def __init__(self, repository: Repository, handlers: dict | None = None):
+    def __init__(self, repository: Repository, handlers: dict | None = None, *, preflights: dict | None = None):
         self.repository = repository
         self.handlers = handlers or {}
+        self.preflights = preflights or {}
         self.processor_id = identifier()
 
-    def once(self) -> bool:
-        operation = self.repository.claim(self.processor_id)
+    def once(self, operation_id: str | None = None) -> bool:
+        if self.preflights:
+            pending = self.repository.pending_for_admission(operation_id)
+            if pending is not None:
+                pending_operation, pending_request = pending
+                preflight = self.preflights.get(pending_operation["payload"]["action"])
+                if preflight is not None:
+                    admission = preflight(pending_operation, pending_request)
+                    if admission is not None:
+                        self.repository.contracts.validate("admission-receipt", admission)
+                        decision = admission["payload"]["decision"]
+                        if decision == "REJECTED":
+                            self.repository.reject_admission(pending_operation["payload"]["operation_id"], admission)
+                            return True
+                        if decision != "ADMITTED":
+                            raise Problem("PRECONDITION_FAILED")
+        operation = self.repository.claim(self.processor_id, operation_id)
         if operation is None:
             return False
         payload = operation["payload"]

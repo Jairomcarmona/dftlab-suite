@@ -246,7 +246,8 @@ class SQLiteRepository:
             product = products[0]
             request = loads(row[1])
             if product.kind == "CAMPAIGN":
-                if {"name": product.document["name"], "drafts": product.document["drafts"]} != request["payload"]:
+                payload = product.document["payload"]
+                if {"name": payload["name"], "drafts": payload["drafts"]} != request["payload"]:
                     raise Problem("PRECONDITION_FAILED")
             if product.kind == "RESUME_PLAN" and (product.document["payload"]["run_id"] != request["target"]["id"] or product.document["payload"]["from_attempt_id"] != request["payload"]["from_attempt_id"]):
                 raise Problem("PRECONDITION_FAILED")
@@ -311,10 +312,48 @@ class SQLiteRepository:
                 raise Problem("PRECONDITION_FAILED")
             return self.contracts.validate("operation-request", loads(row[0]))
 
-    def claim(self, processor_id: str) -> dict | None:
+    def pending_for_admission(self, operation_id: str | None = None):
+        """Read one unclaimed command for a trusted, side-effect-free admission check."""
+        with self._connection() as db:
+            query = "SELECT o.document,o.request FROM outbox b JOIN operations o ON b.operation_id=o.operation_id WHERE b.processor_id IS NULL"
+            row = (db.execute(query+" AND o.operation_id=?", (operation_id,)).fetchone()
+                   if operation_id is not None else db.execute(query+" ORDER BY o.operation_id LIMIT 1").fetchone())
+            if row is None:
+                return None
+            operation = self._operation_document(row[0])
+            if operation["payload"]["state"] != "PENDING":
+                raise Problem("PRECONDITION_FAILED")
+            request = self.contracts.validate("operation-request", loads(row[1]))
+            return operation, request
+
+    def reject_admission(self, operation_id: str, receipt: dict):
+        """Atomically persist a pre-effect AdmissionReceipt and REJECTED command."""
+        with self.transaction() as db:
+            row = db.execute("SELECT o.document,b.processor_id FROM operations o JOIN outbox b ON b.operation_id=o.operation_id WHERE o.operation_id=?", (operation_id,)).fetchone()
+            if row is None:
+                raise Problem("NOT_FOUND")
+            operation = self._operation_document(row[0])
+            payload = operation["payload"]
+            if (payload["action"] != "SUBMIT_RUN" or payload["state"] != "PENDING"
+                    or row[1] is not None or self._effect_intent(db, operation_id) is not None):
+                raise Problem("PRECONDITION_FAILED")
+            receipt = self.contracts.validate("admission-receipt", receipt)
+            decision = receipt["payload"]
+            if (receipt["project_id"] != operation["project_id"] or decision["action"] != "SUBMIT_RUN"
+                    or decision["decision"] != "REJECTED" or decision["reservation"] is not None
+                    or decision["runtime_probe_ref"] is not None or not decision["reasons"]):
+                raise Problem("PRECONDITION_FAILED")
+            error = Problem("ADMISSION_REJECTED", operation_id=operation_id).document()
+            return self._transition(db, operation, payload["revision"], "REJECTED",
+                                    result={"receipt": receipt}, error=error, no_effect=True)
+
+    def claim(self, processor_id: str, operation_id: str | None = None) -> dict | None:
         with self.transaction() as db:
             row = operation = None
-            for candidate in db.execute("SELECT o.operation_id,o.document FROM outbox b JOIN operations o ON b.operation_id=o.operation_id WHERE b.processor_id IS NULL ORDER BY o.operation_id"):
+            query = "SELECT o.operation_id,o.document FROM outbox b JOIN operations o ON b.operation_id=o.operation_id WHERE b.processor_id IS NULL"
+            candidates = (db.execute(query+" AND o.operation_id=? ORDER BY o.operation_id", (operation_id,))
+                          if operation_id is not None else db.execute(query+" ORDER BY o.operation_id"))
+            for candidate in candidates:
                 value = self._operation_document(candidate[1])
                 if value["payload"]["action"] in {"SUBMIT_RUN", "EXECUTE_RESUME_PLAN"}:
                     try:
