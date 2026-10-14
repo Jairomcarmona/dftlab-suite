@@ -21,9 +21,8 @@ try {
   assert.equal(shown.authority,'NUMERICAL_CANDIDATE');
   assert.equal(shown.worker_environment_sha256,raw.worker_environment_sha256);
   assert.deepEqual(shown.groups,raw.groups);
-  assert.equal(shown.capability,'CONTRACT_TESTED');
   assert.equal(await page.locator('#native0 h2').textContent(),'native<script>.json');
   assert.equal(await page.locator('#native0 script').count(),0);
   assert.deepEqual(errors,[]);
-  console.log('Native results browser: 8 assertions PASS');
+  console.log('Native results browser: 7 assertions PASS');
 } finally {await browser.close();}

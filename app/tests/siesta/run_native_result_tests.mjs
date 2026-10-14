@@ -7,7 +7,7 @@ const raw={policy_id:'qraft.electronic.policy@1',authority:'NUMERICAL_CANDIDATE'
 const summary=nativeResultSummary(raw);
 assert.equal(summary.authority,'NUMERICAL_CANDIDATE');
 assert.equal(summary.worker_environment_sha256,raw.worker_environment_sha256);
-assert.deepEqual(summary.groups,raw.groups);assert.equal(summary.capability,'CONTRACT_TESTED');
+assert.deepEqual(summary.groups,raw.groups);
 summary.groups[0].weights.s=9;assert.equal(raw.groups[0].weights.s,-.2);
 assert.throws(()=>nativeResultSummary({...raw,groups:[{bands:[2,3],size:3}]}),/INVALID_NATIVE_GROUP_PRESENTATION/);
 assert.throws(()=>nativeResultSummary({...raw,groups:[{bands:[2,3],size:2,individual_weights:[.5,.5]}]}),/INVALID_NATIVE_GROUP_PRESENTATION/);
@@ -19,4 +19,4 @@ assert.equal(detectAndParse('electronic.json',JSON.stringify({...raw,groups:[{ba
 const eos={policy_id:'qraft.eos.policy@1',status:'ESTABLISHED',quantity:'FreeEnergy',natoms:2,points:[{volume:40,energy:-200}]};
 assert.deepEqual(nativeResultSummary(detectAndParse('eos.json',JSON.stringify(eos)).data).native_result,eos);
 assert.equal(detectAndParse('fat.json',JSON.stringify({groups:[],padding:'x'.repeat(5000),policy_id:raw.policy_id})).kind,'qraft-native');
-console.log('Native result import and presentation: 13 assertions PASS');
+console.log('Native result import and presentation: 12 assertions PASS');

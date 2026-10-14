@@ -18,7 +18,7 @@ export function nativeResultSummary(raw) {
     origin:raw.origin??null, worker_environment_sha256:raw.worker_environment_sha256??null,
     gap:structuredClone(raw.gap??null), longitudinal:structuredClone(raw.longitudinal??null),
     transverse:structuredClone(raw.transverse??[]), partition:structuredClone(raw.partition??null),
-    groups, native_result:structuredClone(raw), capability:'CONTRACT_TESTED'};
+    groups, native_result:structuredClone(raw)};
 }
 
 export function renderNativeResult(target,raw) {

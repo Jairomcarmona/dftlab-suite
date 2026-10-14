@@ -1,5 +1,8 @@
 import {createClient} from '../sdk/client.js';
 import {draftPanel} from './draft-panel.js';
+import {localRunPanel} from './local-run-panel.js';
+
+const RUN_PAGE_COPY={title:id=>`Run ${id}`,close:'Cerrar vista del run'};
 
 // Only emitted in the served build. Handshake never submits an operation.
 export async function attach({stores}){
@@ -7,40 +10,60 @@ export async function attach({stores}){
   const slot=document.createElement('section');slot.className='navgrp';slot.dataset.operativeAccess='';
   const heading=document.createElement('h4');heading.textContent='Acceso local';slot.append(heading);
   const label=document.createElement('label');label.textContent='Seleccionar archivo de acceso del iniciador';
-  const input=document.createElement('input');input.type='file';input.accept='.json';input.setAttribute('aria-label','Archivo de acceso local');
+  const input=document.createElement('input');input.type='file';input.accept='.json';input.setAttribute('aria-label','Archivo de acceso local');input.dataset.operativeAccessFile='';
   label.append(input);slot.append(label);
   const status=document.createElement('p');status.textContent='Aprender, preparar y leer siguen disponibles sin sesión.';slot.append(status);
   document.querySelector('#side .sidefoot').before(slot);
+  const runPage=document.createElement('dialog');runPage.className='operative-run-page';runPage.dataset.operativeRunPage='';
+  const runPageHeader=document.createElement('header');runPageHeader.className='operative-run-page-header';
+  const runPageTitle=document.createElement('h1');runPageTitle.dataset.runPageTitle='';
+  const closeRunPage=document.createElement('button');closeRunPage.type='button';closeRunPage.textContent=RUN_PAGE_COPY.close;closeRunPage.dataset.closeRunPage='';
+  const runPageContent=document.createElement('div');runPageContent.dataset.runPageContent='';
+  runPageHeader.append(runPageTitle,closeRunPage);runPage.append(runPageHeader,runPageContent);document.body.append(runPage);
+  const runPageApi={
+    content:runPageContent,
+    open(runId){runPageTitle.textContent=RUN_PAGE_COPY.title(runId);if(!runPage.open)runPage.showModal();},
+    close(){if(runPage.open)runPage.close();runPageContent.replaceChildren();}
+  };
+  closeRunPage.onclick=()=>runPage.close();
   let generation=0,projectGroup=null;
+  const activeProjectKey=()=>`dftlab.operative.active-project.v1.${client.principalId||'anonymous'}`;
+  const rememberProject=id=>{try{if(id)localStorage.setItem(activeProjectKey(),id);else localStorage.removeItem(activeProjectKey());}catch{}};
   async function showProjects(){
     const mine=++generation;
-    const handshake=await client.handshake();
+    await client.handshake();
     const projects=await client.projects();
     if(mine!==generation)return;
+    runPageApi.close();
     projectGroup?.remove();
     projectGroup=document.createElement('nav');projectGroup.className='navgrp';projectGroup.dataset.remoteGroup='';projectGroup.setAttribute('aria-label','Proyectos y campañas');
     const title=document.createElement('h4');title.textContent='Proyectos y campañas';projectGroup.append(title);
-    const selector=document.createElement('select');selector.setAttribute('aria-label','Proyecto activo');
+    const selector=document.createElement('select');selector.setAttribute('aria-label','Proyecto activo');selector.dataset.projectSelector='';
     const empty=document.createElement('option');empty.value='';empty.textContent='Seleccionar proyecto';selector.append(empty);
     for(const project of projects){const item=document.createElement('option');item.value=project.project_id;item.textContent=project.name;selector.append(item);}
-    selector.value=stores.projectId||'';
-    let panel=null;
+    let remembered=null;try{remembered=localStorage.getItem(activeProjectKey());}catch{}
+    const preferred=stores.projectId||remembered||'';
+    selector.value=projects.some(project=>project.project_id===preferred)?preferred:'';
+    let panel=null,localPanel=null;
     async function selectDrafts(){
-      panel?.element.remove();panel=null;
-      const projectId=selector.value;stores.selectProject(projectId||null);
+      runPageApi.close();
+      panel?.element.remove();panel=null;localPanel?.element.remove();localPanel=null;
+      const projectId=selector.value;stores.selectProject(projectId||null);rememberProject(projectId);
       if(!projectId)return;
       const created=draftPanel({client,projectId,status,isCurrent:()=>mine===generation&&selector.value===projectId&&panel===created});
       panel=created;projectGroup.append(created.element);
-      try{await created.refresh();}catch(error){if(mine===generation)status.textContent=error.code||'No se pudieron leer los borradores.';}
+      const local=localRunPanel({client,projectId,isCurrent:()=>mine===generation&&selector.value===projectId&&localPanel===local,runPage:runPageApi});
+      localPanel=local;projectGroup.append(local.element);
+      try{await Promise.all([created.refresh(),local.refresh()]);}catch(error){if(mine===generation)status.textContent=error.code||'No se pudieron leer los borradores.';}
     }
     selector.onchange=selectDrafts;
     projectGroup.append(selector);
     const logout=document.createElement('button');logout.textContent='Cerrar sesión';
-    logout.onclick=async()=>{logout.disabled=true;try{await client.logout();status.textContent='Sesión cerrada.';}catch{status.textContent='No se pudo confirmar el cierre en el servicio. Reinicia el iniciador.';}finally{generation++;projectGroup?.remove();projectGroup=null;stores.selectProject(null);}};
+    logout.onclick=async()=>{logout.disabled=true;try{await client.logout();status.textContent='Sesión cerrada.';}catch{status.textContent='No se pudo confirmar el cierre en el servicio. Reinicia el iniciador.';}finally{generation++;runPageApi.close();projectGroup?.remove();projectGroup=null;stores.selectProject(null);rememberProject(null);}};
     projectGroup.append(logout);
-    const notice=document.createElement('p');notice.textContent=handshake.capabilities.some(c=>c.payload.admitted_for.includes('EXECUTION'))?'Capacidades de ejecución calificadas disponibles.':'Ejecución pendiente de calificación de motores; no se envían cálculos.';projectGroup.append(notice);
+    const notice=document.createElement('p');notice.textContent='La receta local se admite según el perfil y el presupuesto. La pantalla muestra ADMITTED con finalidad EXPLORATORY o REJECTED con sus motivos; la ciencia queda NOT_ESTABLISHED.';projectGroup.append(notice);
     if(client.canEdit){
-      const form=document.createElement('form');const name=document.createElement('input');name.required=true;name.maxLength=200;name.placeholder='Nombre del proyecto';name.setAttribute('aria-label','Nombre del proyecto');
+      const form=document.createElement('form');const name=document.createElement('input');name.required=true;name.maxLength=200;name.placeholder='Nombre del proyecto';name.setAttribute('aria-label','Nombre del proyecto');name.dataset.projectName='';
       const button=document.createElement('button');button.textContent='Crear proyecto';button.type='submit';form.append(name,button);projectGroup.append(form);
       let pending=null;
       form.onsubmit=async event=>{event.preventDefault();button.disabled=true;name.disabled=true;
@@ -56,7 +79,7 @@ export async function attach({stores}){
   }
   input.onchange=async()=>{
     const file=input.files?.[0];input.value='';if(!file)return;
-    input.disabled=true;generation++;projectGroup?.remove();projectGroup=null;stores.selectProject(null);
+    input.disabled=true;generation++;projectGroup?.remove();projectGroup=null;stores.selectProject(null);rememberProject(null);
     try{
       if(file.size>4096)throw new Error('Oversized access file');
       const access=JSON.parse(await file.text());
