@@ -1,41 +1,17 @@
-[
-  {
-    "created_at": "2026-10-15T06:27:27.224942Z",
-    "integrity": {
-      "algorithm": "sha-256",
-      "canonicalization": "jcs-rfc8785",
-      "digest": "1bbeb9868d6cd74c14e32cd3ca1bbf59733fd0139dc9204c7ff2c28ed612c918",
-      "status": "VERIFIED"
-    },
-    "native_contract_refs": [],
-    "payload": {
-      "accepted_at": "2026-10-15T06:27:27.224923Z",
-      "action": "VALIDATE_INPUT",
-      "error": null,
-      "event_cursor": "513700c8-095a-48fe-832f-80ae9c16eb03:3",
-      "idempotency_key": "d5fa581b-1f1b-450c-8a04-69dc0f3da132",
-      "idempotency_scope": {
-        "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-        "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03"
-      },
-      "key_retention": {
-        "effects_alive": false,
-        "retain_until": null
-      },
+{
+  "export_kind": "REDACTED_PUBLIC_OPERATION_SUMMARY",
+  "source": "Read-only snapshot of the service operations; authoritative records remain unchanged",
+  "notice": "This summary is not an OperationRecord or SubmissionReceipt and does not reproduce their integrity seals",
+  "omitted_fields": [
+    "Nested submission receipt, including its attempt correlation token"
+  ],
+  "operations": [
+    {
       "operation_id": "5abb7817-64ea-4521-9812-5c53489cde6f",
-      "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-      "request_hash": "77d282afe77135d47b79b7e08d891f5b7266d0078cfd7fc24a9a00b28fcd45d4",
-      "result": {
-        "product_refs": [
-          {
-            "id": "0dd5e8d1-d526-459b-a64d-291a88eb7072",
-            "kind": "VALIDATION_RECEIPT",
-            "revision": 1
-          }
-        ]
-      },
-      "revision": 3,
+      "action": "VALIDATE_INPUT",
       "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:27.224923Z",
+      "updated_at": "2026-10-15T06:27:27.885973Z",
       "target_refs": [
         {
           "id": "513700c8-095a-48fe-832f-80ae9c16eb03",
@@ -43,56 +19,20 @@
           "revision": 1
         }
       ],
-      "updated_at": "2026-10-15T06:27:27.885973Z"
+      "product_refs": [
+        {
+          "id": "0dd5e8d1-d526-459b-a64d-291a88eb7072",
+          "kind": "VALIDATION_RECEIPT",
+          "revision": 1
+        }
+      ]
     },
-    "producer": {
-      "algorithm": null,
-      "commit": null,
-      "package": "dftlab-platform",
-      "version": "0.1.0-dev.0"
-    },
-    "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
-    "record_id": "5abb7817-64ea-4521-9812-5c53489cde6f",
-    "schema_id": "dftlab.operation-record",
-    "schema_version": "0.1.0"
-  },
-  {
-    "created_at": "2026-10-15T06:27:28.074041Z",
-    "integrity": {
-      "algorithm": "sha-256",
-      "canonicalization": "jcs-rfc8785",
-      "digest": "86c1577e8e4e586170ae718d840fac4cd68f80e575bf79a64b260d5faa6707f9",
-      "status": "VERIFIED"
-    },
-    "native_contract_refs": [],
-    "payload": {
-      "accepted_at": "2026-10-15T06:27:28.074023Z",
-      "action": "CREATE_CAMPAIGN",
-      "error": null,
-      "event_cursor": "513700c8-095a-48fe-832f-80ae9c16eb03:6",
-      "idempotency_key": "1af2b1be-d6cd-4ce5-abb1-015c092a47f9",
-      "idempotency_scope": {
-        "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-        "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03"
-      },
-      "key_retention": {
-        "effects_alive": false,
-        "retain_until": null
-      },
+    {
       "operation_id": "f3cbafe1-8b94-4d45-98b6-271be062e74f",
-      "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-      "request_hash": "674d0effb839a1247d6e3fb83ce73454624dc3e44a16f37cea729a46df15588d",
-      "result": {
-        "product_refs": [
-          {
-            "id": "2e715786-b9b7-48c4-8371-962acdd71ef9",
-            "kind": "CAMPAIGN",
-            "revision": 1
-          }
-        ]
-      },
-      "revision": 3,
+      "action": "CREATE_CAMPAIGN",
       "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:28.074023Z",
+      "updated_at": "2026-10-15T06:27:28.117641Z",
       "target_refs": [
         {
           "id": "513700c8-095a-48fe-832f-80ae9c16eb03",
@@ -100,56 +40,20 @@
           "revision": 2
         }
       ],
-      "updated_at": "2026-10-15T06:27:28.117641Z"
+      "product_refs": [
+        {
+          "id": "2e715786-b9b7-48c4-8371-962acdd71ef9",
+          "kind": "CAMPAIGN",
+          "revision": 1
+        }
+      ]
     },
-    "producer": {
-      "algorithm": null,
-      "commit": null,
-      "package": "dftlab-platform",
-      "version": "0.1.0-dev.0"
-    },
-    "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
-    "record_id": "f3cbafe1-8b94-4d45-98b6-271be062e74f",
-    "schema_id": "dftlab.operation-record",
-    "schema_version": "0.1.0"
-  },
-  {
-    "created_at": "2026-10-15T06:27:28.408835Z",
-    "integrity": {
-      "algorithm": "sha-256",
-      "canonicalization": "jcs-rfc8785",
-      "digest": "56b072155b40384ded5930ac1415a42736e43a5a8428530ae10d0489815bbaed",
-      "status": "VERIFIED"
-    },
-    "native_contract_refs": [],
-    "payload": {
-      "accepted_at": "2026-10-15T06:27:28.408816Z",
-      "action": "CREATE_PLAN",
-      "error": null,
-      "event_cursor": "513700c8-095a-48fe-832f-80ae9c16eb03:9",
-      "idempotency_key": "6f2d10ac-5aa7-42af-aa11-fdc0308b8b34",
-      "idempotency_scope": {
-        "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-        "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03"
-      },
-      "key_retention": {
-        "effects_alive": false,
-        "retain_until": null
-      },
+    {
       "operation_id": "139bd310-9f49-46c8-9de9-e2fdeede3090",
-      "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-      "request_hash": "2b1b6546336a42884c0f2636c5999041259271cb2a9fa0353a03d83a3931fd08",
-      "result": {
-        "product_refs": [
-          {
-            "id": "f7d1674e-35c5-40fb-a6b5-5d24b4a65867",
-            "kind": "PLAN",
-            "revision": 1
-          }
-        ]
-      },
-      "revision": 3,
+      "action": "CREATE_PLAN",
       "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:28.408816Z",
+      "updated_at": "2026-10-15T06:27:28.597106Z",
       "target_refs": [
         {
           "id": "2e715786-b9b7-48c4-8371-962acdd71ef9",
@@ -157,56 +61,20 @@
           "revision": 1
         }
       ],
-      "updated_at": "2026-10-15T06:27:28.597106Z"
+      "product_refs": [
+        {
+          "id": "f7d1674e-35c5-40fb-a6b5-5d24b4a65867",
+          "kind": "PLAN",
+          "revision": 1
+        }
+      ]
     },
-    "producer": {
-      "algorithm": null,
-      "commit": null,
-      "package": "dftlab-platform",
-      "version": "0.1.0-dev.0"
-    },
-    "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
-    "record_id": "139bd310-9f49-46c8-9de9-e2fdeede3090",
-    "schema_id": "dftlab.operation-record",
-    "schema_version": "0.1.0"
-  },
-  {
-    "created_at": "2026-10-15T06:27:29.170499Z",
-    "integrity": {
-      "algorithm": "sha-256",
-      "canonicalization": "jcs-rfc8785",
-      "digest": "74a8cd644900252ddb362da9b2748320afa8b8b08366e26773fe3c7105ed9cf4",
-      "status": "VERIFIED"
-    },
-    "native_contract_refs": [],
-    "payload": {
-      "accepted_at": "2026-10-15T06:27:29.170476Z",
-      "action": "PREPARE_PACKAGE",
-      "error": null,
-      "event_cursor": "513700c8-095a-48fe-832f-80ae9c16eb03:12",
-      "idempotency_key": "d8077a7e-ae05-4ca1-b859-a7971fcead0b",
-      "idempotency_scope": {
-        "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-        "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03"
-      },
-      "key_retention": {
-        "effects_alive": false,
-        "retain_until": null
-      },
+    {
       "operation_id": "40e136f5-7426-4058-ae90-03592976f57e",
-      "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-      "request_hash": "8379ba01589706a3d8a446c960986bb914f61ad3c7e76af688ee51fc4c45a303",
-      "result": {
-        "product_refs": [
-          {
-            "id": "082d0f9e-730c-40e2-83da-6c519e0722fb",
-            "kind": "PACKAGE",
-            "revision": 1
-          }
-        ]
-      },
-      "revision": 3,
+      "action": "PREPARE_PACKAGE",
       "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:29.170476Z",
+      "updated_at": "2026-10-15T06:27:29.594293Z",
       "target_refs": [
         {
           "id": "f7d1674e-35c5-40fb-a6b5-5d24b4a65867",
@@ -214,149 +82,20 @@
           "revision": 1
         }
       ],
-      "updated_at": "2026-10-15T06:27:29.594293Z"
-    },
-    "producer": {
-      "algorithm": null,
-      "commit": null,
-      "package": "dftlab-platform",
-      "version": "0.1.0-dev.0"
-    },
-    "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
-    "record_id": "40e136f5-7426-4058-ae90-03592976f57e",
-    "schema_id": "dftlab.operation-record",
-    "schema_version": "0.1.0"
-  },
-  {
-    "created_at": "2026-10-15T06:27:29.741447Z",
-    "integrity": {
-      "algorithm": "sha-256",
-      "canonicalization": "jcs-rfc8785",
-      "digest": "0a01f0004981066b41476f70d86e1a2cb8f8dfe2bd619da666993a42f2845d89",
-      "status": "VERIFIED"
-    },
-    "native_contract_refs": [],
-    "payload": {
-      "accepted_at": "2026-10-15T06:27:29.741427Z",
-      "action": "SUBMIT_RUN",
-      "error": null,
-      "event_cursor": "513700c8-095a-48fe-832f-80ae9c16eb03:15",
-      "idempotency_key": "66726a00-1810-413e-a83c-4f9662a7d089",
-      "idempotency_scope": {
-        "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-        "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03"
-      },
-      "key_retention": {
-        "effects_alive": false,
-        "retain_until": null
-      },
-      "operation_id": "0f72d9e8-107d-4e7f-b4d0-bd3c436e5b7e",
-      "owner_principal_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
-      "request_hash": "065e0a64b2cc92df5dec96e18477344b581671bef65490be950be64924e271ff",
-      "result": {
-        "receipt": {
-          "created_at": "2026-10-15T06:27:32.177796Z",
-          "integrity": {
-            "algorithm": "sha-256",
-            "canonicalization": "jcs-rfc8785",
-            "digest": "b5c6a0e9352a2f6315aa3b6fbe08374994744e2fe6e3e2580c4a99d43c0f678a",
-            "status": "VERIFIED"
-          },
-          "native_contract_refs": [
-            {
-              "artifact": {
-                "artifact_id": "34b30959-6664-4c8e-84b1-782cb5265910",
-                "media_type": "application/json",
-                "sha256": "2fa2d666b98f6491cf175dbd5c8510c291840b29d6a3339c28c1d7da51841bfb"
-              },
-              "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
-              "contract": "siestaflow.workflow-lock@1.0",
-              "digest": {
-                "algorithm": "qraft.content-sha256-v1",
-                "value": "003cbdb2f56129fd4a7a5c617b1eeeb78ced4550c790a74134412f5de290882a"
-              },
-              "distribution": "qraft-hpc",
-              "engine": "qraft",
-              "verification": {
-                "status": "VERIFIED",
-                "verified_at": "2026-10-15T06:27:28.585718Z"
-              },
-              "version": "0.2.0"
-            },
-            {
-              "artifact": {
-                "artifact_id": "5360511d-61f5-46ad-90ad-05291ac9bc3e",
-                "media_type": "application/json",
-                "sha256": "d15dfbb36e0e4b57dfd5924d39c6cf4a12ac4512cb332fdf5c86c727602f1102"
-              },
-              "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
-              "contract": "siestaflow.run-lock@1.0",
-              "digest": {
-                "algorithm": "qraft.content-sha256-v1",
-                "value": "740ed2592d8ff393016092bbbe8f29d388c89cda291808b1384e0fd432f738c0"
-              },
-              "distribution": "qraft-hpc",
-              "engine": "qraft",
-              "verification": {
-                "status": "VERIFIED",
-                "verified_at": "2026-10-15T06:27:31.717106Z"
-              },
-              "version": "0.2.0"
-            }
-          ],
-          "payload": {
-            "attempt_token": "687dc010-55f5-437c-aabe-7ab6f3c424a7",
-            "authority_generation": 1,
-            "evidence": [
-              {
-                "artifact_id": "1b53c14f-f348-4e13-bee8-26082428d568",
-                "media_type": "application/json",
-                "sha256": "15552fd62d4ebce163cb017d133254fa0c3758ca2554142760e7b7809aea094e"
-              },
-              {
-                "artifact_id": "0f986b24-fbb3-43b6-b658-d7b86bb7fc19",
-                "media_type": "application/json",
-                "sha256": "0852bb02ca5c34ad48b8236f4021bb290a0daf100a2afb581af93fe2c24b0aad"
-              },
-              {
-                "artifact_id": "b6f8e15f-ca3b-41aa-af94-7b41ee838916",
-                "media_type": "application/json",
-                "sha256": "d510e1b7c19c1de5cdd74d7d7d5186e75c2bb426a872fe936ecbd699daa36598"
-              }
-            ],
-            "job": {
-              "cluster": "siestaflow-local",
-              "job_id": "460",
-              "remote_user": "jmc",
-              "submitted_at": "2026-10-15T06:27:31Z"
-            },
-            "operation_id": "0f72d9e8-107d-4e7f-b4d0-bd3c436e5b7e",
-            "package_ref": {
-              "artifact_id": "082d0f9e-730c-40e2-83da-6c519e0722fb",
-              "media_type": "application/zip",
-              "sha256": "65ac213fe58a10da856ee826f1207f07796ed6256eb1e7aac271e831891e0eec"
-            },
-            "profile": {
-              "profile_id": "wsl-slurm-openmpi-installed-qualification",
-              "revision": 1
-            },
-            "scheduler": "SLURM",
-            "status": "ACCEPTED"
-          },
-          "producer": {
-            "algorithm": null,
-            "commit": null,
-            "package": "dftlab-platform",
-            "version": "0.1.0-dev.0"
-          },
-          "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
-          "record_id": "4734919f-2174-41b0-95de-5ffdf9557202",
-          "schema_id": "dftlab.submission-receipt",
-          "schema_version": "0.1.0"
+      "product_refs": [
+        {
+          "id": "082d0f9e-730c-40e2-83da-6c519e0722fb",
+          "kind": "PACKAGE",
+          "revision": 1
         }
-      },
-      "revision": 3,
+      ]
+    },
+    {
+      "operation_id": "0f72d9e8-107d-4e7f-b4d0-bd3c436e5b7e",
+      "action": "SUBMIT_RUN",
       "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:29.741427Z",
+      "updated_at": "2026-10-15T06:27:32.219995Z",
       "target_refs": [
         {
           "id": "f7d1674e-35c5-40fb-a6b5-5d24b4a65867",
@@ -364,17 +103,12 @@
           "revision": 2
         }
       ],
-      "updated_at": "2026-10-15T06:27:32.219995Z"
-    },
-    "producer": {
-      "algorithm": null,
-      "commit": null,
-      "package": "dftlab-platform",
-      "version": "0.1.0-dev.0"
-    },
-    "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
-    "record_id": "0f72d9e8-107d-4e7f-b4d0-bd3c436e5b7e",
-    "schema_id": "dftlab.operation-record",
-    "schema_version": "0.1.0"
-  }
-]
+      "product_refs": [],
+      "submission": {
+        "status": "ACCEPTED",
+        "scheduler": "SLURM",
+        "job_id": "460"
+      }
+    }
+  ]
+}

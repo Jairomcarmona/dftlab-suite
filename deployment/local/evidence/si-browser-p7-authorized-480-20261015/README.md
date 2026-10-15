@@ -21,7 +21,7 @@ Las lecturas `si-browser-p7-run460-final2-20261015` y `si-browser-p7-run460-fina
 
 ## Evidencia y límites
 
-`database-readonly.json` usa SQLite en `mode=ro`: una fila `resources.kind=RUN`, una cuenta, una reserva y un despacho. `operations.json` conserva las cinco operaciones `SUCCEEDED`. `lru-view-verdict.json` construye el modelo con la respuesta real `getRun`: `COMPLETED_SCIENCE_NOT_ESTABLISHED`, sin reanudación ni uso científico del resultado. No son vectores nuevos.
+`database-readonly.json` usa SQLite en `mode=ro`: una fila `resources.kind=RUN`, una cuenta, una reserva y un despacho. `operations.json` es un resumen público explícitamente redactado de las cinco operaciones `SUCCEEDED`: omite el recibo de envío anidado y su token de correlación; no se presenta como OperationRecord/SubmissionReceipt nativo ni conserva sus sellos. Los registros autoritativos de la base/API permanecen intactos. `lru-view-verdict.json` construye el modelo con la respuesta real `getRun`: `COMPLETED_SCIENCE_NOT_ESTABLISHED`, sin reanudación ni uso científico del resultado. No son vectores nuevos.
 
 `recipe-comparison.json` confirma que los dos FDF del paquete tienen los mismos bytes que los de 459. `artifacts-index.json` verifica hashes/tamaños de los 35 artefactos del proyecto; los JSON y el paquete se copian en `public-artifacts`. Las matrices de densidad quedan guardadas en el servicio con sus hashes, sin duplicarlas en Git. La lectura del navegador verificó admisión, resultado nativo, finalización y evidencia terminal firmada. No se exportan tokens, cookies, bases SQLite ni la clave del firmante.
 
