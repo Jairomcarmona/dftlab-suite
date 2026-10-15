@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "route": "BROWSER_READ_ONLY_EXISTING_RUN",
+  "started_at": "2026-10-15T06:30:51.165Z",
+  "status": "READ_FAILED_NO_WRITE",
+  "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+  "run_id": "42ac02f3-7069-4507-ba3a-ef273a553278",
+  "claims": {
+    "purpose": "EXPLORATORY",
+    "scientific_assessment": "NOT_ESTABLISHED",
+    "capabilities_published_for_execution": false
+  },
+  "run_reads": {},
+  "artifact_reads": [],
+  "cancelled_artifact_metadata_reads": [],
+  "mutating_requests": [],
+  "browser_errors": [],
+  "error": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-project-selector]') to be visible\u001b[22m\n",
+  "elapsed_seconds": 30.475
+}

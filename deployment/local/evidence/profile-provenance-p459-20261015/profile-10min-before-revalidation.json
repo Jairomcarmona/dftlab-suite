@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "profile_id": "wsl-slurm-openmpi-installed-qualification",
+  "target": "slurm",
+  "slurm": {
+    "partition": "local",
+    "account": "default",
+    "qos": "normal"
+  },
+  "allocation": {
+    "nodes": 1,
+    "total_cpus": 4,
+    "memory": "512M",
+    "walltime": "00:10:00",
+    "max_parallel_steps": 1,
+    "shutdown_margin_seconds": 30,
+    "termination_grace_seconds": 10
+  },
+  "runtime": {
+    "module_commands": [],
+    "siesta_executable": "siesta",
+    "executable_arguments": [],
+    "launcher": {
+      "kind": "openmpi",
+      "command": [
+        "/usr/bin/mpirun"
+      ],
+      "arguments": [],
+      "bootstrap": "",
+      "processes_per_node": 4
+    },
+    "exclusive": true,
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "PATH": "/home/jmc/.local/siesta-5.4.2-openmpi/bin:/usr/bin:/bin",
+      "QRAFT_PYTHON": "/home/jmc/.local/state/dftlab-qualification/t023b-consumer-v1/venv/bin/python",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "task_policy": {
+    "max_attempts": 1,
+    "require_scf_converged": true
+  }
+}

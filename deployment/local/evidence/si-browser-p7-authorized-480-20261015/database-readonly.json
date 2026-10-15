@@ -1,0 +1,43 @@
+{
+  "query": "SELECT resource_id,kind,project_id,revision FROM resources WHERE kind='RUN'",
+  "rows": [
+    {
+      "resource_id": "42ac02f3-7069-4507-ba3a-ef273a553278",
+      "kind": "RUN",
+      "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+      "revision": 11
+    }
+  ],
+  "budget_accounts": [
+    {
+      "budget_id": "5ce444c1-a49c-4549-b423-335038ba4137",
+      "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+      "owner_id": "35c8bcaa-dfa8-40a8-90d9-0a2f81d7e082",
+      "revision": 1,
+      "unit": "allocated_cpu_second",
+      "capacity": 480,
+      "expires_at": "2026-10-16T06:27:26.832091Z"
+    }
+  ],
+  "budget_holds": [
+    {
+      "reservation_id": "9d1f410c-9371-4c82-966e-2648ec71e5e0",
+      "budget_id": "5ce444c1-a49c-4549-b423-335038ba4137",
+      "operation_id": "0f72d9e8-107d-4e7f-b4d0-bd3c436e5b7e",
+      "request_hash": "065e0a64b2cc92df5dec96e18477344b581671bef65490be950be64924e271ff",
+      "amount": 480,
+      "unit": "allocated_cpu_second",
+      "budget_revision": 1,
+      "reserved_at": "2026-10-15T06:27:31.245302Z"
+    }
+  ],
+  "scheduler_dispatches": [
+    {
+      "operation_id": "0f72d9e8-107d-4e7f-b4d0-bd3c436e5b7e",
+      "run_id": "42ac02f3-7069-4507-ba3a-ef273a553278",
+      "generation": 1,
+      "phase": "ACKNOWLEDGED"
+    }
+  ],
+  "submission_count": 1
+}

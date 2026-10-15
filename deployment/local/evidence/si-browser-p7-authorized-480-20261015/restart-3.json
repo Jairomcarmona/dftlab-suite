@@ -1,0 +1,14 @@
+{
+  "reason": "New one-use bootstrap after the original browser closed; no resubmission",
+  "stop": {
+    "returncode": 0,
+    "stdout": "{\"instance_id\": \"337c983a-6809-4614-9d83-fcced6abf740\", \"scope\": \"local-api\", \"status\": \"stopped\", \"version\": \"0.1.0.dev0\"}\n",
+    "stderr": ""
+  },
+  "start": {
+    "returncode": 0,
+    "stdout": "{\"api_version\": \"0.1.0\", \"instance_id\": \"f9a89d97-55e4-4fe0-8145-2915717c19ca\", \"pid\": 50062, \"scope\": \"local-api\", \"status\": \"running\", \"url\": \"http://127.0.0.1:37775/\", \"version\": \"0.1.0.dev0\"}\n",
+    "stderr": ""
+  },
+  "profile_sha256": "1f3742c9c66f918c53381194fdbbdb27e4a10c26bac65182a6faaa7be3abb223"
+}

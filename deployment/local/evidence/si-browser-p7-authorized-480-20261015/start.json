@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/jmc/.local/state/dftlab-qualification/p7-browser-ec2ae09-20261015/venv/bin/python",
+    "-I",
+    "-m",
+    "dftlab_platform.launcher",
+    "start",
+    "--state-dir",
+    "/home/jmc/.local/state/dftlab-platform/si-browser-p7-480-20261015",
+    "--local-run",
+    "--site-config",
+    "/home/jmc/.local/state/dftlab-qualification/t023b-consumer-v1/config.json",
+    "--profile",
+    "/home/jmc/.local/state/dftlab-platform/si-browser-p7-2min-profile-20261015.json",
+    "--pseudo",
+    "/mnt/c/Users/Jairo/Downloads/DFTQUANTUMLAB/dftlab-suite-corte-p6/app/tests/siesta/fixtures/pseudo/Si_lda_oncv.psml",
+    "--wheelhouse",
+    "/home/jmc/.local/state/dftlab-qualification/p6-pinned-wheelhouse"
+  ],
+  "DFTLAB_PROFILE": "/home/jmc/.local/state/dftlab-platform/si-browser-p7-2min-profile-20261015.json",
+  "profile_sha256_before_start": "1f3742c9c66f918c53381194fdbbdb27e4a10c26bac65182a6faaa7be3abb223",
+  "returncode": 0,
+  "stdout": "{\"api_version\": \"0.1.0\", \"instance_id\": \"ad38f8bf-b0f5-47a9-ba60-d19eabb1242d\", \"pid\": 42391, \"scope\": \"local-api\", \"status\": \"running\", \"url\": \"http://127.0.0.1:56563/\", \"version\": \"0.1.0.dev0\"}\n",
+  "stderr": ""
+}

@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "route": "BROWSER_READ_ONLY_EXISTING_RUN",
+  "started_at": "2026-10-15T06:32:11.761Z",
+  "status": "READ_FAILED_NO_WRITE",
+  "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+  "run_id": "42ac02f3-7069-4507-ba3a-ef273a553278",
+  "claims": {
+    "purpose": "EXPLORATORY",
+    "scientific_assessment": "NOT_ESTABLISHED",
+    "capabilities_published_for_execution": false
+  },
+  "run_reads": {},
+  "artifact_reads": [
+    {
+      "artifact_id": "e49e62e4-64bd-4f45-9a57-2666a17c0e38",
+      "path": "artifacts/e49e62e4-64bd-4f45-9a57-2666a17c0e38.bin",
+      "status": 200,
+      "size_bytes": 1290,
+      "sha256": "f63dbb2c32cb470c48b6be1f87e0079d8142e672381d35e6adc11d5d86eb88d4"
+    },
+    {
+      "artifact_id": "db9e88ee-3cc7-408c-99e8-e1820d0bc308",
+      "path": "artifacts/db9e88ee-3cc7-408c-99e8-e1820d0bc308.bin",
+      "status": 200,
+      "size_bytes": 6890,
+      "sha256": "c04de5eda7da8c985ac0e8d99a5925ba721eb39a450f70fd9fc81c4a422aa2be"
+    },
+    {
+      "artifact_id": "94cdeb15-1d7d-4111-8595-76bcf7024bba",
+      "path": "artifacts/94cdeb15-1d7d-4111-8595-76bcf7024bba.bin",
+      "status": 200,
+      "size_bytes": 3259,
+      "sha256": "f103eba4a7a2a112ec5d9102220eb55ad11b690c1ac9fee972a3c55dd0ca46df"
+    }
+  ],
+  "cancelled_artifact_metadata_reads": [],
+  "mutating_requests": [],
+  "browser_errors": [],
+  "error": "AssertionError: The browser must retrieve signed terminal evidence",
+  "elapsed_seconds": 2.015
+}

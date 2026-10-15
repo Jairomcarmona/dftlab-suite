@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "route": "BROWSER_READ_ONLY_EXISTING_RUN",
+  "started_at": "2026-10-15T06:32:54.838Z",
+  "status": "EXISTING_RUN_READ_AND_RELOADED",
+  "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+  "run_id": "42ac02f3-7069-4507-ba3a-ef273a553278",
+  "claims": {
+    "purpose": "EXPLORATORY",
+    "scientific_assessment": "NOT_ESTABLISHED",
+    "capabilities_published_for_execution": false
+  },
+  "run_reads": {
+    "first": {
+      "source": "existing run opened through the operative browser",
+      "visible_text_sha256": "c847f9cb549b5361def97bd92dd9bf386a7ec69a541b6138837a116c767545f3",
+      "admission_decision": "ADMITTED",
+      "purpose": "EXPLORATORY",
+      "event_count": 33,
+      "artifact_count": 22,
+      "showed_native_result": true,
+      "showed_science_not_established": true
+    },
+    "get_run": {
+      "path": "get-run.json",
+      "status": 200,
+      "sha256": "fcce55e0bfb4049a8675d69a72f5e92308cdf62b33128017b69b30ee299f3c19",
+      "dimensions": {
+        "execution": {
+          "observed_at": "2026-10-15T06:27:42.063418Z",
+          "source": "QRAFT_NATIVE_RESULT_AND_TERMINAL_EVIDENCE",
+          "value": "COMPLETED"
+        },
+        "integrity": {
+          "observed_at": "2026-10-15T06:27:42.063418Z",
+          "source": "PACKAGE_RESULT_AND_TERMINAL_ARTIFACT_SHA256",
+          "value": "VERIFIED"
+        },
+        "scheduler": {
+          "observed_at": "2026-10-15T06:27:42.063418Z",
+          "source": "SIGNED_QRAFT_TERMINAL_SCHEDULER_EVIDENCE",
+          "value": "COMPLETED"
+        },
+        "science": {
+          "observed_at": "2026-10-15T06:27:42.063418Z",
+          "source": "NO_SCIENTIFIC_ASSESSMENT_PERFORMED",
+          "value": "NOT_ESTABLISHED"
+        }
+      },
+      "captured_at": "2026-10-15T06:32:57.634Z"
+    },
+    "after_reload": {
+      "showed_native_result": true,
+      "showed_finalization_published": true,
+      "showed_science_not_established": true
+    }
+  },
+  "artifact_reads": [
+    {
+      "artifact_id": "088e1252-a5bd-465d-ac97-c5460f0789f7",
+      "path": "artifacts/088e1252-a5bd-465d-ac97-c5460f0789f7.bin",
+      "status": 200,
+      "size_bytes": 593,
+      "sha256": "8a84f944b63a17f1d4c20fe83987fab54b23111824b03affa6b6ce77344470d5"
+    },
+    {
+      "artifact_id": "e49e62e4-64bd-4f45-9a57-2666a17c0e38",
+      "path": "artifacts/e49e62e4-64bd-4f45-9a57-2666a17c0e38.bin",
+      "status": 200,
+      "size_bytes": 1290,
+      "sha256": "f63dbb2c32cb470c48b6be1f87e0079d8142e672381d35e6adc11d5d86eb88d4"
+    },
+    {
+      "artifact_id": "db9e88ee-3cc7-408c-99e8-e1820d0bc308",
+      "path": "artifacts/db9e88ee-3cc7-408c-99e8-e1820d0bc308.bin",
+      "status": 200,
+      "size_bytes": 6890,
+      "sha256": "c04de5eda7da8c985ac0e8d99a5925ba721eb39a450f70fd9fc81c4a422aa2be"
+    },
+    {
+      "artifact_id": "94cdeb15-1d7d-4111-8595-76bcf7024bba",
+      "path": "artifacts/94cdeb15-1d7d-4111-8595-76bcf7024bba.bin",
+      "status": 200,
+      "size_bytes": 3259,
+      "sha256": "f103eba4a7a2a112ec5d9102220eb55ad11b690c1ac9fee972a3c55dd0ca46df"
+    }
+  ],
+  "cancelled_artifact_metadata_reads": [],
+  "mutating_requests": [],
+  "browser_errors": [],
+  "signed_terminal_evidence": {
+    "artifact_id": "088e1252-a5bd-465d-ac97-c5460f0789f7",
+    "sha256": "8a84f944b63a17f1d4c20fe83987fab54b23111824b03affa6b6ce77344470d5",
+    "job": {
+      "cluster": "siestaflow-local",
+      "job_id": "460",
+      "remote_user": "jmc"
+    },
+    "state": "COMPLETED",
+    "signature": "5b936dd0261fca340c2bf387d406900b16f4cd975799130a083a1c2f674eabfd"
+  },
+  "elapsed_seconds": 3.545
+}
