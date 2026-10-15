@@ -278,6 +278,23 @@ class LocalRunTests(unittest.TestCase):
                                        "native_ref": {"artifact_id": "native-001"}}])
         runtime._artifact.assert_not_called()
 
+    def test_declared_outputs_accept_qraft_relative_path_field(self):
+        runtime = object.__new__(LocalRunApplication)
+        workflow = SimpleNamespace(tasks=[
+            SimpleNamespace(task_id="single", outputs=[SimpleNamespace(
+                name="density", relative_path="si.DM", artifact_type="siesta.density-matrix",
+                media_type="application/x-siesta-dm")]),
+            SimpleNamespace(task_id="derived", outputs=[SimpleNamespace(
+                name="density", relative_path="si.DM", artifact_type="siesta.density-matrix",
+                media_type="application/x-siesta-dm")]),
+        ])
+        runtime.engines = SimpleNamespace(qraft=SimpleNamespace(
+            load_workflow_lock=Mock(return_value=({}, workflow))))
+
+        outputs = runtime._declared_outputs({"root": "/tmp/run-001"})
+
+        self.assertEqual([item["path"] for item in outputs], ["si.DM", "si.DM"])
+
     def test_output_requires_task_attempt_evidence_with_matching_hash(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

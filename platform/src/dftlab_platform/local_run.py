@@ -960,6 +960,8 @@ class LocalRunApplication:
             for output in self._field(task, "outputs", ()) or ():
                 name = self._field(output, "name")
                 path = self._field(output, "path")
+                if path is None:
+                    path = self._field(output, "relative_path")
                 artifact_type = self._field(output, "artifact_type")
                 media_type = self._field(output, "media_type")
                 if any(not isinstance(item, str) or not item for item in (task_id, name, path, artifact_type, media_type)):
