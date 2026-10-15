@@ -66,3 +66,43 @@ El WebSocket de terminal (#30), la API pública de presupuestos y cualquier cons
 ## Contratos afectados
 
 Nuevos: `campaign`, `plan`. Cambiados: `operation-request`, `operation-record`, `admission-receipt`, `finalization-receipt`, `openapi/dftlab-api.v1.json` (siete GET, cuatro páginas), `errors/error-codes.json` (`CURSOR_EXPIRED` también para listas) y los fixtures de `contracts/fixtures/` (campaign, plan, operation-record, operation-request, admission-receipt, finalization-receipt).
+
+## Adenda 1: operaciones de creación, regla de reserva, identidad del perfil y capability exploratoria
+
+Fecha: 2026-10-15. Propuesta de Claude tras el corte vertical (runs 459 y 460, [#110](https://github.com/Jairomcarmona/dftlab-suite/issues/110)); entra en vigor cuando Manuel la acepte al fusionar el PR. No cambia ningún schema, fixture ni código.
+
+### A1. `createCampaign` y `createPlan`
+
+El §1 definió las lecturas de campañas y planes pero no cómo se crean. El corte los necesitó y Manuel autorizó el 2026-10-14 añadirlos al OpenAPI (PR #111):
+
+- `POST /projects/{project_id}/campaigns` (`createCampaign`) y `POST /campaigns/{campaign_id}/plans` (`createPlan`).
+- Siguen el patrón de las demás acciones: cuerpo `operation-request`, respuesta `202` (o `200` si es idempotente) con `operation-record`, y los errores comunes. No añaden schema ni campo público.
+- El producto (`CAMPAIGN`, `PLAN`) se lee con los GET del §1, como ya dice «lectura tras escritura».
+
+### A2. Regla de reserva: CPU asignadas
+
+**Qué se observó.** El código reserva `nodos × CPU pedidas por el perfil × límite de tiempo`. El job 460 (igual que el 459) pidió 4 CPU y SLURM le asignó 8: `ReqTRES cpu=4`, `AllocTRES cpu=8`, `NumTasks=4`. Con 120 s, la reserva fue 480 y la capacidad realmente bloqueada fue 960. Una causa probable es que SLURM reserva núcleos completos de dos hilos en este WSL, pero no se comprobó la configuración. El cálculo corrió 4 procesos durante unos 8 s.
+
+**Decisión propuesta.** El §3 no cambia: la unidad es `allocated_cpu_second` y cuenta CPU **asignadas**. Reservar menos de lo que SLURM bloquea es la dirección insegura. El código debe alinearse: la cantidad asignada por CPU pedida se toma del perfil calificado o del probe, nunca se supone. Hasta entonces:
+
+- la diferencia es una limitación conocida, aceptada por Manuel solo para los runs 459 y 460;
+- ningún presupuesto nuevo debe tratarse como exacto, y
+- la corrección del código es un PR aparte de Codex que ordena Manuel; esta adenda no lo ordena.
+
+Para un usuario local único la diferencia no pone en riesgo a otros trabajos; el cambio importa cuando haya más de un consumidor del presupuesto (P9).
+
+### A3. Identidad del perfil
+
+**Qué se observó.** `wsl-slurm-openmpi-installed-qualification` revisión 1 tiene dos contenidos: el original de 2 minutos (SHA `1f3742c9…e3abb223`) y un archivo de operador de 10 minutos (SHA `fcd98dca…03d7b1e8`). Cada run guarda el SHA del perfil que usó, así que 459 y 460 son trazables.
+
+**Regla propuesta.** `profile_id` más revisión identifican un único contenido. Un contenido distinto es una revisión nueva. El archivo de 10 minutos pasa a revisión 2 la próxima vez que se use. No se modifica ningún archivo ahora. No se exige una verificación de SHA en la plataforma: puede añadirse después sin cambiar este ADR.
+
+**Consecuencia para el código.** `local_run.py` fija hoy la revisión del perfil en 1. Antes de usar una revisión 2, un PR de Codex debe leer la revisión del perfil en lugar de suponerla.
+
+### A4. Capability de ejecución exploratoria
+
+Sin cambio: `listCapabilities` sigue sin publicar una capability de ejecución. `capability-descriptor.schema.json` no puede expresar el propósito `EXPLORATORY` y exige `RUNTIME_VERIFIED` o más para `EXECUTION`. Los runs 459 y 460 son evidencia de tubería con ciencia `NOT_ESTABLISHED`; no bastan por sí solos para elevar nada. Cómo se expresa una capability exploratoria y qué evidencia la lleva a `RUNTIME_VERIFIED` queda para una decisión de Manuel, con un ADR propio. `platform_resume_enabled` sigue en `false`.
+
+### Pruebas
+
+Ninguna nueva: es una adenda de texto. `node scripts/verify.mjs` debe seguir pasando.
