@@ -46,7 +46,7 @@ def serve(state, instance, base_path="", *, local_run_options=None):
         # UI. No token in URL, stdout, heartbeat, logs or browser persistence.
         _write(state / "access.json", {"bootstrap_token": token, "origin": settings.origin})
         app = create_app(repository, artifacts, readmodels, settings, sessions, drafts=drafts, runtime=local_run)
-        server = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=settings.port, access_log=False, log_config=None, proxy_headers=False, ws="none", limit_concurrency=64, h11_max_incomplete_event_size=8192, timeout_keep_alive=5, lifespan="off"))
+        server = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=settings.port, access_log=False, log_config=None, proxy_headers=False, ws="none", limit_concurrency=64, h11_max_incomplete_event_size=8192, timeout_keep_alive=5, timeout_graceful_shutdown=5, lifespan="off"))
         environment = dict(os.environ)
         environment.pop("PYTHONPATH", None)
         options = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {"start_new_session": True}

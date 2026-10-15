@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import ctypes
+import errno
 import json
 import os
 from pathlib import Path
@@ -19,6 +20,8 @@ from . import __version__
 HEARTBEAT_SECONDS = 0.2
 STALE_SECONDS = 3.0
 TIMEOUT_SECONDS = 10.0
+STOP_TIMEOUT_SECONDS = 20.0
+READ_RETRY_SECONDS = 1.0
 
 
 def _default_state() -> Path:
@@ -28,13 +31,24 @@ def _default_state() -> Path:
 
 
 def _read(path: Path) -> dict | None:
-    try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-        if not isinstance(value, dict):
-            raise ValueError("Launcher record is not an object")
-        return value
-    except FileNotFoundError:
-        return None
+    deadline = time.monotonic() + READ_RETRY_SECONDS
+    while True:
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(value, dict):
+                raise ValueError("Launcher record is not an object")
+            return value
+        except FileNotFoundError:
+            return None
+        except OSError as error:
+            # Windows can deny a read briefly while another process atomically
+            # replaces the heartbeat. Treat only access/share violations as
+            # transient and preserve the fail-closed error after a short bound.
+            if error.errno != errno.EACCES and getattr(error, "winerror", None) not in {5, 32}:
+                raise
+            if time.monotonic() >= deadline:
+                raise
+            time.sleep(0.01)
 
 
 def _write(path: Path, data: dict) -> None:
@@ -97,6 +111,25 @@ def _wait_stopped(state: Path, instance: str) -> bool:
     return False
 
 
+def _reap_stopped_instance(state: Path, instance: str) -> tuple[dict, int]:
+    """Clear only a stopped local instance, after both OS-held guards are free."""
+    from .local_runtime import local_lock
+    try:
+        with local_lock(state / "service.guard"):
+            with local_lock(state / "processor.guard"):
+                current = _lease(state)
+                if current is not None and current["instance_id"] != instance:
+                    return {"error": "INSTANCE_CHANGED", **_status(state)}, 2
+                if current is not None:
+                    for name in ("access.json", "heartbeat.json", "launcher.lock", f"stop-{instance}.json"):
+                        (state / name).unlink(missing_ok=True)
+                return {"status": "stopped", "instance_id": instance, "version": __version__, "scope": "local-api"}, 0
+    except OSError:
+        # Failure to acquire either guard is evidence that shutdown is not
+        # complete. Leave all ownership records untouched.
+        return {"error": "STOP_TIMEOUT", **_status(state)}, 2
+
+
 def _start(state: Path, base_path="", local_run_options=None) -> tuple[dict, int]:
     from .local_runtime import private_directory
     state = private_directory(state)
@@ -149,30 +182,38 @@ def _stop(state: Path) -> tuple[dict, int]:
     if current is None:
         return _status(state), 0
     instance = current["instance_id"]
-    handle = None
+    handles = []
+    kernel = None
     if os.name == "nt":
         pulse = _read(state / "heartbeat.json")
         if pulse and pulse.get("instance_id") == instance:
             kernel = ctypes.WinDLL("kernel32", use_last_error=True)
             kernel.OpenProcess.argtypes = [ctypes.c_uint32, ctypes.c_int, ctypes.c_uint32]
             kernel.OpenProcess.restype = ctypes.c_void_p
-            handle = kernel.OpenProcess(0x00100000, False, pulse["pid"])
+            kernel.WaitForSingleObject.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+            kernel.WaitForSingleObject.restype = ctypes.c_uint32
+            kernel.CloseHandle.argtypes = [ctypes.c_void_p]
+            for pid in (pulse.get("pid"), pulse.get("processor_pid")):
+                if isinstance(pid, int) and pid > 0:
+                    handle = kernel.OpenProcess(0x00100000, False, pid)  # SYNCHRONIZE only; never terminate.
+                    if handle:
+                        handles.append(handle)
     try:
         _request_stop(state, instance)
-        if _wait_stopped(state, instance):
-            # Wait only; never terminate a PID. Capture the Windows process
-            # handle before cooperative stop so PID recycling cannot change it.
-            if handle:
-                kernel.WaitForSingleObject.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
-                kernel.WaitForSingleObject.restype = ctypes.c_uint32
-                if kernel.WaitForSingleObject(handle, int(TIMEOUT_SECONDS*1000)) != 0:
-                    return {"error": "STOP_TIMEOUT", "status": "unknown"}, 2
-            return {"status": "stopped", "instance_id": instance, "version": __version__, "scope": "local-api"}, 0
-        return {"error": "STOP_TIMEOUT", **_status(state)}, 2
+        deadline = time.monotonic() + STOP_TIMEOUT_SECONDS
+        while True:
+            process_exited = all(kernel.WaitForSingleObject(handle, 0) == 0 for handle in handles) if handles else False
+            if process_exited or not handles:
+                result, code = _reap_stopped_instance(state, instance)
+                if code == 0 or result.get("error") == "INSTANCE_CHANGED":
+                    return result, code
+            if time.monotonic() >= deadline:
+                return {"error": "STOP_TIMEOUT", **_status(state)}, 2
+            time.sleep(HEARTBEAT_SECONDS)
     finally:
-        if handle:
-            kernel.CloseHandle.argtypes = [ctypes.c_void_p]
-            kernel.CloseHandle(handle)
+        if kernel:
+            for handle in handles:
+                kernel.CloseHandle(handle)
 
 
 def _run(state: Path, instance: str, base_path="", local_run_options=None) -> int:
