@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "route": "BROWSER_READ_ONLY_EXISTING_RUN",
+  "started_at": "2026-10-15T03:45:41.126Z",
+  "status": "EXISTING_RUN_READ_AND_RELOADED",
+  "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+  "run_id": "2d89c421-bc62-4218-a060-0fd2fbd0669c",
+  "claims": {
+    "purpose": "EXPLORATORY",
+    "scientific_assessment": "NOT_ESTABLISHED",
+    "capabilities_published_for_execution": false
+  },
+  "run_reads": {
+    "first": {
+      "source": "existing run opened through the operative browser",
+      "visible_text_sha256": "b10063a01e72f5cf8edb075ef56eecc980af7407019ff24adadc42983e94f206",
+      "admission_decision": "ADMITTED",
+      "purpose": "EXPLORATORY",
+      "event_count": 33,
+      "artifact_count": 22,
+      "showed_native_result": true,
+      "showed_science_not_established": true
+    },
+    "get_run": {
+      "path": "get-run.json",
+      "status": 200,
+      "sha256": "d5b7a72179d051ccfdf489944d228b2245031baf12c76944523e81ac498a9dff",
+      "dimensions": {
+        "execution": {
+          "observed_at": "2026-10-15T02:49:50.119566Z",
+          "source": "QRAFT_NATIVE_RESULT_AND_TERMINAL_EVIDENCE",
+          "value": "COMPLETED"
+        },
+        "integrity": {
+          "observed_at": "2026-10-15T02:49:50.119566Z",
+          "source": "PACKAGE_RESULT_AND_TERMINAL_ARTIFACT_SHA256",
+          "value": "VERIFIED"
+        },
+        "scheduler": {
+          "observed_at": "2026-10-15T02:49:50.119566Z",
+          "source": "SIGNED_QRAFT_TERMINAL_SCHEDULER_EVIDENCE",
+          "value": "COMPLETED"
+        },
+        "science": {
+          "observed_at": "2026-10-15T02:49:50.119566Z",
+          "source": "NO_SCIENTIFIC_ASSESSMENT_PERFORMED",
+          "value": "NOT_ESTABLISHED"
+        }
+      },
+      "captured_at": "2026-10-15T03:45:45.335Z"
+    },
+    "after_reload": {
+      "showed_native_result": true,
+      "showed_finalization_published": true,
+      "showed_science_not_established": true
+    }
+  },
+  "artifact_reads": [
+    {
+      "artifact_id": "d0c0ec02-a44b-44ce-8e52-35017ec7a57d",
+      "path": "artifacts/d0c0ec02-a44b-44ce-8e52-35017ec7a57d.bin",
+      "status": 200,
+      "size_bytes": 1290,
+      "sha256": "ef2a16ee2b4439d7d823ecd099fa37a327965dff82e4f80a6a5c489c4d73a767"
+    },
+    {
+      "artifact_id": "1f17d91b-093d-4d71-809d-e43ba9edc41c",
+      "path": "artifacts/1f17d91b-093d-4d71-809d-e43ba9edc41c.bin",
+      "status": 200,
+      "size_bytes": 6890,
+      "sha256": "b0438ee6f33c495cfcfe0db0b4df138f8151d33f9dec76e39f27caacbf4085ae"
+    },
+    {
+      "artifact_id": "f1053b80-7541-4c36-8709-92b9c714995d",
+      "path": "artifacts/f1053b80-7541-4c36-8709-92b9c714995d.bin",
+      "status": 200,
+      "size_bytes": 3259,
+      "sha256": "cbc72987aaa418f74ba8191f09500dc04e0aa21204b898d969bffdce34e3e31d"
+    }
+  ],
+  "cancelled_artifact_metadata_reads": [],
+  "mutating_requests": [],
+  "browser_errors": [],
+  "elapsed_seconds": 4.97
+}

@@ -196,6 +196,7 @@ try{
   await budget.fill('budget-local');
   await page.locator('button[data-local-action="submit"]').click();
   const run=page.locator(`article[data-run-id="${RUN}"]`).filter({has:page.locator('[data-native-result]')});await run.waitFor({timeout:15000});
+  await run.getByText(/Finalización: PUBLISHED/).waitFor({timeout:15000});
   await page.locator('[data-operative-run-page][open]').waitFor();
   const layout=await page.locator('[data-operative-run-page]').evaluate(dialog=>({
     width:dialog.clientWidth,scrollWidth:dialog.scrollWidth,
@@ -209,6 +210,7 @@ try{
   assert.match(await admitted.innerText(),/EXPLORATORY/);
   const runAdmission=run.locator('[data-run-admission][data-decision="ADMITTED"]');await runAdmission.waitFor();
   assert.equal(await runAdmission.getAttribute('data-purpose'),'EXPLORATORY');
+  assert.match(await run.innerText(),/Finalización: PUBLISHED; salidas no producidas: 0\./);
   assert.match(await run.innerText(),/scheduler[\s\S]*execution[\s\S]*integrity[\s\S]*science/);
   assert.match(await run.locator('[data-native-result]').textContent(),/scf_converged/);
   assert.equal(await run.locator('li').filter({hasText:'qraft.runtime-result-observation'}).count(),1);
@@ -221,6 +223,7 @@ try{
   try{await page.locator('[data-operative-run-page][open]').waitFor({timeout:15000});}
   catch(error){console.error(JSON.stringify({dialogCount:await page.locator('[data-operative-run-page]').count(),project:await page.locator('[data-project-selector]').inputValue(),runCardCount:await page.locator('article[data-run-id]').count(),runList:await page.locator('[data-run-list]').innerText(),localStorage:await page.evaluate(()=>Object.keys(localStorage).filter(key=>key.startsWith('dftlab.local-run.v1.')).map(key=>[key,localStorage.getItem(key)])),status:await page.locator('[data-local-run-panel] [role="status"]').textContent(),calls:state.calls.slice(-15)}));throw error;}
   await reloadedRun.waitFor({timeout:15000});
+  await reloadedRun.getByText(/Finalización: PUBLISHED/).waitFor({timeout:15000});
   assert.equal(await page.locator('[data-project-selector]').inputValue(),PROJECT);
   assert.match(await page.locator('[data-operation-list]').innerText(),/SUBMIT_RUN · SUCCEEDED/);
   assert.ok(state.calls.some(call=>call.startsWith(`GET projects/${PROJECT}/operations`)));
