@@ -1,0 +1,1725 @@
+{
+  "admission": {
+    "decision": "ADMITTED",
+    "purpose": "EXPLORATORY",
+    "reasons": [
+      "EXPLORATORY_SCIENCE_NOT_ESTABLISHED"
+    ],
+    "reservation": {
+      "amount": {
+        "unit": "allocated_cpu_second",
+        "value": 480
+      },
+      "budget_ref": "f4164a19-37ab-4d38-a8f7-f353929de73c",
+      "reservation_id": "e9ec259b-6721-435f-8e59-378da03fd538"
+    }
+  },
+  "api_version": "0.1.0",
+  "artifacts": [
+    {
+      "artifact_id": "d0c0ec02-a44b-44ce-8e52-35017ec7a57d",
+      "kind": "dftlab.admission-receipt",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.admission-receipt-d0c0ec02-a44b-44ce-8e52-35017ec7a57d.json",
+      "sha256": "ef2a16ee2b4439d7d823ecd099fa37a327965dff82e4f80a6a5c489c4d73a767",
+      "size_bytes": 1290
+    },
+    {
+      "artifact_id": "ec290250-ffd1-43d6-9b82-84881168ef27",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-ec290250-ffd1-43d6-9b82-84881168ef27.json",
+      "sha256": "bf35b8298a66b48a65514195553307ff4ec2755717e6dd1df2b0fd46af96be48",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "47883e88-5e42-4abd-a7aa-1fef87e79d58",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-47883e88-5e42-4abd-a7aa-1fef87e79d58.json",
+      "sha256": "de7fb0508be3c093c36c5f58206e5b7b7cdae47aa62154c556a0e077ad17cfdd",
+      "size_bytes": 570
+    },
+    {
+      "artifact_id": "0b871b63-c1d1-402e-a991-d6556f8f248f",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-0b871b63-c1d1-402e-a991-d6556f8f248f.json",
+      "sha256": "f8cf54300f9654f379be07f4a18c87e9c11d2c812f2a1648241c6e7a3cc94e85",
+      "size_bytes": 1923
+    },
+    {
+      "artifact_id": "f6565ff1-8617-4530-901e-ac51197b9d09",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-f6565ff1-8617-4530-901e-ac51197b9d09.json",
+      "sha256": "e1de41240d2c2a2b9b6ad260d990cfef9c1438561421d5e439eddf8c90271b8b",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "41e87c0d-d6e3-46e2-b7fe-eead5cd538ad",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-41e87c0d-d6e3-46e2-b7fe-eead5cd538ad.json",
+      "sha256": "7ae641c8e90e9d14d992115dada6e7dc0d311a1b08ff8c718af6b6df66d7f941",
+      "size_bytes": 415
+    },
+    {
+      "artifact_id": "6dbb4dab-2864-40ca-aaf3-f34a5c555072",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-6dbb4dab-2864-40ca-aaf3-f34a5c555072.json",
+      "sha256": "e84551de802c93d735ab034e2d51b0c5833e3ccbbffd0d9a45a6807bab0afeeb",
+      "size_bytes": 2014
+    },
+    {
+      "artifact_id": "34ba5c4b-bdad-4cd2-be05-80eb41176511",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-34ba5c4b-bdad-4cd2-be05-80eb41176511.json",
+      "sha256": "ad74d03a1fb0241afc7943d2b7e6d6ddc7ff0988642a211132c721c4878a7566",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "64b41567-ed40-4752-ada0-0fe03070369d",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-64b41567-ed40-4752-ada0-0fe03070369d.json",
+      "sha256": "2074debb79d1b3b87b6a03692a8afa98c6ac47f99b2deff5de87c2fb2b050600",
+      "size_bytes": 415
+    },
+    {
+      "artifact_id": "84cc3427-2dea-4f20-a295-8b967931fc27",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-84cc3427-2dea-4f20-a295-8b967931fc27.json",
+      "sha256": "af1c64570edb01d6a46aa6702fd85d1a4c6e0ed6694daf2c8aa65c45f829efad",
+      "size_bytes": 2014
+    },
+    {
+      "artifact_id": "cd36d05f-b2d3-4b84-bc83-a7fbe97da687",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-cd36d05f-b2d3-4b84-bc83-a7fbe97da687.json",
+      "sha256": "0520295f4af1adc72561c45e9284304e30f8f1091c3a31ff48a7832287ff7672",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "1ec99a82-d076-4c95-9abc-1b2c7559915e",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-1ec99a82-d076-4c95-9abc-1b2c7559915e.json",
+      "sha256": "7eb4d2793e5b586d945a5f5d8baafafb73e14b42b439b77204de91417b06335a",
+      "size_bytes": 415
+    },
+    {
+      "artifact_id": "d5ecdd1b-e56c-46ca-98bd-e819e2c5a50e",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-d5ecdd1b-e56c-46ca-98bd-e819e2c5a50e.json",
+      "sha256": "5ddc03a51752122a3e92ec01a51b0b828794f87c383910e0d485a215eee01ef0",
+      "size_bytes": 2014
+    },
+    {
+      "artifact_id": "1f17d91b-093d-4d71-809d-e43ba9edc41c",
+      "kind": "qraft.runtime-result-observation",
+      "media_type": "application/json",
+      "path": "artifacts/qraft.runtime-result-observation-1f17d91b-093d-4d71-809d-e43ba9edc41c.json",
+      "sha256": "b0438ee6f33c495cfcfe0db0b4df138f8151d33f9dec76e39f27caacbf4085ae",
+      "size_bytes": 6890
+    },
+    {
+      "artifact_id": "06415612-1849-428b-998e-ede2f0b93dac",
+      "kind": "dftlab.native-worker-summary",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.native-worker-summary-06415612-1849-428b-998e-ede2f0b93dac.json",
+      "sha256": "9546d00fcb961fb71cebdb46dc29ad35a08ecedd5966c7f42d5b61c1f930ec6a",
+      "size_bytes": 591
+    },
+    {
+      "artifact_id": "5144e401-36fd-4085-b570-9b691691d340",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-5144e401-36fd-4085-b570-9b691691d340.json",
+      "sha256": "768c935211b8dcd40d9d142607db0622a768a0e57b1a33a56258ce19ede1bdfa",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "4a62ad33-b2ec-4db2-b362-bdb62732612f",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-4a62ad33-b2ec-4db2-b362-bdb62732612f.json",
+      "sha256": "ae047a28a23073d678d330f7917e0864e77deaa58e7c5b5cadd4a0bb5702ac5c",
+      "size_bytes": 2016
+    },
+    {
+      "artifact_id": "cf07d7a2-9d2d-45ac-81d9-4a6f2ae8dc68",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-cf07d7a2-9d2d-45ac-81d9-4a6f2ae8dc68.json",
+      "sha256": "cab828daceaa2d9f26d5066f1f1f8c1d141b6fadbe57e0b16e0a11a127086c1d",
+      "size_bytes": 301
+    },
+    {
+      "artifact_id": "08268f20-8a25-43dd-9e11-fe1102de6896",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-08268f20-8a25-43dd-9e11-fe1102de6896.json",
+      "sha256": "5cbb9d42335c16143ffe7c37735c121d8d0023b7ca46a71a6ddc3badcc8293ec",
+      "size_bytes": 2016
+    },
+    {
+      "artifact_id": "e915c28e-fcdb-4106-b265-b13870e1be50",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-e915c28e-fcdb-4106-b265-b13870e1be50.json",
+      "sha256": "989954573b1f81332321d50581435126dfa6b666655c6294bed04806548c99b1",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "0f6fb336-0c54-4796-b01f-f9ae7ca0ca2d",
+      "kind": "qraft.terminal-scheduler-evidence",
+      "media_type": "application/json",
+      "path": "artifacts/qraft.terminal-scheduler-evidence-0f6fb336-0c54-4796-b01f-f9ae7ca0ca2d.json",
+      "sha256": "9b58064d91be255f959abf36e39dfae45ddb733f42737b5c4e795e3a6a48eeef",
+      "size_bytes": 593
+    },
+    {
+      "artifact_id": "f1053b80-7541-4c36-8709-92b9c714995d",
+      "kind": "dftlab.finalization-receipt",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.finalization-receipt-f1053b80-7541-4c36-8709-92b9c714995d.json",
+      "sha256": "cbc72987aaa418f74ba8191f09500dc04e0aa21204b898d969bffdce34e3e31d",
+      "size_bytes": 3259
+    },
+    {
+      "artifact_id": "a8eab241-9d63-41f5-992f-231e7bb5f639",
+      "kind": "siesta.density-matrix",
+      "media_type": "application/x-siesta-dm",
+      "path": "artifacts/siesta.density-matrix-a8eab241-9d63-41f5-992f-231e7bb5f639.bin",
+      "sha256": "16812331fe51fb1c7ce5c1f64f1b8360c3f866af9f5678809d77ec34005abb99",
+      "size_bytes": 478084
+    },
+    {
+      "artifact_id": "02eba1ab-b34f-40a5-a970-0fea357f0e3e",
+      "kind": "siesta.density-matrix",
+      "media_type": "application/x-siesta-dm",
+      "path": "artifacts/siesta.density-matrix-02eba1ab-b34f-40a5-a970-0fea357f0e3e.bin",
+      "sha256": "dfefd0fba0aee7f5e8e9fde2a121d3edc5ab83e3f1f5ad93f1d77ee73528604d",
+      "size_bytes": 478084
+    }
+  ],
+  "budget_id": "f4164a19-37ab-4d38-a8f7-f353929de73c",
+  "capabilities_response": [],
+  "claims": {
+    "capabilities_published_for_execution": false,
+    "purpose": "EXPLORATORY",
+    "scientific_assessment": "NOT_ESTABLISHED"
+  },
+  "completed_at": "2026-10-15T03:19:23.015267Z",
+  "draft_id": "30326bb4-e1d0-4587-a824-c6615a8f85c9",
+  "elapsed_seconds": 372.558,
+  "final_execution_state": "COMPLETED",
+  "finalization_receipt": {
+    "created_at": "2026-10-15T03:19:23.015267Z",
+    "integrity": {
+      "algorithm": "sha-256",
+      "canonicalization": "jcs-rfc8785",
+      "digest": "40250ef1cda2273be47a0c332b3007ccfae453142b5444f15995a15932f944fa",
+      "status": "VERIFIED"
+    },
+    "native_contract_refs": [],
+    "payload": {
+      "assessment_refs": [],
+      "attempt_id": "25c03d32-0ea6-4107-ab7b-dd538ed84dc2",
+      "authority_generation": 1,
+      "expected_artifacts": [
+        {
+          "artifact_id": "1f17d91b-093d-4d71-809d-e43ba9edc41c",
+          "media_type": "application/json",
+          "sha256": "b0438ee6f33c495cfcfe0db0b4df138f8151d33f9dec76e39f27caacbf4085ae"
+        },
+        {
+          "artifact_id": "06415612-1849-428b-998e-ede2f0b93dac",
+          "media_type": "application/json",
+          "sha256": "9546d00fcb961fb71cebdb46dc29ad35a08ecedd5966c7f42d5b61c1f930ec6a"
+        },
+        {
+          "artifact_id": "a8eab241-9d63-41f5-992f-231e7bb5f639",
+          "media_type": "application/x-siesta-dm",
+          "sha256": "16812331fe51fb1c7ce5c1f64f1b8360c3f866af9f5678809d77ec34005abb99"
+        },
+        {
+          "artifact_id": "02eba1ab-b34f-40a5-a970-0fea357f0e3e",
+          "media_type": "application/x-siesta-dm",
+          "sha256": "dfefd0fba0aee7f5e8e9fde2a121d3edc5ab83e3f1f5ad93f1d77ee73528604d"
+        }
+      ],
+      "journal_cursor": "2d89c421-bc62-4218-a060-0fd2fbd0669c:31",
+      "missing": [],
+      "native_refs": [
+        {
+          "artifact": {
+            "artifact_id": "95ce49bf-c75a-4937-98c7-5e52340c6232",
+            "media_type": "application/json",
+            "sha256": "ac8056201ffd3a8e5f2bcb9ee51f9b936e0e98496b0534b4c81c45311a5cb9a5"
+          },
+          "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
+          "contract": "siestaflow.workflow-lock@1.0",
+          "digest": {
+            "algorithm": "qraft.content-sha256-v1",
+            "value": "a5be4cedb9b0632b97d1232e106bc405ee696da3f3d98ffa2e0ec1bea36b39e6"
+          },
+          "distribution": "qraft-hpc",
+          "engine": "qraft",
+          "verification": {
+            "status": "VERIFIED",
+            "verified_at": "2026-10-15T02:49:34.871018Z"
+          },
+          "version": "0.2.0"
+        },
+        {
+          "artifact": {
+            "artifact_id": "4bde4c34-0c7c-44d1-ae2a-73eabc3cc2b8",
+            "media_type": "application/json",
+            "sha256": "2e549574e7d43cfa889fd4bbf5613aabe8ccca52d8e736bbc6da4f9d81b244e0"
+          },
+          "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
+          "contract": "siestaflow.run-lock@1.0",
+          "digest": {
+            "algorithm": "qraft.content-sha256-v1",
+            "value": "b8f22ddd23e7a9b1ce7adafabf266abbe2ded61bd62870af7186750f125b65ef"
+          },
+          "distribution": "qraft-hpc",
+          "engine": "qraft",
+          "verification": {
+            "status": "VERIFIED",
+            "verified_at": "2026-10-15T02:49:37.911215Z"
+          },
+          "version": "0.2.0"
+        }
+      ],
+      "run_id": "2d89c421-bc62-4218-a060-0fd2fbd0669c",
+      "state": "PUBLISHED",
+      "unproduced_outputs": [],
+      "validation_refs": [],
+      "verified_artifacts": [
+        {
+          "artifact_id": "1f17d91b-093d-4d71-809d-e43ba9edc41c",
+          "media_type": "application/json",
+          "sha256": "b0438ee6f33c495cfcfe0db0b4df138f8151d33f9dec76e39f27caacbf4085ae"
+        },
+        {
+          "artifact_id": "06415612-1849-428b-998e-ede2f0b93dac",
+          "media_type": "application/json",
+          "sha256": "9546d00fcb961fb71cebdb46dc29ad35a08ecedd5966c7f42d5b61c1f930ec6a"
+        },
+        {
+          "artifact_id": "a8eab241-9d63-41f5-992f-231e7bb5f639",
+          "media_type": "application/x-siesta-dm",
+          "sha256": "16812331fe51fb1c7ce5c1f64f1b8360c3f866af9f5678809d77ec34005abb99"
+        },
+        {
+          "artifact_id": "02eba1ab-b34f-40a5-a970-0fea357f0e3e",
+          "media_type": "application/x-siesta-dm",
+          "sha256": "dfefd0fba0aee7f5e8e9fde2a121d3edc5ab83e3f1f5ad93f1d77ee73528604d"
+        }
+      ]
+    },
+    "producer": {
+      "algorithm": null,
+      "commit": null,
+      "package": "dftlab-platform",
+      "version": "0.1.0-dev.0"
+    },
+    "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+    "record_id": "5c452073-bd9e-47f0-9f54-b4fbbda5175a",
+    "schema_id": "dftlab.finalization-receipt",
+    "schema_version": "0.1.0"
+  },
+  "get_run": {
+    "dimensions": {
+      "execution": {
+        "observed_at": "2026-10-15T02:49:50.119566Z",
+        "source": "QRAFT_NATIVE_RESULT_AND_TERMINAL_EVIDENCE",
+        "value": "COMPLETED"
+      },
+      "integrity": {
+        "observed_at": "2026-10-15T02:49:50.119566Z",
+        "source": "PACKAGE_RESULT_AND_TERMINAL_ARTIFACT_SHA256",
+        "value": "VERIFIED"
+      },
+      "scheduler": {
+        "observed_at": "2026-10-15T02:49:50.119566Z",
+        "source": "SIGNED_QRAFT_TERMINAL_SCHEDULER_EVIDENCE",
+        "value": "COMPLETED"
+      },
+      "science": {
+        "observed_at": "2026-10-15T02:49:50.119566Z",
+        "source": "NO_SCIENTIFIC_ASSESSMENT_PERFORMED",
+        "value": "NOT_ESTABLISHED"
+      }
+    },
+    "path": "get-run.json",
+    "run_id": "2d89c421-bc62-4218-a060-0fd2fbd0669c",
+    "sha256": "d5b7a72179d051ccfdf489944d228b2245031baf12c76944523e81ac498a9dff"
+  },
+  "input_hashes": {
+    "engine_lock_sha256": "87dfadbaa30b1105a591654343662e6044a94c1b52f292af62aeb76f328ace92",
+    "hubbardflow_wheel_sha256": "4414ec06fa2c1d36f7703295414f04a545ca5a290e9dd8b14f66ba664576b119",
+    "profile_sha256": "1f3742c9c66f918c53381194fdbbdb27e4a10c26bac65182a6faaa7be3abb223",
+    "pseudo_sha256": "84c9316efac1959ee8c04b8d5a06eec2e069fa19302cb66254f2e4dc455b2044",
+    "qraft_package_sha256": "d4775a953bab14a3dc470477c2da513384e52b9665cbfb8c546a07473e705c65",
+    "qraft_wheel_sha256": "2bc79321c6ab859f6c1ea24dccc2dca8837e8be7a92a36dcee79dcb5f71f88c2"
+  },
+  "job_id": "459",
+  "operation_ids": {
+    "createCampaign": "1a57006a-3f59-43e4-b253-e8e1002ea500",
+    "createPlan": "43ce77e5-1c76-4054-b51c-51335144022c",
+    "preparePackage": "8a203590-0d80-44d5-bad4-3b9a7a939ea5",
+    "submitRun": "596ca99c-0d3e-4537-9026-2d2e3150b089",
+    "validateInput": "7174a2bf-4a5a-4987-98fa-c3ae613fcccf"
+  },
+  "origin": "http://127.0.0.1:41607",
+  "previous_timeout": null,
+  "principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+  "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+  "qraft_result_original": {
+    "attempts": {
+      "derived": {
+        "artifacts": {
+          "si.DM": "dfefd0fba0aee7f5e8e9fde2a121d3edc5ab83e3f1f5ad93f1d77ee73528604d"
+        },
+        "attempt_id": "attempt-0001",
+        "execution_spec_sha256": "b9446a6e0f6bd02afb55d8fe30c993c0a47762fb58ce21925ba1d63aec387676",
+        "exit_code": 0,
+        "finished_at": "2026-10-15T02:49:46.842153+00:00",
+        "node_id": "derived",
+        "result": {
+          "execution_state": "COMPLETED",
+          "scientific_decision": "NOT_EVALUATED",
+          "technical_validation": {
+            "classification": "COMPLETED",
+            "parser_summary": {
+              "atoms": null,
+              "benign_warnings": [
+                "# WARNING: This information might be incomplete!",
+                "************************ Begin: TS CHECKS AND WARNINGS ************************",
+                "************************ End: TS CHECKS AND WARNINGS **************************",
+                "WARNING: BASIS_ENTHALPY and BASIS_HARRIS_ENTHALPY files are deprecated. They will be removed in future releases."
+              ],
+              "classification": "COMPLETED",
+              "dm_restart_attempted": true,
+              "dm_restart_succeeded": true,
+              "elapsed_seconds": null,
+              "energies": [
+                -263.79947,
+                -263.79947,
+                -263.79947
+              ],
+              "errors": [],
+              "line_count": 531,
+              "max_force": null,
+              "mentioned_artifacts": [
+                ".DM",
+                ".RHO"
+              ],
+              "normal_termination": true,
+              "provisional_status": "PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED",
+              "scf_converged": true,
+              "scf_iterations": 2,
+              "scf_started": true,
+              "species": null,
+              "spin_evidence": null,
+              "started": true,
+              "synthetic": false,
+              "version": "5.4.2",
+              "warnings": [
+                "# WARNING: This information might be incomplete!",
+                "************************ Begin: TS CHECKS AND WARNINGS ************************",
+                "************************ End: TS CHECKS AND WARNINGS **************************",
+                "WARNING: BASIS_ENTHALPY and BASIS_HARRIS_ENTHALPY files are deprecated. They will be removed in future releases."
+              ]
+            },
+            "reasons": [
+              "normal technical completion evidence",
+              "PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED"
+            ],
+            "status": "PASS"
+          }
+        },
+        "schema_version": "1.0",
+        "scientific_identity_sha256": "94d87435a896cc373b4736b03c733197ec78d760b4660b8e388582bc8a98c3ac",
+        "started_at": "2026-10-15T02:49:45.082590+00:00",
+        "stderr": "stderr.txt",
+        "stdout": "stdout.txt"
+      },
+      "single": {
+        "artifacts": {
+          "si.DM": "16812331fe51fb1c7ce5c1f64f1b8360c3f866af9f5678809d77ec34005abb99"
+        },
+        "attempt_id": "attempt-0001",
+        "execution_spec_sha256": "b9446a6e0f6bd02afb55d8fe30c993c0a47762fb58ce21925ba1d63aec387676",
+        "exit_code": 0,
+        "finished_at": "2026-10-15T02:49:45.020556+00:00",
+        "node_id": "single",
+        "result": {
+          "execution_state": "COMPLETED",
+          "scientific_decision": "NOT_EVALUATED",
+          "technical_validation": {
+            "classification": "COMPLETED",
+            "parser_summary": {
+              "atoms": null,
+              "benign_warnings": [
+                "# WARNING: This information might be incomplete!",
+                "************************ Begin: TS CHECKS AND WARNINGS ************************",
+                "************************ End: TS CHECKS AND WARNINGS **************************",
+                "WARNING: BASIS_ENTHALPY and BASIS_HARRIS_ENTHALPY files are deprecated. They will be removed in future releases."
+              ],
+              "classification": "COMPLETED",
+              "dm_restart_attempted": true,
+              "dm_restart_succeeded": false,
+              "elapsed_seconds": null,
+              "energies": [
+                -263.78331,
+                -263.79947,
+                -263.79947
+              ],
+              "errors": [],
+              "line_count": 533,
+              "max_force": null,
+              "mentioned_artifacts": [
+                ".RHO"
+              ],
+              "normal_termination": true,
+              "provisional_status": "PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED",
+              "scf_converged": true,
+              "scf_iterations": 10,
+              "scf_started": true,
+              "species": null,
+              "spin_evidence": null,
+              "started": true,
+              "synthetic": false,
+              "version": "5.4.2",
+              "warnings": [
+                "# WARNING: This information might be incomplete!",
+                "************************ Begin: TS CHECKS AND WARNINGS ************************",
+                "************************ End: TS CHECKS AND WARNINGS **************************",
+                "WARNING: BASIS_ENTHALPY and BASIS_HARRIS_ENTHALPY files are deprecated. They will be removed in future releases."
+              ]
+            },
+            "reasons": [
+              "normal technical completion evidence",
+              "PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED"
+            ],
+            "status": "PASS"
+          }
+        },
+        "schema_version": "1.0",
+        "scientific_identity_sha256": "79928e6118ea705ba24edafd59cedcbc8c93e2253911542794e79f70202a7587",
+        "started_at": "2026-10-15T02:49:42.847858+00:00",
+        "stderr": "stderr.txt",
+        "stdout": "stdout.txt"
+      }
+    },
+    "node_results": {
+      "derived": {
+        "execution_state": "COMPLETED",
+        "scientific_decision": "NOT_EVALUATED",
+        "technical_validation": {
+          "classification": "COMPLETED",
+          "parser_summary": {
+            "atoms": null,
+            "benign_warnings": [
+              "# WARNING: This information might be incomplete!",
+              "************************ Begin: TS CHECKS AND WARNINGS ************************",
+              "************************ End: TS CHECKS AND WARNINGS **************************",
+              "WARNING: BASIS_ENTHALPY and BASIS_HARRIS_ENTHALPY files are deprecated. They will be removed in future releases."
+            ],
+            "classification": "COMPLETED",
+            "dm_restart_attempted": true,
+            "dm_restart_succeeded": true,
+            "elapsed_seconds": null,
+            "energies": [
+              -263.79947,
+              -263.79947,
+              -263.79947
+            ],
+            "errors": [],
+            "line_count": 531,
+            "max_force": null,
+            "mentioned_artifacts": [
+              ".DM",
+              ".RHO"
+            ],
+            "normal_termination": true,
+            "provisional_status": "PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED",
+            "scf_converged": true,
+            "scf_iterations": 2,
+            "scf_started": true,
+            "species": null,
+            "spin_evidence": null,
+            "started": true,
+            "synthetic": false,
+            "version": "5.4.2",
+            "warnings": [
+              "# WARNING: This information might be incomplete!",
+              "************************ Begin: TS CHECKS AND WARNINGS ************************",
+              "************************ End: TS CHECKS AND WARNINGS **************************",
+              "WARNING: BASIS_ENTHALPY and BASIS_HARRIS_ENTHALPY files are deprecated. They will be removed in future releases."
+            ]
+          },
+          "reasons": [
+            "normal technical completion evidence",
+            "PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED"
+          ],
+          "status": "PASS"
+        }
+      },
+      "single": {
+        "execution_state": "COMPLETED",
+        "scientific_decision": "NOT_EVALUATED",
+        "technical_validation": {
+          "classification": "COMPLETED",
+          "parser_summary": {
+            "atoms": null,
+            "benign_warnings": [
+              "# WARNING: This information might be incomplete!",
+              "************************ Begin: TS CHECKS AND WARNINGS ************************",
+              "************************ End: TS CHECKS AND WARNINGS **************************",
+              "WARNING: BASIS_ENTHALPY and BASIS_HARRIS_ENTHALPY files are deprecated. They will be removed in future releases."
+            ],
+            "classification": "COMPLETED",
+            "dm_restart_attempted": true,
+            "dm_restart_succeeded": false,
+            "elapsed_seconds": null,
+            "energies": [
+              -263.78331,
+              -263.79947,
+              -263.79947
+            ],
+            "errors": [],
+            "line_count": 533,
+            "max_force": null,
+            "mentioned_artifacts": [
+              ".RHO"
+            ],
+            "normal_termination": true,
+            "provisional_status": "PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED",
+            "scf_converged": true,
+            "scf_iterations": 10,
+            "scf_started": true,
+            "species": null,
+            "spin_evidence": null,
+            "started": true,
+            "synthetic": false,
+            "version": "5.4.2",
+            "warnings": [
+              "# WARNING: This information might be incomplete!",
+              "************************ Begin: TS CHECKS AND WARNINGS ************************",
+              "************************ End: TS CHECKS AND WARNINGS **************************",
+              "WARNING: BASIS_ENTHALPY and BASIS_HARRIS_ENTHALPY files are deprecated. They will be removed in future releases."
+            ]
+          },
+          "reasons": [
+            "normal technical completion evidence",
+            "PROVISIONAL_UNTIL_REAL_OUTPUT_IMPORTED"
+          ],
+          "status": "PASS"
+        }
+      }
+    },
+    "peak_cpus": 4,
+    "peak_nodes": 1,
+    "peak_parallel_steps": 1,
+    "reused_nodes": [],
+    "status": "COMPLETED"
+  },
+  "qraft_result_sha256": "b0438ee6f33c495cfcfe0db0b4df138f8151d33f9dec76e39f27caacbf4085ae",
+  "route": "HTTP",
+  "run_events": {
+    "count": 33,
+    "path": "run-events.json",
+    "sha256": "9bfa2a1c8d06df2456146e8cd15224abf49bf7b52844917318cb2a848f6c4036"
+  },
+  "run_id": "2d89c421-bc62-4218-a060-0fd2fbd0669c",
+  "schema_version": 1,
+  "started_at": "2026-10-15T02:49:29Z",
+  "status": "COMPLETED",
+  "steps": {
+    "budget": {
+      "budget_id": "f4164a19-37ab-4d38-a8f7-f353929de73c",
+      "cpu_seconds": 480,
+      "expires_at": "2026-10-16T02:49:32.706677Z",
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "unit": "allocated_cpu_second"
+    },
+    "campaign": {
+      "campaign": {
+        "created_at": "2026-10-15T02:49:34.480925Z",
+        "integrity": {
+          "algorithm": "sha-256",
+          "canonicalization": "jcs-rfc8785",
+          "digest": "dc7dc672977f1b5f09a51454985d6cd1bc5b8f018029a64f2e28065d7b1dc4e3",
+          "status": "VERIFIED"
+        },
+        "native_contract_refs": [],
+        "payload": {
+          "campaign_id": "8bcc040b-4e87-4e68-8adb-f8654353290e",
+          "drafts": [
+            {
+              "draft_id": "30326bb4-e1d0-4587-a824-c6615a8f85c9",
+              "revision": 1
+            }
+          ],
+          "name": "Si diamante · primer cálculo real por HTTP",
+          "revision": 1
+        },
+        "producer": {
+          "algorithm": null,
+          "commit": null,
+          "package": "dftlab-platform",
+          "version": "0.1.0-dev.0"
+        },
+        "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+        "record_id": "8bcc040b-4e87-4e68-8adb-f8654353290e",
+        "schema_id": "dftlab.campaign",
+        "schema_version": "0.1.0"
+      },
+      "operation": {
+        "created_at": "2026-10-15T02:49:34.389651Z",
+        "integrity": {
+          "algorithm": "sha-256",
+          "canonicalization": "jcs-rfc8785",
+          "digest": "aaab8c6a6696227c64857910327526545996e50d3030f48f68a0cc0b0315afe1",
+          "status": "VERIFIED"
+        },
+        "native_contract_refs": [],
+        "payload": {
+          "accepted_at": "2026-10-15T02:49:34.389625Z",
+          "action": "CREATE_CAMPAIGN",
+          "error": null,
+          "event_cursor": "2d3298eb-9125-4ae2-9545-503faec0d642:6",
+          "idempotency_key": "ac769574e2244b4587a2c03b6fe8204e",
+          "idempotency_scope": {
+            "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+            "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642"
+          },
+          "key_retention": {
+            "effects_alive": false,
+            "retain_until": null
+          },
+          "operation_id": "1a57006a-3f59-43e4-b253-e8e1002ea500",
+          "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+          "request_hash": "dae8f710355b15ab6b7660c9eb84d7addc42f5d3b96cc72518df9f5b60a7336e",
+          "result": {
+            "product_refs": [
+              {
+                "id": "8bcc040b-4e87-4e68-8adb-f8654353290e",
+                "kind": "CAMPAIGN",
+                "revision": 1
+              }
+            ]
+          },
+          "revision": 3,
+          "state": "SUCCEEDED",
+          "target_refs": [
+            {
+              "id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+              "kind": "PROJECT",
+              "revision": 2
+            }
+          ],
+          "updated_at": "2026-10-15T02:49:34.488248Z"
+        },
+        "producer": {
+          "algorithm": null,
+          "commit": null,
+          "package": "dftlab-platform",
+          "version": "0.1.0-dev.0"
+        },
+        "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+        "record_id": "1a57006a-3f59-43e4-b253-e8e1002ea500",
+        "schema_id": "dftlab.operation-record",
+        "schema_version": "0.1.0"
+      }
+    },
+    "createCampaign": {
+      "created_at": "2026-10-15T02:49:34.389651Z",
+      "integrity": {
+        "algorithm": "sha-256",
+        "canonicalization": "jcs-rfc8785",
+        "digest": "aaab8c6a6696227c64857910327526545996e50d3030f48f68a0cc0b0315afe1",
+        "status": "VERIFIED"
+      },
+      "native_contract_refs": [],
+      "payload": {
+        "accepted_at": "2026-10-15T02:49:34.389625Z",
+        "action": "CREATE_CAMPAIGN",
+        "error": null,
+        "event_cursor": "2d3298eb-9125-4ae2-9545-503faec0d642:6",
+        "idempotency_key": "ac769574e2244b4587a2c03b6fe8204e",
+        "idempotency_scope": {
+          "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+          "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642"
+        },
+        "key_retention": {
+          "effects_alive": false,
+          "retain_until": null
+        },
+        "operation_id": "1a57006a-3f59-43e4-b253-e8e1002ea500",
+        "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+        "request_hash": "dae8f710355b15ab6b7660c9eb84d7addc42f5d3b96cc72518df9f5b60a7336e",
+        "result": {
+          "product_refs": [
+            {
+              "id": "8bcc040b-4e87-4e68-8adb-f8654353290e",
+              "kind": "CAMPAIGN",
+              "revision": 1
+            }
+          ]
+        },
+        "revision": 3,
+        "state": "SUCCEEDED",
+        "target_refs": [
+          {
+            "id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+            "kind": "PROJECT",
+            "revision": 2
+          }
+        ],
+        "updated_at": "2026-10-15T02:49:34.488248Z"
+      },
+      "producer": {
+        "algorithm": null,
+        "commit": null,
+        "package": "dftlab-platform",
+        "version": "0.1.0-dev.0"
+      },
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "record_id": "1a57006a-3f59-43e4-b253-e8e1002ea500",
+      "schema_id": "dftlab.operation-record",
+      "schema_version": "0.1.0"
+    },
+    "createPlan": {
+      "created_at": "2026-10-15T02:49:34.572023Z",
+      "integrity": {
+        "algorithm": "sha-256",
+        "canonicalization": "jcs-rfc8785",
+        "digest": "472686466c6a9c517bdc35cdcd2c40ea2a2b5a32f67ba9d1471f26b2b9240a78",
+        "status": "VERIFIED"
+      },
+      "native_contract_refs": [],
+      "payload": {
+        "accepted_at": "2026-10-15T02:49:34.571991Z",
+        "action": "CREATE_PLAN",
+        "error": null,
+        "event_cursor": "2d3298eb-9125-4ae2-9545-503faec0d642:9",
+        "idempotency_key": "b01ab7cd94d44803a90ad74c88e48a0f",
+        "idempotency_scope": {
+          "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+          "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642"
+        },
+        "key_retention": {
+          "effects_alive": false,
+          "retain_until": null
+        },
+        "operation_id": "43ce77e5-1c76-4054-b51c-51335144022c",
+        "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+        "request_hash": "90e78578bfdf345d0285cdf339e60c8c1ceb89806cbfedeb96f20fd339425a98",
+        "result": {
+          "product_refs": [
+            {
+              "id": "43e96c8e-e85c-4628-8837-18195f5b7f6c",
+              "kind": "PLAN",
+              "revision": 1
+            }
+          ]
+        },
+        "revision": 3,
+        "state": "SUCCEEDED",
+        "target_refs": [
+          {
+            "id": "8bcc040b-4e87-4e68-8adb-f8654353290e",
+            "kind": "CAMPAIGN",
+            "revision": 1
+          }
+        ],
+        "updated_at": "2026-10-15T02:49:34.891977Z"
+      },
+      "producer": {
+        "algorithm": null,
+        "commit": null,
+        "package": "dftlab-platform",
+        "version": "0.1.0-dev.0"
+      },
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "record_id": "43ce77e5-1c76-4054-b51c-51335144022c",
+      "schema_id": "dftlab.operation-record",
+      "schema_version": "0.1.0"
+    },
+    "draft": {
+      "draft": {
+        "created_at": "2026-10-15T02:49:32.996188Z",
+        "integrity": {
+          "algorithm": "sha-256",
+          "canonicalization": "jcs-rfc8785",
+          "digest": "bd81dfe103bc0c220cd387e4bdca8143f0b1c6c51532ff57dce0f6f4884c6f4a",
+          "status": "VERIFIED"
+        },
+        "native_contract_refs": [],
+        "payload": {
+          "draft_id": "30326bb4-e1d0-4587-a824-c6615a8f85c9",
+          "intent_id": "952abb91-9885-4c2b-9753-a9feb0fec3bf",
+          "origin": {
+            "exported_kind": "TEMPLATE",
+            "kind": "LEARNING_PROMOTION",
+            "learning_dataset_id": "ld-si",
+            "source_artifact": null
+          },
+          "provenance_state": "PARTIAL",
+          "purpose": "EXPLORATORY",
+          "revision": 1,
+          "scientific_assessment": "NOT_EVALUATED",
+          "structure": {
+            "revision": 1,
+            "structure_id": "f54872bd-8f26-406b-8865-944c7363903c"
+          },
+          "title": "Si diamante · primer cálculo real por HTTP",
+          "updated_at": "2026-10-15T02:49:32.996147Z"
+        },
+        "producer": {
+          "algorithm": null,
+          "commit": null,
+          "package": "dftlab-platform",
+          "version": "0.1.0-dev.0"
+        },
+        "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+        "record_id": "8c74304d-041e-4622-8aa1-0f0fd5713496",
+        "schema_id": "dftlab.draft",
+        "schema_version": "0.1.0"
+      },
+      "intent": {
+        "numerical_policy": {
+          "created_at": "2026-10-15T02:49:32.991407Z",
+          "integrity": {
+            "algorithm": "sha-256",
+            "canonicalization": "jcs-rfc8785",
+            "digest": "d2b34fe83f01a8f1ac06214b437f5b7a56420278d826ea84f61d00c7000327a9",
+            "status": "VERIFIED"
+          },
+          "native_contract_refs": [],
+          "payload": {
+            "basis": {
+              "energy_shift": {
+                "unit": "Ry",
+                "value": 0.02
+              },
+              "size": "DZP"
+            },
+            "convergence_target": "total_energy",
+            "justification": "Explicit local authoring case; fixed parameters, no universal convergence/science claim.",
+            "kgrid": {
+              "divisions": [
+                2,
+                2,
+                2
+              ],
+              "k_includes_2pi": false,
+              "kind": "MONKHORST_PACK",
+              "shift": [
+                0,
+                0,
+                0
+              ]
+            },
+            "mesh_cutoff": {
+              "unit": "Ry",
+              "value": 200
+            },
+            "policy": {
+              "digest": "5a3d78065c65bdbeba32d00f1e2bcc31050575718ec2c9f731aa1109428c69ff",
+              "policy_id": "dftlab.qualification-scf",
+              "version": "0.1.0"
+            },
+            "smearing": null,
+            "solver": "diagon",
+            "tolerances": {
+              "dm_tolerance": {
+                "unit": "1",
+                "value": "1e-5"
+              }
+            }
+          },
+          "producer": {
+            "algorithm": null,
+            "commit": null,
+            "package": "dftlab-platform",
+            "version": "0.1.0-dev.0"
+          },
+          "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+          "record_id": "5eb1e12a-326b-4aa7-bf7f-d9991f713dc5",
+          "schema_id": "dftlab.numerical-policy",
+          "schema_version": "0.1.0"
+        },
+        "physical_model": {
+          "created_at": "2026-10-15T02:49:32.989919Z",
+          "integrity": {
+            "algorithm": "sha-256",
+            "canonicalization": "jcs-rfc8785",
+            "digest": "28dad1762c423e7a0aacf8cd1da8a246a1b346ae70b39a4842e571e023528142",
+            "status": "VERIFIED"
+          },
+          "native_contract_refs": [],
+          "payload": {
+            "assumptions": [],
+            "hubbard": null,
+            "relativistic": "SCALAR",
+            "spin": "NONE",
+            "total_charge": {
+              "unit": "e",
+              "value": 0
+            },
+            "xc": {
+              "family": "LDA",
+              "functional": "CA"
+            }
+          },
+          "producer": {
+            "algorithm": null,
+            "commit": null,
+            "package": "dftlab-platform",
+            "version": "0.1.0-dev.0"
+          },
+          "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+          "record_id": "dd88468a-56df-420a-aabd-e85c608c6994",
+          "schema_id": "dftlab.physical-model",
+          "schema_version": "0.1.0"
+        },
+        "run_intent": {
+          "created_at": "2026-10-15T02:49:32.993974Z",
+          "integrity": {
+            "algorithm": "sha-256",
+            "canonicalization": "jcs-rfc8785",
+            "digest": "5202494df2294d115ded01c45e5de42d3c52f4d8f84e4e125d3b27f520d15857",
+            "status": "VERIFIED"
+          },
+          "native_contract_refs": [],
+          "payload": {
+            "draft_id": "30326bb4-e1d0-4587-a824-c6615a8f85c9",
+            "intent_id": "952abb91-9885-4c2b-9753-a9feb0fec3bf",
+            "numerical_policy_ref": "5eb1e12a-326b-4aa7-bf7f-d9991f713dc5",
+            "operation": "dftlab.scf",
+            "physical_model_ref": "dd88468a-56df-420a-aabd-e85c608c6994",
+            "promoted_from": {
+              "exported_kind": "TEMPLATE",
+              "learning_dataset_id": "ld-si"
+            },
+            "protocol": {
+              "protocol_id": "dftlab.siesta.single-derived",
+              "version": "0.1.0"
+            },
+            "purpose": "EXPLORATORY",
+            "structure": {
+              "revision": 1,
+              "structure_id": "f54872bd-8f26-406b-8865-944c7363903c"
+            }
+          },
+          "producer": {
+            "algorithm": null,
+            "commit": null,
+            "package": "dftlab-platform",
+            "version": "0.1.0-dev.0"
+          },
+          "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+          "record_id": "54f194f6-1ab6-498b-afb0-e69da597997f",
+          "schema_id": "dftlab.run-intent",
+          "schema_version": "0.1.0"
+        }
+      },
+      "structure": {
+        "created_at": "2026-10-15T02:49:32.985634Z",
+        "integrity": {
+          "algorithm": "sha-256",
+          "canonicalization": "jcs-rfc8785",
+          "digest": "7fa9ce7e9045742f792ccf2748afc2400588a712f8c82078317702d6aa33319f",
+          "status": "VERIFIED"
+        },
+        "native_contract_refs": [],
+        "payload": {
+          "cell": {
+            "unit": "angstrom",
+            "vectors": [
+              [
+                0,
+                2.7155,
+                2.7155
+              ],
+              [
+                2.7155,
+                0,
+                2.7155
+              ],
+              [
+                2.7155,
+                2.7155,
+                0
+              ]
+            ]
+          },
+          "convention": "cell-vectors-as-rows",
+          "coordinates": {
+            "kind": "fractional"
+          },
+          "parent_revision": null,
+          "periodicity": [
+            true,
+            true,
+            true
+          ],
+          "physical_intent": "BULK",
+          "revision": 1,
+          "sites": [
+            {
+              "atom_id": "si-1",
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "species_label": "Si"
+            },
+            {
+              "atom_id": "si-2",
+              "position": [
+                0.25,
+                0.25,
+                0.25
+              ],
+              "species_label": "Si"
+            }
+          ],
+          "structure_id": "f54872bd-8f26-406b-8865-944c7363903c",
+          "transformations": []
+        },
+        "producer": {
+          "algorithm": null,
+          "commit": null,
+          "package": "dftlab-platform",
+          "version": "0.1.0-dev.0"
+        },
+        "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+        "record_id": "8677a684-19a5-4d22-befa-6bd12a6fbd9a",
+        "schema_id": "dftlab.structure-revision",
+        "schema_version": "0.1.0"
+      }
+    },
+    "health_and_capabilities": {
+      "capability_count": 0,
+      "health": {
+        "api_version": "0.1.0",
+        "status": "OK"
+      }
+    },
+    "latest_projection": {
+      "created_at": "2026-10-15T02:49:38.017082Z",
+      "integrity": {
+        "algorithm": "sha-256",
+        "canonicalization": "jcs-rfc8785",
+        "digest": "cf2d2de82e7e49b7bf1eba48c051417ef83c51178ef29c2d55af1ce269745a15",
+        "status": "VERIFIED"
+      },
+      "native_contract_refs": [],
+      "payload": {
+        "current_attempt_id": "25c03d32-0ea6-4107-ab7b-dd538ed84dc2",
+        "dimensions": {
+          "execution": {
+            "observed_at": "2026-10-15T02:49:47.421401Z",
+            "source": "QRAFT_NATIVE_WORKER_STARTED",
+            "value": "RUNNING"
+          },
+          "integrity": {
+            "observed_at": "2026-10-15T02:49:38.017021Z",
+            "source": "QRAFT_RUN_INSPECTOR_AND_PACKAGE_SHA256",
+            "value": "VERIFIED"
+          },
+          "scheduler": {
+            "observed_at": "2026-10-15T02:49:48.858153Z",
+            "source": "SLURM_TERMINAL_SEEN_AWAITING_SIGNED_EVIDENCE",
+            "value": "UNKNOWN"
+          },
+          "science": {
+            "observed_at": "2026-10-15T02:49:38.017021Z",
+            "source": "EXPLORATORY_RUN_WITHOUT_SCIENTIFIC_ASSESSMENT",
+            "value": "NOT_ESTABLISHED"
+          }
+        },
+        "native_refs": [
+          {
+            "artifact": {
+              "artifact_id": "95ce49bf-c75a-4937-98c7-5e52340c6232",
+              "media_type": "application/json",
+              "sha256": "ac8056201ffd3a8e5f2bcb9ee51f9b936e0e98496b0534b4c81c45311a5cb9a5"
+            },
+            "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
+            "contract": "siestaflow.workflow-lock@1.0",
+            "digest": {
+              "algorithm": "qraft.content-sha256-v1",
+              "value": "a5be4cedb9b0632b97d1232e106bc405ee696da3f3d98ffa2e0ec1bea36b39e6"
+            },
+            "distribution": "qraft-hpc",
+            "engine": "qraft",
+            "verification": {
+              "status": "VERIFIED",
+              "verified_at": "2026-10-15T02:49:34.871018Z"
+            },
+            "version": "0.2.0"
+          },
+          {
+            "artifact": {
+              "artifact_id": "4bde4c34-0c7c-44d1-ae2a-73eabc3cc2b8",
+              "media_type": "application/json",
+              "sha256": "2e549574e7d43cfa889fd4bbf5613aabe8ccca52d8e736bbc6da4f9d81b244e0"
+            },
+            "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
+            "contract": "siestaflow.run-lock@1.0",
+            "digest": {
+              "algorithm": "qraft.content-sha256-v1",
+              "value": "b8f22ddd23e7a9b1ce7adafabf266abbe2ded61bd62870af7186750f125b65ef"
+            },
+            "distribution": "qraft-hpc",
+            "engine": "qraft",
+            "verification": {
+              "status": "VERIFIED",
+              "verified_at": "2026-10-15T02:49:37.911215Z"
+            },
+            "version": "0.2.0"
+          }
+        ],
+        "run_id": "2d89c421-bc62-4218-a060-0fd2fbd0669c",
+        "snapshot_cursor": "2d89c421-bc62-4218-a060-0fd2fbd0669c:0",
+        "source_revision": 10
+      },
+      "producer": {
+        "algorithm": null,
+        "commit": null,
+        "package": "dftlab-platform",
+        "version": "0.1.0-dev.0"
+      },
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "record_id": "7171f483-7789-4f42-a1fe-6c83a50c5346",
+      "schema_id": "dftlab.run-projection",
+      "schema_version": "0.1.0"
+    },
+    "package": {
+      "artifact": {
+        "created_at": "2026-10-15T02:49:35.419931Z",
+        "integrity": {
+          "algorithm": "sha-256",
+          "canonicalization": "jcs-rfc8785",
+          "digest": "14e5713945015f0abf9ab843e26affa15ad27bff08cc3735ba5559f8bb95f5f4",
+          "status": "VERIFIED"
+        },
+        "native_contract_refs": [],
+        "payload": {
+          "artifact_id": "b4c14bc9-216c-4f84-8b5b-dc68a8c97003",
+          "input_refs": [],
+          "integrity_state": "VERIFIED",
+          "kind": "qraft.run-package",
+          "locator_id": "f8764763-4d26-49a2-9674-d923d7ab80eb",
+          "media_type": "application/zip",
+          "parser": null,
+          "producer_ref": {
+            "id": "58be8fed-89fb-48d7-90be-33ae7a30a4df",
+            "kind": "IMPORT"
+          },
+          "retention_class": "ESSENTIAL",
+          "sha256": "d4775a953bab14a3dc470477c2da513384e52b9665cbfb8c546a07473e705c65",
+          "size_bytes": 351427
+        },
+        "producer": {
+          "algorithm": null,
+          "commit": null,
+          "package": "dftlab-platform",
+          "version": "0.1.0-dev.0"
+        },
+        "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+        "record_id": "e7734282-d309-4942-910c-68162d2cdbc5",
+        "schema_id": "dftlab.artifact-record",
+        "schema_version": "0.1.0"
+      },
+      "content_path": "artifacts/qraft-run-package-b4c14bc9-216c-4f84-8b5b-dc68a8c97003.bin",
+      "content_sha256": "d4775a953bab14a3dc470477c2da513384e52b9665cbfb8c546a07473e705c65",
+      "operation": {
+        "created_at": "2026-10-15T02:49:34.978052Z",
+        "integrity": {
+          "algorithm": "sha-256",
+          "canonicalization": "jcs-rfc8785",
+          "digest": "506bfce0be78e458188ae294e5f7487e3d184daca68c828b78d81fea9260b409",
+          "status": "VERIFIED"
+        },
+        "native_contract_refs": [],
+        "payload": {
+          "accepted_at": "2026-10-15T02:49:34.978027Z",
+          "action": "PREPARE_PACKAGE",
+          "error": null,
+          "event_cursor": "2d3298eb-9125-4ae2-9545-503faec0d642:12",
+          "idempotency_key": "d09610d8afb141f4995d3fa60e71d9d5",
+          "idempotency_scope": {
+            "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+            "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642"
+          },
+          "key_retention": {
+            "effects_alive": false,
+            "retain_until": null
+          },
+          "operation_id": "8a203590-0d80-44d5-bad4-3b9a7a939ea5",
+          "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+          "request_hash": "20f89f8e9f80415086d3e8c1c286ef87ab53e11eda55859865517620fecad721",
+          "result": {
+            "product_refs": [
+              {
+                "id": "b4c14bc9-216c-4f84-8b5b-dc68a8c97003",
+                "kind": "PACKAGE",
+                "revision": 1
+              }
+            ]
+          },
+          "revision": 3,
+          "state": "SUCCEEDED",
+          "target_refs": [
+            {
+              "id": "43e96c8e-e85c-4628-8837-18195f5b7f6c",
+              "kind": "PLAN",
+              "revision": 1
+            }
+          ],
+          "updated_at": "2026-10-15T02:49:35.561622Z"
+        },
+        "producer": {
+          "algorithm": null,
+          "commit": null,
+          "package": "dftlab-platform",
+          "version": "0.1.0-dev.0"
+        },
+        "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+        "record_id": "8a203590-0d80-44d5-bad4-3b9a7a939ea5",
+        "schema_id": "dftlab.operation-record",
+        "schema_version": "0.1.0"
+      },
+      "size_bytes": 351427
+    },
+    "plan": {
+      "operation": {
+        "created_at": "2026-10-15T02:49:34.572023Z",
+        "integrity": {
+          "algorithm": "sha-256",
+          "canonicalization": "jcs-rfc8785",
+          "digest": "472686466c6a9c517bdc35cdcd2c40ea2a2b5a32f67ba9d1471f26b2b9240a78",
+          "status": "VERIFIED"
+        },
+        "native_contract_refs": [],
+        "payload": {
+          "accepted_at": "2026-10-15T02:49:34.571991Z",
+          "action": "CREATE_PLAN",
+          "error": null,
+          "event_cursor": "2d3298eb-9125-4ae2-9545-503faec0d642:9",
+          "idempotency_key": "b01ab7cd94d44803a90ad74c88e48a0f",
+          "idempotency_scope": {
+            "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+            "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642"
+          },
+          "key_retention": {
+            "effects_alive": false,
+            "retain_until": null
+          },
+          "operation_id": "43ce77e5-1c76-4054-b51c-51335144022c",
+          "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+          "request_hash": "90e78578bfdf345d0285cdf339e60c8c1ceb89806cbfedeb96f20fd339425a98",
+          "result": {
+            "product_refs": [
+              {
+                "id": "43e96c8e-e85c-4628-8837-18195f5b7f6c",
+                "kind": "PLAN",
+                "revision": 1
+              }
+            ]
+          },
+          "revision": 3,
+          "state": "SUCCEEDED",
+          "target_refs": [
+            {
+              "id": "8bcc040b-4e87-4e68-8adb-f8654353290e",
+              "kind": "CAMPAIGN",
+              "revision": 1
+            }
+          ],
+          "updated_at": "2026-10-15T02:49:34.891977Z"
+        },
+        "producer": {
+          "algorithm": null,
+          "commit": null,
+          "package": "dftlab-platform",
+          "version": "0.1.0-dev.0"
+        },
+        "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+        "record_id": "43ce77e5-1c76-4054-b51c-51335144022c",
+        "schema_id": "dftlab.operation-record",
+        "schema_version": "0.1.0"
+      },
+      "plan": {
+        "created_at": "2026-10-15T02:49:34.882718Z",
+        "integrity": {
+          "algorithm": "sha-256",
+          "canonicalization": "jcs-rfc8785",
+          "digest": "50600e4aa7d4265021db0424289a89eb5f9e3623fa239ab0b6f40b96b31ef87a",
+          "status": "VERIFIED"
+        },
+        "native_contract_refs": [
+          {
+            "artifact": {
+              "artifact_id": "95ce49bf-c75a-4937-98c7-5e52340c6232",
+              "media_type": "application/json",
+              "sha256": "ac8056201ffd3a8e5f2bcb9ee51f9b936e0e98496b0534b4c81c45311a5cb9a5"
+            },
+            "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
+            "contract": "siestaflow.workflow-lock@1.0",
+            "digest": {
+              "algorithm": "qraft.content-sha256-v1",
+              "value": "a5be4cedb9b0632b97d1232e106bc405ee696da3f3d98ffa2e0ec1bea36b39e6"
+            },
+            "distribution": "qraft-hpc",
+            "engine": "qraft",
+            "verification": {
+              "status": "VERIFIED",
+              "verified_at": "2026-10-15T02:49:34.871018Z"
+            },
+            "version": "0.2.0"
+          }
+        ],
+        "payload": {
+          "campaign_id": "8bcc040b-4e87-4e68-8adb-f8654353290e",
+          "draft": {
+            "draft_id": "30326bb4-e1d0-4587-a824-c6615a8f85c9",
+            "revision": 1
+          },
+          "intent_id": "952abb91-9885-4c2b-9753-a9feb0fec3bf",
+          "plan_id": "43e96c8e-e85c-4628-8837-18195f5b7f6c",
+          "revision": 1,
+          "validation_receipt_id": "72891a3c-5ab3-49bf-bb8d-425e3f121a6b"
+        },
+        "producer": {
+          "algorithm": null,
+          "commit": null,
+          "package": "dftlab-platform",
+          "version": "0.1.0-dev.0"
+        },
+        "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+        "record_id": "43e96c8e-e85c-4628-8837-18195f5b7f6c",
+        "schema_id": "dftlab.plan",
+        "schema_version": "0.1.0"
+      }
+    },
+    "plan_after_package": {
+      "created_at": "2026-10-15T02:49:34.882718Z",
+      "integrity": {
+        "algorithm": "sha-256",
+        "canonicalization": "jcs-rfc8785",
+        "digest": "909b3d7240957424b587be210106d26e1f2fe3d0bcf1e9d05239842e063b9d2f",
+        "status": "VERIFIED"
+      },
+      "native_contract_refs": [
+        {
+          "artifact": {
+            "artifact_id": "95ce49bf-c75a-4937-98c7-5e52340c6232",
+            "media_type": "application/json",
+            "sha256": "ac8056201ffd3a8e5f2bcb9ee51f9b936e0e98496b0534b4c81c45311a5cb9a5"
+          },
+          "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
+          "contract": "siestaflow.workflow-lock@1.0",
+          "digest": {
+            "algorithm": "qraft.content-sha256-v1",
+            "value": "a5be4cedb9b0632b97d1232e106bc405ee696da3f3d98ffa2e0ec1bea36b39e6"
+          },
+          "distribution": "qraft-hpc",
+          "engine": "qraft",
+          "verification": {
+            "status": "VERIFIED",
+            "verified_at": "2026-10-15T02:49:34.871018Z"
+          },
+          "version": "0.2.0"
+        }
+      ],
+      "payload": {
+        "campaign_id": "8bcc040b-4e87-4e68-8adb-f8654353290e",
+        "draft": {
+          "draft_id": "30326bb4-e1d0-4587-a824-c6615a8f85c9",
+          "revision": 1
+        },
+        "intent_id": "952abb91-9885-4c2b-9753-a9feb0fec3bf",
+        "plan_id": "43e96c8e-e85c-4628-8837-18195f5b7f6c",
+        "revision": 2,
+        "validation_receipt_id": "72891a3c-5ab3-49bf-bb8d-425e3f121a6b"
+      },
+      "producer": {
+        "algorithm": null,
+        "commit": null,
+        "package": "dftlab-platform",
+        "version": "0.1.0-dev.0"
+      },
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "record_id": "43e96c8e-e85c-4628-8837-18195f5b7f6c",
+      "schema_id": "dftlab.plan",
+      "schema_version": "0.1.0"
+    },
+    "preparePackage": {
+      "created_at": "2026-10-15T02:49:34.978052Z",
+      "integrity": {
+        "algorithm": "sha-256",
+        "canonicalization": "jcs-rfc8785",
+        "digest": "506bfce0be78e458188ae294e5f7487e3d184daca68c828b78d81fea9260b409",
+        "status": "VERIFIED"
+      },
+      "native_contract_refs": [],
+      "payload": {
+        "accepted_at": "2026-10-15T02:49:34.978027Z",
+        "action": "PREPARE_PACKAGE",
+        "error": null,
+        "event_cursor": "2d3298eb-9125-4ae2-9545-503faec0d642:12",
+        "idempotency_key": "d09610d8afb141f4995d3fa60e71d9d5",
+        "idempotency_scope": {
+          "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+          "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642"
+        },
+        "key_retention": {
+          "effects_alive": false,
+          "retain_until": null
+        },
+        "operation_id": "8a203590-0d80-44d5-bad4-3b9a7a939ea5",
+        "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+        "request_hash": "20f89f8e9f80415086d3e8c1c286ef87ab53e11eda55859865517620fecad721",
+        "result": {
+          "product_refs": [
+            {
+              "id": "b4c14bc9-216c-4f84-8b5b-dc68a8c97003",
+              "kind": "PACKAGE",
+              "revision": 1
+            }
+          ]
+        },
+        "revision": 3,
+        "state": "SUCCEEDED",
+        "target_refs": [
+          {
+            "id": "43e96c8e-e85c-4628-8837-18195f5b7f6c",
+            "kind": "PLAN",
+            "revision": 1
+          }
+        ],
+        "updated_at": "2026-10-15T02:49:35.561622Z"
+      },
+      "producer": {
+        "algorithm": null,
+        "commit": null,
+        "package": "dftlab-platform",
+        "version": "0.1.0-dev.0"
+      },
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "record_id": "8a203590-0d80-44d5-bad4-3b9a7a939ea5",
+      "schema_id": "dftlab.operation-record",
+      "schema_version": "0.1.0"
+    },
+    "project": {
+      "created_at": "2026-10-15T02:49:29.670670Z",
+      "name": "Si primer cálculo real · HTTP",
+      "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "revision": 1
+    },
+    "project_after_validation": {
+      "created_at": "2026-10-15T02:49:29.670670Z",
+      "name": "Si primer cálculo real · HTTP",
+      "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "revision": 2
+    },
+    "session": {
+      "expires_at": "2026-10-15T03:49:29.587981Z",
+      "principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8"
+    },
+    "validateInput": {
+      "created_at": "2026-10-15T02:49:33.071943Z",
+      "integrity": {
+        "algorithm": "sha-256",
+        "canonicalization": "jcs-rfc8785",
+        "digest": "a57ea9db63995183d0582151f2923aa6c05f66bb583dffabfc3809cb5b079e7c",
+        "status": "VERIFIED"
+      },
+      "native_contract_refs": [],
+      "payload": {
+        "accepted_at": "2026-10-15T02:49:33.071913Z",
+        "action": "VALIDATE_INPUT",
+        "error": null,
+        "event_cursor": "2d3298eb-9125-4ae2-9545-503faec0d642:3",
+        "idempotency_key": "b8329574f64549249caef062a539b7f0",
+        "idempotency_scope": {
+          "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+          "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642"
+        },
+        "key_retention": {
+          "effects_alive": false,
+          "retain_until": null
+        },
+        "operation_id": "7174a2bf-4a5a-4987-98fa-c3ae613fcccf",
+        "owner_principal_id": "c7cf5a89-0c22-43e2-9b39-e4dfd73cb7a8",
+        "request_hash": "c6a168986c14677316eb6cd85409d7640f7b9e92f3fd4d4029468895160cdbfa",
+        "result": {
+          "product_refs": [
+            {
+              "id": "72891a3c-5ab3-49bf-bb8d-425e3f121a6b",
+              "kind": "VALIDATION_RECEIPT",
+              "revision": 1
+            }
+          ]
+        },
+        "revision": 3,
+        "state": "SUCCEEDED",
+        "target_refs": [
+          {
+            "id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+            "kind": "PROJECT",
+            "revision": 1
+          }
+        ],
+        "updated_at": "2026-10-15T02:49:34.274566Z"
+      },
+      "producer": {
+        "algorithm": null,
+        "commit": null,
+        "package": "dftlab-platform",
+        "version": "0.1.0-dev.0"
+      },
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "record_id": "7174a2bf-4a5a-4987-98fa-c3ae613fcccf",
+      "schema_id": "dftlab.operation-record",
+      "schema_version": "0.1.0"
+    },
+    "validation_receipt": {
+      "created_at": "2026-10-15T02:49:34.197725Z",
+      "integrity": {
+        "algorithm": "sha-256",
+        "canonicalization": "jcs-rfc8785",
+        "digest": "e5de4a3536b37a9237fc174d70b4154ad747415033d8c0046c2c77868366ca2c",
+        "status": "VERIFIED"
+      },
+      "native_contract_refs": [
+        {
+          "artifact": {
+            "artifact_id": "c14a01f3-171d-4060-9615-3b3089a5e8fd",
+            "media_type": "application/json",
+            "sha256": "e124461ac868cf0903bdb95d5568d0e1184051ff93673d4cba45f1d808e3a275"
+          },
+          "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
+          "contract": "siestaflow.validation-report@1.0",
+          "digest": {
+            "algorithm": "qraft.content-sha256-v1",
+            "value": "8c9f7478fac6260e064434c5f6ed5022d757088689e41267d0f00f3aefa8965a"
+          },
+          "distribution": "qraft-hpc",
+          "engine": "qraft",
+          "verification": {
+            "status": "VERIFIED",
+            "verified_at": "2026-10-15T02:49:34.129483Z"
+          },
+          "version": "0.2.0"
+        },
+        {
+          "artifact": {
+            "artifact_id": "60dc9ed0-ffe2-4daf-8d71-bab7d322f89a",
+            "media_type": "application/json",
+            "sha256": "6095019e4b49fb229d7b930d2788745af05f4bc448b996a82c728da9021ece5e"
+          },
+          "commit": "377e4290446609f5bd35e3d41539dc5a39b5e798",
+          "contract": "siestaflow.validation-report@1.0",
+          "digest": {
+            "algorithm": "qraft.content-sha256-v1",
+            "value": "f5de9a68e158a9598fcbf6a2e89ff1a0724e8ba710adc3077de902e0b8d6a80d"
+          },
+          "distribution": "qraft-hpc",
+          "engine": "qraft",
+          "verification": {
+            "status": "VERIFIED",
+            "verified_at": "2026-10-15T02:49:34.191421Z"
+          },
+          "version": "0.2.0"
+        }
+      ],
+      "payload": {
+        "authority": "AUTHORITATIVE",
+        "decision": "ACCEPTED",
+        "diagnostics": [],
+        "input_refs": [
+          {
+            "artifact_id": "b77abe46-bdea-42fa-a3dd-3d4b86b5b50b",
+            "media_type": "application/json",
+            "sha256": "3792fb75b6b6a92975471173e6021b5a093f31c0c406d51f6d31fc75302f4ee9"
+          },
+          {
+            "artifact_id": "0532a2f1-1b45-4f56-a6bb-1c7704e6ecca",
+            "media_type": "application/xml",
+            "sha256": "84c9316efac1959ee8c04b8d5a06eec2e069fa19302cb66254f2e4dc455b2044"
+          },
+          {
+            "artifact_id": "538b789b-498d-49f0-9028-30cb7736759d",
+            "media_type": "text/x-siesta-fdf",
+            "sha256": "21a71af27817a7f3860ce737be40bf1a7627853b1650cb3864516d9452a4312b"
+          },
+          {
+            "artifact_id": "8ca098e1-a6e8-48a7-b39d-41c07dd459a5",
+            "media_type": "text/x-siesta-fdf",
+            "sha256": "46f32a3faca7b6a9b616c883d8a9325eb7052322babb0cc427e8f28a82baf381"
+          },
+          {
+            "artifact_id": "c14a01f3-171d-4060-9615-3b3089a5e8fd",
+            "media_type": "application/json",
+            "sha256": "e124461ac868cf0903bdb95d5568d0e1184051ff93673d4cba45f1d808e3a275"
+          },
+          {
+            "artifact_id": "60dc9ed0-ffe2-4daf-8d71-bab7d322f89a",
+            "media_type": "application/json",
+            "sha256": "6095019e4b49fb229d7b930d2788745af05f4bc448b996a82c728da9021ece5e"
+          }
+        ],
+        "overrides": [],
+        "policies": [
+          {
+            "digest": "06bd5c8aefd0a57b4ba926fe4244983f8da9b413b3e225c4b1cc7652eaeef477",
+            "policy_id": "qraft.siesta-native-ruleset",
+            "version": "0.2.0"
+          }
+        ],
+        "scope": "Preflight nativo de autoría registrada; no acredita admisión, entorno ni validez científica.",
+        "validator": {
+          "name": "dftlab.qraft-authoring",
+          "version": "0.1.0"
+        }
+      },
+      "producer": {
+        "algorithm": null,
+        "commit": null,
+        "package": "dftlab-platform",
+        "version": "0.1.0-dev.0"
+      },
+      "project_id": "2d3298eb-9125-4ae2-9545-503faec0d642",
+      "record_id": "72891a3c-5ab3-49bf-bb8d-425e3f121a6b",
+      "schema_id": "dftlab.validation-receipt",
+      "schema_version": "0.1.0"
+    }
+  },
+  "submission_redactions": [
+    "attempt_token omitted from public export"
+  ],
+  "submission_summary": "submission-summary.json",
+  "timeout_seconds": 360,
+  "updated_at": "2026-10-15T03:13:34Z"
+}

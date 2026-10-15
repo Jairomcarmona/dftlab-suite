@@ -12,7 +12,7 @@
     "datasets": 16,
     "datasetBytes": 10678665,
     "ownJavascriptFiles": 66,
-    "ownJavascriptLines": 12350,
+    "ownJavascriptLines": 12401,
     "exportSourceCalls": 52,
     "scientificModules": 28
   },
@@ -2522,8 +2522,8 @@
     },
     {
       "file": "app/dftlab/static/js/sdk/client.js",
-      "bytes": 4868,
-      "sha256": "11e4c49509020b47bd7c057b2bf99a10639c6f4d504f57f6ac9e17ba93a88ad0"
+      "bytes": 8713,
+      "sha256": "75b85fde35a80108d9ddeec749589413f6f4f8c530d8c29b413dd0ad0c8bb46f"
     },
     {
       "file": "app/dftlab/static/js/sdk/contracts.js",
@@ -2532,8 +2532,8 @@
     },
     {
       "file": "app/dftlab/static/js/sdk/validators.generated.js",
-      "bytes": 1763491,
-      "sha256": "59ebf37af6d3ba48ca97748a7f50417af9b07c091bbff2a9f96ec08f53fa2efe"
+      "bytes": 1827237,
+      "sha256": "ec1ea701cdde434f8fda085052e4058a5a3a994975af1455b61c65d373c934b9"
     },
     {
       "file": "app/dftlab/static/js/siesta/bands.js",

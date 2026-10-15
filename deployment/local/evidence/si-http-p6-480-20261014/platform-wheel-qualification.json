@@ -1,0 +1,700 @@
+{
+  "schema_version": 1,
+  "success": true,
+  "target": {
+    "os": "Windows",
+    "release": "11",
+    "machine": "AMD64",
+    "python": "3.12.10"
+  },
+  "commands": [
+    {
+      "name": "uv-version",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log_sha256": "374a029b7648d9b12f93a912b3e1ba56b93bffdb8d552df57f3b706744588bef"
+    },
+    {
+      "name": "source-commit",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "log_sha256": "fb86d6ea0e9124b1ccd8eedb9430f229ff40da72e5dfa69077601633ccb103af"
+    },
+    {
+      "name": "source-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "build",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-p6-terminal-bridge\\platform",
+        "--python",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-p6-terminal-bridge\\runtime\\p6-qualifier-env\\Scripts\\python.exe",
+        "--no-build-isolation",
+        "--wheel",
+        "--sdist",
+        "--out-dir",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-p6-terminal-bridge\\runtime\\platform-qualification-p6-final-clean\\artifacts",
+        "--no-create-gitignore"
+      ],
+      "exit_code": 0,
+      "log_sha256": "5692513da84065821a8e6dfcb4aa25e3a50ead471c9978dda83396d75dc3b589"
+    },
+    {
+      "name": "rebuild-sdist",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "build",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-p6-terminal-bridge\\runtime\\platform-qualification-p6-final-clean\\artifacts\\dftlab_platform-0.1.0.dev0.tar.gz",
+        "--python",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-p6-terminal-bridge\\runtime\\p6-qualifier-env\\Scripts\\python.exe",
+        "--no-build-isolation",
+        "--wheel",
+        "--out-dir",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-htxzdf_w\\rebuilt",
+        "--no-create-gitignore"
+      ],
+      "exit_code": 0,
+      "log_sha256": "e5754b70a17f7c3af9529b1c134e2b9b7b51f471fc9cbab6fc097602732e1347"
+    },
+    {
+      "name": "clean-venv",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "venv",
+        "--python",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-p6-terminal-bridge\\runtime\\p6-qualifier-env\\Scripts\\python.exe",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-htxzdf_w\\venv"
+      ],
+      "exit_code": 0,
+      "log_sha256": "8d8e83cf263c299b2996aab13c53b92c4da01f0e0b9ff36d805569cb62d7f4be"
+    },
+    {
+      "name": "runtime-lock-export",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "export",
+        "--project",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-p6-terminal-bridge\\platform",
+        "--locked",
+        "--no-dev",
+        "--no-emit-project",
+        "--format",
+        "requirements-txt",
+        "--output-file",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-htxzdf_w\\requirements.txt"
+      ],
+      "exit_code": 0,
+      "log_sha256": "63a48e0a4f74536e407b8c7c85ceecad9e62b29d35b90137a6d43dbe94e6052f"
+    },
+    {
+      "name": "runtime-dependencies",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "pip",
+        "install",
+        "--python",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-htxzdf_w\\venv\\Scripts\\python.exe",
+        "--require-hashes",
+        "-r",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-htxzdf_w\\requirements.txt"
+      ],
+      "exit_code": 0,
+      "log_sha256": "e9c208bf3807361229469e39348c2d467d8f1da4e707cec57030a422e6f8756b"
+    },
+    {
+      "name": "wheel-install",
+      "argv": [
+        "C:\\Users\\Jairo\\.local\\bin\\uv.EXE",
+        "pip",
+        "install",
+        "--python",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-htxzdf_w\\venv\\Scripts\\python.exe",
+        "--no-index",
+        "--no-deps",
+        "C:\\Users\\Jairo\\Downloads\\DFTQUANTUMLAB\\dftlab-suite-p6-terminal-bridge\\runtime\\platform-qualification-p6-final-clean\\artifacts\\dftlab_platform-0.1.0.dev0-py3-none-any.whl"
+      ],
+      "exit_code": 0,
+      "log_sha256": "3308cfc96e6ee9129b993b807268be4e71174f98920f548e808d4c3e2e24e0c0"
+    },
+    {
+      "name": "installed-tests",
+      "argv": [
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-htxzdf_w\\venv\\Scripts\\python.exe",
+        "-I",
+        "-c",
+        "import unittest,sys; suite=unittest.defaultTestLoader.discover(sys.argv[1]); result=unittest.TextTestRunner(verbosity=2).run(suite); sys.exit(not result.wasSuccessful())",
+        "C:\\Users\\Jairo\\AppData\\Local\\Temp\\dftlab-installed-htxzdf_w\\tests"
+      ],
+      "exit_code": 0,
+      "log_sha256": "54cb01753f9e97d1e2ffe7063c527ce2ea8b0da05fbb098dd7937f0c6418c9cb"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "dftlab_platform-0.1.0.dev0-py3-none-any.whl",
+      "bytes": 7659862,
+      "sha256": "06c7aaeab025456360caa351da264ba09b33444c7f991287d6d76b0eba7d489d"
+    },
+    {
+      "file": "dftlab_platform-0.1.0.dev0.tar.gz",
+      "bytes": 7576016,
+      "sha256": "d2b708183170f866919fee7b7b3acfa26c05a20bde18f3a67ec5868fea251bdd"
+    },
+    {
+      "file": "runtime-requirements.txt",
+      "bytes": 11311,
+      "sha256": "f89f1ece5f6dc85a11dc4a19ab072dd89fed3ecbbe4a19d1f7dc7f249e39e1d2"
+    }
+  ],
+  "source_commit": "08d6ffc4c2a6a109c9e62951185b8e665a982440",
+  "source_identity_origin": "git_worktree",
+  "source_tree_dirty": false,
+  "source_sha256": {
+    "platform\\hatch_build.py": "f83b8ae05bf313c7e9754be8f542f4e0a9b60866a963a9c13827ef5920cd087a",
+    "platform\\pyproject.toml": "847fa0bb4cb579c638c46ad2cc476b78759c5b90a391207f7f2ddbcaff3ff06b",
+    "platform\\README.md": "3fe71c864892f3dfdd8328cf39a1f0ebfcba8b223a5bda7e851cfaebc8f0ffad",
+    "platform\\uv.lock": "f5b09854ba23a2ee44f712e8847c902c152c35889cfb0a59dd96b5e39e8177dc",
+    "platform\\src\\dftlab_platform\\artifacts.py": "378b299f22b37e0a1250ccd7f4e77f9ba249b46a0fd094c7d3d7c2c00918f266",
+    "platform\\src\\dftlab_platform\\artifact_storage.py": "3f5f0897f69cb60bd94061994ad35bd5a05e368bddd579d190140fb2e0b457f7",
+    "platform\\src\\dftlab_platform\\authoring.py": "816ca5ba0e82efe5fdb6dae9e896f849463140c8d59b16ad3f1f773171473f8e",
+    "platform\\src\\dftlab_platform\\authority.py": "2a90cc85ba9e132b38681c85bd2aaad69de7ac39a9fb3c069c035ed90b59e40c",
+    "platform\\src\\dftlab_platform\\authority_recovery.py": "48d783d95e7ba94548151f7b1f5ade0582ae45960a75c34f5d848de3fda2abca",
+    "platform\\src\\dftlab_platform\\authority_storage.py": "99374898752dde2118632c19b07054d53f0bf48d4c253de77750da24f4e4bfe2",
+    "platform\\src\\dftlab_platform\\budgets.py": "a85c81309a268d8ac31454c8e67c71ae859565c52bfbb9e8e47508dbe9f64ad1",
+    "platform\\src\\dftlab_platform\\checkpoints.py": "ceac8d2fe6e321968c9a58cd2feaf8bc92540bfe816db12171d76ee57a445a8e",
+    "platform\\src\\dftlab_platform\\contracts.py": "41f6d67d8ba01d1d52487ba6ecb1cdd095cbd978eed63a5439916cdb599b4150",
+    "platform\\src\\dftlab_platform\\domain.py": "2b55b0787da28a5f3ac3543a4e54fe1f4e9edfcabbee9fe4567100c7f3260241",
+    "platform\\src\\dftlab_platform\\drafts.py": "3f723fff06b7a4b61dcd6d5d0884b4b24e0271ca6744203bcc8e86b53e149f1b",
+    "platform\\src\\dftlab_platform\\draft_storage.py": "3c444421f59c1ad0a4504f7f56ce009c4b55af795d0021b1a293275275ae022f",
+    "platform\\src\\dftlab_platform\\engines.py": "7958e52b730748d8d9e07fe102bca3550e1a66e6f1ff1afe5fea022dc2e6ce32",
+    "platform\\src\\dftlab_platform\\generation_admission.py": "ce10d2303b87256d6b65590dea8335594fd010ce6e46a8860f53e3e509306302",
+    "platform\\src\\dftlab_platform\\hf1_bundle.py": "a8003d3fcb7073f7a5d19a0487e90ca5113b55089b7f0777d2cb2d7b31bdba9f",
+    "platform\\src\\dftlab_platform\\hf1_capability.py": "f2d0a2efcc9446f1c396cf0418c8b6a7ac6cd4305a56a0cd21568086c145bff1",
+    "platform\\src\\dftlab_platform\\hf1_children.py": "534976e48ac83d58a2bf5fb42559b36cf85fe6a50af3b2761cce0e09370adf70",
+    "platform\\src\\dftlab_platform\\hf1_controller_entry.py": "9b577d859a00c466e65357969024acb80855654efb1b51894c9d10e783630dad",
+    "platform\\src\\dftlab_platform\\hf1_preflight.py": "98feffd2663f407492fa331974acefd4238dbe52f9db1c6c9cfd89c5d511c81e",
+    "platform\\src\\dftlab_platform\\hf1_recipe.py": "cdbbc746b5ef99c71d93e0981cce4815428afcf24e9c127d1606ee1702a4cf29",
+    "platform\\src\\dftlab_platform\\hf1_worker.py": "aceff4f8189c568aa6bb1472d02ee93d63d22b2b17f21f9e5081126a7e079f59",
+    "platform\\src\\dftlab_platform\\launcher.py": "ec5431cf274f1b80ce16504f2c457ff27c2d94cb2ceb14da0702309fd67f1ecc",
+    "platform\\src\\dftlab_platform\\local_effects.py": "f6cdf310645492061942fad3e65f5cf970b792c053fc31e8d5ea585e20f16b00",
+    "platform\\src\\dftlab_platform\\local_run.py": "d3667d253cde430379f6b277cd3a1e7b3e00a9a18c173071dd0f5e29207f48a5",
+    "platform\\src\\dftlab_platform\\local_runtime.py": "3d51a147676b5cc3ccb809bea078cf66490a15218279b74497f690355814f4a8",
+    "platform\\src\\dftlab_platform\\local_run_worker.py": "8a94152ba06045e4ec2413adb1c795f5c997c951159b72ace86d91b58c0537fc",
+    "platform\\src\\dftlab_platform\\native_checkpoints.py": "b70e78f424bb33115746521a72dfdf2f46b655cc3ac74e357b9428e92c681704",
+    "platform\\src\\dftlab_platform\\native_worker.py": "8f94152199412def4bec151432415d8f31b685dc2e7387838ec42f519106a037",
+    "platform\\src\\dftlab_platform\\policy_refs.py": "b90ab95b7b00d20febfd13c0c4c9be74974b8038bc407f2498989d668834ef15",
+    "platform\\src\\dftlab_platform\\presets.py": "b79a81aa33e47419e9ee8504e6fd0f35fa854fabb11e1a306b67d7837e52f7b1",
+    "platform\\src\\dftlab_platform\\processor.py": "183f2db5751be5d6a9431fefde2139074fbf5ba821181930cb52d5711f40dc6c",
+    "platform\\src\\dftlab_platform\\projection_storage.py": "0c01fcd5ea78cba69485d30f358c72d0002305420e4c1bf6a00af592f8b151c0",
+    "platform\\src\\dftlab_platform\\pseudo_catalog.py": "9eb3bd54ba31756843aa5e2a3718ca165818b962cdc687732585998477149b83",
+    "platform\\src\\dftlab_platform\\qraft_authoring.py": "5993a6beeb1e922bcd7920382727f7bfc80af3739c9035d680f7898b91d4c3eb",
+    "platform\\src\\dftlab_platform\\readmodels.py": "29e7285463a89f6e1343b749f3c5de76756b6a4dcba860713202db05187ec148",
+    "platform\\src\\dftlab_platform\\runtime.py": "abf4c5cc04857a1cba6055fa57ef67ec950f9c98084000d9ee5734abd2f18643",
+    "platform\\src\\dftlab_platform\\runtime_probe.py": "d15fb8f86f99fd99b0c1300088d0e0003902b72bbf990c6077d659f9c96b2035",
+    "platform\\src\\dftlab_platform\\scientific_results.py": "002d86543a7a30297cfb68e5d96caf91a0208ee8e4f222820d6abf273b8b6536",
+    "platform\\src\\dftlab_platform\\security.py": "ff509b471580f6357435a285bb0b524a9d6913690843f6cc1e358270a865467b",
+    "platform\\src\\dftlab_platform\\service.py": "2d80ca9502dad58b3f893d7c2fb639ae534db83a7699f59b133ec8c912ecb6e9",
+    "platform\\src\\dftlab_platform\\slabs.py": "5e9b1b5bb11a8de2d668e8b9cd4f7d4f59282e37a3ff83db014f33c2945c3986",
+    "platform\\src\\dftlab_platform\\slurm.py": "dfce1fc633fb1acb3dbaa19d1585073ff18b86025204ffa918cd166cd29647e1",
+    "platform\\src\\dftlab_platform\\storage.py": "2a709d0c702735c3d0423ee96786b3c02d38cfbb33c1602f94458a7d7b60968c",
+    "platform\\src\\dftlab_platform\\submissions.py": "3dd10dbd5bc77ffba2f3d05be3a052b2268205a53d54338521f6438801ad3468",
+    "platform\\src\\dftlab_platform\\submission_storage.py": "424e1978e86525ef154d080c05edbc825d801f10edc86221a364f9acd00b562f",
+    "platform\\src\\dftlab_platform\\terminal_evidence.py": "544d920a0af7f9416646f4dd40b9048521f45464cea139c6daeeb1f65f3367a4",
+    "platform\\src\\dftlab_platform\\web_assets.py": "acbb2f87f6d384724a0fb71301bb8f18eff2c92df9ea1514eeffe9d1d9d3a127",
+    "platform\\src\\dftlab_platform\\wsl_sacct.py": "fba7d84f3ec1f7f99aa1a894efc31982d4e69d1d6cbfb19fb0106a4bf2868450",
+    "platform\\src\\dftlab_platform\\__init__.py": "32854909888e55f6261b49cef79e7830709b30031d5d4f9fa9a775b4e7d438ad",
+    "platform\\tests\\test_artifacts.py": "22c6eeb7aca8953578ba04a9ba547f84564de393add26c06a9384fa7a355f9e2",
+    "platform\\tests\\test_authoring.py": "bdf66ef3f45e6c01949f7b0aea6920b58e09d7bbb0df9bbe4ab3285dd78cf608",
+    "platform\\tests\\test_authority.py": "e289b1ebc45da3307776c3953006d09b28ac260b35d5275eb4f510204b7e0e29",
+    "platform\\tests\\test_authority_generations.py": "1b6d1a14fcc293c4f95aaba63c213b8e26ff9e8f93541a0d0964a0cd360b0f3a",
+    "platform\\tests\\test_authority_recovery.py": "5d90974851b3123e7133f5729cec59dd9ba96f14fb6b26cb786d06c034de4b42",
+    "platform\\tests\\test_budgets.py": "eeac123330b17d351f80e2f4d3bfe2411ca21c2292f3b2f8cd5a31df7c1469e4",
+    "platform\\tests\\test_checkpoints.py": "5b6c6fab7e6adf5444cc30d3163ac8eb2490769f22bb283fc45f3af104d7e5a4",
+    "platform\\tests\\test_contracts.py": "aceacaf47428ab9157c458f8e0d08a225fceee41a82ec9d001df8d51a4922566",
+    "platform\\tests\\test_drafts.py": "b3d923dabbcd9e763e02229af80fe182ff5851ab417da7dba6dac922aa7991e5",
+    "platform\\tests\\test_engines.py": "9dfd960ef2a61d10c94214a86a8db996c1824aacd0d20ae2e996703d40e91658",
+    "platform\\tests\\test_hf1.py": "99a585406d86c45d263953d9998e59d3ad244c9cdd017d1d2aead128dfe425ed",
+    "platform\\tests\\test_hf1_preflight.py": "1f6d5a0acf6e4c03de65af74738c80f13afb5fbef15e848be7653a5ed469df80",
+    "platform\\tests\\test_hf1_recipe.py": "bf03024e828b894c795ab202dc8fd88deca384891d08ab22ee858fa72f9cdff4",
+    "platform\\tests\\test_installed.py": "5408cd58906f7cce6b115285243e8d6a25582fba09c5fa671d39bf82c48d19db",
+    "platform\\tests\\test_local_products.py": "4abe0cd485cafdc404f0a1677d3452e5de1c4b40ca9b98e8c1c91f6bf2ec6baf",
+    "platform\\tests\\test_local_run.py": "b01731e55304899701a9fd093ec218f6c8750edd36f08e8aa4bda6ba17f82ce9",
+    "platform\\tests\\test_native_checkpoints.py": "bf404910f5974f7ad5fb07acf44abb3bb865413c419387d9ec119218015e117b",
+    "platform\\tests\\test_native_extensions.py": "4ac7e4e410ef05f7482790a6371b5bcfc568c145e8958ad118fc2b3b3620e5a1",
+    "platform\\tests\\test_native_worker.py": "4a919dd5885fb20bfb3d4ba12f76780724fdd9f8ef4d922af8b0565a2588abfe",
+    "platform\\tests\\test_operation_recovery.py": "0a82c2df0b7bd7a67eb78236ab6d8b30305069efcf55aaa9c5946d967a2e3b6a",
+    "platform\\tests\\test_policy_refs.py": "4bff308e867ba65d0de3ba0295f5add636aaa8e0e526ca2dcf1a4dfe7a175a78",
+    "platform\\tests\\test_presets.py": "67a48ee65c79f4369074abac67ec685fb14b012d2165758ed8b4ffaab35621a6",
+    "platform\\tests\\test_preset_intent.py": "f6dae0f93d9a4beb237701a7b7f36392c12a72d29be27b6ce06f338c2381d7b3",
+    "platform\\tests\\test_pseudo_catalog.py": "bd4360c5566c8eade552b9e5d6d79b31b5456ee1223708c2305cc16552ce87ab",
+    "platform\\tests\\test_runtime.py": "6c32fc4b9f81ed5074079b1279ebf6747a95e5145dd001cbefcbf16d65d7446c",
+    "platform\\tests\\test_runtime_probe.py": "76aea89ffce86743dbcdb43e694a5155a5d1ec05eef1eb11e7a1abbfc0c32478",
+    "platform\\tests\\test_scientific_results.py": "f2dace762d0576638ee8ef2dbaec13f1091ba58ab8995dbf0c7694414561e44a",
+    "platform\\tests\\test_service.py": "be4e54cfc11e0399c2d148d59c3ba9f536b05a075b737f297f36f9ca2f0f927d",
+    "platform\\tests\\test_slabs.py": "78e14078b4df805743d055c58a1f38dac4384e369d065198c5d4515c432d5790",
+    "platform\\tests\\test_slab_service.py": "04c76729f296f9418790546634fe3f10cd2187cee72720cacccef7c866f7db0a",
+    "platform\\tests\\test_slurm.py": "a5754a9b39eb5e38285c915c922df7b888432a8f7e25ff301a5176a1eaa43140",
+    "platform\\tests\\test_storage.py": "f6d73738d5ecdfa6800f1b2efdec4c1ba203df5123cde4e13f25a069a2558766",
+    "platform\\tests\\test_submissions.py": "da5cf9b4caf18ce20cfab78f62757d58b92e50954d3f7942ccd81f74736b872a",
+    "platform\\tests\\test_terminal_evidence.py": "3c748d0ac9c4791c3ec5f5f43c974f128bf6ba70de71a3d0128f890612b22020",
+    "platform\\tests\\test_web_assets.py": "52c15ac720b37034d71c3e502468018aab01c53f24e6ffa70563c680b0219906",
+    "platform\\tests\\test_wsl_sacct.py": "6048f21b5d1031449572129b01cf739c4bf570baeb3a9e051def0de1f02ca21e",
+    "platform\\tests\\fixtures\\pseudos.cases.json": "78effa3c15fc75d725c6cc549b55ade48d5168c705b8f05ba4664de54a76ff88",
+    "platform\\tests\\fixtures\\slabs.cases.json": "dc8466f64cc3680654339e9d2756dcdf757fe68fdc501c37561f2b829ccce324"
+  },
+  "bundled_engine_lock_sha256": "87dfadbaa30b1105a591654343662e6044a94c1b52f292af62aeb76f328ace92",
+  "bundled_contract_sha256": {
+    "README.md": "4fa66c0177b4e1848eb7433531c1819fb674ee9439bb2c5d81079c810db82211",
+    "errors/error-codes.json": "b9787b08a265e93b612455cc749ee8777ebaf9c0340d5ff125c4e77134c09f04",
+    "fixtures/manifest.json": "5adcb3cfae05305609b8b32b38205f49a4ac46d5e9fd1a92e5028c5dedb306a5",
+    "openapi/dftlab-api.v1.json": "a71d3ced3b96e3ad5c947c376bdaa0673413d16932626b0daa242d26a9ae24aa",
+    "schemas/admission-receipt.schema.json": "541710400d383db101d500532d5c68a24deaeb4a6553b80cd458cdbc3ff28d25",
+    "schemas/analysis-result.schema.json": "0718a92e78f5d5030420532b56eefaded9d0ddb6d19b35710f1b2b844a03e6b4",
+    "schemas/artifact-record.schema.json": "e533a0623a022822cf6344393b3cca3177e98c501f3a574f981875219613b967",
+    "schemas/artifact-ref.schema.json": "3f3035f788d7cf37eca6f70fa4c495bf040722da23793c81ace8a658cfd47da2",
+    "schemas/assessment-record.schema.json": "0d1537997f492d3da5410429defcb0b303d4c93b119980a7c19ce6ae9c59ec10",
+    "schemas/campaign.schema.json": "cc889004183b02055c326c368fba4bb7820d8303eabd30dcf083d46ee365478b",
+    "schemas/capability-descriptor.schema.json": "31f4bc1d84a04ed0a9586fbec07871c6dd5f6bc17bcc95e99269bfd76edd8f41",
+    "schemas/capability-qualification-record.schema.json": "5a228b680d07df72c36ba47859b4df07686470e855af23286375709af7676783",
+    "schemas/controller-authority-record.schema.json": "e38b2787a225034c699c5fb6b83b201cd63d8c0cbeabb7b1d5b1511f134a0040",
+    "schemas/defs.schema.json": "2c4245ded2988c8ffeb5f9bed55fcac0d0aa57cf2805277a67b0408edebfb5f4",
+    "schemas/draft-create-request.schema.json": "fb9ac1d5ba43e344b9a296539806a840986885b1c9f08078906ad7a254a8999e",
+    "schemas/draft-revision-request.schema.json": "ac0de47777c134134a27fa9a5e26a2124584033223b85689522645de844b4aa6",
+    "schemas/draft.schema.json": "72d30eccfaa8f184d191552f2d960c20a9697d95ed6417962c2d757590211653",
+    "schemas/effect-intent.schema.json": "ec459350bfce85c8f21e9a6a85be891833bba6e1e28fdbbf301191ec3f6d57a9",
+    "schemas/envelope.schema.json": "65a9bec1574e618a8aa2ff2e5c7e669e30be68d29f29602316606c628daf8480",
+    "schemas/event-record.schema.json": "8d53475594e033eaffe8d5abcb6083288a7fad1c06c18e7a12b0253d56c03b78",
+    "schemas/finalization-receipt.schema.json": "148edbe65fcba39d1463ad6bd7afa21df64f9f3fd8ba18df85c0dc292ca3ef4b",
+    "schemas/hubbard-layer-message.schema.json": "07f751bf9e889a1d58120cdbea7887d1db995a5295bb435b3af87c144e28c7bb",
+    "schemas/learning-dataset.schema.json": "708dcac1f3b6f3d3d2aaa880dae1f75aebfcbad299e88b5500edc8dacd98b058",
+    "schemas/native-contract-ref.schema.json": "37119066a4ee3c4f8ef7e49bf37e98cfde81d55af19650263bc0e635212adc0e",
+    "schemas/numerical-policy.schema.json": "f174bc72ccdfa458c970362ad392ac0b45266c452fb8c060a01d4163ff9a0556",
+    "schemas/operation-record.schema.json": "985134f76c4053cd34f036a52295e57bd63ab642e3885cf8ae50b9ed300854c8",
+    "schemas/operation-request.schema.json": "21eb2785c04e47f14becd52422486ebbb8034a59f90d697f4df85f3b323dcba6",
+    "schemas/operation-resolution-receipt.schema.json": "375fe408dc1338206840691975dbd438d2fdee5abc471e98c8438a5bcf33ab23",
+    "schemas/physical-model.schema.json": "10bf43c7048cb64e967c41c074a87506bcb4a12cf2a6406a64812d7da905641f",
+    "schemas/plan.schema.json": "e43aaaf24458aa7a1f1e46ad7075dbb12f894b9dbb9aabf086e9f4b3e71b96a6",
+    "schemas/problem.schema.json": "39455da5771de69a0284379688b0082b4dba0721dbaa595bb852044c4ed87b22",
+    "schemas/qraft-controller-ledger-entry.schema.json": "e93daa8ca193153563eec4c563da3360e2870d1228c8ceb8a62b6efb90dad2b3",
+    "schemas/qraft-controller-reservation.schema.json": "0c1694dd725d1d0eb8ce7e8a23bd537547629ab3dc463e158567c9cb50c3df56",
+    "schemas/qraft-controller-resume-verdict.schema.json": "d825a369a57712a11ff346d2b9333bb5956a3a21efb75eabb3d3086748c25fd5",
+    "schemas/recovery-checkpoint.schema.json": "70c259b11b9b351f394c79068b92a2a928208da3435ec9c4899665a96349787f",
+    "schemas/result-dataset.schema.json": "b236ee0442e512cb9d3fc5de2c7fcda8e2dacca221e4d40d2a609c7261e2e20a",
+    "schemas/resume-plan.schema.json": "9d58aa5a898e074de5594b250b53232fd091867d5df4f71d237d432fb91da768",
+    "schemas/run-intent.schema.json": "ca7d28f1f95f19f0470fffac37fbe88051b99ed5d4a7e1b5010b567837939fa7",
+    "schemas/run-projection.schema.json": "53c72037d64c5ba5f580a869cbfa67bc8421f87451e2f3956d49aabf62095a79",
+    "schemas/runtime-probe-receipt.schema.json": "f23ff7b386848ccba354df26b285131f1a1c83f86a444a77d12370a42cebbb72",
+    "schemas/species-definition.schema.json": "be1b14dd3b41aa4546ccbe1a8d838634349672c1eec0f1b95687369925db91d2",
+    "schemas/structure-revision.schema.json": "231fdf360501cdf14981f0cac3f6ae91f274a8c261e5cf1b4f476bf5f7cc7ef1",
+    "schemas/submission-receipt.schema.json": "a7b688f5a58ad64eae43e9ed9ffbf6d16c598f7331810ab5e1e6d2a5a8cbe9ea",
+    "schemas/validation-receipt.schema.json": "867a1e2074691a48f81721de1ee7b9c7b7fb2064aa13f7153f3547b958e1e3a2",
+    "scripts/check-contracts.mjs": "f2a07afc8b1f876272695d21c05a024b3632789f1c645bc7d07da86d3c92b262",
+    "scripts/validate_fixtures.py": "7472b9df6892fa70ba1f03aacb0f3d3a8ccf4e1e15138b5db690bb6ceb28d989",
+    "transitions/operation-transitions.json": "c0971eaade2b250f5d17b60aba8eaf13226af7cbf88fa3e8b4902e348d27e574",
+    "vocabularies/native-digest-algorithms.json": "62fbefbcbda0c7cdb723f00c545cf8e5f74cd7381eeaa7562a51ab951b3d1742",
+    "vocabularies/native-status-projection.json": "f30b4d0e41c0115e7c66b88d1ae3b7670b2938d8402683ae82ba0f98e0a7f67a",
+    "fixtures/authority-generations/cases.json": "539dcfff0c2d84296a0deb75db9b36f2d44f4215b11f1e817be1265899bae8c3",
+    "fixtures/canonicalization/expected.json": "603be09e96c05bef30b58007f1cf7854efb9099438537cfe478e28b7791ee52b",
+    "fixtures/canonicalization/inputs.json": "09c3bb3cf53ae49b11c1ec1e695c0092daabefbf57f8f3a4e1c47cf84ffc63a7",
+    "fixtures/controller-ledger-rules/cases.json": "a23b77a51c899c3fd34e42888dcbfe5a395e4df79ce555954f8d6abde1c11720",
+    "fixtures/controller-resume-rules/cases.json": "8775f90fdfed832f5890d25566cf8e4e00682a37482b27ac2fa32e15507f2175",
+    "fixtures/native-digests/two-algorithms.json": "462b917e5e4a172297a93d81bb4144d276509aa318de402375b4cbe62ccedd25",
+    "fixtures/admission-receipt/invalid/admitted-without-probe.json": "46cb8f53c1a3005062504a936c410e0e04c2e264bdab7219c4ad546f17c4d748",
+    "fixtures/admission-receipt/invalid/admitted-without-reservation.json": "27d59c56610d0514f9631113ee72169c1fccf808273cf9ce32207da4e371ed1d",
+    "fixtures/admission-receipt/invalid/qualified-without-qualification.json": "41185a498b4331b4d5a8553e1831310d1395fed61f3372a7a54e210d7b539b7c",
+    "fixtures/admission-receipt/invalid/rejected-without-reasons.json": "ed6c456462bb278bec51a0dd12233b50cf3598e04b55d43713dfdb3cd26888fc",
+    "fixtures/admission-receipt/invalid/reservation-wrong-unit.json": "2d296f2d38690aaed2eae1007c90428a5e82e71e278ae9f82924752b7b28e288",
+    "fixtures/admission-receipt/valid/exploratory.json": "1586b61218def807e271617bdc01a38f3b11374cc804028bacbc41a034b860bb",
+    "fixtures/admission-receipt/valid/rejected-before-reservation.json": "8d3370e259b4f8220faad5a64280dde2886db07f1a1974ed7a89b5f71a351b0a",
+    "fixtures/analysis-result/invalid/without-assessment.json": "e57a312975d3606faca883d6ac103a0e8014722ae9e1885b5ac0d80be1efd22b",
+    "fixtures/analysis-result/valid/hubbard.json": "39b0ee9f6d8903c8092cfd2803a03f2f37c3858ff8b485263c5be81e3a13e3b4",
+    "fixtures/artifact-record/invalid/negative-size.json": "7232943363ef0262c31fa89ef5547d67782cf81089997272d0f00f26681aca99",
+    "fixtures/artifact-record/invalid/unsafe-size.json": "56f80c328d4205e39383b51672732055b17a0f9ccffde1ccdcba29c187e5d837",
+    "fixtures/artifact-record/valid/siesta-output.json": "b2d0b802c029a4636d6ae86be675e07300a54e8579bf30775b501c96226ee9f5",
+    "fixtures/artifact-ref/invalid/with-host-path.json": "2b28a1664e8f3600ea5c8977a7666c0bff323fd8f703d72e6724b8d7f0fd4c15",
+    "fixtures/artifact-ref/invalid/with-url.json": "f4dd7f278d0613de2bcaa9dfc0d56faa2fea032fce9c52d2510d4325119c3aa2",
+    "fixtures/artifact-ref/valid/basic.json": "4528cdfeaa2c4ff45fb24744ad270682fd09dfda6ffb2c74328bb1610df59ecb",
+    "fixtures/assessment-record/invalid/boolean-valid.json": "80a611727d660391cc99a266889ad3cc739c59648cfe7477141f6752eff8f315",
+    "fixtures/assessment-record/invalid/not-established-shown-as-pass.json": "bb034de24ac05619ef90ccb2a8fd3fbce7e3388a28a11838e33274b808929999",
+    "fixtures/assessment-record/invalid/pass-without-evidence.json": "a4fb8d3bf1c30cb2a7a53bfa0d7cfd99e0219c80601359793e1b518c16f8ed53",
+    "fixtures/assessment-record/invalid/platform-future-enum.json": "0fac2d4d047470027ebc4eba6a7e19177f25b7d67c38d406b25e95103ca1f60a",
+    "fixtures/assessment-record/invalid/u-used-as-ueff.json": "af933d0fe7b55d8eb36284e6283255a4ccec4426c5a4b51ea0d6047980399c33",
+    "fixtures/assessment-record/valid/native-future-enum.json": "3264b8e15d76b446042703a9d1e4c772c62eaf5c487b486e952d10810ac6dadf",
+    "fixtures/assessment-record/valid/not-established.json": "f8dc691825f50c0f926ba3170f89f3b097aeaf775952775ff9c43e458f9ce5d9",
+    "fixtures/campaign/invalid/extra-field.json": "6093c194362b1b0e507ba9ebaa3928810d226cbdec5af0b6ceb1996c67db57da",
+    "fixtures/campaign/invalid/no-drafts.json": "01a0aaa8e9993373157b9e97b98d6466325b7fc15405590a98cd5f2f64ef3835",
+    "fixtures/campaign/valid/one-draft.json": "7c4d0aa64f2189a83e8f9efd8cf884a99c0fce80037c924a1d0ca25b8632db15",
+    "fixtures/capability-descriptor/invalid/controller-without-cooperative-cancel.json": "a25e91b209a4734b65d01a2b41ac0d6f09c7b6e3be7956dc0ca5c579418b8e2e",
+    "fixtures/capability-descriptor/invalid/execution-not-verified.json": "d299e68daf052f289e5f893ffc8e6a330605dc3abe2ed4c41797b5e606549232",
+    "fixtures/capability-descriptor/valid/hf1-controller.json": "b5684b4c538fda53fec3c359ca08aa2e073dbae6e76bf97c4278d2073afa49e5",
+    "fixtures/capability-descriptor/valid/offline-reader.json": "1a72520cd7ee57efeaa4b026638a7d05729706705611528498714cf48e78556b",
+    "fixtures/capability-qualification-record/invalid/missing-dimension.json": "800e0ecb35ee0995a47894c7622f28715f21195276657d26212c1f8e440bf63e",
+    "fixtures/capability-qualification-record/valid/single-point.json": "82e72d76e39d2f67403f680519dd1916a7d45b899d9f2d42550476dce846d49b",
+    "fixtures/controller-authority-record/invalid/takeover-without-fencing.json": "983bec32a51fdc15c4a7fea8c48fc3edc9965e806bddcd9261fceec110974673",
+    "fixtures/controller-authority-record/valid/no-fencing-conservative.json": "0ba7623cab428d888f229719f539804fa26ea426e99f1c3421ca5fc3cb859001",
+    "fixtures/draft/invalid/assessment-pass.json": "09243144390179c169cdd641c50ef39d08540f1bbea514da09ce80d72a080920",
+    "fixtures/draft/invalid/learning-without-dataset.json": "e4bdf69093e657c2c081a96e955d941f6e07440078aff74aa448f87c580ae942",
+    "fixtures/draft/invalid/provenance-verified.json": "f8f350a2e1571be616c84d4f914ca1b3a10144216b710383b2d7f7259ee9f83a",
+    "fixtures/draft/valid/promoted-from-learning.json": "9c72c6832265e8584f004316f3e7b22d78c62b6b11adcda5c2eeef6f9e256e9f",
+    "fixtures/draft-create-request/invalid/client-sets-structure-id.json": "739f0279d3f4cda6cedc4331cde08cb851a433a42d37301e63ecbee68140ae10",
+    "fixtures/draft-create-request/invalid/educational-purpose.json": "f035ecb76e1f03ce532f4f14867d6b2be8c9abf03c0702fcb3dc78c9505b121d",
+    "fixtures/draft-create-request/invalid/learning-operational.json": "ee3e8e8692c02987b86199ed563e49c360a1ebb5ecc2c084778562fc762062b4",
+    "fixtures/draft-create-request/invalid/structure-export-with-intent.json": "a0671adb40e4adc86e742163d4a7c802649164c2b18dd1da60efe38a241215fd",
+    "fixtures/draft-create-request/valid/promote-structure.json": "84ed087269e57cee832dc0ed4d9b8ce89904f2c55cc4bc2b19eabb6dcb9ea9b3",
+    "fixtures/draft-create-request/valid/promote-template.json": "61c10a084b692ff012e95b355ed5820d2ac8ef79d25d4c11bd2b10298efdd68a",
+    "fixtures/draft-create-request/valid/user-import.json": "4b92cab6cd254abaa5305af3ec566c7ea7a046bab655910d0512fcf0c8a0bc04",
+    "fixtures/draft-revision-request/invalid/empty-changes.json": "871a40d501c3c34255c61a27fdab096f0fa640d654e08df46dce875b05e86d40",
+    "fixtures/draft-revision-request/invalid/without-expected-revision.json": "e548290ddd81583528f92b2a461705ada2880b1461b3aab5c5469ac492f1c2a1",
+    "fixtures/draft-revision-request/valid/add-intent.json": "7775fea696ac6948e127c29c491994026469136bdbf5addf1ad5e474c802f70d",
+    "fixtures/effect-intent/invalid/idempotent-action.json": "a3eb7a1305ba94e62675a8f111f023ba0c2b0d8838bfe3583f741eea4475be05",
+    "fixtures/effect-intent/invalid/without-package.json": "4fc9f0e15d16d251eef021166d1ac15404b68ff8e6936aa052816061d15c6093",
+    "fixtures/effect-intent/valid/submit.json": "38eefdacba66421f1db960df9305fe55885398bb7ab3f890d6f49cceafb9fde2",
+    "fixtures/envelope/invalid/extension-not-namespaced.json": "c481458fc1f7463f882f644bada188c1786c68ac0b4d81ea577dcd3e5b37383e",
+    "fixtures/envelope/invalid/unknown-top-level-field.json": "72c7bb6b90fb435f8f82e7c68e3604b997fabca26fc939c0c9d9ccfc0f0641f3",
+    "fixtures/envelope/invalid/verified-without-digest.json": "6cb687cb030bb5a55ff2cd99113faec9aa7b390ea3f7748f5f4e99ae62646f55",
+    "fixtures/envelope/valid/unverified-null-digest.json": "4b4e677e123cf4cd6d8f1544c064d6dfe589b1fb0ad62e01c0a524ec722be728",
+    "fixtures/envelope/valid/verified-digest.json": "9a0659ca11818670fc7edf6d9c66e7386998aeca56d0226f794d6931672efe5b",
+    "fixtures/event-record/invalid/sequence-zero.json": "dd4a117544817e7c328c53249342ac3e556c3046e64d0d4461fad709681a92ff",
+    "fixtures/event-record/invalid/wrong-payload.json": "68095dcd189cad393795627e97f9651465a1b7a6bfb38c7e9d140c04634fc115",
+    "fixtures/event-record/valid/future-type.json": "61a121df711baeb3f1bb3997be884ec26ebb1d87452e430746c0842e158b4f20",
+    "fixtures/event-record/valid/operation-state.json": "7f8270cfbf302ad6dc0ab5183c502a5689519ed441bdb9fcc4f655fc0af82290",
+    "fixtures/event-record/valid/resync.json": "cb14f566acc96c4edad60955afa63608d340fe6bf71aa527ec644259745dfb17",
+    "fixtures/finalization-receipt/invalid/nothing-expected.json": "a153e1a5bd463b1b6fea26d9978710fcc8c67b8baf52751741bb0f13f02addae",
+    "fixtures/finalization-receipt/invalid/published-with-missing.json": "fc8ce1efd8c8b67024e5a6baf7303be3b5e70f11c3e27c9e47b33ae5d79bbe7e",
+    "fixtures/finalization-receipt/invalid/published-with-unproduced.json": "9cc599b37b8a1dae1931c6f2409f890408ed54a5e42d1774fa07f04026e80dba",
+    "fixtures/finalization-receipt/valid/interrupted-unproduced.json": "33d8b4dbf13bf31da28dff284e8038b34bb4825fc8f9989e9c59888e24eb6de4",
+    "fixtures/finalization-receipt/valid/published.json": "660bdf62fff1806d3bce386e86ce5b7ec23a16c7a29d9bfe3faad0883f77f1d4",
+    "fixtures/hubbard-layer-message/invalid/analyze-as-ueff.json": "7dd012b1d0aaa028903321e60845fc5a95a20cc548604d47a90d5cef492c65b7",
+    "fixtures/hubbard-layer-message/invalid/tau-as-float.json": "681008198514d305f4050d671be9001c675753d74a41da1b217bf2519a8431df",
+    "fixtures/hubbard-layer-message/valid/analyze-response.json": "6a4ba71efb65d6ed28578fc9798d38879bb4a99d0dd82589e6cb750af256f72b",
+    "fixtures/hubbard-layer-message/valid/check-resume-response.json": "a5c9b5065ff7586b4c0cba7ce044dff5351d3e75870927acc0de08c32a6db8c6",
+    "fixtures/hubbard-layer-message/valid/resolve-plan-request.json": "091d379df8364254e32ca19e1e1d353dd7694bf572b6b6c9408c4a02b4a76569",
+    "fixtures/hubbard-layer-message/valid/resolve-plan-response.json": "0a5b0e936241aaea21094b7f288026daf759386bb7439524f07bb8bcdb0e18f0",
+    "fixtures/learning-dataset/invalid/operational-purpose.json": "6c43bf457ef22573d50829ad6d8b9c1cfdac3b03beca4d14a8f87a8bbd31b45b",
+    "fixtures/learning-dataset/invalid/path-escape.json": "20a19833e33bf903a6fdcefb520310443844fd117fae05db9c78c89a66fd686d",
+    "fixtures/learning-dataset/valid/builtin-example.json": "3a7adc214dd2dcefef1d223330a2ad15f5001446a8f2eecfce4cff6637e57c7b",
+    "fixtures/native-contract-ref/invalid/contract-without-version.json": "5e8c854d0ef46d21a858ee41b6e002e8192024a47b0327f39645d14213c733a6",
+    "fixtures/native-contract-ref/invalid/short-commit.json": "f564374ca40ee96fbe59756780147396a0fefe3a805c9c80ecf3ec24825e866a",
+    "fixtures/native-contract-ref/valid/qraft-controller-reservation.json": "04d2179f05d2ed1210a8f7e4c23f87e50e78153ff949684429afaf97f2024ffd",
+    "fixtures/native-contract-ref/valid/qraft-workflow-lock.json": "2a6b8d9201d28cc8e596b02d07d37ebfb3b8e33d76b5fe4716fe4502c2c60595",
+    "fixtures/numerical-policy/invalid/null-without-reason.json": "e7ba0a98d35b9e763dc0c1b30073b794c0adccaf7832465bd42e2cc3373bf94c",
+    "fixtures/numerical-policy/valid/null-with-reason.json": "7bfd3446b911523eb5351ebd669aa541dd1671d2b576d1a9df17b271d023e22d",
+    "fixtures/numerical-policy/valid/scf.json": "86f02d265235cd2b3d4763f29052200fdf1e7dca9a2dd57c2f8116e79e9cc816",
+    "fixtures/operation-record/invalid/campaign-wrong-kind.json": "8d406f92dd214b776eec843a5eaa8611c7788893cd733d4b3377381005b8a471",
+    "fixtures/operation-record/invalid/create-plan-without-product.json": "6fa937aeb2c19a0624a85d482f62f4c7a7dc30b3af7df1a2ebd0dd57a232cdbb",
+    "fixtures/operation-record/invalid/failed-without-error.json": "c0c67f3c01d486ab2c9e454e08b941ec25283af106805509bd3d6e383984046d",
+    "fixtures/operation-record/invalid/key-expiring-with-live-effects.json": "4dced2d5c6a0fd8b667b8f98f5b5acd124745594afd852d66636cec25bee2afc",
+    "fixtures/operation-record/valid/create-campaign-succeeded.json": "4d37ee9eb6213238e1c6940740ca73efd1cb0ddfeb71568c645dbda03a301b39",
+    "fixtures/operation-record/valid/create-plan-recovered.json": "231bb8146342d53a29a7db263603cd604b57eb080f579803fc1e99812a3fb1ed",
+    "fixtures/operation-record/valid/create-plan-succeeded.json": "a694548b738141c26d7d7db94b2ce8738b977079f726f97b9da161712acd02ed",
+    "fixtures/operation-record/valid/submit-outcome-unknown.json": "4274485b6ee8b320da139d23456f80be7ac720fc35fdef91d44cb74bc90d0593",
+    "fixtures/operation-record/valid/submit-succeeded.json": "6b6580ee8840616fee1a911576e791bb53175b8c3dd82df4eaa049ef69e020cc",
+    "fixtures/operation-request/invalid/action-target-mismatch.json": "bd5be183a192e20bf3bf61a40442162372cf6f02a506653e91f0cfdd354faf89",
+    "fixtures/operation-request/invalid/client-sets-owner.json": "d8949b20a633eb83a01b9b0e1d907c90824cb4f2f8963ac16c2feff71608f70c",
+    "fixtures/operation-request/invalid/create-campaign-without-drafts.json": "74748418750753de5ccfca25afbc838002024573a66659057f50a207bf4f4113",
+    "fixtures/operation-request/invalid/plan-without-validation.json": "bc594a142c3f549e865dc6c88b7f629a391bdfc056804b91ef0513203dbf3c56",
+    "fixtures/operation-request/invalid/prepare-package-without-profile.json": "9e58f56f6b9fb2c69ed8725fbc55a8fb41e8cfc0d479984c93bfca5ee4b68cf7",
+    "fixtures/operation-request/invalid/short-key.json": "a1ee2d1aa60a4a4e9510d7cdb1024c7c3eaffbdbe9027d3a2f29be7618853864",
+    "fixtures/operation-request/invalid/submit-without-profile.json": "3d64062ec964e8208c48837ad81e052a1df3370d0f86df097b9a5dd1a740b53f",
+    "fixtures/operation-request/invalid/validate-input-empty-payload.json": "f6007974331ca5b5131d3159677b5e7b6bc9ddcc75e832a93ffbd1699c54ecd9",
+    "fixtures/operation-request/invalid/validate-input-without-revision.json": "5a305f830a13cea750c249bc2a8746b07aec2110912957b236d74869f9017f8c",
+    "fixtures/operation-request/valid/create-campaign.json": "1c7c6acaf71698a0988566b95191333a7c82118fabff10d3f791a2402ad1bdf0",
+    "fixtures/operation-request/valid/create-plan.json": "2701f7944d79690fb84681edeccc7615b44b812737e2afb8060c4d1c7dea7ba5",
+    "fixtures/operation-request/valid/prepare-package.json": "815fe334355c046b089b5ac11e3ace98a7c1c4b0153435ed79a74f545b7c3ece",
+    "fixtures/operation-request/valid/submit-run.json": "257f09ba5a51add949faf20b026157c0185cb6330adf9994baa980b2b2788d6f",
+    "fixtures/operation-request/valid/validate-input.json": "0f6f1169cf508a4769849c8bd841cebc795ab7e513565aed5868d6d9303b9cd3",
+    "fixtures/operation-resolution-receipt/invalid/class-mismatch.json": "682909896cc0838e17cd4907a8e688705e229988bd2461a321cb4a00ef2927b6",
+    "fixtures/operation-resolution-receipt/invalid/committed-without-products.json": "06e13e5abbbed630387050e127a84b528868f88ea4b7b9326a37888ea8573ce9",
+    "fixtures/operation-resolution-receipt/invalid/submit-with-local-finding.json": "d39a25d72f009f305ca9a95fcc347c8c67144bfced0ba65b2b39b6fa93fc851b",
+    "fixtures/operation-resolution-receipt/valid/local-absent.json": "0e5c8629445ab6036eb103e92b74289f2c0d47da1616611312d6ca13108537cb",
+    "fixtures/operation-resolution-receipt/valid/local-committed.json": "76abd7efd49cbb91e35a6fb9a566010102f2412b7f9f41516c4f7e81d76e12c5",
+    "fixtures/operation-resolution-receipt/valid/submit-no-intent.json": "bc4c755e424bdf15f5896079285f3a2e509a9e5455058a892f3f48f13b421736",
+    "fixtures/physical-model/invalid/ueff-without-derivation.json": "1725e4afee0b9052369fc985ba619f3393bd015055485d740894045d6b1161a3",
+    "fixtures/physical-model/valid/hubbard-u-scalar-charge.json": "88e82dc3fdfb0b4daa576a1c91e62e90b4acb617d704606d62b4c6f57ee80d63",
+    "fixtures/physical-model/valid/pbe.json": "f179404bc7af4009ed4be51c93203a5bdd4efa37a80afb0976796a95155e3ce9",
+    "fixtures/plan/invalid/no-native-ref.json": "cc88a95ddd2bdcdf573ab95c99b50407cd0139e994e0e65e76c3da4b02701a7c",
+    "fixtures/plan/invalid/two-native-refs.json": "3acc8fb3340342c33c98d3f0266d502bf881be3787cf442f44fd79a911d6d758",
+    "fixtures/plan/valid/locked.json": "188789c382565fb9b8670d5f39e38555bd35665dc294a28dfdfd1bf45d8b8b4c",
+    "fixtures/problem/invalid/with-host-path.json": "e20eedde3b75ac5a922f662f96829aad06284e648b99b51df89401c75d90b404",
+    "fixtures/problem/invalid/without-code.json": "32ac7cbf7d19f5a3a60415d1a62471af43d753ba2df17d4aa4db04978c931b98",
+    "fixtures/problem/valid/key-reused.json": "47a800be07e107ff4e6e2eb90edc8a475b46beccde55e6f400bc7aecd72d99c3",
+    "fixtures/qraft-controller-ledger-entry/invalid/intent-without-hosts.json": "41ced14693cf9c57a248ebad6e9f646ff98d96f14472478000c065e458f2ef58",
+    "fixtures/qraft-controller-ledger-entry/invalid/recovered-with-trace.json": "47dd7e9914b7a2cbff9d39483ba314ecb4b948d410cb83daf349c816c821e7fc",
+    "fixtures/qraft-controller-ledger-entry/invalid/settled-without-native-state.json": "9dd565b2cee36a12807dce60a7c890f0d107b7114deb2c54f3193bf4d27cba4d",
+    "fixtures/qraft-controller-ledger-entry/valid/launch-intent.json": "b06d1442282c1a52a11e1975d43c6d2fe9991e051199af239c9ca2e8999ce8e1",
+    "fixtures/qraft-controller-ledger-entry/valid/node-settled.json": "f6f75f336f09e41c5ca3f663c358d420500d58c20e73b262bf021a1d4a3ca9da",
+    "fixtures/qraft-controller-ledger-entry/valid/settlement-recovered.json": "00a2d3ef4d34d5a35ccee213a0a68d0b5631c6713731349dccdc8020c9a59e12",
+    "fixtures/qraft-controller-reservation/invalid/closure-by-group-check.json": "4aa5a082538ddafa7dbc87f86af1049aaf3494de90a17b1f7d9db38bdc1c03e9",
+    "fixtures/qraft-controller-reservation/invalid/relative-launcher.json": "5f69f30438fa00f9fab50c981f84917b77dd2387ec688bc7411eb0f47693d2eb",
+    "fixtures/qraft-controller-reservation/invalid/two-nodes.json": "680723eaec8203768d38de78bc0657cfbeb8729af22e400ed5fe0886f755b7a5",
+    "fixtures/qraft-controller-reservation/invalid/without-containment.json": "dd49bf64c74f62605180ff9290bf93d91ad28af3133c0ff4f0d7d8c9219f7cda",
+    "fixtures/qraft-controller-reservation/valid/slurm-second-attempt.json": "3ca2cc3cbc8a0a4c159b6dc39525b40490649768f681c1b3918c09eb1e9b5749",
+    "fixtures/qraft-controller-resume-verdict/invalid/continue-claiming-physical-equivalence.json": "61fb76746ea7677e6d62adb47926b40dd187029c05dd87767dba1698d3354db7",
+    "fixtures/qraft-controller-resume-verdict/invalid/continue-despite-identity-mismatch.json": "38d482f33101c37638d3af4a0db1401c97a01b4c1a3bec77d53b3e2402d15518",
+    "fixtures/qraft-controller-resume-verdict/invalid/continue-with-reusable-responses.json": "57f49a8ce64e3642a0a3ae4be8fd9bec93c18a978430acd4351267aec1656483",
+    "fixtures/qraft-controller-resume-verdict/invalid/continue-without-check-resume.json": "8144aa354c643808dc88b8b62d4d332f21d2c08015ca1489f34d4e25adaf1aa2",
+    "fixtures/qraft-controller-resume-verdict/invalid/evidence-invalid-with-changes.json": "9ebd704dfe84e2490ff15a9162329080dddbd922641b71a8f8ee536ca8eb80d7",
+    "fixtures/qraft-controller-resume-verdict/invalid/evidence-invalid-with-neutral-result.json": "ecf7cd679fdfa76697aa5769517a8538b2e28904c274f8cee892fc01c49bca3d",
+    "fixtures/qraft-controller-resume-verdict/invalid/inconsistent-mismatch-with-placeholder.json": "261e95a0d5af2a7db28a6998e8505b9873fdf9a9b286f89214067faa20795f37",
+    "fixtures/qraft-controller-resume-verdict/invalid/inputs-changed-without-mismatch.json": "c8b79503a1fd4d4af8bdad619466c5fe584dd8b827d0b339fa8d3f61afd77e54",
+    "fixtures/qraft-controller-resume-verdict/invalid/refuse-with-continuation.json": "1a60f1fde028062307c65f64a4856f62f6f223d9d27b4b7b7ea6f80499cdc2f7",
+    "fixtures/qraft-controller-resume-verdict/invalid/scientific-effect-promoted.json": "326ba7a496d6f8e833958d3accb8eaf4f253db5fbd82210389318e5193897682",
+    "fixtures/qraft-controller-resume-verdict/valid/continue-interrupted-node.json": "b30c98ef84e6b1ce659c084939bae11a6b9c6c09cae27b849c9684d84d7bf581",
+    "fixtures/qraft-controller-resume-verdict/valid/refuse-evidence-invalid.json": "c517ea89ae955ff8a2a94f86c6bbfc108130caff36feb858a40063e61f77a8f3",
+    "fixtures/qraft-controller-resume-verdict/valid/refuse-inconsistent-mismatch.json": "ca20df568412d3a3e1073c7deb90c60b711f6661229cb4abcd8a48d3d2d79731",
+    "fixtures/qraft-controller-resume-verdict/valid/refuse-inputs-changed.json": "92756959848f0267b2cb42dc28a567eba52c8fb5c58173c80356e7c10b617e70",
+    "fixtures/recovery-checkpoint/invalid/live-file-copy.json": "8497d85ecfc45b96fbd4be0fe84e5643ff157438bdc1b65bd0d55564fe2238c4",
+    "fixtures/recovery-checkpoint/valid/sqlite.json": "6f399a2ad7f14f269d5fd836cadcac0cd9b28401918fcf21b897b03c06b6e368",
+    "fixtures/result-dataset/invalid/import-verified-without-evidence.json": "0872e18924d9e922f29d8f32ce3aa73f2eea6bd7a6a17b8ae10dc5b3b7bd6bcb",
+    "fixtures/result-dataset/valid/imported-bands.json": "671efc00b0de29cda8043591e3fa21324497da04f439ea292fcebceeeb2e44e9",
+    "fixtures/resume-plan/invalid/without-expiry.json": "d0200e3eeec3e9e4cd2691368654350b6cc316ecfebb687a68ad97d209084746",
+    "fixtures/resume-plan/valid/partial-reuse.json": "12da22576e5820f9c174497bf45d609a62e6a8fff4885f2552b451e263e72cbb",
+    "fixtures/run-intent/invalid/educational-purpose.json": "3036a94f5cd9f90a17df99f52d572f749ed9d2d338632df8ded11a9665b0416b",
+    "fixtures/run-intent/invalid/without-draft.json": "2f425018a33752a37a55fca6da94787bfc94e9861426c4ae092e8b6cee1a9c44",
+    "fixtures/run-intent/valid/promoted-to-draft.json": "d38a50a16752e62aa1ff0139ed4952f586edfd53ec367abd74dc82d177ed1828",
+    "fixtures/run-projection/invalid/never-observed-running.json": "afd564ddc4e88a0caf4048bc36a3d321a629b1dd4ab863463b1cdcda2410f46f",
+    "fixtures/run-projection/valid/completed-not-established.json": "ac96665ec1a299f97c01e20f2cb7c5a1e9f49714b59e839333f8d2fb3c2b7698",
+    "fixtures/run-projection/valid/ssh-lost-unknown.json": "7dc161da557d3c13c5e1045df478172d59da3698641f4d2a11e741545f722a74",
+    "fixtures/runtime-probe-receipt/invalid/without-validity.json": "8d4cde436f1222e45b70789f97a6fefcfbe569b0c35de42a7788793eca23d8a7",
+    "fixtures/runtime-probe-receipt/valid/slurm-mpi.json": "70b18f10e6ad3b4436a6bce7f4dd13232fbffa7dfa72c263089c102afcb3776d",
+    "fixtures/species-definition/invalid/z-out-of-range.json": "0e1c6a4b5c961a8da8526dd0d80cde192549f845a2627bcaf958564682459b91",
+    "fixtures/species-definition/valid/si.json": "6e1536f0dd836cfd74693f7f44cf82851f1381c5a045a3a3f16598ba9d448596",
+    "fixtures/structure-revision/invalid/cartesian-without-unit.json": "39b21760d6416bd7a33ee2fc8633c04cb9a86410605f6e7cbff766c75e62b07c",
+    "fixtures/structure-revision/invalid/position-2d.json": "9d340a2efcba719ad4c7667a6a0d827a4632220d44d267614e32b431275c3247",
+    "fixtures/structure-revision/valid/si-diamond.json": "3295f3540054706a02ef2886606659ce97c0d09c9271053fded5384a461dc70d",
+    "fixtures/submission-receipt/invalid/absent-without-evidence.json": "531a496b71435c1526d9e2b43155516ee45fee98c0b31d20b6a8995f50c70793",
+    "fixtures/submission-receipt/invalid/accepted-without-job.json": "cb9d603f57ffaea4c1411e352594ac48ee4ad0c1787961d07a3d1fa9b7298b7c",
+    "fixtures/submission-receipt/valid/accepted.json": "879a352ee8e69ac0c29f026ab505d90e7d7da000f716d18a3de0983b7ff65a69",
+    "fixtures/submission-receipt/valid/ack-lost.json": "f0ba24daa78d40bbe1bc6ef9c6945fbff9c9f2eab926795ae9929b639691471d",
+    "fixtures/validation-receipt/invalid/override-hard-rule.json": "c609bcd6acffafa7492b0a0287e5fd22dd935151591f946027aa658e26928bd4",
+    "fixtures/validation-receipt/valid/heuristic-override.json": "be07376fb21672bf95a1fb8e410ec36486584540cdf6e06b6df0a6b415a56938"
+  },
+  "bundled_operative_manifest": {
+    "format": "dftlab.operative-assets",
+    "version": 1,
+    "api_version": "0.1.0",
+    "entry": "assets/main-ATOJFJ2F.js",
+    "files": [
+      {
+        "path": "assets/app.css",
+        "size_bytes": 18428,
+        "sha256": "fbcb7b880f38ce572df497180483c026073129581fde7f96c965c8939785a8e4"
+      },
+      {
+        "path": "assets/chunk-2HNFRLPK.js",
+        "size_bytes": 16096,
+        "sha256": "5c28965ce6daf0755202d50fef31284115e25f0469e3c9f2461b9a6829478772"
+      },
+      {
+        "path": "assets/chunk-5OFZCSO5.js",
+        "size_bytes": 25842,
+        "sha256": "77ca398f3841f37869b509c9ff6580b4967ef7cdff539640ef3b50586ef95742"
+      },
+      {
+        "path": "assets/chunk-77OQOKRQ.js",
+        "size_bytes": 15900,
+        "sha256": "f596d0e5f450ffd20bf7ded921f3ff325c52d5c966595a5516ef0e1a7effc469"
+      },
+      {
+        "path": "assets/chunk-AAOTIJVR.js",
+        "size_bytes": 76135,
+        "sha256": "6121246a3471064a6d43ab05b185514bd8f1f21022199baf683381db03b10a5e"
+      },
+      {
+        "path": "assets/chunk-AAZABAPM.js",
+        "size_bytes": 106,
+        "sha256": "ff9e0dca4365b7b1581e7275f3c6dbcf1474ffb874d81a3375ecf7a835dbaa6f"
+      },
+      {
+        "path": "assets/chunk-AJK4PI6U.js",
+        "size_bytes": 301690,
+        "sha256": "1ca94dc0c3af97fcd4feb1a8fa0e37c57f35681f6153895e201f85c216128973"
+      },
+      {
+        "path": "assets/chunk-BV3LM7X4.js",
+        "size_bytes": 356168,
+        "sha256": "570e684b34e51738f260f8470e2675de21b9b198a24dcaff4036fb27c7890c00"
+      },
+      {
+        "path": "assets/chunk-C3XQ2Y7B.js",
+        "size_bytes": 4118,
+        "sha256": "0849bc0f32f1d004b4217b95fb5b4fa44e73fb83124f8a8939feba52c8fdcd9f"
+      },
+      {
+        "path": "assets/chunk-DIW43KQS.js",
+        "size_bytes": 24990,
+        "sha256": "26dffe61f36f25219375d5a62b132c89dd463814532ac41e9c83f52c4c280874"
+      },
+      {
+        "path": "assets/chunk-DQNXNBIS.js",
+        "size_bytes": 681,
+        "sha256": "fbf7110db6fc3c10182ff941495e107f3d1b71244591a248c471765b52a03694"
+      },
+      {
+        "path": "assets/chunk-F3HOFIYF.js",
+        "size_bytes": 74315,
+        "sha256": "dcade8048c0877b86e483dfb0fe778ff25ab2dbe87b9eabbfbafa2673fe74e40"
+      },
+      {
+        "path": "assets/chunk-FHVNP3R4.js",
+        "size_bytes": 21083,
+        "sha256": "c193f2444c95915029f85421822498295d7dd57e95ac074c70c3d2871fb01e72"
+      },
+      {
+        "path": "assets/chunk-FUDGFDX5.js",
+        "size_bytes": 425171,
+        "sha256": "0d2d317b3c40b64233277217058057fedbc63e9358b8cf8e28334794e8548378"
+      },
+      {
+        "path": "assets/chunk-HPNC2NHN.js",
+        "size_bytes": 22553,
+        "sha256": "62a64c1f29d5a883d6179cb379269706cada0ff63c08f04409bfcf2e31d996d2"
+      },
+      {
+        "path": "assets/chunk-IUE42TBW.js",
+        "size_bytes": 220674,
+        "sha256": "cd124a0baedae73a22e8d057f7a29f356876c2dea266799a42d8ec69c02ca22e"
+      },
+      {
+        "path": "assets/chunk-JDN4I6AS.js",
+        "size_bytes": 4314362,
+        "sha256": "c0058d25e64505749938725fe77c23e656779d3a112c83e794b7d6f29ed58687"
+      },
+      {
+        "path": "assets/chunk-JDUP62HY.js",
+        "size_bytes": 1440,
+        "sha256": "3ddd8eeb54ce445bd3a41e905a4de980ee45eccd9a992fe34b7a30272b83e4a5"
+      },
+      {
+        "path": "assets/chunk-JSUJUZX3.js",
+        "size_bytes": 52861,
+        "sha256": "031d9d271782c4c9ad3cb75374bbf89814cf45e55757ff2b7fb5fe5773da8f2d"
+      },
+      {
+        "path": "assets/chunk-JXJD2KSN.js",
+        "size_bytes": 384913,
+        "sha256": "e35fad955099ddd84f3f68e4dcb325a7fc31ee1620954428d06b957c20a5ab5f"
+      },
+      {
+        "path": "assets/chunk-KNZNOTJR.js",
+        "size_bytes": 22954,
+        "sha256": "2ce4d731484c3b45e38447a9568224b9ea18ced75d5baa9d3ba22655ff5dcdc1"
+      },
+      {
+        "path": "assets/chunk-LTATUOMJ.js",
+        "size_bytes": 20571,
+        "sha256": "310789a10655560fa20d5f7d08f23480e6bb14afe77923a37ebc7b11f1dbde4e"
+      },
+      {
+        "path": "assets/chunk-M3PV36AL.js",
+        "size_bytes": 45852,
+        "sha256": "81e2b8d002f2d5d73e3bdb1f949bfe3fa045fb96bfc6bb83108affd5987a644a"
+      },
+      {
+        "path": "assets/chunk-NEWA2UST.js",
+        "size_bytes": 142,
+        "sha256": "1558f5829ba633e392e9a66282af186791a6fd6cc1630a205d016b9342d70e1a"
+      },
+      {
+        "path": "assets/chunk-NJXDFGKJ.js",
+        "size_bytes": 2838,
+        "sha256": "c29395573bc608015c0a6318f2589eccac1ebf87be7ee3bcde5c90c802e1faee"
+      },
+      {
+        "path": "assets/chunk-NXCHNBF4.js",
+        "size_bytes": 3775308,
+        "sha256": "1f14c7eac2ccb81426ad2b0c8810f189078a41bf38e764e9a24816fa3b76bbd4"
+      },
+      {
+        "path": "assets/chunk-OSXOZW2Q.js",
+        "size_bytes": 116425,
+        "sha256": "08483951485b793c34dd56279991f053efce8241d571771d2974fc16ae05e6e4"
+      },
+      {
+        "path": "assets/chunk-QBAVZNZU.js",
+        "size_bytes": 35064,
+        "sha256": "5dbd5ec139c655dcc398b1b9222071217fa2561043cb2052bd1858011f1fcda0"
+      },
+      {
+        "path": "assets/chunk-QZBF5RNL.js",
+        "size_bytes": 994895,
+        "sha256": "ac92d9c6eb51a08d7a0a318a23fbe7bbdfdd799c0337bc179f7fe4dae484ae8c"
+      },
+      {
+        "path": "assets/chunk-R4ZQ5MDI.js",
+        "size_bytes": 1842514,
+        "sha256": "7ae7a89b33d5d004c120d26628745073b8ca36c3d8ab256615ae5d8c8df44e33"
+      },
+      {
+        "path": "assets/chunk-T6B7VUFB.js",
+        "size_bytes": 1185,
+        "sha256": "3da3d41f1108f2d454b7c7b8fc00def3b69bccd788429f7319515014279f68e4"
+      },
+      {
+        "path": "assets/chunk-THGAPMU6.js",
+        "size_bytes": 28869,
+        "sha256": "78a8ee55687fd673df63efedcba2bcb7ca18828863bda20f505b53d8f010baa7"
+      },
+      {
+        "path": "assets/chunk-TJLI3PWO.js",
+        "size_bytes": 617035,
+        "sha256": "a4e7b7766bfb1e1468ad4010df33d5332855edb4f959ec1efca647d922ce4f72"
+      },
+      {
+        "path": "assets/chunk-U55E3HBJ.js",
+        "size_bytes": 85640,
+        "sha256": "dee4cc0ca599b13bc001c58f4b4a2e693d471657319323ed37ae2a0e225c66dd"
+      },
+      {
+        "path": "assets/chunk-V66S3S64.js",
+        "size_bytes": 359886,
+        "sha256": "4e88ac1b0790d7544e1760b6cedcf20569dd624d516a08304dc8635342df2471"
+      },
+      {
+        "path": "assets/chunk-ZB3W574J.js",
+        "size_bytes": 118024,
+        "sha256": "155c78767b20e5e1a49950c023824ce774e6c0aca3c4443559924ce5cbaa592c"
+      },
+      {
+        "path": "assets/chunk-ZLWQQ5F3.js",
+        "size_bytes": 5263,
+        "sha256": "46aa166ab4a0c34850c03c19cad7bf8a101fb6476fdd7e1f2b8ddcf7f1c32a17"
+      },
+      {
+        "path": "assets/chunk-ZSVA7CT2.js",
+        "size_bytes": 3722,
+        "sha256": "731eb111c3144f2181e45b6121b08391c334726837324c0ca7f76699dcd1f3a9"
+      },
+      {
+        "path": "assets/main-ATOJFJ2F.js",
+        "size_bytes": 6141,
+        "sha256": "6f7f41b6ff35b04f34587ee7ee7674ce528cee72d723359f7d0f1ed48dd849dd"
+      },
+      {
+        "path": "index.html",
+        "size_bytes": 893,
+        "sha256": "858b813da81f044883df3f76c88d2e0e5e38d82e065313cd79942f57d6156d18"
+      }
+    ]
+  },
+  "sdist_rebuild_matches_wheel": true,
+  "authoritative_sources_unchanged": true,
+  "installed_without_checkout_or_pythonpath": true,
+  "scope": "installed platform and bundled contracts; no scientific/HPC qualification"
+}

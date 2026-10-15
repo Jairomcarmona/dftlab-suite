@@ -10,7 +10,7 @@ import hashlib
 from typing import Protocol
 
 from .contracts import BASE, canonical
-from .domain import Principal, Problem, identifier
+from .domain import Principal, Problem, envelope, identifier, reseal
 from .engines import engine_lock
 from .local_effects import LocalEffect, LocalProduct
 
@@ -111,15 +111,16 @@ class AuthoringHandlers:
         for reference in payload["drafts"]:
             self._draft(owner, project, reference)
         campaign_id = identifier()
-        document = {"campaign_id": campaign_id, "project_id": project, "revision": 1,
-                    "name": payload["name"], "drafts": payload["drafts"]}
+        document = envelope("campaign", project, {"campaign_id": campaign_id, "revision": 1,
+                           "name": payload["name"], "drafts": payload["drafts"]}, record_id=campaign_id, contracts=self.contracts)
         return LocalEffect((LocalProduct("CAMPAIGN", campaign_id, 1, document),))
 
     def plan(self, operation, request):
         owner = self._context("CREATE_PLAN", operation, request)
         project, payload = request["project_id"], request["payload"]
         campaign = self.repository.local_product(owner, "CAMPAIGN", request["target"]["id"])
-        if campaign.document["project_id"] != project or payload["draft"] not in campaign.document["drafts"]:
+        campaign_payload = campaign.document["payload"]
+        if campaign.document["project_id"] != project or payload["draft"] not in campaign_payload["drafts"]:
             raise Problem("PRECONDITION_FAILED")
         bundle = self._draft(owner, project, payload["draft"])
         if bundle["intent"] is None or bundle["intent"]["run_intent"]["payload"]["intent_id"] != payload["intent_id"]:
@@ -140,12 +141,18 @@ class AuthoringHandlers:
         if canonical([bundle, receipt, snapshot]) != inputs_before:
             raise Problem("PRECONDITION_FAILED")
         self._native_plan(owner, project, native)
-        return LocalEffect((LocalProduct("PLAN", identifier(), 1, native),))
+        plan_id = identifier()
+        plan = envelope("plan", project, {"plan_id": plan_id, "campaign_id": campaign_payload["campaign_id"], "revision": 1,
+                         "draft": payload["draft"], "intent_id": payload["intent_id"],
+                         "validation_receipt_id": payload["validation_receipt_id"]}, record_id=plan_id,
+                         contracts=self.contracts, native_contract_refs=[native])
+        return LocalEffect((LocalProduct("PLAN", plan_id, 1, plan),))
 
     def package(self, operation, request):
         owner = self._context("PREPARE_PACKAGE", operation, request)
         project = request["project_id"]
-        native = self.repository.local_product(owner, "PLAN", request["target"]["id"]).document
+        plan = self.repository.local_product(owner, "PLAN", request["target"]["id"]).document
+        native = plan["native_contract_refs"][0]
         self._native_plan(owner, project, native)
         if request["payload"]["expected_plan_digest"] != native["digest"]:
             raise Problem("PRECONDITION_FAILED")

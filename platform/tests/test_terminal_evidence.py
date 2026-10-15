@@ -66,7 +66,7 @@ class TerminalEvidence(unittest.TestCase):
         self.port = self.fixture.prepare_identity()
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
         base = self.fixture.commands.patch
-        self.fixture.commands.patch = lambda output: re.sub(r"SubmitTime=\S+", "SubmitTime="+timestamp, base(output)).replace("JobState=RUNNING", f"JobState=COMPLETED StartTime={timestamp} EndTime={timestamp} NumCPUs=8 NumTasks=4 CPUs/Task=1 ReqTRES=cpu=4,mem=512M AllocTRES=cpu=8,node=1")
+        self.fixture.commands.patch = lambda output: re.sub(r"SubmitTime=\S+", "SubmitTime="+timestamp, base(output)).replace("JobState=RUNNING EndTime=Unknown", f"JobState=COMPLETED StartTime={timestamp} EndTime={timestamp} NumCPUs=8 NumTasks=4 CPUs/Task=1 ReqTRES=cpu=4,mem=512M AllocTRES=cpu=8,node=1")
         self.history = History(self.fixture, timestamp)
         self.workflow = SimpleNamespace(workflow_id="native-workflow", project_id=self.fixture.intent["project_id"])
         self.run = SimpleNamespace(run_id=self.fixture.package.run_id, project_id=self.workflow.project_id, workflow_id=self.workflow.workflow_id, workflow_lock_sha256="1"*64)

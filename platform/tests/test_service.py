@@ -14,8 +14,8 @@ import unittest
 import uvicorn
 from dftlab_platform.artifacts import LocalArtifactStore
 from dftlab_platform.artifact_storage import SQLiteArtifactIndex
-from dftlab_platform.contracts import Contracts, resource_json
-from dftlab_platform.domain import Operations, Problem, identifier, reseal
+from dftlab_platform.contracts import Contracts, canonical, resource_json
+from dftlab_platform.domain import Operations, Problem, envelope, identifier, reseal
 from dftlab_platform.projection_storage import SQLiteReadModels
 from dftlab_platform.security import LocalSettings, Sessions, SecurityMiddleware
 from dftlab_platform.service import create_app
@@ -159,6 +159,37 @@ class HTTPService(unittest.TestCase):
         self.assertEqual(response[2], operation)
         self.assert_problem(self.request("GET", "/operations/"+operation["record_id"], cookie=self.other_cookie), 404, "NOT_FOUND")
 
+    def test_campaign_and_plan_actions_are_http_routes_over_existing_operation_contracts(self):
+        project = self.project()
+        campaign = {
+            "action": "CREATE_CAMPAIGN", "project_id": project["project_id"],
+            "target": {"kind": "PROJECT", "id": project["project_id"], "expected_revision": 1},
+            "payload": {"name": "Si local", "drafts": [{"draft_id": "draft-fixture", "revision": 1}]},
+            "idempotency_key": "campaign-route-key-01",
+        }
+        wrong_campaign_action = copy.deepcopy(campaign)
+        wrong_campaign_action["action"] = "CREATE_PLAN"
+        self.assert_problem(self.request("POST", f"/projects/{project['project_id']}/campaigns", wrong_campaign_action), 422, "VALIDATION_FAILED")
+        wrong_campaign_target = copy.deepcopy(campaign)
+        wrong_campaign_target["target"]["id"] = identifier()
+        self.assert_problem(self.request("POST", f"/projects/{project['project_id']}/campaigns", wrong_campaign_target), 422, "VALIDATION_FAILED")
+        self.assert_problem(self.request("POST", f"/projects/{project['project_id']}/campaigns", campaign), 503, "ENGINE_UNAVAILABLE")
+        plan = {
+            "action": "CREATE_PLAN", "project_id": project["project_id"],
+            "target": {"kind": "CAMPAIGN", "id": "campaign-fixture", "expected_revision": 1},
+            "payload": {"draft": {"draft_id": "draft-fixture", "revision": 1},
+                        "intent_id": "intent-fixture", "validation_receipt_id": "receipt-fixture"},
+            "idempotency_key": "plan-route-key-0001",
+        }
+        wrong_plan_action = copy.deepcopy(plan)
+        wrong_plan_action["action"] = "CREATE_CAMPAIGN"
+        self.assert_problem(self.request("POST", "/campaigns/campaign-fixture/plans", wrong_plan_action), 422, "VALIDATION_FAILED")
+        wrong_plan_target = copy.deepcopy(plan)
+        wrong_plan_target["target"]["id"] = "campaign-other"
+        self.assert_problem(self.request("POST", "/campaigns/campaign-fixture/plans", wrong_plan_target), 422, "VALIDATION_FAILED")
+        self.assert_problem(self.request("POST", "/campaigns/campaign-fixture/plans", plan), 404, "NOT_FOUND")
+        self.assertEqual(self.request("GET", "/capabilities")[2], [])
+
     def test_artifacts_http_binary_range_integrity_and_cross_owner(self):
         project = self.project()
         data = b"native-output\x00\xff"
@@ -270,6 +301,126 @@ class HTTPService(unittest.TestCase):
         self.assertEqual(actual["payload"]["dimensions"], projection["payload"]["dimensions"])
         self.assertEqual(actual["payload"]["snapshot_cursor"], projection["payload"]["snapshot_cursor"])
         self.assertEqual(self.repo.project(self.alice, project["project_id"]), project)
+
+    def _insert_aggregate(self, kind, document, revision=1):
+        self.repo.contracts.validate(kind.lower() if kind in {"CAMPAIGN", "PLAN"} else kind, document)
+        resource_id = document["payload"][{"CAMPAIGN": "campaign_id", "PLAN": "plan_id"}[kind]]
+        with self.repo.transaction() as db:
+            db.execute("INSERT INTO resources VALUES(?,?,?,?,?)", (resource_id, kind, document["project_id"], revision, canonical(document).decode()))
+        return resource_id
+
+    def _campaign_document(self, project_id, *, name="Campaign"):
+        campaign_id = identifier()
+        document = resource_json("fixtures/campaign/valid/one-draft.json")
+        document["project_id"] = project_id
+        document["record_id"] = campaign_id
+        document["payload"].update(campaign_id=campaign_id, name=name, revision=1)
+        reseal(document)
+        return document
+
+    def test_adr019_reads_have_owner_non_oracle_and_current_products(self):
+        project = self.project()
+        campaign = self._campaign_document(project["project_id"])
+        campaign_id = self._insert_aggregate("CAMPAIGN", campaign)
+        plan_id = identifier()
+        plan = resource_json("fixtures/plan/valid/locked.json")
+        plan["project_id"] = project["project_id"]
+        plan["record_id"] = plan_id
+        plan["payload"].update(plan_id=plan_id, campaign_id=campaign_id, revision=1)
+        native_ref = copy.deepcopy(plan["native_contract_refs"][0])
+        reseal(plan)
+        self._insert_aggregate("PLAN", plan)
+        receipt = resource_json("fixtures/validation-receipt/valid/heuristic-override.json")
+        receipt_id = identifier()
+        receipt["project_id"] = project["project_id"]
+        receipt["record_id"] = receipt_id
+        reseal(receipt)
+        with self.repo.transaction() as db:
+            db.execute("INSERT INTO resources VALUES(?,?,?,?,?)", (receipt_id, "VALIDATION_RECEIPT", project["project_id"], 1, canonical(receipt).decode()))
+        projection = resource_json("fixtures/run-projection/valid/completed-not-established.json")
+        projection["project_id"] = project["project_id"]
+        self.readmodels.put(self.alice, "RUN", projection)
+        run_id = projection["payload"]["run_id"]
+        operation_request = resource_json("fixtures/operation-request/valid/create-campaign.json")
+        operation_request.update(project_id=project["project_id"], idempotency_key="adr019-list-operation")
+        operation_request["target"].update(id=project["project_id"], expected_revision=self.repo.project(self.alice, project["project_id"])["revision"])
+        operation = self.repo.accept(self.alice, operation_request)[0]
+        operation_id = operation["payload"]["operation_id"]
+
+        paths = [
+            "/projects/"+project["project_id"]+"/campaigns",
+            "/campaigns/"+campaign_id,
+            "/campaigns/"+campaign_id+"/plans",
+            "/plans/"+plan_id,
+            "/projects/"+project["project_id"]+"/runs",
+            "/projects/"+project["project_id"]+"/operations",
+            "/validation-receipts/"+receipt_id,
+        ]
+        results = [self.request("GET", path) for path in paths]
+        self.assertEqual([result[0] for result in results], [200]*7)
+        self.assertEqual(results[0][2]["items"][0]["payload"]["campaign_id"], campaign_id)
+        self.assertEqual(results[1][2]["payload"]["campaign_id"], campaign_id)
+        self.assertEqual(results[2][2]["items"][0]["payload"]["plan_id"], plan_id)
+        self.assertEqual(results[3][2]["payload"]["plan_id"], plan_id)
+        self.assertEqual(results[3][2]["native_contract_refs"][0], native_ref)
+        self.assertEqual(results[4][2]["items"][0]["payload"]["run_id"], run_id)
+        self.assertEqual(results[5][2]["items"][0]["payload"]["operation_id"], operation_id)
+        self.assertEqual(results[6][2]["record_id"], receipt_id)
+
+        missing_id = identifier()
+        missing_project = identifier()
+        missing_paths = [
+            "/projects/"+missing_project+"/campaigns",
+            "/campaigns/"+missing_id,
+            "/campaigns/"+missing_id+"/plans",
+            "/plans/"+missing_id,
+            "/projects/"+missing_project+"/runs",
+            "/projects/"+missing_project+"/operations",
+            "/validation-receipts/"+missing_id,
+        ]
+        for owned_path, absent_path in zip(paths, missing_paths):
+            inaccessible = self.request("GET", owned_path, cookie=self.other_cookie, csrf=self.other_csrf)
+            absent = self.request("GET", absent_path, cookie=self.other_cookie, csrf=self.other_csrf)
+            self.assertEqual(inaccessible[0], 404, (owned_path, inaccessible[2]))
+            self.assertEqual(absent[0], 404, (absent_path, absent[2]))
+            self.assertEqual({key: value for key, value in inaccessible[2].items() if key != "request_id"},
+                             {key: value for key, value in absent[2].items() if key != "request_id"})
+
+    def test_adr019_pagination_is_stable_bounded_and_expires(self):
+        project = self.project()
+        originals = [self._campaign_document(project["project_id"], name=f"Campaign {index}") for index in range(3)]
+        original_ids = [self._insert_aggregate("CAMPAIGN", document) for document in originals]
+        base = "/projects/"+project["project_id"]+"/campaigns"
+        for limit in (1, 50, 200):
+            status, _, response = self.request("GET", base+f"?limit={limit}")
+            self.assertEqual(status, 200, response)
+            self.assertGreaterEqual(len(response["items"]), min(limit, len(original_ids)))
+        for limit in (0, 201):
+            self.assert_problem(self.request("GET", base+f"?limit={limit}"), 422, "VALIDATION_FAILED")
+        self.assert_problem(self.request("GET", base+"?cursor=malformed"), 422, "VALIDATION_FAILED")
+
+        status, _, page = self.request("GET", base+"?limit=1")
+        self.assertEqual(status, 200)
+        cursor = page["next_cursor"]
+        self.assertIsNotNone(cursor)
+        inserted = self._campaign_document(project["project_id"], name="Inserted after first page")
+        self._insert_aggregate("CAMPAIGN", inserted)
+        collected = [item["payload"]["campaign_id"] for item in page["items"]]
+        while cursor is not None:
+            status, _, page = self.request("GET", base+"?limit=1&cursor="+cursor)
+            self.assertEqual(status, 200, page)
+            collected.extend(item["payload"]["campaign_id"] for item in page["items"])
+            cursor = page["next_cursor"]
+        self.assertEqual(set(collected), set(original_ids))
+        self.assertEqual(len(collected), len(set(collected)))
+        created = {doc["payload"]["campaign_id"]: doc["created_at"] for doc in originals}
+        self.assertEqual(collected, sorted(original_ids, key=lambda item: (created[item], item)))
+
+        self.readmodels.clock = lambda: 1000
+        self.readmodels.cursor_seconds = 3
+        expired_cursor = self.request("GET", base+"?limit=1")[2]["next_cursor"]
+        self.readmodels.clock = lambda: 1003
+        self.assert_problem(self.request("GET", base+"?limit=1&cursor="+expired_cursor), 410, "CURSOR_EXPIRED")
 
 
 if __name__ == "__main__":

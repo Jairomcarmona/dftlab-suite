@@ -669,6 +669,73 @@
       }
     },
     "/api/v1/projects/{project_id}/campaigns": {
+      "post": {
+        "operationId": "createCampaign",
+        "summary": "Crear campaña desde un borrador",
+        "x-dftlab-action": "CREATE_CAMPAIGN",
+        "description": "Mutación durable mediante el handler de autoría registrado. La petición usa el OperationRequest y create_campaign_payload existentes; el catálogo de capabilities no anuncia esta ruta. Repetir la misma idempotency_key con el mismo cuerpo devuelve la operación existente.",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Proyecto"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/P401"},
+          "403": {"$ref": "#/components/responses/P403"},
+          "404": {"$ref": "#/components/responses/P404"},
+          "409": {"$ref": "#/components/responses/P409"},
+          "412": {"$ref": "#/components/responses/P412"},
+          "422": {"$ref": "#/components/responses/P422"},
+          "503": {"$ref": "#/components/responses/P503"}
+        }
+      },
       "get": {
         "operationId": "listCampaigns",
         "summary": "Campañas del proyecto",
@@ -737,6 +804,73 @@
       }
     },
     "/api/v1/campaigns/{campaign_id}/plans": {
+      "post": {
+        "operationId": "createPlan",
+        "summary": "Crear plan desde campaña y recibo de validación",
+        "x-dftlab-action": "CREATE_PLAN",
+        "description": "Mutación durable mediante el handler de autoría registrado. La petición usa el OperationRequest y create_plan_payload existentes; el catálogo de capabilities no anuncia esta ruta. Repetir la misma idempotency_key con el mismo cuerpo devuelve la operación existente.",
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "../schemas/defs.schema.json#/$defs/id"
+            },
+            "description": "Campaña"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../schemas/operation-request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intención persistida.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/OperationLocation"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Repetición idempotente: la operación ya existente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/operation-record.schema.json"
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/P401"},
+          "403": {"$ref": "#/components/responses/P403"},
+          "404": {"$ref": "#/components/responses/P404"},
+          "409": {"$ref": "#/components/responses/P409"},
+          "412": {"$ref": "#/components/responses/P412"},
+          "422": {"$ref": "#/components/responses/P422"},
+          "503": {"$ref": "#/components/responses/P503"}
+        }
+      },
       "get": {
         "operationId": "listPlans",
         "summary": "Planes de una campaña",

@@ -1,11 +1,11 @@
 """Application products, not a new client protocol or an engine DAG.
 
-Engine documents remain original NativeContractRefs. Campaign is private
-platform bookkeeping: no Campaign schema or read endpoint is invented.
+Engine documents remain original NativeContractRefs inside the public Plan
+envelope; campaigns and plans use their accepted aggregate schemas.
 """
 from dataclasses import dataclass
 
-from .contracts import BASE
+from .contracts import BASE, ContractError
 from .domain import Problem
 
 
@@ -24,8 +24,8 @@ class LocalEffect:
 
 PRODUCTS = {
     "VALIDATE_INPUT": ("VALIDATION_RECEIPT", "validation-receipt"),
-    "CREATE_CAMPAIGN": ("CAMPAIGN", None),
-    "CREATE_PLAN": ("PLAN", "native-contract-ref"),
+    "CREATE_CAMPAIGN": ("CAMPAIGN", "campaign"),
+    "CREATE_PLAN": ("PLAN", "plan"),
     "PREPARE_PACKAGE": ("PACKAGE", "artifact-record"),
     "CREATE_RESUME_PLAN": ("RESUME_PLAN", "resume-plan"),
 }
@@ -45,10 +45,32 @@ def validate_products(contracts, operation, products):
         raise Problem("PRECONDITION_FAILED")
     document, schema = product.document, expected[1]
     if schema:
-        contracts.validate(schema, document)
-        if schema != "native-contract-ref":
-            if document["project_id"] != operation["project_id"] or document["integrity"]["status"] != "VERIFIED":
+        try:
+            contracts.validate(schema, document)
+        except ContractError:
+            raise Problem("PRECONDITION_FAILED") from None
+        if document["project_id"] != operation["project_id"] or document["integrity"]["status"] != "VERIFIED":
+            raise Problem("PRECONDITION_FAILED")
+        if schema == "campaign":
+            payload = document["payload"]
+            if payload["campaign_id"] != product.product_id or payload["revision"] != product.revision:
                 raise Problem("PRECONDITION_FAILED")
+            try:
+                contracts.validate_ref(BASE+"schemas/operation-request.schema.json#/$defs/create_campaign_payload", {"name": payload["name"], "drafts": payload["drafts"]})
+            except ContractError:
+                raise Problem("PRECONDITION_FAILED") from None
+        elif schema == "plan":
+            payload = document["payload"]
+            if payload["plan_id"] != product.product_id or payload["revision"] != product.revision or len(document["native_contract_refs"]) != 1:
+                raise Problem("PRECONDITION_FAILED")
+            reference = document["native_contract_refs"][0]
+            try:
+                contracts.validate("native-contract-ref", reference)
+            except ContractError:
+                raise Problem("PRECONDITION_FAILED") from None
+            if reference["engine"] != "qraft" or reference["contract"] != "siestaflow.workflow-lock@1.0" or reference["verification"]["status"] != "VERIFIED":
+                raise Problem("PRECONDITION_FAILED")
+        else:
             field = {"validation-receipt": "record_id", "artifact-record": "artifact_id", "resume-plan": "resume_plan_id"}[schema]
             actual = document["record_id"] if field == "record_id" else document["payload"][field]
             if actual != product.product_id:
@@ -57,14 +79,7 @@ def validate_products(contracts, operation, products):
                 raise Problem("PRECONDITION_FAILED")
             if schema == "artifact-record" and (document["payload"]["integrity_state"] != "VERIFIED" or document["payload"]["kind"] != "qraft.run-package"):
                 raise Problem("PRECONDITION_FAILED")
-        elif document["engine"] != "qraft" or document["contract"] != "siestaflow.workflow-lock@1.0" or document["verification"]["status"] != "VERIFIED":
-            raise Problem("PRECONDITION_FAILED")
     else:
-        # Deliberately private, explicit bookkeeping until a public read
-        # representation is agreed. Not serialized as an invented envelope.
-        if not isinstance(document, dict) or set(document) != {"campaign_id", "project_id", "revision", "name", "drafts"}:
+        if not isinstance(document, dict):
             raise Problem("PRECONDITION_FAILED")
-        if document["campaign_id"] != product.product_id or document["project_id"] != operation["project_id"] or document["revision"] != product.revision:
-            raise Problem("PRECONDITION_FAILED")
-        contracts.validate_ref(BASE+"schemas/operation-request.schema.json#/$defs/create_campaign_payload", {"name": document["name"], "drafts": document["drafts"]})
     return [{"kind": product.kind, "id": product.product_id, "revision": product.revision}]

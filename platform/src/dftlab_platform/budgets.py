@@ -9,8 +9,8 @@ from datetime import datetime
 from typing import Protocol
 
 from .authority import instant, stamp, utcnow
-from .contracts import digest, loads
-from .domain import Problem, identifier
+from .contracts import canonical, digest, loads
+from .domain import Problem, envelope, identifier
 
 
 MAX_AMOUNT = 2**53-1
@@ -71,7 +71,13 @@ class SQLiteBudgetHolds:
                 db.execute("CREATE TABLE budget_clock(singleton INTEGER PRIMARY KEY CHECK(singleton=1), observed_at TEXT)")
                 db.execute("INSERT INTO budget_clock VALUES(1,NULL)")
                 db.execute("INSERT INTO budget_migrations VALUES(1)")
-            elif versions != [1]:
+                versions = [1]
+            if versions == [1]:
+                db.execute("CREATE TABLE IF NOT EXISTS admission_records(operation_id TEXT PRIMARY KEY REFERENCES operations(operation_id), budget_id TEXT NOT NULL REFERENCES budget_accounts(budget_id), amount INTEGER NOT NULL CHECK(amount BETWEEN 1 AND 9007199254740991), receipt TEXT NOT NULL, receipt_hash TEXT NOT NULL)")
+                db.execute("INSERT INTO budget_migrations VALUES(2)")
+            elif versions == [1, 2]:
+                db.execute("CREATE TABLE IF NOT EXISTS admission_records(operation_id TEXT PRIMARY KEY REFERENCES operations(operation_id), budget_id TEXT NOT NULL REFERENCES budget_accounts(budget_id), amount INTEGER NOT NULL CHECK(amount BETWEEN 1 AND 9007199254740991), receipt TEXT NOT NULL, receipt_hash TEXT NOT NULL)")
+            else:
                 raise ValueError("Explicit budget migration required")
 
     def _observed(self, db):
@@ -116,6 +122,112 @@ class SQLiteBudgetHolds:
             if held > account.capacity:
                 raise Problem("PRECONDITION_FAILED")
             return account, held
+
+    def admitted(self, owner, operation_id):
+        """Return the immutable admitted receipt for a request being resumed."""
+        with self.repository._connection() as db:
+            row = db.execute(
+                "SELECT a.budget_id,a.amount,a.receipt,a.receipt_hash,o.owner_id,o.project_id "
+                "FROM admission_records a JOIN operations o USING(operation_id) WHERE a.operation_id=?",
+                (operation_id,),
+            ).fetchone()
+            if row is None or row[4] != owner.principal_id:
+                return None
+            receipt = self.repository.contracts.validate("admission-receipt", loads(row[2]))
+            if digest(receipt) != row[3] or receipt["project_id"] != row[5]:
+                raise Problem("PRECONDITION_FAILED")
+            payload = receipt["payload"]
+            hold = db.execute(
+                "SELECT reservation_id,budget_id,operation_id,request_hash,amount,unit,budget_revision,reserved_at "
+                "FROM budget_holds WHERE operation_id=?", (operation_id,),
+            ).fetchone()
+            operation = self.repository._operation_document(
+                db.execute("SELECT document FROM operations WHERE operation_id=?", (operation_id,)).fetchone()[0]
+            )
+            request = loads(db.execute("SELECT request FROM operations WHERE operation_id=?", (operation_id,)).fetchone()[0])
+            if (hold is None or row[0] != payload["reservation"]["budget_ref"]
+                    or row[1] != payload["reservation"]["amount"]["value"]
+                    or hold[0] != payload["reservation"]["reservation_id"]
+                    or hold[4] != row[1]
+                    or request.get("budget_ref") != row[0]
+                    or operation["payload"]["action"] != "SUBMIT_RUN"):
+                raise Problem("PRECONDITION_FAILED")
+            return receipt
+
+    def admit(self, owner, budget_id, operation_id, quantity, receipt_payload):
+        """Atomically reserve capacity and persist one accepted AdmissionReceipt.
+
+        The only accepted caller is the trusted local-run admission preflight.
+        PENDING operations remain unclaimed until this transaction commits; a
+        duplicate preflight returns the same receipt and reservation.
+        """
+        amount(quantity)
+        with self.repository.transaction() as db:
+            previous = db.execute(
+                "SELECT budget_id,amount,receipt,receipt_hash FROM admission_records WHERE operation_id=?",
+                (operation_id,),
+            ).fetchone()
+            if previous is not None:
+                if previous[0] != budget_id or previous[1] != quantity:
+                    raise Problem("PRECONDITION_FAILED")
+                receipt = self.repository.contracts.validate("admission-receipt", loads(previous[2]))
+                if digest(receipt) != previous[3]:
+                    raise Problem("PRECONDITION_FAILED")
+                return receipt
+            account = self._account(db, owner, budget_id)
+            row = db.execute(
+                "SELECT o.owner_id,o.project_id,o.request,o.request_hash,o.document,b.processor_id "
+                "FROM operations o JOIN outbox b USING(operation_id) WHERE o.operation_id=?",
+                (operation_id,),
+            ).fetchone()
+            if row is None or row[0] != owner.principal_id or row[1] != account.project_id:
+                raise Problem("NOT_FOUND")
+            request = loads(row[2])
+            operation = self.repository._operation_document(row[4])
+            if (digest(request) != row[3] or request.get("budget_ref") != budget_id
+                    or request.get("action") != "SUBMIT_RUN"
+                    or operation["payload"]["state"] != "PENDING"
+                    or row[5] is not None):
+                raise Problem("PRECONDITION_FAILED")
+            self.repository._execution_ready(db)
+            observed = self._observed(db)
+            if observed >= instant(account.expires_at):
+                raise Problem("PRECONDITION_FAILED")
+            previous_hold = db.execute(
+                "SELECT reservation_id,budget_id,operation_id,request_hash,amount,unit,budget_revision,reserved_at "
+                "FROM budget_holds WHERE operation_id=?", (operation_id,),
+            ).fetchone()
+            if previous_hold is None:
+                held = db.execute("SELECT COALESCE(SUM(amount),0) FROM budget_holds WHERE budget_id=?", (budget_id,)).fetchone()[0]
+                if held + quantity > account.capacity:
+                    raise Problem("PRECONDITION_FAILED")
+                hold = BudgetHold(identifier(), budget_id, operation_id, row[3], quantity, account.unit,
+                                  account.revision, stamp(observed))
+                db.execute("INSERT INTO budget_holds VALUES(?,?,?,?,?,?,?,?)", tuple(hold.__dict__.values()))
+            else:
+                hold = BudgetHold(*previous_hold)
+                if (hold.budget_id, hold.request_hash, hold.amount, hold.unit, hold.budget_revision) != (
+                        budget_id, row[3], quantity, account.unit, account.revision):
+                    raise Problem("PRECONDITION_FAILED")
+            payload = dict(receipt_payload)
+            payload["reservation"] = {
+                "reservation_id": hold.reservation_id,
+                "budget_ref": budget_id,
+                "amount": {"value": quantity, "unit": account.unit},
+            }
+            receipt = envelope("admission-receipt", operation["project_id"], payload,
+                               contracts=self.repository.contracts)
+            self.repository.contracts.validate("admission-receipt", receipt)
+            decision = receipt["payload"]
+            if (decision["decision"] != "ADMITTED" or decision["runtime_probe_ref"] is None
+                    or decision["reservation"] is None or decision["action"] != "SUBMIT_RUN"):
+                raise Problem("PRECONDITION_FAILED")
+            encoded = canonical(receipt).decode()
+            db.execute("INSERT INTO admission_records VALUES(?,?,?,?,?)",
+                       (operation_id, budget_id, quantity, encoded, digest(receipt)))
+            if self._observed(db) >= instant(account.expires_at):
+                raise Problem("PRECONDITION_FAILED")
+            return receipt
 
     def reserve(self, owner, budget_id, operation_id, revision, processor_id, quantity):
         amount(quantity)

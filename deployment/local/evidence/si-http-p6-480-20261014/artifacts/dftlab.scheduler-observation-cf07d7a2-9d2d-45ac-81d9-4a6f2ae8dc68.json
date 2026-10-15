@@ -1,0 +1,1 @@
+{"argv":["/usr/bin/sacct","--completion","--jobs=459","--noheader","--parsable2","--format=JobID,User,Cluster,State,Start,End"],"command":"terminal-history","observed_at":"2026-10-15T02:49:49.844353Z","output":"459|jmc(1000)|unknown|COMPLETED|2026-10-14T20:49:38|2026-10-14T20:49:47\n","returncode":0}

@@ -1,0 +1,196 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": "d0c0ec02-a44b-44ce-8e52-35017ec7a57d",
+      "kind": "dftlab.admission-receipt",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.admission-receipt-d0c0ec02-a44b-44ce-8e52-35017ec7a57d.json",
+      "sha256": "ef2a16ee2b4439d7d823ecd099fa37a327965dff82e4f80a6a5c489c4d73a767",
+      "size_bytes": 1290
+    },
+    {
+      "artifact_id": "ec290250-ffd1-43d6-9b82-84881168ef27",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-ec290250-ffd1-43d6-9b82-84881168ef27.json",
+      "sha256": "bf35b8298a66b48a65514195553307ff4ec2755717e6dd1df2b0fd46af96be48",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "47883e88-5e42-4abd-a7aa-1fef87e79d58",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-47883e88-5e42-4abd-a7aa-1fef87e79d58.json",
+      "sha256": "de7fb0508be3c093c36c5f58206e5b7b7cdae47aa62154c556a0e077ad17cfdd",
+      "size_bytes": 570
+    },
+    {
+      "artifact_id": "0b871b63-c1d1-402e-a991-d6556f8f248f",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-0b871b63-c1d1-402e-a991-d6556f8f248f.json",
+      "sha256": "f8cf54300f9654f379be07f4a18c87e9c11d2c812f2a1648241c6e7a3cc94e85",
+      "size_bytes": 1923
+    },
+    {
+      "artifact_id": "f6565ff1-8617-4530-901e-ac51197b9d09",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-f6565ff1-8617-4530-901e-ac51197b9d09.json",
+      "sha256": "e1de41240d2c2a2b9b6ad260d990cfef9c1438561421d5e439eddf8c90271b8b",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "41e87c0d-d6e3-46e2-b7fe-eead5cd538ad",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-41e87c0d-d6e3-46e2-b7fe-eead5cd538ad.json",
+      "sha256": "7ae641c8e90e9d14d992115dada6e7dc0d311a1b08ff8c718af6b6df66d7f941",
+      "size_bytes": 415
+    },
+    {
+      "artifact_id": "6dbb4dab-2864-40ca-aaf3-f34a5c555072",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-6dbb4dab-2864-40ca-aaf3-f34a5c555072.json",
+      "sha256": "e84551de802c93d735ab034e2d51b0c5833e3ccbbffd0d9a45a6807bab0afeeb",
+      "size_bytes": 2014
+    },
+    {
+      "artifact_id": "34ba5c4b-bdad-4cd2-be05-80eb41176511",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-34ba5c4b-bdad-4cd2-be05-80eb41176511.json",
+      "sha256": "ad74d03a1fb0241afc7943d2b7e6d6ddc7ff0988642a211132c721c4878a7566",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "64b41567-ed40-4752-ada0-0fe03070369d",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-64b41567-ed40-4752-ada0-0fe03070369d.json",
+      "sha256": "2074debb79d1b3b87b6a03692a8afa98c6ac47f99b2deff5de87c2fb2b050600",
+      "size_bytes": 415
+    },
+    {
+      "artifact_id": "84cc3427-2dea-4f20-a295-8b967931fc27",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-84cc3427-2dea-4f20-a295-8b967931fc27.json",
+      "sha256": "af1c64570edb01d6a46aa6702fd85d1a4c6e0ed6694daf2c8aa65c45f829efad",
+      "size_bytes": 2014
+    },
+    {
+      "artifact_id": "cd36d05f-b2d3-4b84-bc83-a7fbe97da687",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-cd36d05f-b2d3-4b84-bc83-a7fbe97da687.json",
+      "sha256": "0520295f4af1adc72561c45e9284304e30f8f1091c3a31ff48a7832287ff7672",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "1ec99a82-d076-4c95-9abc-1b2c7559915e",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-1ec99a82-d076-4c95-9abc-1b2c7559915e.json",
+      "sha256": "7eb4d2793e5b586d945a5f5d8baafafb73e14b42b439b77204de91417b06335a",
+      "size_bytes": 415
+    },
+    {
+      "artifact_id": "d5ecdd1b-e56c-46ca-98bd-e819e2c5a50e",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-d5ecdd1b-e56c-46ca-98bd-e819e2c5a50e.json",
+      "sha256": "5ddc03a51752122a3e92ec01a51b0b828794f87c383910e0d485a215eee01ef0",
+      "size_bytes": 2014
+    },
+    {
+      "artifact_id": "1f17d91b-093d-4d71-809d-e43ba9edc41c",
+      "kind": "qraft.runtime-result-observation",
+      "media_type": "application/json",
+      "path": "artifacts/qraft.runtime-result-observation-1f17d91b-093d-4d71-809d-e43ba9edc41c.json",
+      "sha256": "b0438ee6f33c495cfcfe0db0b4df138f8151d33f9dec76e39f27caacbf4085ae",
+      "size_bytes": 6890
+    },
+    {
+      "artifact_id": "06415612-1849-428b-998e-ede2f0b93dac",
+      "kind": "dftlab.native-worker-summary",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.native-worker-summary-06415612-1849-428b-998e-ede2f0b93dac.json",
+      "sha256": "9546d00fcb961fb71cebdb46dc29ad35a08ecedd5966c7f42d5b61c1f930ec6a",
+      "size_bytes": 591
+    },
+    {
+      "artifact_id": "5144e401-36fd-4085-b570-9b691691d340",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-5144e401-36fd-4085-b570-9b691691d340.json",
+      "sha256": "768c935211b8dcd40d9d142607db0622a768a0e57b1a33a56258ce19ede1bdfa",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "4a62ad33-b2ec-4db2-b362-bdb62732612f",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-4a62ad33-b2ec-4db2-b362-bdb62732612f.json",
+      "sha256": "ae047a28a23073d678d330f7917e0864e77deaa58e7c5b5cadd4a0bb5702ac5c",
+      "size_bytes": 2016
+    },
+    {
+      "artifact_id": "cf07d7a2-9d2d-45ac-81d9-4a6f2ae8dc68",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-cf07d7a2-9d2d-45ac-81d9-4a6f2ae8dc68.json",
+      "sha256": "cab828daceaa2d9f26d5066f1f1f8c1d141b6fadbe57e0b16e0a11a127086c1d",
+      "size_bytes": 301
+    },
+    {
+      "artifact_id": "08268f20-8a25-43dd-9e11-fe1102de6896",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-08268f20-8a25-43dd-9e11-fe1102de6896.json",
+      "sha256": "5cbb9d42335c16143ffe7c37735c121d8d0023b7ca46a71a6ddc3badcc8293ec",
+      "size_bytes": 2016
+    },
+    {
+      "artifact_id": "e915c28e-fcdb-4106-b265-b13870e1be50",
+      "kind": "dftlab.scheduler-observation",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.scheduler-observation-e915c28e-fcdb-4106-b265-b13870e1be50.json",
+      "sha256": "989954573b1f81332321d50581435126dfa6b666655c6294bed04806548c99b1",
+      "size_bytes": 7986
+    },
+    {
+      "artifact_id": "0f6fb336-0c54-4796-b01f-f9ae7ca0ca2d",
+      "kind": "qraft.terminal-scheduler-evidence",
+      "media_type": "application/json",
+      "path": "artifacts/qraft.terminal-scheduler-evidence-0f6fb336-0c54-4796-b01f-f9ae7ca0ca2d.json",
+      "sha256": "9b58064d91be255f959abf36e39dfae45ddb733f42737b5c4e795e3a6a48eeef",
+      "size_bytes": 593
+    },
+    {
+      "artifact_id": "f1053b80-7541-4c36-8709-92b9c714995d",
+      "kind": "dftlab.finalization-receipt",
+      "media_type": "application/json",
+      "path": "artifacts/dftlab.finalization-receipt-f1053b80-7541-4c36-8709-92b9c714995d.json",
+      "sha256": "cbc72987aaa418f74ba8191f09500dc04e0aa21204b898d969bffdce34e3e31d",
+      "size_bytes": 3259
+    },
+    {
+      "artifact_id": "a8eab241-9d63-41f5-992f-231e7bb5f639",
+      "kind": "siesta.density-matrix",
+      "media_type": "application/x-siesta-dm",
+      "path": "artifacts/siesta.density-matrix-a8eab241-9d63-41f5-992f-231e7bb5f639.bin",
+      "sha256": "16812331fe51fb1c7ce5c1f64f1b8360c3f866af9f5678809d77ec34005abb99",
+      "size_bytes": 478084
+    },
+    {
+      "artifact_id": "02eba1ab-b34f-40a5-a970-0fea357f0e3e",
+      "kind": "siesta.density-matrix",
+      "media_type": "application/x-siesta-dm",
+      "path": "artifacts/siesta.density-matrix-02eba1ab-b34f-40a5-a970-0fea357f0e3e.bin",
+      "sha256": "dfefd0fba0aee7f5e8e9fde2a121d3edc5ab83e3f1f5ad93f1d77ee73528604d",
+      "size_bytes": 478084
+    }
+  ]
+}

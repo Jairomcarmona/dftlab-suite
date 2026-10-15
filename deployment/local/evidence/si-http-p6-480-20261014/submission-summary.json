@@ -1,0 +1,30 @@
+{
+  "integrity": {
+    "algorithm": "sha-256",
+    "canonicalization": "jcs-rfc8785",
+    "digest": "564d6202cf81f01d7d04bbe48678d2ff0d4784de612275cadd14e6586b7102d3",
+    "status": "VERIFIED"
+  },
+  "record_id": "d3ff0290-6918-416c-aa3d-4291800cc9c7",
+  "redactions": [
+    "payload.attempt_token omitted from this public evidence export"
+  ],
+  "schema_id": "dftlab.submission-receipt",
+  "submission": {
+    "job": {
+      "cluster": "siestaflow-local",
+      "job_id": "459",
+      "remote_user": "jmc",
+      "submitted_at": "2026-10-15T02:49:38Z"
+    },
+    "operation_id": "596ca99c-0d3e-4537-9026-2d2e3150b089",
+    "package_sha256": "d4775a953bab14a3dc470477c2da513384e52b9665cbfb8c546a07473e705c65",
+    "plan_sha256": "a5be4cedb9b0632b97d1232e106bc405ee696da3f3d98ffa2e0ec1bea36b39e6",
+    "profile": {
+      "profile_id": "wsl-slurm-openmpi-installed-qualification",
+      "revision": 1
+    },
+    "scheduler": "SLURM",
+    "status": "ACCEPTED"
+  }
+}

@@ -18,7 +18,7 @@ class Commands:
         self.root, self.script, self.token = root, script, token
         self.calls, self.queue, self.patch = [], "", lambda output: output
         self.ack, self.code = "123;synthetic-cluster\n", 0
-        self.config = "ClusterName = synthetic-cluster\n"
+        self.config = "ClusterName = synthetic-cluster\nMinJobAge = 300 sec\n"
 
     def run(self, argv, *, cwd, environment):
         self.calls.append((argv, cwd, dict(environment)))
@@ -29,7 +29,7 @@ class Commands:
         if "--noheader" in argv:
             return Observation(self.queue, 0)
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
-        output = f"JobId=123 JobName=dftlab-{self.token} UserId=fixture(1000) Comment=dftlab:{self.token} SubmitTime={timestamp} WorkDir={self.root} Command={self.script} JobState=RUNNING\n"
+        output = f"JobId=123 JobName=dftlab-{self.token} UserId=fixture(1000) Comment=dftlab:{self.token} SubmitTime={timestamp} WorkDir={self.root} Command={self.script} JobState=RUNNING EndTime=Unknown\n"
         return Observation(self.patch(output), 0)
 
 
@@ -104,6 +104,23 @@ class Slurm(unittest.TestCase):
             port.find(self.intent)
         self.assertFalse(any("--parsable" in argv for argv, _, _ in self.commands.calls))
 
+    def test_job_state_observation_exposes_min_job_age_but_is_not_a_terminal_receipt(self):
+        port = self.prepare_identity()
+        end_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        identity_patch = self.commands.patch
+        self.commands.patch = lambda output: identity_patch(output).replace(
+            "JobState=RUNNING EndTime=Unknown", "JobState=COMPLETED EndTime="+end_time)
+
+        observed = port.observe_job_state(self.intent, "123")
+
+        self.assertEqual((observed.job_id, observed.state), ("123", "COMPLETED"))
+        self.assertEqual(observed.end_time, end_time)
+        self.assertEqual(observed.min_job_age_seconds, 300)
+        self.assertEqual([call[0][1:] for call in self.commands.calls], [
+            ("show", "config"), ("--oneliner", "show", "job", "123"),
+        ])
+        self.assertEqual(self.evidence, [])  # Polling is only a trigger; the collector records terminal proof.
+
     def test_wrong_cluster_user_workdir_command_time_and_duplicate_field_are_rejected(self):
         port = self.prepare_identity()
         uid = self.site.uid
@@ -118,7 +135,7 @@ class Slurm(unittest.TestCase):
             self.commands.patch = modification
             with self.subTest(modification=modification), self.assertRaises(Problem):
                 port.submit(self.intent)
-        self.commands.config = "ClusterName = other\n"
+        self.commands.config = "ClusterName = other\nMinJobAge = 300 sec\n"
         before = sum("--parsable" in argv for argv, _, _ in self.commands.calls)
         with self.assertRaises(Problem):
             port.submit(self.intent)

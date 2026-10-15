@@ -21,6 +21,20 @@ assert.equal(JSON.parse(calls[0].options.body).bootstrap_token,'b'.repeat(48));
 assert.equal(calls.at(-1).options.headers['X-CSRF-Token'],'c'.repeat(48));
 assert.ok(calls.every(c=>c.url.startsWith(baseUrl)&&!c.url.includes('bbbb')&&c.options.credentials==='same-origin'));
 assert.equal(client.canEdit,false);assert.equal(client.principalId,null);
+const pageCalls=[];const pagedClient=createClient({baseUrl,origin,fetcher:async(url)=>{
+  const target=new URL(url);pageCalls.push(target);
+  const cursor=target.searchParams.get('cursor');
+  return {ok:true,status:200,json:async()=>target.pathname.endsWith('/events')
+    ?{events:[],next_cursor:'run-real:0'}
+    :{items:[],next_cursor:cursor?null:'page-next'}};
+}});
+const campaigns=await pagedClient.campaigns('prj-real');
+assert.deepEqual(campaigns.items,[]);assert.equal(campaigns.next_cursor,null);
+assert.deepEqual(pageCalls.slice(0,2).map(url=>url.searchParams.get('cursor')),[null,'page-next']);
+const events=await pagedClient.runEvents('run-real');
+assert.deepEqual(events.events,[]);assert.equal(events.next_cursor,'run-real:0');
+assert.equal(pageCalls[2].searchParams.get('after'),null);
+assert.equal(typeof pagedClient.validationReceipt,'function');
 const fixture=JSON.parse(fs.readFileSync(new URL('../../../contracts/fixtures/structure-revision/valid/si-diamond.json',import.meta.url)));
 const original=JSON.stringify(fixture);let submission=null;
 const first=await promoteStructure({structure:fixture,projectId:'prj-real',learningDatasetId:'ld-si',title:'Silicio',key:'promotion-key-001',createDraft:async(project,body)=>{submission={project,body};return 'server-bundle';}});
