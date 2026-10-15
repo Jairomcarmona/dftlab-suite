@@ -1,0 +1,57 @@
+{
+  "source": "REAL_BROWSER_GET_RUN",
+  "source_sha256": "fcce55e0bfb4049a8675d69a72f5e92308cdf62b33128017b69b30ee299f3c19",
+  "run_id": "42ac02f3-7069-4507-ba3a-ef273a553278",
+  "projection_dimensions": {
+    "execution": {
+      "observed_at": "2026-10-15T06:27:42.063418Z",
+      "source": "QRAFT_NATIVE_RESULT_AND_TERMINAL_EVIDENCE",
+      "value": "COMPLETED"
+    },
+    "integrity": {
+      "observed_at": "2026-10-15T06:27:42.063418Z",
+      "source": "PACKAGE_RESULT_AND_TERMINAL_ARTIFACT_SHA256",
+      "value": "VERIFIED"
+    },
+    "scheduler": {
+      "observed_at": "2026-10-15T06:27:42.063418Z",
+      "source": "SIGNED_QRAFT_TERMINAL_SCHEDULER_EVIDENCE",
+      "value": "COMPLETED"
+    },
+    "science": {
+      "observed_at": "2026-10-15T06:27:42.063418Z",
+      "source": "NO_SCIENTIFIC_ASSESSMENT_PERFORMED",
+      "value": "NOT_ESTABLISHED"
+    }
+  },
+  "lru_view": {
+    "headline": "COMPLETED_SCIENCE_NOT_ESTABLISHED",
+    "tone": "warn",
+    "science": {
+      "state": "NOT_ESTABLISHED",
+      "basis": "NONE"
+    },
+    "actions": {
+      "cancel": false,
+      "resume": false,
+      "use_result": false,
+      "resume_reason": "NOT_RESUMABLE_STATE"
+    },
+    "resume_plan": null,
+    "preserved": {
+      "plan_digest": "003cbdb2f56129fd4a7a5c617b1eeeb78ced4550c790a74134412f5de290882a",
+      "policy_digests": [],
+      "responses": []
+    },
+    "attempts": [
+      {
+        "attempt_id": "6bd154b6-bc1b-49df-9102-9f37cf357fdb",
+        "generation": 1,
+        "state": "COMPLETED",
+        "previous_attempt_id": null,
+        "current": true
+      }
+    ],
+    "banners": []
+  }
+}

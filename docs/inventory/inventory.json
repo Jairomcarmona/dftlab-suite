@@ -11,8 +11,8 @@
     "structureWriterFormats": 6,
     "datasets": 16,
     "datasetBytes": 10678665,
-    "ownJavascriptFiles": 66,
-    "ownJavascriptLines": 12401,
+    "ownJavascriptFiles": 67,
+    "ownJavascriptLines": 12920,
     "exportSourceCalls": 52,
     "scientificModules": 28
   },
@@ -1488,7 +1488,7 @@
     },
     {
       "file": "app/dftlab/static/js/siesta/native-results.js",
-      "sha256": "fd975b28cf2c79071a616980635a10b2473dbc444457e5fe4421ea14df556f34",
+      "sha256": "0cd8e54a7b954d369efb611afee54085b37b6514e03c80454552f936c4fa6485",
       "exports": [
         "parseNativeResult",
         "nativeResultSummary",
@@ -2411,6 +2411,11 @@
       "sha256": "fc31dc5189ec9ebc10e1948fef026401eea7f73399e1a4d929a3de5072f010bf"
     },
     {
+      "file": "app/dftlab/static/js/application/local-run-panel.js",
+      "bytes": 31899,
+      "sha256": "2ffd421450a68992f0fa058b9df9c5453a921e5b2054cddc123331e21bde5f04"
+    },
+    {
       "file": "app/dftlab/static/js/application/lru-panel.js",
       "bytes": 3085,
       "sha256": "2b2417c55eca716eaad0f1f0903fefd5a6ef2a6a4a44208fc1f2e96c6b05779d"
@@ -2422,8 +2427,8 @@
     },
     {
       "file": "app/dftlab/static/js/application/operative-shell.js",
-      "bytes": 5233,
-      "sha256": "fd545efc09c56f87222e082c7cb747b5c365e3f8fde7021abd7117bb8250f8e1"
+      "bytes": 7287,
+      "sha256": "e392e8c6e613a0c398dce87ae048f62821f39dad55df7243d671f3b8afb27a21"
     },
     {
       "file": "app/dftlab/static/js/core/chart.js",
@@ -2502,8 +2507,8 @@
     },
     {
       "file": "app/dftlab/static/js/main.js",
-      "bytes": 3489,
-      "sha256": "308dd108468d55ed65d23fc0c05e699a4c9ea72f40cd1101d8f205fdeaf234af"
+      "bytes": 3528,
+      "sha256": "0a408d3f72bd4b4dc5c63714e253fccd09960f4ff3faf2c8702c14fd0bbb33ed"
     },
     {
       "file": "app/dftlab/static/js/physics/atom.js",
@@ -2577,8 +2582,8 @@
     },
     {
       "file": "app/dftlab/static/js/siesta/native-results.js",
-      "bytes": 1476,
-      "sha256": "fd975b28cf2c79071a616980635a10b2473dbc444457e5fe4421ea14df556f34"
+      "bytes": 1446,
+      "sha256": "0cd8e54a7b954d369efb611afee54085b37b6514e03c80454552f936c4fa6485"
     },
     {
       "file": "app/dftlab/static/js/siesta/out.js",
@@ -2742,8 +2747,8 @@
     },
     {
       "file": "app/scripts/test-browser.mjs",
-      "bytes": 1178,
-      "sha256": "bd957f93540b41ef172e0dc0023e64fcc1e887db53113eb343a0ddb108bf4a51"
+      "bytes": 1214,
+      "sha256": "52258757e5f5fc56190059edf8898818697e5a8534b8eb9d9c8914c7da1147f3"
     },
     {
       "file": "app/package.json",

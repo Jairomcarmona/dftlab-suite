@@ -1,0 +1,259 @@
+{
+  "content_sha256": "003cbdb2f56129fd4a7a5c617b1eeeb78ced4550c790a74134412f5de290882a",
+  "contract": {
+    "name": "siestaflow.workflow-lock",
+    "version": "1.0"
+  },
+  "extensions": {},
+  "payload": {
+    "definition_sha256": "9f4848ddecbe3279989d1898bf40b42cc00e3990038690764283b182de08278a",
+    "edges": [
+      {
+        "kind": "artifact",
+        "source_output_name": "density",
+        "source_task_id": "single",
+        "target_input_name": "parent_dm",
+        "target_task_id": "derived"
+      }
+    ],
+    "external_artifacts": [
+      {
+        "artifact_id": "input-1a6530a7b33fb12e",
+        "media_type": "text/x-siesta-fdf",
+        "metadata": {},
+        "producer_attempt_id": null,
+        "producer_task_id": null,
+        "relative_path": "derived.fdf",
+        "role": "INPUT",
+        "sha256": "46f32a3faca7b6a9b616c883d8a9325eb7052322babb0cc427e8f28a82baf381",
+        "size_bytes": 736
+      },
+      {
+        "artifact_id": "input-656e7eeba42fafca",
+        "media_type": "text/x-siesta-fdf",
+        "metadata": {},
+        "producer_attempt_id": null,
+        "producer_task_id": null,
+        "relative_path": "single.fdf",
+        "role": "INPUT",
+        "sha256": "21a71af27817a7f3860ce737be40bf1a7627853b1650cb3864516d9452a4312b",
+        "size_bytes": 718
+      },
+      {
+        "artifact_id": "input-933296c925dd6576",
+        "media_type": "application/xml",
+        "metadata": {},
+        "producer_attempt_id": null,
+        "producer_task_id": null,
+        "relative_path": "Si.psml",
+        "role": "INPUT",
+        "sha256": "84c9316efac1959ee8c04b8d5a06eec2e069fa19302cb66254f2e4dc455b2044",
+        "size_bytes": 84145
+      }
+    ],
+    "metadata": {
+      "composition": {
+        "connections": [
+          {
+            "artifact_type": "siesta.density-matrix",
+            "source_port": "density",
+            "source_task": "single",
+            "target_port": "parent_dm",
+            "target_task": "derived"
+          }
+        ],
+        "fragments": [
+          "single",
+          "derived"
+        ],
+        "ports": [
+          {
+            "artifact_type": "siesta.fdf",
+            "direction": "input",
+            "media_type": "text/x-siesta-fdf",
+            "port": "fdf",
+            "task": "derived"
+          },
+          {
+            "artifact_type": "siesta.density-matrix",
+            "direction": "input",
+            "media_type": "application/x-siesta-dm",
+            "port": "parent_dm",
+            "task": "derived"
+          },
+          {
+            "artifact_type": "siesta.pseudopotential",
+            "direction": "input",
+            "media_type": "application/xml",
+            "port": "pseudo",
+            "task": "derived"
+          },
+          {
+            "artifact_type": "siesta.density-matrix",
+            "direction": "output",
+            "media_type": "application/x-siesta-dm",
+            "port": "density",
+            "task": "derived"
+          },
+          {
+            "artifact_type": "siesta.fdf",
+            "direction": "input",
+            "media_type": "text/x-siesta-fdf",
+            "port": "fdf",
+            "task": "single"
+          },
+          {
+            "artifact_type": "siesta.pseudopotential",
+            "direction": "input",
+            "media_type": "application/xml",
+            "port": "pseudo",
+            "task": "single"
+          },
+          {
+            "artifact_type": "siesta.density-matrix",
+            "direction": "output",
+            "media_type": "application/x-siesta-dm",
+            "port": "density",
+            "task": "single"
+          }
+        ],
+        "schema_version": "1.0"
+      },
+      "description": "Explicit Si single/DM derivation",
+      "dftlab.authoring": {
+        "snapshot": {
+          "artifact_id": "270e0a71-a716-4a0e-90e4-62ceb91f7926",
+          "media_type": "application/json",
+          "sha256": "c07cf823e8d00fd5ad99fbb0ec3dc0a3e5c0915bd0af69e3f737f8056c203f2a"
+        },
+        "sources": {
+          "Si.psml": {
+            "artifact_id": "9ed58e40-257f-4210-8365-7de59481001c",
+            "media_type": "application/xml",
+            "sha256": "84c9316efac1959ee8c04b8d5a06eec2e069fa19302cb66254f2e4dc455b2044"
+          },
+          "derived.fdf": {
+            "artifact_id": "d9925d60-502b-4fa0-959a-eafc811ef02c",
+            "media_type": "text/x-siesta-fdf",
+            "sha256": "46f32a3faca7b6a9b616c883d8a9325eb7052322babb0cc427e8f28a82baf381"
+          },
+          "single.fdf": {
+            "artifact_id": "a9280b45-9eb3-4342-81e4-55e6db042250",
+            "media_type": "text/x-siesta-fdf",
+            "sha256": "21a71af27817a7f3860ce737be40bf1a7627853b1650cb3864516d9452a4312b"
+          }
+        },
+        "version": "0.1.0"
+      },
+      "dftlab.protocol": {
+        "protocol_id": "dftlab.siesta.single-derived",
+        "version": "0.1.0"
+      },
+      "dftlab.run_intent_record_id": "1255fa08-5033-4089-b998-037ee2487cdb",
+      "execution_authorized": false,
+      "final_authority": "HUMAN_REVIEW",
+      "intent_sha256": "7f011e4eca3253b43d4d8ef2084e4e17ead8ce26277ebacd087d24ecc2cb7e53",
+      "recipe_id": "dftlab.siesta.single-derived",
+      "recipe_version": "0.1.0",
+      "scientific_scope": "Registered exact authoring case, no universal defaults"
+    },
+    "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+    "schema_version": "1.0",
+    "tasks": [
+      {
+        "capability_id": "siestaflow.engine.siesta",
+        "dependencies": [],
+        "inputs": [
+          {
+            "destination": "main.fdf",
+            "external_artifact_id": "input-656e7eeba42fafca",
+            "media_type": "text/x-siesta-fdf",
+            "name": "fdf",
+            "source_output_name": null,
+            "source_task_id": null
+          },
+          {
+            "destination": "Si.psml",
+            "external_artifact_id": "input-933296c925dd6576",
+            "media_type": "application/xml",
+            "name": "pseudo",
+            "source_output_name": null,
+            "source_task_id": null
+          }
+        ],
+        "kind": "calculation",
+        "outputs": [
+          {
+            "artifact_type": "siesta.density-matrix",
+            "media_type": "application/x-siesta-dm",
+            "name": "density",
+            "relative_path": "si.DM",
+            "required": true
+          }
+        ],
+        "resources": {
+          "cpus_per_process": 1,
+          "mpi_processes": 4,
+          "nodes": 1,
+          "processes_per_node": 4,
+          "walltime_seconds": 60
+        },
+        "settings": {},
+        "task_id": "single"
+      },
+      {
+        "capability_id": "siestaflow.engine.siesta",
+        "dependencies": [
+          "single"
+        ],
+        "inputs": [
+          {
+            "destination": "main.fdf",
+            "external_artifact_id": "input-1a6530a7b33fb12e",
+            "media_type": "text/x-siesta-fdf",
+            "name": "fdf",
+            "source_output_name": null,
+            "source_task_id": null
+          },
+          {
+            "destination": "si.DM",
+            "external_artifact_id": null,
+            "media_type": "application/x-siesta-dm",
+            "name": "parent_dm",
+            "source_output_name": "density",
+            "source_task_id": "single"
+          },
+          {
+            "destination": "Si.psml",
+            "external_artifact_id": "input-933296c925dd6576",
+            "media_type": "application/xml",
+            "name": "pseudo",
+            "source_output_name": null,
+            "source_task_id": null
+          }
+        ],
+        "kind": "calculation",
+        "outputs": [
+          {
+            "artifact_type": "siesta.density-matrix",
+            "media_type": "application/x-siesta-dm",
+            "name": "density",
+            "relative_path": "si.DM",
+            "required": true
+          }
+        ],
+        "resources": {
+          "cpus_per_process": 1,
+          "mpi_processes": 4,
+          "nodes": 1,
+          "processes_per_node": 4,
+          "walltime_seconds": 60
+        },
+        "settings": {},
+        "task_id": "derived"
+      }
+    ],
+    "workflow_id": "8b778427-4088-4176-b67c-b7df5967c384"
+  },
+  "producer": "siestaflow.workflow-compiler"
+}

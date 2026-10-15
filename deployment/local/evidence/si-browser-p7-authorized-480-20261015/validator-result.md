@@ -1,0 +1,7 @@
+# Dictamen del validador científico
+
+APROBADO, exclusivamente para la página y el resultado P-7 del run `42ac02f3-7069-4507-ba3a-ef273a553278` / job 460. La evidencia combinada acredita el recorrido del único envío desde navegador hasta su finalización, guardado y lectura tras recargar. El arnés original conserva su fallo; no se presenta como una prueba automatizada exitosa.
+
+El validador verificó en modo de solo lectura: una fila RUN, una operación SUBMIT_RUN, un despacho ACKNOWLEDGED, una entrada RPC y un EffectIntent; hashes de getRun y de los cuatro contenidos descargados; los 35 artefactos contra el almacén; sellos de admisión/finalización; HMAC terminal con el firmante registrado e identidad/digests nativos; resultado técnico COMPLETED/PASS y SCF convergido de ambos nodos, 10 y 2 iteraciones; recibo PUBLISHED, missing y unproduced_outputs vacíos; cuatro salidas existentes incluidas las dos DM de 478084 bytes. La evidencia terminal persistida es histórica autenticada: su ventana de frescura ya venció.
+
+Revisó visualmente `si-browser-p7-run460-final3-20261015/result-overview.png` y `result-finalization.png`; la UI conserva EXPLORATORY, NOT_ESTABLISHED y los hechos originales de QRAFT. La lectura tras recargar conserva el getRun `fcce55e0bfb4049a8675d69a72f5e92308cdf62b33128017b69b30ee299f3c19`, cero mutaciones y cero errores. No encontró correcciones adicionales en ese alcance. El dictamen no establece validez física, no promueve capabilities y no extiende la verificación a 457/458 ni modifica 459.

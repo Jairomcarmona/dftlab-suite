@@ -1,0 +1,114 @@
+{
+  "export_kind": "REDACTED_PUBLIC_OPERATION_SUMMARY",
+  "source": "Read-only snapshot of the service operations; authoritative records remain unchanged",
+  "notice": "This summary is not an OperationRecord or SubmissionReceipt and does not reproduce their integrity seals",
+  "omitted_fields": [
+    "Nested submission receipt, including its attempt correlation token"
+  ],
+  "operations": [
+    {
+      "operation_id": "5abb7817-64ea-4521-9812-5c53489cde6f",
+      "action": "VALIDATE_INPUT",
+      "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:27.224923Z",
+      "updated_at": "2026-10-15T06:27:27.885973Z",
+      "target_refs": [
+        {
+          "id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+          "kind": "PROJECT",
+          "revision": 1
+        }
+      ],
+      "product_refs": [
+        {
+          "id": "0dd5e8d1-d526-459b-a64d-291a88eb7072",
+          "kind": "VALIDATION_RECEIPT",
+          "revision": 1
+        }
+      ]
+    },
+    {
+      "operation_id": "f3cbafe1-8b94-4d45-98b6-271be062e74f",
+      "action": "CREATE_CAMPAIGN",
+      "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:28.074023Z",
+      "updated_at": "2026-10-15T06:27:28.117641Z",
+      "target_refs": [
+        {
+          "id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+          "kind": "PROJECT",
+          "revision": 2
+        }
+      ],
+      "product_refs": [
+        {
+          "id": "2e715786-b9b7-48c4-8371-962acdd71ef9",
+          "kind": "CAMPAIGN",
+          "revision": 1
+        }
+      ]
+    },
+    {
+      "operation_id": "139bd310-9f49-46c8-9de9-e2fdeede3090",
+      "action": "CREATE_PLAN",
+      "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:28.408816Z",
+      "updated_at": "2026-10-15T06:27:28.597106Z",
+      "target_refs": [
+        {
+          "id": "2e715786-b9b7-48c4-8371-962acdd71ef9",
+          "kind": "CAMPAIGN",
+          "revision": 1
+        }
+      ],
+      "product_refs": [
+        {
+          "id": "f7d1674e-35c5-40fb-a6b5-5d24b4a65867",
+          "kind": "PLAN",
+          "revision": 1
+        }
+      ]
+    },
+    {
+      "operation_id": "40e136f5-7426-4058-ae90-03592976f57e",
+      "action": "PREPARE_PACKAGE",
+      "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:29.170476Z",
+      "updated_at": "2026-10-15T06:27:29.594293Z",
+      "target_refs": [
+        {
+          "id": "f7d1674e-35c5-40fb-a6b5-5d24b4a65867",
+          "kind": "PLAN",
+          "revision": 1
+        }
+      ],
+      "product_refs": [
+        {
+          "id": "082d0f9e-730c-40e2-83da-6c519e0722fb",
+          "kind": "PACKAGE",
+          "revision": 1
+        }
+      ]
+    },
+    {
+      "operation_id": "0f72d9e8-107d-4e7f-b4d0-bd3c436e5b7e",
+      "action": "SUBMIT_RUN",
+      "state": "SUCCEEDED",
+      "accepted_at": "2026-10-15T06:27:29.741427Z",
+      "updated_at": "2026-10-15T06:27:32.219995Z",
+      "target_refs": [
+        {
+          "id": "f7d1674e-35c5-40fb-a6b5-5d24b4a65867",
+          "kind": "PLAN",
+          "revision": 2
+        }
+      ],
+      "product_refs": [],
+      "submission": {
+        "status": "ACCEPTED",
+        "scheduler": "SLURM",
+        "job_id": "460"
+      }
+    }
+  ]
+}

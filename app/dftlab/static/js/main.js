@@ -10,7 +10,7 @@ const side=$('#side'), view=$('#view');
 function nav(){
   side.innerHTML=`<div class="brand"><b>DFT Lab</b><span>SIESTA · v1</span></div>`+
     GROUPS.map(g=>`<nav class="navgrp" aria-label="${g.title}"><h4>${g.title}</h4>${VIEWS.filter(v=>v.group===g.id).map(v=>`<a href="#${v.id}" data-id="${v.id}"><span class="num">${v.num||''}</span><span>${v.title}</span></a>`).join('')}</nav>`).join('')+
-    `<div class="sidefoot"><div class="btnrow"><button class="tiny" id="themeBtn" type="button">Tema</button></div><span>Cálculos reales con SIESTA 5.4.2. La app no ejecuta SIESTA: lee y exporta archivos.</span></div>`;
+    `<div class="sidefoot"><div class="btnrow"><button class="tiny" id="themeBtn" type="button">Tema</button></div><span>Los flujos locales requieren una receta y un perfil admitidos; los resultados científicos conservan su evidencia original.</span></div>`;
   $('#themeBtn').onclick=()=>{ const r=document.documentElement, cur=r.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'); r.dataset.theme = cur==='dark'?'light':'dark'; try{ localStorage.setItem('dftlab-theme', r.dataset.theme); }catch(e){} };
 }
 try{ const t=localStorage.getItem('dftlab-theme'); if(t) document.documentElement.dataset.theme=t; }catch(e){}

@@ -1,0 +1,18 @@
+{
+  "job": "440",
+  "argv": [
+    "/usr/bin/sacct",
+    "--completion",
+    "--jobs=440",
+    "--noheader",
+    "--parsable2",
+    "--format=JobID,User,Cluster,State,Start,End"
+  ],
+  "returncode": 0,
+  "output": "440|jmc(1000)|unknown|COMPLETED|2026-10-11T09:00:14|2026-10-11T09:00:21\n",
+  "service_adapter_preflight": true,
+  "interop": "enabled\ninterpreter /init\nflags: PF\noffset 0\nmagic 4d5a\n",
+  "wsl_sha256": "fcd08205b608b5c4831e0dcb1801dd274436cd2c8420815f18ae58a085891a18",
+  "sacct_sha256": "20632577ca462f7d570feb56adef7c811fbf5911b9b97810a67a497342e97b71",
+  "profile_sha256": "1f3742c9c66f918c53381194fdbbdb27e4a10c26bac65182a6faaa7be3abb223"
+}

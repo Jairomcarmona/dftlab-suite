@@ -1,0 +1,40 @@
+{
+  "content_sha256": "740ed2592d8ff393016092bbbe8f29d388c89cda291808b1384e0fd432f738c0",
+  "contract": {
+    "name": "siestaflow.run-lock",
+    "version": "1.0"
+  },
+  "extensions": {},
+  "payload": {
+    "controller_campaign_sha256": "8d406ade35fddda3fa9d3ba6a0889b51e6eea974a84f4d55313e84154eba120c",
+    "execution_authorized": false,
+    "execution_profile_id": "wsl-slurm-openmpi-installed-qualification",
+    "execution_profile_sha256": "1ff9e7a6e2f2a945cb5d4621aa54c30dcac4b6943eb7c4610304d66519704118",
+    "metadata": {
+      "execution_resolution": {
+        "human_confirmed": null,
+        "resolution_mode": "PROFILE_ALREADY_RESOLVED",
+        "selection_status": "PROFILE_ALREADY_RESOLVED"
+      },
+      "manual_submission_required": true,
+      "source_identity": {
+        "source_commit": null,
+        "source_tree_dirty": null
+      },
+      "validation_review_codes": [],
+      "validation_status": "PASS"
+    },
+    "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+    "run_id": "42ac02f3-7069-4507-ba3a-ef273a553278",
+    "schema_version": "1.0",
+    "submission_performed": false,
+    "target": "slurm",
+    "task_ids": [
+      "single",
+      "derived"
+    ],
+    "workflow_id": "8b778427-4088-4176-b67c-b7df5967c384",
+    "workflow_lock_sha256": "003cbdb2f56129fd4a7a5c617b1eeeb78ced4550c790a74134412f5de290882a"
+  },
+  "producer": "siestaflow.run-preparer"
+}

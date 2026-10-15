@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "status": "ONE_BROWSER_SUBMISSION_AND_READ_ONLY_COMPLETION",
+  "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+  "run_id": "42ac02f3-7069-4507-ba3a-ef273a553278",
+  "job_id": "460",
+  "operation_id": "0f72d9e8-107d-4e7f-b4d0-bd3c436e5b7e",
+  "budget": {
+    "cpu_seconds": 480,
+    "unit": "allocated_cpu_second",
+    "expires_at": "2026-10-16T06:27:26.832091Z"
+  },
+  "budget_id": "5ce444c1-a49c-4549-b423-335038ba4137",
+  "original_harness_status": "FAILED_NO_RESUBMIT",
+  "original_harness_error": "TimeoutError: locator.waitFor: Timeout 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-local-run-panel] [data-decision]') to be visible\u001b[22m\n",
+  "midway_reload": {
+    "after": "plan",
+    "before": "package"
+  },
+  "submissions": 1,
+  "platform_until_finalization_seconds": 18.278,
+  "slurm_runtime_seconds": 8,
+  "original_harness_elapsed_seconds": 125.611,
+  "get_run_sha256": "fcce55e0bfb4049a8675d69a72f5e92308cdf62b33128017b69b30ee299f3c19",
+  "profile_sha256": "1f3742c9c66f918c53381194fdbbdb27e4a10c26bac65182a6faaa7be3abb223",
+  "native_result": {
+    "artifact_id": "db9e88ee-3cc7-408c-99e8-e1820d0bc308",
+    "kind": "qraft.runtime-result-observation",
+    "media_type": "application/json",
+    "sha256": "c04de5eda7da8c985ac0e8d99a5925ba721eb39a450f70fd9fc81c4a422aa2be",
+    "size_bytes": 6890,
+    "preserved_in_service": true,
+    "path": "public-artifacts/qraft.runtime-result-observation-db9e88ee-3cc7-408c-99e8-e1820d0bc308.json"
+  },
+  "signed_terminal_evidence": {
+    "artifact_id": "088e1252-a5bd-465d-ac97-c5460f0789f7",
+    "kind": "qraft.terminal-scheduler-evidence",
+    "media_type": "application/json",
+    "sha256": "8a84f944b63a17f1d4c20fe83987fab54b23111824b03affa6b6ce77344470d5",
+    "size_bytes": 593,
+    "preserved_in_service": true,
+    "path": "public-artifacts/qraft.terminal-scheduler-evidence-088e1252-a5bd-465d-ac97-c5460f0789f7.json"
+  },
+  "finalization_receipt": {
+    "artifact_id": "94cdeb15-1d7d-4111-8595-76bcf7024bba",
+    "kind": "dftlab.finalization-receipt",
+    "media_type": "application/json",
+    "sha256": "f103eba4a7a2a112ec5d9102220eb55ad11b690c1ac9fee972a3c55dd0ca46df",
+    "size_bytes": 3259,
+    "preserved_in_service": true,
+    "path": "public-artifacts/dftlab.finalization-receipt-94cdeb15-1d7d-4111-8595-76bcf7024bba.json"
+  },
+  "finalization_state": "PUBLISHED",
+  "unproduced_outputs": [],
+  "after_reload": {
+    "showed_native_result": true,
+    "showed_finalization_published": true,
+    "showed_science_not_established": true
+  },
+  "browser_mutating_requests": [],
+  "browser_errors": [],
+  "screenshots": [
+    {
+      "path": "../si-browser-p7-run460-final3-20261015/result-overview.png",
+      "sha256": "62c38e871ab06f6a8a28473a38c1807ecef49e91faf95a0a3661e09f53a8150a"
+    },
+    {
+      "path": "../si-browser-p7-run460-final3-20261015/result-finalization.png",
+      "sha256": "352f3495b143ae7973f0f58ce57d591ea2c2d2832a9f9bc4193e1b6bd4d0ab40"
+    }
+  ],
+  "validator": "APROBADO for P7 result/page and combined evidence; no physical validation",
+  "limits": [
+    "Requested CPU reservation versus observed AllocTRES=8; deferred ADR/contract decision",
+    "Distinct content under same profile_id/revision1, traced by per-run SHA",
+    "Science NOT_ESTABLISHED; native NOT_EVALUATED; no execution capability published",
+    "457/458 remain unverified; 459 unchanged"
+  ]
+}

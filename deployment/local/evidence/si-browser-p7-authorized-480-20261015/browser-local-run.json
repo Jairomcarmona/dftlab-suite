@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "route": "BROWSER",
+  "started_at": "2026-10-15T06:27:24.116Z",
+  "status": "FAILED_NO_RESUBMIT",
+  "existing_http_run": null,
+  "claims": {
+    "purpose": "EXPLORATORY",
+    "scientific_assessment": "NOT_ESTABLISHED",
+    "capabilities_published_for_execution": false
+  },
+  "run_reads": {},
+  "artifact_reads": [],
+  "browser_errors": [],
+  "project_id": "513700c8-095a-48fe-832f-80ae9c16eb03",
+  "project_name": "Si diamante · navegador 2026-10-15T06-27-25-264Z",
+  "budget_id": "5ce444c1-a49c-4549-b423-335038ba4137",
+  "budget_command": {
+    "executable": "/home/jmc/.local/state/dftlab-qualification/p7-browser-ec2ae09-20261015/venv/bin/python",
+    "args": [
+      "-I",
+      "-m",
+      "dftlab_platform.launcher",
+      "budget",
+      "add",
+      "--state-dir",
+      "/home/jmc/.local/state/dftlab-platform/si-browser-p7-480-20261015",
+      "--project",
+      "513700c8-095a-48fe-832f-80ae9c16eb03",
+      "--cpu-seconds",
+      "480",
+      "--expires-hours",
+      "24"
+    ],
+    "stdout": "{\"budget_id\": \"5ce444c1-a49c-4549-b423-335038ba4137\", \"cpu_seconds\": 480, \"expires_at\": \"2026-10-16T06:27:26.832091Z\", \"project_id\": \"513700c8-095a-48fe-832f-80ae9c16eb03\", \"unit\": \"allocated_cpu_second\"}"
+  },
+  "budget": {
+    "cpu_seconds": 480,
+    "unit": "allocated_cpu_second",
+    "expires_at": "2026-10-16T06:27:26.832091Z"
+  },
+  "steps": {
+    "promotion": "LISTO",
+    "validation": "SUCCEEDED",
+    "campaign": "SUCCEEDED",
+    "plan": "SUCCEEDED",
+    "package": "SUCCEEDED"
+  },
+  "reload_midway": {
+    "after": "plan",
+    "before": "package"
+  },
+  "error": "TimeoutError: locator.waitFor: Timeout 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-local-run-panel] [data-decision]') to be visible\u001b[22m\n",
+  "elapsed_seconds": 125.611
+}

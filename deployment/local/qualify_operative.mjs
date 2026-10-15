@@ -40,7 +40,12 @@ try{
   assert.equal(await page.locator('[data-remote-group] b').count(),0,'Imported text is not HTML');
   assert.ok((await context.cookies()).some(c=>c.name==='dftlab_session'&&c.httpOnly&&c.sameSite==='Strict'));
   assert.ok(!(await page.evaluate(()=>document.cookie)).includes('dftlab_session'));
-  assert.deepEqual(await page.evaluate(()=>Object.keys(localStorage).filter(k=>k!=='dftlab-theme')),[],'No session/draft credentials in localStorage');
+  const activeProject=await page.locator('[aria-label="Proyecto activo"]').evaluate(element=>element.value);
+  assert.ok(activeProject,'The created project is selected');
+  const persisted=await page.evaluate(()=>Object.entries(localStorage).filter(([key])=>key!=='dftlab-theme'));
+  assert.equal(persisted.length,1,'Only the active project selection is persisted');
+  assert.match(persisted[0][0],/^dftlab\.operative\.active-project\.v1\.[0-9a-f-]{36}$/i,'No session/draft credential key is persisted');
+  assert.equal(persisted[0][1],activeProject,'The stored value is the selected project ID');
   assert.ok(requests.filter(r=>r.method!=='GET').every(r=>r.url.endsWith('/lab/api/v1/session')||r.url.endsWith('/lab/api/v1/projects')),'Navigation never submits calculations');
   assert.ok(requests.every(r=>r.url.startsWith(new URL(runtime.url).origin+'/lab/')||/^(blob|data):/.test(r.url)),'No external origins or unversioned service calls');
   // CDP evaluation is allowed to bypass CSP. Trigger the callback later by a
@@ -56,7 +61,8 @@ try{
   assert.equal(await page.evaluate(()=>window.__unsafeInline),undefined,'Inline JS forbidden');
   assert.deepEqual(errors,[],'No lazy-route or session page errors');
   await page.reload();await page.locator('[data-remote-group]').waitFor();
-  assert.equal(await page.getByRole('button',{name:'Crear proyecto',exact:true}).count(),1,'Reload recovers CSRF from cookie without browser persistence');
+  await page.waitForFunction(id=>document.querySelector('[aria-label="Proyecto activo"]')?.value===id,activeProject);
+  assert.equal(await page.getByRole('button',{name:'Crear proyecto',exact:true}).count(),1,'Reload recovers CSRF from its cookie independently of project selection storage');
   await page.selectOption('[aria-label="Proyecto activo"]',{label:'Si <b>literal</b>'});
   await page.locator('[data-draft-panel]').waitFor();
   await page.fill('[aria-label="Título del borrador"]','Si <img> borrador');
